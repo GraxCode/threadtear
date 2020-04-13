@@ -22,6 +22,9 @@ public class MyExecution extends Execution {
 		super(ExecutionCategory.CLEANING /* category */, "My execution" /* name */,
 				"Executes something" /* description, can use html */);
 	}
+	/**
+	* This method is invoked when the user clicks on the Run button
+	*/
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
 		classes.stream().map(c -> c.node).forEach(c -> {
@@ -30,12 +33,11 @@ public class MyExecution extends Execution {
 	}
 }
 ```
-To load ClassNodes at runtime, use the `me.nov.threadtear.asm.vm.VM` class and implement `IVMReferenceHandler`:
+To load ClassNodes at runtime, use the `me.nov.threadtear.asm.vm.VM` class and implement `me.nov.threadtear.asm.vm.IVMReferenceHandler`:
 ```java
 public class MyExecution extends Execution implements IVMReferenceHandler {
 	public MyExecution() {
-		super(ExecutionCategory.GENERIC /* category */, "My execution" /* name */,
-				"Loads ClassNodes at runtime" /* description, can use html */);
+		super(ExecutionCategory.GENERIC, "My execution", "Loads ClassNodes at runtime");
 	}
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
@@ -43,20 +45,16 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 			VM vm = VM.constructVM(this);
 			//transform bytecode to java.lang.Class
 			Class<?> loadedClass = vm.loadClass(c.name.replace('/', '.'), true);
-			/*
-			* do stuff with your class here
-			*
-			* loadedClass.getMethods[0].invoke(...);
-			*/
+			//do stuff with your class here
+			loadedClass.getMethods[0].invoke(...);
 		});
 	}
+	/**
+	* Will get invoked by VM, when VM.loadClass is called
+	*/
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		/*
-		* Will get invoked by class loader
-		*
-		* Try to find the class to be loaded in open jar archive
-		*/
+		//try to find the class to be loaded in open jar archive
 		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
 	}
 }
