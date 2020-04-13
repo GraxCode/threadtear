@@ -22,6 +22,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 public class TryCatchObfuscationRemover extends Execution {
 
 	private ArrayList<Clazz> classes;
+	private boolean verbose;
 
 	public TryCatchObfuscationRemover() {
 		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks",
@@ -30,12 +31,13 @@ public class TryCatchObfuscationRemover extends Execution {
 
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+		this.verbose = verbose;
 		this.classes = classes;
 		logger.info("Removing redundant try catch blocks by ZKM");
 		long tcbs = getAmountBlocks();
 		classes.stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
 		long amount = (tcbs - getAmountBlocks());
-		logger.info("Finished, removed " + amount + " blocks in total!");
+		logger.info("Finished, removed " + amount + " blocks of " + tcbs + " total blocks!");
 		return amount > 0;
 	}
 
@@ -46,10 +48,8 @@ public class TryCatchObfuscationRemover extends Execution {
 
 	public void checkTCBs(ClassNode c, List<MethodNode> methods) {
 		methods.forEach(m -> {
-			logger.info("m");
 			if (m.tryCatchBlocks.stream().anyMatch(this::isFake)) {
 				m.tryCatchBlocks.stream().filter(this::isFake).collect(Collectors.toSet()).forEach(tcb -> {
-					logger.info("remov");
 					m.tryCatchBlocks.remove(tcb);
 				});
 				Instructions.removeDeadCode(c, m);
@@ -63,10 +63,16 @@ public class TryCatchObfuscationRemover extends Execution {
 			return true;
 		} else if (ain.getType() == AbstractInsnNode.METHOD_INSN && ain.getNext().getOpcode() == ATHROW) {
 			MethodInsnNode min = (MethodInsnNode) ain;
-			ClassNode node = getClass(classes, min.owner).node;
-			MethodNode getter = getMethod(node, min.name, min.desc);
+			Clazz clazz = getClass(classes, min.owner);
+			if (clazz == null) {
+				if (verbose)
+					logger.warning("Class " + min.owner + " not found, possibly library");
+				return false;
+			}
+			MethodNode getter = getMethod(clazz.node, min.name, min.desc);
 			if (getter == null) {
-				logger.warning("Getter " + min.owner + "." + min.name + min.desc + " not found, is library?");
+				if (verbose)
+					logger.warning("Getter " + min.owner + "." + min.name + min.desc + " not found, possibly library");
 				return false;
 			}
 			AbstractInsnNode getterFirst = getter.instructions.getFirst();
