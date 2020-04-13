@@ -15,7 +15,8 @@ import me.nov.threadtear.execution.ExecutionCategory;
 public class RestoreSourceFiles extends Execution {
 
 	public RestoreSourceFiles() {
-		super(ExecutionCategory.ANALYSIS, "Restore names by source file", "Restore class names by their source file attribute");
+		super(ExecutionCategory.ANALYSIS, "Restore names by source file",
+				"Restore class names by their source file attribute, if it isn't null.<br>Could reverse obfuscation with bad configuration.");
 	}
 
 	private Map<String, String> map;

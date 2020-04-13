@@ -21,7 +21,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 public class ReobfuscateClassNames extends Execution {
 
 	public ReobfuscateClassNames() {
-		super(ExecutionCategory.ANALYSIS, "Reobfuscate class names", "Reobfuscate class names for easier analysis");
+		super(ExecutionCategory.ANALYSIS, "Reobfuscate class names", "Reobfuscate class names for easier analysis.<br>Gets rid of annoying class names like IlIllIlI.");
 	}
 
 	private Map<String, String> map;

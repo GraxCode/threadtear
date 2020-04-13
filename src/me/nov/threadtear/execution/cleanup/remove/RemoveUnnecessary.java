@@ -19,7 +19,7 @@ public class RemoveUnnecessary extends Execution {
 
 	public RemoveUnnecessary() {
 		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions",
-				"Remove unnecessary instructions (even bad number or flow obfuscation).");
+				"Remove unnecessary instructions that can be optimized.<br>This could include number or flow obfuscation.");
 	}
 
 	@Override
