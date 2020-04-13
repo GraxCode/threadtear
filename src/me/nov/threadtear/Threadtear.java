@@ -8,8 +8,10 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -100,6 +102,9 @@ public class Threadtear extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			new Thread(() -> {
 				logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
+				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
+				logger.info(ignoredClasses.size() + " classes will be ignored");
+				classes.removeIf(c -> !c.transform);
 				executions.forEach(e -> {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());
@@ -107,6 +112,7 @@ public class Threadtear extends JFrame {
 					logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms)
 							+ " ms");
 				});
+				classes.addAll(ignoredClasses); //re-add ignored classes to export them
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e1) {
