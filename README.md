@@ -30,7 +30,37 @@ public class MyExecution extends Execution {
 	}
 }
 ```
-
+To load ClassNodes at runtime, use the `me.nov.threadtear.asm.vm.VM` class and implement `IVMReferenceHandler`:
+```java
+public class MyExecution extends Execution implements IVMReferenceHandler {
+	public MyExecution() {
+		super(ExecutionCategory.GENERIC /* category */, "My execution" /* name */,
+				"Loads ClassNodes at runtime" /* description, can use html */);
+	}
+	@Override
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
+		classes.stream().map(c -> c.node).forEach(c -> {
+			VM vm = VM.constructVM(this);
+			//transform bytecode to java.lang.Class
+			Class<?> loadedClass = vm.loadClass(c.name.replace('/', '.'), true);
+			/*
+			* do stuff with your class here
+			*
+			* loadedClass.getMethods[0].invoke(...);
+			*/
+		});
+	}
+	@Override
+	public ClassNode tryClassLoad(String name) {
+		/*
+		* Will get invoked by class loader
+		*
+		* Try to find the class to be loaded in open jar archive
+		*/
+		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+	}
+}
+```
 ## Libraries needed
 commons-io 2.6, darklaf-1.3.3.4, asm-all 8+
 
