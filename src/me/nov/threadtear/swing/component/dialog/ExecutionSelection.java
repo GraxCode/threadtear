@@ -80,7 +80,7 @@ public class ExecutionSelection extends JDialog {
 			DefaultTreeModel model = new DefaultTreeModel(root);
 			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			for (ExecutionCategory t : ExecutionCategory.values()) {
-				root.add(new ExecutionTreeNode(t.toString().toLowerCase()));
+				root.add(new ExecutionTreeNode(t.name));
 			}
 			addExecution(root, new InlineMethods());
 
@@ -108,7 +108,7 @@ public class ExecutionSelection extends JDialog {
 			for (int i = 0; i < root.getChildCount(); i++) {
 
 				ExecutionTreeNode child = (ExecutionTreeNode) root.getChildAt(i);
-				if (child.toString().equalsIgnoreCase(e.type.toString())) {
+				if (child.toString().equalsIgnoreCase(e.type.name)) {
 					child.add(new ExecutionTreeNode(e, false));
 					return;
 				}

@@ -129,7 +129,7 @@ public class Threadtear extends JFrame {
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File output = jfc.getSelectedFile();
 					JarIO.saveAsJar(inputFile, output, classes, noSign);
-					logger.info("Saving successful!");
+					logger.info("Saved to " + output.getAbsolutePath());
 				}
 			}).start();
 		});

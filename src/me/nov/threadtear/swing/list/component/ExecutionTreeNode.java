@@ -15,7 +15,7 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
 		if (member != null) {
 			this.text = member.name;
 			if (suffix) {
-				text += " (" + ex.type.name().toLowerCase() + ")";
+				text += " (" + ex.type.name + ")";
 			}
 		}
 	}

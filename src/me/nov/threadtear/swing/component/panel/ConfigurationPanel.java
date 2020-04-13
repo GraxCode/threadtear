@@ -29,7 +29,7 @@ public class ConfigurationPanel extends JPanel {
 	private JPanel createCheckboxes() {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 		panel.add(verbose = new JCheckBox("Verbose"));
-		panel.add(computeFrames = new JCheckBox("Compute Frames"));
+		panel.add(computeFrames = new JCheckBox("Compute Frames")); // TODO something else maybe
 		panel.add(ignoreErrors = new JCheckBox("Ignore Errors"));
 		panel.add(removeSignature = new JCheckBox("Remove Signature"));
 		return panel;
