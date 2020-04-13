@@ -91,4 +91,12 @@ public class Instructions implements Opcodes {
 		}
 		return true;
 	}
+
+	public static AbstractInsnNode getRealNext(AbstractInsnNode ain) {
+		do {
+			// skip labels, frames and line numbers
+			ain = ain.getNext();
+		} while (ain.getOpcode() == -1);
+		return ain;
+	}
 }

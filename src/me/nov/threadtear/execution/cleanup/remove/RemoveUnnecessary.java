@@ -11,7 +11,6 @@ import org.objectweb.asm.tree.MethodNode;
 
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Instructions;
-import me.nov.threadtear.asm.util.Sandbox;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 
@@ -22,6 +21,23 @@ public class RemoveUnnecessary extends Execution {
 				"Remove unnecessary instructions that can be optimized.<br>This could include number or flow obfuscation.");
 	}
 
+	/*
+	 * TODO
+	 * Nothing done here yet, this class should simulate stack and simultaneously rewrite the code.
+	 * 
+	 * eg.
+	 * ICONST_4
+	 * ICONST_1
+	 * IADD
+	 * INVOKESTATIC ...
+	 * 
+	 * would be turned into
+	 * 
+	 * ICONST_5
+	 * INVOKESTATIC ...
+	 * 
+	 */
+	
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
 		logger.info("Simulating stack for every method!");
@@ -60,7 +76,7 @@ public class RemoveUnnecessary extends Execution {
 
 		public AbstractInsnNode compute() {
 			StreamSupport.stream(code.spliterator(), false).filter(Instructions::unnecessaryToStack).forEach(code::remove);
-			Object o = Sandbox.compute(code);
+			Object o = null /* simulate using vm maybe */;
 			return new LdcInsnNode(o);
 		}
 	}

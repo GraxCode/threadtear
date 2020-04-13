@@ -58,13 +58,10 @@ public class TryCatchObfuscationRemover extends Execution {
 	}
 
 	public boolean isFake(TryCatchBlockNode tcbn) {
-		AbstractInsnNode ain = tcbn.handler;
-		while (ain.getOpcode() == -1) { // skip labels and frames
-			ain = ain.getNext();
-		}
+		AbstractInsnNode ain = Instructions.getRealNext(tcbn.handler);
 		if (ain.getOpcode() == ATHROW) {
 			return true;
-		} else if (ain instanceof MethodInsnNode && ain.getNext().getOpcode() == ATHROW) {
+		} else if (ain.getType() == AbstractInsnNode.METHOD_INSN && ain.getNext().getOpcode() == ATHROW) {
 			MethodInsnNode min = (MethodInsnNode) ain;
 			ClassNode node = getClass(classes, min.owner).node;
 			MethodNode getter = getMethod(node, min.name, min.desc);

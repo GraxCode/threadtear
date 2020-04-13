@@ -338,4 +338,17 @@ public class Access {
 		}
 		return access;
 	}
+
+	public static int makePublic(int access) {
+		if (Access.isPrivate(access)) {
+			access = removeAccess(access, ACC_PRIVATE);
+		}
+		if (Access.isProtected(access)) {
+			access = removeAccess(access, ACC_PROTECTED);
+		}
+		if (!Access.isPublic(access)) {
+			access |= ACC_PUBLIC;
+		}
+		return access;
+	}
 }
