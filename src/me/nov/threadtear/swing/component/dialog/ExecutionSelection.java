@@ -24,6 +24,7 @@ import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.generic.FixAccess;
+import me.nov.threadtear.execution.zkm.general.TryCatchObfuscationRemover;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;
 
@@ -89,6 +90,8 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 
+			addExecution(root, new TryCatchObfuscationRemover());
+			
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);
 			this.addTreeSelectionListener(this);
