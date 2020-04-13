@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.generic;
+package me.nov.threadtear.execution.analysis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.References;
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
 
 public class RestoreSourceFiles extends Execution {
 
 	public RestoreSourceFiles() {
-		super(ExecutionType.GENERIC, "Restore name by source file", "Restore class names by their source file attribute");
+		super(ExecutionCategory.ANALYSIS, "Restore names by source file", "Restore class names by their source file attribute");
 	}
 
 	private Map<String, String> map;

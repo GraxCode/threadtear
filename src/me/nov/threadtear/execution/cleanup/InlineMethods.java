@@ -16,12 +16,12 @@ import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
 
 public class InlineMethods extends Execution {
 
 	public InlineMethods() {
-		super(ExecutionType.CLEANING, "Inline static methods without invocation",
+		super(ExecutionCategory.CLEANING, "Inline static methods without invocation",
 				"Inline static methods that only return or throw");
 	}
 

@@ -105,6 +105,7 @@ public class Threadtear extends JFrame {
 				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
 				logger.info(ignoredClasses.size() + " classes will be ignored");
 				classes.removeIf(c -> !c.transform);
+				logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
 				executions.forEach(e -> {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());

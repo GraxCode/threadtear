@@ -6,12 +6,12 @@ import java.util.List;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
 
 public class FixAccess extends Execution {
 
 	public FixAccess() {
-		super(ExecutionType.GENERIC, "Fix access", "Fixes obfuscated access like synthetic or bridge");
+		super(ExecutionCategory.GENERIC, "Fix obfuscated access", "Fixes obfuscated access like synthetic or bridge");
 	}
 
 	@Override

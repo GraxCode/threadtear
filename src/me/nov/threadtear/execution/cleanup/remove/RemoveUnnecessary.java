@@ -13,12 +13,12 @@ import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.asm.util.Sandbox;
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
 
 public class RemoveUnnecessary extends Execution {
 
 	public RemoveUnnecessary() {
-		super(ExecutionType.CLEANING, "Remove unnecessary instructions",
+		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions",
 				"Remove unnecessary instructions (even bad number or flow obfuscation).");
 	}
 

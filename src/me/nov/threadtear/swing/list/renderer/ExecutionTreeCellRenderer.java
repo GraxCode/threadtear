@@ -18,14 +18,19 @@ import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
 	private static final long serialVersionUID = 1L;
 
-	private ImageIcon execution, directory;
+	private ImageIcon executionRed, executionGreen, executionBlue, directory;
 
 	public ExecutionTreeCellRenderer() {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		this.directory = new ImageIcon(
 				tk.getImage(this.getClass().getResource("/res/directory.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-		this.execution = new ImageIcon(
-				tk.getImage(this.getClass().getResource("/res/execution.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		
+		this.executionRed = new ImageIcon(
+				tk.getImage(this.getClass().getResource("/res/execution_red.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		this.executionGreen = new ImageIcon(
+				tk.getImage(this.getClass().getResource("/res/execution_green.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		this.executionBlue = new ImageIcon(
+				tk.getImage(this.getClass().getResource("/res/execution_blue.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 	}
 
 	@Override
@@ -38,7 +43,17 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
 			Execution exec = (Execution) tn.member;
 			setToolTipText(tn.getTooltip());
 			if (exec != null) {
-				this.setIcon(this.execution);
+				switch(exec.type) {
+				case ANALYSIS:
+					this.setIcon(this.executionGreen);
+					break;
+				case CLEANING:
+					this.setIcon(this.executionBlue);
+					break;
+				default:
+					this.setIcon(this.executionRed);
+					break;
+				}
 			} else {
 				this.setIcon(this.directory);
 			}

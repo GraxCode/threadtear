@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.generic;
+package me.nov.threadtear.execution.analysis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.References;
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
 
 public class ReobfuscateClassNames extends Execution {
 
 	public ReobfuscateClassNames() {
-		super(ExecutionType.GENERIC, "Reobfuscate class names", "Reobfuscate class names for easier analysis");
+		super(ExecutionCategory.ANALYSIS, "Reobfuscate class names", "Reobfuscate class names for easier analysis");
 	}
 
 	private Map<String, String> map;

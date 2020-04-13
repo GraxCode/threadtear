@@ -19,11 +19,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionType;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
+import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.generic.FixAccess;
-import me.nov.threadtear.execution.generic.ReobfuscateClassNames;
-import me.nov.threadtear.execution.generic.RestoreSourceFiles;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;
 
@@ -79,12 +79,13 @@ public class ExecutionSelection extends JDialog {
 			ExecutionTreeNode root = new ExecutionTreeNode("");
 			DefaultTreeModel model = new DefaultTreeModel(root);
 			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-			for (ExecutionType t : ExecutionType.values()) {
+			for (ExecutionCategory t : ExecutionCategory.values()) {
 				root.add(new ExecutionTreeNode(t.toString().toLowerCase()));
 			}
 			addExecution(root, new InlineMethods());
 
 			addExecution(root, new FixAccess());
+			
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 

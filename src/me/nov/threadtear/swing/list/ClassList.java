@@ -48,6 +48,7 @@ public class ClassList extends JPanel implements ILoader {
 				ignoreChilds(node);
 				refreshIgnored();
 				repaint();
+				tree.grabFocus();
 			}
 		});
 		panel.add(ignore);
@@ -56,6 +57,7 @@ public class ClassList extends JPanel implements ILoader {
 			ignoreChilds((SortedTreeClassNode) model.getRoot());
 			refreshIgnored();
 			repaint();
+			tree.grabFocus();
 		});
 
 		panel.add(toggle);

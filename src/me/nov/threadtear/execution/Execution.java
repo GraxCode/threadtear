@@ -11,11 +11,11 @@ import me.nov.threadtear.asm.Clazz;
 
 public abstract class Execution implements Opcodes {
 	public String name;
-	public ExecutionType type;
+	public ExecutionCategory type;
 	public String description;
 	protected static final Logger logger = Threadtear.logger;
 	protected static final Random random = new Random();
-	public Execution(ExecutionType type, String name, String description) {
+	public Execution(ExecutionCategory type, String name, String description) {
 		this.type = type;
 		this.name = name;
 		this.description = description;
