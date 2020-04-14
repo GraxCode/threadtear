@@ -3,6 +3,7 @@ package me.nov.threadtear.swing.list.component;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionTag;
 
 public class ExecutionTreeNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
@@ -23,7 +24,18 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
 	public String getTooltip() {
 		if (member == null)
 			return null;
-		return "<html>" + member.description + "<br>Class: " + member.getClass().getName();
+		StringBuilder b = new StringBuilder();
+		b.append("<html>");
+		b.append(member.description);
+		b.append("<br><i><b>");
+		for (ExecutionTag tag : member.tags) {
+			b.append("<br>");
+			b.append(tag.info);
+		}
+		b.append("</b><br><br>Class: ");
+		b.append(member.getClass().getName());
+		b.append("</i>");
+		return b.toString();
 	}
 
 	public ExecutionTreeNode(String folder) {

@@ -20,6 +20,7 @@ import me.nov.threadtear.asm.vm.Sandbox;
 import me.nov.threadtear.asm.vm.VM;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
 
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler {
@@ -35,8 +36,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	public StringObfuscationZKM() {
 		super(ExecutionCategory.ZKM8_11, "Remove string obfuscation by ZKM 8 - 11",
 				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br>"
-						+ "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i><br>"
-						+ "<b>Can possibly run dangerous code.</b>");
+						+ "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
+				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	/*

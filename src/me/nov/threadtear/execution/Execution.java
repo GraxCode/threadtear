@@ -12,16 +12,19 @@ import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
 
 public abstract class Execution implements Opcodes {
-	public String name;
-	public ExecutionCategory type;
-	public String description;
+	public final String name;
+	public final ExecutionCategory type;
+	public final String description;
+	public final ExecutionTag[] tags;
+
 	protected static final Logger logger = Threadtear.logger;
 	protected static final Random random = new Random();
 
-	public Execution(ExecutionCategory type, String name, String description) {
+	public Execution(ExecutionCategory type, String name, String description, ExecutionTag... tags) {
 		this.type = type;
 		this.name = name;
 		this.description = description;
+		this.tags = tags;
 	}
 
 	@Override
@@ -36,11 +39,11 @@ public abstract class Execution implements Opcodes {
 	}
 
 	protected MethodNode getMethod(ClassNode node, String name, String desc) {
-		if(node == null)
+		if (node == null)
 			return null;
 		return node.methods.stream().filter(m -> m.name.equals(name) && m.desc.equals(desc)).findFirst().orElse(null);
 	}
-	
+
 	protected MethodNode getStaticInitializer(ClassNode node) {
 		return node.methods.stream().filter(m -> m.name.equals("<clinit>")).findFirst().orElse(null);
 	}

@@ -17,12 +17,13 @@ import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 
 public class InlineMethods extends Execution {
 
 	public InlineMethods() {
 		super(ExecutionCategory.CLEANING, "Inline static methods without invocation",
-				"Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.");
+				"Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.", ExecutionTag.RUNNABLE);
 	}
 
 	public int inlines;

@@ -15,6 +15,7 @@ import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 
 /**
  * Works with ZKM 8 - 11, newer versions remain untested
@@ -26,7 +27,9 @@ public class TryCatchObfuscationRemover extends Execution {
 
 	public TryCatchObfuscationRemover() {
 		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks",
-				"Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.");
+				"Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", 
+				ExecutionTag.RUNNABLE,
+				ExecutionTag.BETTER_DECOMPILE);
 	}
 
 	@Override

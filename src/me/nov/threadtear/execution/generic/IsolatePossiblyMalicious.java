@@ -8,6 +8,7 @@ import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 
 public class IsolatePossiblyMalicious extends Execution {
 
@@ -16,7 +17,8 @@ public class IsolatePossiblyMalicious extends Execution {
 
 	public IsolatePossiblyMalicious() {
 		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls",
-				"Isolate runtime and reflection calls, so no code can be executed");
+				"Isolate runtime and reflection calls, so no code can be executed.<br>Doesn't mean it can't run malicious code afterwards.",
+				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override

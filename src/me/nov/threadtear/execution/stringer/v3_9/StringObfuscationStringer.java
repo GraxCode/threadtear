@@ -20,6 +20,7 @@ import me.nov.threadtear.asm.vm.Sandbox;
 import me.nov.threadtear.asm.vm.VM;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
 
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler {
@@ -31,8 +32,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private boolean verbose;
 
 	public StringObfuscationStringer() {
-		super(ExecutionCategory.STRINGER3_9, "Remove string obfuscation by Stringer",
-				"Should work for version 3 - 9.<br><b>Can possibly run dangerous code.</b>");
+		super(ExecutionCategory.STRINGER3_9, "Remove string obfuscation by Stringer", "Should work for version 3 - 9.",
+				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override
@@ -48,8 +49,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 			return false;
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-		logger.info(
-				"Of a total of " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were successfully decrypted");
+		logger.info("Of a total of " + encrypted + " encrypted strings, " + (decryptionRatio)
+				+ "% were successfully decrypted");
 		return decryptionRatio > 0.25;
 	}
 
@@ -71,12 +72,14 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 							String realString = invokeProxy(cn, m, min, (String) lin.cst);
 							if (realString != null) {
 								if (Strings.isHighUTF(realString)) {
-									logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
+									logger.warning("String may have not decrypted correctly in " + cn.name + "."
+											+ m.name + m.desc);
 								} else {
 									this.decrypted++;
 								}
 								lin.cst = realString;
-								// Can't call m.instructions.remove(min); as it would mess with the loop, turn it into String.valueOf instead
+								// Can't call m.instructions.remove(min); as it would mess with the loop, turn
+								// it into String.valueOf instead
 								min.owner = "java/lang/String";
 								min.name = "valueOf";
 								min.desc = "(Ljava/lang/Object;)Ljava/lang/String;";
@@ -101,13 +104,18 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 
 	private ClassNode fakeInvocationClone;
 
-	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, String encryptedString) throws Exception {
+	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, String encryptedString)
+			throws Exception {
 		VM vm = VM.constructVM(this);
-		fakeInvocationClone = createFakeClone(cn, m, min, encryptedString); // create a duplicate of the current class, we need this because stringer checks for stacktrace method name and class
-		vm.loadClass(min.owner.replace('/', '.'), true); // load decryption class, this class will load another class (some type of list / map)
+		fakeInvocationClone = createFakeClone(cn, m, min, encryptedString); // create a duplicate of the current class,
+																			// we need this because stringer checks for
+																			// stacktrace method name and class
+		vm.loadClass(min.owner.replace('/', '.'), true); // load decryption class, this class will load another class
+															// (some type of list / map)
 		Class<?> loadedClone = vm.loadClass(fakeInvocationClone.name.replace('/', '.'), true); // load dupe
 		if (m.name.equals("<init>")) {
-			loadedClone.newInstance(); // special case: constructors have to be invoked by newInstance. Sandbox.createMethodProxy automatically handles access and super call
+			loadedClone.newInstance(); // special case: constructors have to be invoked by newInstance.
+										// Sandbox.createMethodProxy automatically handles access and super call
 		} else {
 			for (Method reflectionMethod : loadedClone.getMethods()) {
 				if (reflectionMethod.getName().equals(m.name)) {
