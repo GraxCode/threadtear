@@ -11,8 +11,7 @@ public class Descriptor {
 			return description;
 		}
 		if (description.contains("L") && description.contains(";")) {
-			if (description.startsWith("(")
-					|| (description.startsWith("L") || description.startsWith("[")) && description.endsWith(";")) {
+			if (description.startsWith("(") || (description.startsWith("L") || description.startsWith("[")) && description.endsWith(";")) {
 				String regex = "(?<=[L])[^;]*(?=;)";
 				Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(Pattern.quote(description));
@@ -34,8 +33,7 @@ public class Descriptor {
 		String x = description.replaceAll("(?=([L;()\\/\\[IDFJBZV]))", "");
 		if (x.isEmpty()) {
 			return true;
-		} else if (x.equals("Z") || x.equals("J") || x.equals("I") || x.equals("F") || x.equals("D") || x.equals("C")
-				|| x.equals("T") || x.equals("G")) {
+		} else if (x.equals("Z") || x.equals("J") || x.equals("I") || x.equals("F") || x.equals("D") || x.equals("C") || x.equals("T") || x.equals("G")) {
 			return true;
 		}
 		return false;
@@ -69,7 +67,7 @@ public class Descriptor {
 	public static int getStackSize(char type) {
 		if (type == 'J' || type == 'D') {
 			return 2;
-		} else if(type == 'V') {
+		} else if (type == 'V') {
 			return 0;
 		}
 		return 1;

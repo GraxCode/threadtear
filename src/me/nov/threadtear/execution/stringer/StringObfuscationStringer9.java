@@ -33,8 +33,7 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 	private boolean verbose;
 
 	public StringObfuscationStringer9() {
-		super(ExecutionCategory.STRINGER, "String obfuscation removal targeting Stringer 9",
-				"Works for version 9 only.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+		super(ExecutionCategory.STRINGER, "String obfuscation removal targeting Stringer 9", "Works for version 9 only.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override
@@ -50,8 +49,7 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 			return false;
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-		logger.info("Of a total of " + encrypted + " encrypted strings, " + (decryptionRatio)
-				+ "% were successfully decrypted");
+		logger.info("Of a total of " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were successfully decrypted");
 		return decryptionRatio > 0.25;
 	}
 
@@ -73,8 +71,7 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 				do {
 					proxyExecution.add(next.clone(null));
 					next = Instructions.getRealNext(next);
-				} while (next != null && next.getOpcode() != INVOKESTATIC
-						&& next.getType() != AbstractInsnNode.JUMP_INSN);
+				} while (next != null && next.getOpcode() != INVOKESTATIC && next.getType() != AbstractInsnNode.JUMP_INSN);
 				if (next != null && next.getOpcode() == INVOKESTATIC) {
 					MethodInsnNode min = (MethodInsnNode) next;
 					proxyExecution.add(min.clone(null));
@@ -84,8 +81,7 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 							String realString = invokeProxy(cn, m, min, proxyExecution);
 							if (realString != null) {
 								if (Strings.isHighUTF(realString)) {
-									logger.warning("String may have not decrypted correctly in " + cn.name + "."
-											+ m.name + m.desc);
+									logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
 								} else {
 									this.decrypted++;
 								}
@@ -101,8 +97,7 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							logger.warning("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": "
-									+ e.getClass().getName() + ", " + e.getMessage());
+							logger.warning("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
 						}
 					} else if (verbose) {
 						logger.warning("Wrong desc in " + cn.name + "." + m.name + m.desc + ": " + min.desc);
@@ -114,18 +109,17 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 
 	private ClassNode fakeInvocationClone;
 
-	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, InsnList proxyExecution)
-			throws Exception {
+	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, InsnList proxyExecution) throws Exception {
 		VM vm = VM.constructVM(this);
 		fakeInvocationClone = createFakeClone(cn, m, proxyExecution); // create a duplicate of the current class,
-																		// we need this because stringer checks for
-																		// stacktrace method name and class
+		// we need this because stringer checks for
+		// stacktrace method name and class
 		vm.loadClass(min.owner.replace('/', '.'), true); // load decryption class, this class will load another class
-															// (some type of list / map)
+		// (some type of list / map)
 		Class<?> loadedClone = vm.loadClass(fakeInvocationClone.name.replace('/', '.'), true); // load dupe
 		if (m.name.equals("<init>")) {
 			loadedClone.newInstance(); // special case: constructors have to be invoked by newInstance.
-										// Sandbox.createMethodProxy automatically handles access and super call
+			// Sandbox.createMethodProxy automatically handles access and super call
 		} else {
 			for (Method reflectionMethod : loadedClone.getMethods()) {
 				if (reflectionMethod.getName().equals(m.name)) {

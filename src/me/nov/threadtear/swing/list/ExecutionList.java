@@ -25,8 +25,7 @@ public class ExecutionList extends JPanel {
 
 	public ExecutionList() {
 		this.setLayout(new BorderLayout());
-		this.add(Utils.addTitleAndBorder("Executions in order", new JScrollPane(executions = new ExecutionTree())),
-				BorderLayout.CENTER);
+		this.add(Utils.addTitleAndBorder("Executions in order", new JScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
 
 		this.add(createButtons(), BorderLayout.SOUTH);
 	}

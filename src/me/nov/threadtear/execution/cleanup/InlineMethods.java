@@ -22,8 +22,7 @@ import me.nov.threadtear.execution.ExecutionTag;
 public class InlineMethods extends Execution {
 
 	public InlineMethods() {
-		super(ExecutionCategory.CLEANING, "Inline static methods without invocation",
-				"Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.", ExecutionTag.RUNNABLE);
+		super(ExecutionCategory.CLEANING, "Inline static methods without invocation", "Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.", ExecutionTag.RUNNABLE);
 	}
 
 	public int inlines;
@@ -38,7 +37,8 @@ public class InlineMethods extends Execution {
 		inlines = 0;
 		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
 			m.instructions.forEach(ain -> {
-				if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be superclass and real overrides
+				if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be
+					// superclass and real overrides
 					MethodInsnNode min = (MethodInsnNode) ain;
 					String key = min.owner + "." + min.name + min.desc;
 					if (map.containsKey(key)) {
@@ -54,16 +54,14 @@ public class InlineMethods extends Execution {
 
 	private void inlineMethod(MethodNode m, MethodInsnNode min, MethodNode method) {
 		InsnList copy = Instructions.copy(method.instructions);
-		StreamSupport.stream(copy.spliterator(), false)
-				.filter(ain -> ain.getType() == AbstractInsnNode.LINE || ain.getType() == AbstractInsnNode.FRAME)
-				.forEach(copy::remove);
+		StreamSupport.stream(copy.spliterator(), false).filter(ain -> ain.getType() == AbstractInsnNode.LINE || ain.getType() == AbstractInsnNode.FRAME).forEach(copy::remove);
 		removeReturn(copy);
 
 		InsnList fakeVarList = createFakeVarList(method);
 		copy.insert(fakeVarList);
 
-		StreamSupport.stream(copy.spliterator(), false).filter(ain -> ain.getType() == AbstractInsnNode.VAR_INSN)
-				.map(ain -> (VarInsnNode) ain).forEach(v -> v.var += m.maxLocals + 4); // offset local variables to not collide with existing ones
+		StreamSupport.stream(copy.spliterator(), false).filter(ain -> ain.getType() == AbstractInsnNode.VAR_INSN).map(ain -> (VarInsnNode) ain).forEach(v -> v.var += m.maxLocals + 4); // offset local variables to not
+		// collide with existing ones
 		m.instructions.insert(min, copy);
 		m.instructions.remove(min);
 	}
@@ -173,7 +171,8 @@ public class InlineMethods extends Execution {
 		case AbstractInsnNode.FIELD_INSN:
 		case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
 		case AbstractInsnNode.TYPE_INSN:
-		case AbstractInsnNode.JUMP_INSN: // TODO replace return (if not last, inside loop) with goto to last insn, so jumps are supported too
+		case AbstractInsnNode.JUMP_INSN: // TODO replace return (if not last, inside loop) with goto to last insn, so
+			// jumps are supported too
 			return true;
 		}
 		return false;

@@ -180,14 +180,12 @@ public class Instructions implements Opcodes {
 						break;
 					case PUTFIELD:
 						copy.insertBefore(fin, new InsnNode(POP)); // pop reference
-						copy.insertBefore(fin,
-								new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						copy.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
 						copy.set(fin, createNullPushForType(fin.desc));
 						i += 2;
 						break;
 					case PUTSTATIC:
-						copy.insertBefore(fin,
-								new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						copy.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
 						copy.set(fin, createNullPushForType(fin.desc));
 						i += 1;
 						break;

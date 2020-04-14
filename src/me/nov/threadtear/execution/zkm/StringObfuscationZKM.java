@@ -34,10 +34,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private static final String ENCHANCED_MODE_METHOD_DESC = "(II)Ljava/lang/String;";
 
 	public StringObfuscationZKM() {
-		super(ExecutionCategory.ZKM, "String obfuscation removal targeting ZKM 5 - 11",
-				"Could work for older or newer versions too.<br>"
-						+ "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
-				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+		super(ExecutionCategory.ZKM, "String obfuscation removal targeting ZKM 5 - 11", "Could work for older or newer versions too.<br>" + "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>", ExecutionTag.RUNNABLE,
+				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	/*
@@ -59,15 +57,13 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	private boolean hasZKMBlock(ClassNode cn) {
 		if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy would not be
-											// working
-											// because static methods in interfaces are not allowed
+			// working
+			// because static methods in interfaces are not allowed
 			return false;
 		MethodNode mn = getStaticInitializer(cn);
 		if (mn == null)
 			return false;
-		return StreamSupport.stream(mn.instructions.spliterator(), false)
-				.anyMatch(ain -> ain.getType() == AbstractInsnNode.LDC_INSN
-						&& Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
+		return StreamSupport.stream(mn.instructions.spliterator(), false).anyMatch(ain -> ain.getType() == AbstractInsnNode.LDC_INSN && Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
 	}
 
 	private static final String ALLOWED_CALLS = "(java/lang/String).*";
@@ -75,9 +71,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private void decrypt(ClassNode cn) {
 		MethodNode clinit = getStaticInitializer(cn);
 		// cut out decryption part and make proxy
-		MethodNode callMethod = Sandbox.createMethodProxy(
-				Instructions.isolateCallsThatMatch(cn, clinit, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS)),
-				"clinitProxy", "()V");
+		MethodNode callMethod = Sandbox.createMethodProxy(Instructions.isolateCallsThatMatch(cn, clinit, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS)), "clinitProxy", "()V");
 		cn.methods.add(callMethod);
 		try {
 			invokeVMAndReplace(cn);
@@ -152,8 +146,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 			AbstractInsnNode previous = Instructions.getRealPrevious(min);
 			AbstractInsnNode prePrevious = Instructions.getRealPrevious(previous);
 			if (Instructions.isInteger(previous) && Instructions.isInteger(prePrevious)) {
-				String decrypted = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null,
-						Instructions.getIntValue(prePrevious), Instructions.getIntValue(previous));
+				String decrypted = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, Instructions.getIntValue(prePrevious), Instructions.getIntValue(previous));
 				if (!Strings.isHighUTF(decrypted)) {
 					// avoid concurrent modification
 					m.instructions.set(prePrevious, new InsnNode(NOP)); // remove aaload
@@ -231,8 +224,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 * This case is only when ZKM stores the decrypted String[] in a local variable
 	 * instead of GETSTATIC everytime
 	 */
-	private int handleLocalVariableLoad(String[] decryptedArray, ClassNode cn, MethodNode m, FieldInsnNode fin,
-			VarInsnNode vin) {
+	private int handleLocalVariableLoad(String[] decryptedArray, ClassNode cn, MethodNode m, FieldInsnNode fin, VarInsnNode vin) {
 		int replaces = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);

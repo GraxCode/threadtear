@@ -25,8 +25,7 @@ public class VM extends ClassLoader implements Opcodes {
 		if (loaded.containsKey(name))
 			throw new RuntimeException();
 		try {
-			Method define = ClassLoader.class.getDeclaredMethod("defineClass0", String.class, byte[].class, int.class,
-					int.class, ProtectionDomain.class);
+			Method define = ClassLoader.class.getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
 			define.setAccessible(true);
 			Class<?> c = (Class<?>) define.invoke(this, name, bytes, 0, bytes.length, null);
 			resolveClass(c);

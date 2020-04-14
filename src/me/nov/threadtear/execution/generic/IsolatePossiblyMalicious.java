@@ -16,9 +16,7 @@ public class IsolatePossiblyMalicious extends Execution {
 	private int changed;
 
 	public IsolatePossiblyMalicious() {
-		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls",
-				"Isolate runtime and reflection calls, so no code can be executed.<br>Doesn't mean it can't run malicious code afterwards.",
-				ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls", "Isolate runtime and reflection calls, so no code can be executed.<br>Doesn't mean it can't run malicious code afterwards.", ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
@@ -27,8 +25,7 @@ public class IsolatePossiblyMalicious extends Execution {
 		logger.info("Isolating all " + classes.size() + " classes");
 		classes.stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
-				InsnList newInstructions = Instructions.isolateCallsThatMatch(c, m,
-						(s) -> s.matches(POSSIBLY_MALICIOUS_REGEX));
+				InsnList newInstructions = Instructions.isolateCallsThatMatch(c, m, (s) -> s.matches(POSSIBLY_MALICIOUS_REGEX));
 				if (!Instructions.matchOpcodes(m.instructions, newInstructions)) {
 					changed++;
 					if (verbose) {

@@ -48,10 +48,8 @@ public class Threadtear extends JFrame {
 		JMenu help = new JMenu("Help");
 		JMenuItem about = new JMenuItem("About Threadtear");
 		about.addActionListener(e -> {
-			JOptionPane.showMessageDialog(this,
-					"<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
-							+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by noverify a.k.a GraxCode.",
-					"About", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
+					+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by noverify a.k.a GraxCode.", "About", JOptionPane.INFORMATION_MESSAGE);
 		});
 		help.add(about);
 		bar.add(help);
@@ -101,14 +99,12 @@ public class Threadtear extends JFrame {
 				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
 				logger.info(ignoredClasses.size() + " classes will be ignored");
 				classes.removeIf(c -> !c.transform);
-				logger.info(
-						"If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
+				logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
 				executions.forEach(e -> {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());
 					boolean success = e.execute(classes, verbose, ignoreErr);
-					logger.info("Finish with " + (success ? "success" : "failure") + ". Took "
-							+ (System.currentTimeMillis() - ms) + " ms");
+					logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms) + " ms");
 				});
 				classes.addAll(ignoredClasses); // re-add ignored classes to export them
 				try {

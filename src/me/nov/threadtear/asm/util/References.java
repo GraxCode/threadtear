@@ -35,8 +35,7 @@ public class References {
 				Object o = idin.bsmArgs[i];
 				if (o instanceof Handle) {
 					Handle handle = (Handle) o;
-					idin.bsmArgs[i] = new Handle(handle.getTag(), Descriptor.fixDesc(handle.getOwner(), map), handle.getName(),
-							Descriptor.fixDesc(handle.getDesc(), map), handle.isInterface());
+					idin.bsmArgs[i] = new Handle(handle.getTag(), Descriptor.fixDesc(handle.getOwner(), map), handle.getName(), Descriptor.fixDesc(handle.getDesc(), map), handle.isInterface());
 				} else if (o instanceof Type) {
 					Type type = (Type) o;
 					idin.bsmArgs[i] = Type.getType(Descriptor.fixDesc(type.getDescriptor(), map));
@@ -54,7 +53,8 @@ public class References {
 		return 1;
 	}
 
-	// cn.attrs.forEach(at -> at.type = Descriptor.fixDesc(at.type, map)); don't know
+	// cn.attrs.forEach(at -> at.type = Descriptor.fixDesc(at.type, map)); don't
+	// know
 	public static void remapMethodType(Map<String, String> map, MethodNode mn) {
 		mn.desc = Descriptor.fixDesc(mn.desc, map);
 		for (int i = 0; i < mn.exceptions.size(); i++) {

@@ -17,27 +17,21 @@ import me.nov.threadtear.execution.ExecutionCategory;
 public class RemoveUnnecessary extends Execution {
 
 	public RemoveUnnecessary() {
-		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions",
-				"Remove unnecessary instructions that can be optimized.<br>This could include number or flow obfuscation.");
+		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions", "Remove unnecessary instructions that can be optimized.<br>This could include number or flow obfuscation.");
 	}
 
 	/*
-	 * TODO
-	 * Nothing done here yet, this class should simulate stack and simultaneously rewrite the code.
+	 * TODO Nothing done here yet, this class should simulate stack and
+	 * simultaneously rewrite the code.
 	 * 
-	 * eg.
-	 * ICONST_4
-	 * ICONST_1
-	 * IADD
-	 * INVOKESTATIC ...
+	 * eg. ICONST_4 ICONST_1 IADD INVOKESTATIC ...
 	 * 
 	 * would be turned into
 	 * 
-	 * ICONST_5
-	 * INVOKESTATIC ...
+	 * ICONST_5 INVOKESTATIC ...
 	 * 
 	 */
-	
+
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
 		logger.info("Simulating stack for every method!");

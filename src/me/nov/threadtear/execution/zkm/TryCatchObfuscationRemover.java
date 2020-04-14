@@ -26,10 +26,7 @@ public class TryCatchObfuscationRemover extends Execution {
 	private boolean verbose;
 
 	public TryCatchObfuscationRemover() {
-		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks",
-				"Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", 
-				ExecutionTag.RUNNABLE,
-				ExecutionTag.BETTER_DECOMPILE);
+		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks", "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
 	}
 
 	@Override
@@ -45,8 +42,7 @@ public class TryCatchObfuscationRemover extends Execution {
 	}
 
 	private long getAmountBlocks() {
-		return classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks)
-				.flatMap(List::stream).count();
+		return classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks).flatMap(List::stream).count();
 	}
 
 	public void checkTCBs(ClassNode c, List<MethodNode> methods) {

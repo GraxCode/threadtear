@@ -8,5 +8,4 @@ public enum ExecutionCategory {
 	ExecutionCategory(String name) {
 		this.name = name;
 	}
-
 }
