@@ -3,7 +3,6 @@ package me.nov.threadtear;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -13,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -21,10 +19,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.io.JarIO;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.CustomOutputStream;
 import me.nov.threadtear.swing.component.panel.ConfigurationPanel;
@@ -36,7 +32,7 @@ import me.nov.threadtear.swing.listener.ExitListener;
 public class Threadtear extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private ListPanel listPanel;
+	public ListPanel listPanel;
 
 	public Threadtear() {
 		this.initBounds();
@@ -90,7 +86,7 @@ public class Threadtear extends JFrame {
 		charset.set(null, null);
 	}
 
-	public void run(boolean verbose, boolean frames, boolean ignoreErr, boolean noSign) {
+	public void run(boolean verbose, boolean frames, boolean ignoreErr) {
 		ArrayList<Clazz> classes = listPanel.classList.classes;
 		ArrayList<Execution> executions = listPanel.executionList.getExecutions();
 		LogFrame logFrame = new LogFrame();
@@ -120,18 +116,7 @@ public class Threadtear extends JFrame {
 				} catch (InterruptedException e1) {
 				}
 				logger.info("Successful finish!");
-				File inputFile = listPanel.classList.inputFile;
-				JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
-				jfc.setAcceptAllFileFilterUsed(false);
-				jfc.setSelectedFile(inputFile);
-				jfc.setDialogTitle("Save transformed jar archive");
-				jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar)", "jar"));
-				int result = jfc.showSaveDialog(this);
-				if (result == JFileChooser.APPROVE_OPTION) {
-					File output = jfc.getSelectedFile();
-					JarIO.saveAsJar(inputFile, output, classes, noSign);
-					logger.info("Saved to " + output.getAbsolutePath());
-				}
+				listPanel.classList.loadTree(classes);
 			}).start();
 		});
 	}

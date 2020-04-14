@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -38,7 +39,7 @@ public class ClassList extends JPanel implements ILoader {
 
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
-		ignored = new JLabel("", JLabel.CENTER);
+		ignored = new JLabel("", SwingConstants.CENTER);
 		panel.add(ignored);
 		panel.add(new JPanel());
 		JButton ignore = new JButton("Ignore");
@@ -65,9 +66,9 @@ public class ClassList extends JPanel implements ILoader {
 	}
 
 	private void refreshIgnored() {
-		if(classes != null) {
-		 long disabled = classes.stream().filter(c -> !c.transform).count();
-		 ignored.setText("<html>" + classes.size() + " classes<br>" + disabled + " ignored");
+		if (classes != null) {
+			long disabled = classes.stream().filter(c -> !c.transform).count();
+			ignored.setText("<html>" + classes.size() + " classes<br>" + disabled + " ignored");
 		}
 	}
 
@@ -107,15 +108,21 @@ public class ClassList extends JPanel implements ILoader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			classes.forEach(c -> {
-				String[] packages = c.node.name.split("/");
-				addToTree((SortedTreeClassNode) model.getRoot(), c, packages, 0);
-			});
+			loadTree(classes);
 			refreshIgnored();
 			model.reload();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void loadTree(ArrayList<Clazz> classes) {
+		model = new DefaultTreeModel(new SortedTreeClassNode(""));
+		classes.forEach(c -> {
+			String[] packages = c.node.name.split("/");
+			addToTree((SortedTreeClassNode) model.getRoot(), c, packages, 0);
+		});
+		tree.setModel(model);
 	}
 
 	public void addToTree(SortedTreeClassNode current, Clazz c, String[] packages, int pckg) {

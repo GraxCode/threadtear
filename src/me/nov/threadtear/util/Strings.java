@@ -18,7 +18,7 @@ public class Strings {
 		char[] ccst = cst.toCharArray();
 		for (char c : ccst)
 			sum += c;
-		double mean = sum / (double) cst.length();
+		double mean = sum / cst.length();
 		double sdev = 0.0;
 		for (int i = 1; i < ccst.length; i++)
 			sdev += (ccst[i] - mean) * (ccst[i] - mean);

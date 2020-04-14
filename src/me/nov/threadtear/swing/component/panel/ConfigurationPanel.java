@@ -1,13 +1,17 @@
 package me.nov.threadtear.swing.component.panel;
 
 import java.awt.GridLayout;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.asm.io.JarIO;
 
 public class ConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -39,10 +43,25 @@ public class ConfigurationPanel extends JPanel {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 16, 16));
 		panel.add(new JButton("Load Config"));
 		panel.add(new JButton("Save Config"));
-		panel.add(new JButton("Show Log"));
+		JButton save = new JButton("Save Jar");
+		save.addActionListener(l -> {
+			File inputFile = main.listPanel.classList.inputFile;
+			JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
+			jfc.setAcceptAllFileFilterUsed(false);
+			jfc.setSelectedFile(inputFile);
+			jfc.setDialogTitle("Save transformed jar archive");
+			jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar)", "jar"));
+			int result = jfc.showSaveDialog(this);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File output = jfc.getSelectedFile();
+				JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected());
+				Threadtear.logger.info("Saved to " + output.getAbsolutePath());
+			}
+		});
+		panel.add(save);
 		JButton run = new JButton("Run");
 		run.addActionListener(l -> {
-			main.run(verbose.isSelected(), computeFrames.isSelected(), ignoreErrors.isSelected(), removeSignature.isSelected());
+			main.run(verbose.isSelected(), computeFrames.isSelected(), ignoreErrors.isSelected());
 		});
 		panel.add(run);
 		return panel;

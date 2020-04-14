@@ -36,7 +36,7 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		if (node instanceof SortedTreeClassNode) {
-			Clazz clazz = (Clazz) ((SortedTreeClassNode) node).member;
+			Clazz clazz = ((SortedTreeClassNode) node).member;
 			if (clazz != null) {
 				ClassNode cn = clazz.node;
 				if (Access.isInterface(cn.access)) {

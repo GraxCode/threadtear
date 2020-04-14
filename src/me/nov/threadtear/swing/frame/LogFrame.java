@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class LogFrame extends JFrame {
@@ -29,7 +30,7 @@ public class LogFrame extends JFrame {
 
 	public LogFrame() {
 		setTitle("Execution log");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 800);
 		setLayout(new BorderLayout());
 		this.setAlwaysOnTop(true);

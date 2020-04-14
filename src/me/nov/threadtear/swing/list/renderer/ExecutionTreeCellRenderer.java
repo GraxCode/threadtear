@@ -40,7 +40,7 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		if (node instanceof ExecutionTreeNode) {
 			ExecutionTreeNode tn = ((ExecutionTreeNode) node);
-			Execution exec = (Execution) tn.member;
+			Execution exec = tn.member;
 			setToolTipText(tn.getTooltip());
 			if (exec != null) {
 				switch(exec.type) {
