@@ -7,7 +7,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
@@ -99,4 +101,39 @@ public class Instructions implements Opcodes {
 		} while (ain.getOpcode() == -1);
 		return ain;
 	}
+
+	public static boolean isInteger(AbstractInsnNode ain) {
+		int op = ain.getOpcode();
+
+		switch (op) {
+		case BIPUSH:
+		case SIPUSH:
+		case ICONST_M1:
+		case ICONST_0:
+		case ICONST_1:
+		case ICONST_2:
+		case ICONST_3:
+		case ICONST_4:
+		case ICONST_5:
+			return true;
+		}
+		if (ain.getType() == AbstractInsnNode.LDC_INSN) {
+			return ((LdcInsnNode) ain).cst instanceof Integer;
+		}
+		return false;
+	}
+
+	public static int getIntValue(AbstractInsnNode node) {
+		if (node.getOpcode() >= ICONST_M1 && node.getOpcode() <= ICONST_5) {
+			return node.getOpcode() - 3; // simple but effective
+		}
+		if (node.getOpcode() == SIPUSH || node.getOpcode() == BIPUSH) {
+			return ((IntInsnNode) node).operand;
+		}
+		if (node.getType() == AbstractInsnNode.LDC_INSN) {
+			return (Integer) ((LdcInsnNode) node).cst;
+		}
+		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
+	}
+
 }

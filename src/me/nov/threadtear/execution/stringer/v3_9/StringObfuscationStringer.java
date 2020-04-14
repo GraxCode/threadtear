@@ -60,7 +60,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private void check(ClassNode cn, MethodNode m, AbstractInsnNode ain) {
 		if (ain.getType() == AbstractInsnNode.LDC_INSN) {
 			LdcInsnNode lin = (LdcInsnNode) ain;
-			if (lin.cst instanceof String && Strings.seemsEncrypted((String) lin.cst)) {
+			if (lin.cst instanceof String && Strings.isHighUTF((String) lin.cst)) {
 				AbstractInsnNode next = Instructions.getRealNext(lin);
 				if (next.getOpcode() == INVOKESTATIC) {
 					MethodInsnNode min = (MethodInsnNode) next;
@@ -70,7 +70,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 						try {
 							String realString = invokeProxy(cn, m, min, (String) lin.cst);
 							if (realString != null) {
-								if (Strings.seemsEncrypted(realString)) {
+								if (Strings.isHighUTF(realString)) {
 									logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
 								} else {
 									this.decrypted++;

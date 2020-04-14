@@ -40,4 +40,8 @@ public abstract class Execution implements Opcodes {
 			return null;
 		return node.methods.stream().filter(m -> m.name.equals(name) && m.desc.equals(desc)).findFirst().orElse(null);
 	}
+	
+	protected MethodNode getStaticInitializer(ClassNode node) {
+		return node.methods.stream().filter(m -> m.name.equals("<clinit>")).findFirst().orElse(null);
+	}
 }
