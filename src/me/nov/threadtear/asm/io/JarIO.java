@@ -30,17 +30,16 @@ public class JarIO {
 	private static ArrayList<Clazz> readEntry(JarFile jar, JarEntry en, ArrayList<Clazz> classes) {
 		String name = en.getName();
 		try (InputStream jis = jar.getInputStream(en)) {
-			if (name.endsWith(".class")) {
-				byte[] bytes = IOUtils.toByteArray(jis);
-				if (String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3]).equals("CAFEBABE")) {
-					try {
-						final ClassNode cn = Conversion.toNode(bytes);
-						if (cn != null && (cn.superName != null || cn.name.equals("java/lang/Object"))) {
-							classes.add(new Clazz(cn, en));
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+			byte[] bytes = IOUtils.toByteArray(jis);
+			if (isClassFile(bytes)) {
+				try {
+					final ClassNode cn = Conversion.toNode(bytes);
+					if (cn != null && (cn.superName != null || cn.name.equals("java/lang/Object"))) {
+						classes.add(new Clazz(cn, en));
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.err.println("Failed to load file " + name);
 				}
 			}
 		} catch (Exception e) {
@@ -49,35 +48,31 @@ public class JarIO {
 		return classes;
 	}
 
-	public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSign) {
+	public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSignature) {
 		try {
 			JarOutputStream out = new JarOutputStream(new FileOutputStream(output));
 			JarFile jar = new JarFile(original);
 			Stream<JarEntry> str = jar.stream();
 			str.forEach(z -> {
 				try {
-					String name = z.getName();
-					if (name.endsWith(".class")) {
-						Clazz clazz = classes.stream().filter(c -> c.oldEntry.getName().equals(name)).findFirst().orElse(null);
-						if (clazz != null) {
-							out.putNextEntry(cloneOldEntry(clazz.oldEntry, clazz.node.name + ".class"));
-							out.write(Conversion.toBytecode(clazz.node, true));
-							out.closeEntry();
-							return;
-						}
+					if (classes.stream().anyMatch(c -> c.oldEntry.getName().equals(z.getName()))) {
+						// ignore old class files
+						return;
 					}
-					if(name.startsWith("META-INF/") && noSign) {
-						if(name.startsWith("META-INF/CERT.")) {
-							//export no certificates
+					String name = z.getName();
+					if (noSignature && name.startsWith("META-INF/")) {
+						if (name.startsWith("META-INF/CERT.")) {
+							// export no certificates
 							return;
 						}
-						if(name.equals("META-INF/MANIFEST.MF")) {
+						if (name.equals("META-INF/MANIFEST.MF")) {
 							out.putNextEntry(cloneOldEntry(z, z.getName()));
 							out.write(Manifest.patchManifest(IOUtils.toByteArray(jar.getInputStream(z))));
 							out.closeEntry();
 							return;
 						}
 					}
+					// export resources
 					out.putNextEntry(cloneOldEntry(z, z.getName()));
 					out.write(IOUtils.toByteArray(jar.getInputStream(z)));
 					out.closeEntry();
@@ -85,11 +80,22 @@ public class JarIO {
 					throw new RuntimeException("Failed at entry " + z.getName(), e);
 				}
 			});
+			for (Clazz c : classes) {
+				// add updated classes
+				out.putNextEntry(cloneOldEntry(c.oldEntry, c.node.name + ".class"));
+				out.write(Conversion.toBytecode(c.node, true));
+				out.closeEntry();
+			}
 			jar.close();
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static boolean isClassFile(byte[] bytes) {
+		return bytes.length >= 4
+				&& String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3]).equals("CAFEBABE");
 	}
 
 	private static JarEntry cloneOldEntry(JarEntry old, String name) {
