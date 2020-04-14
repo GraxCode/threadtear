@@ -33,6 +33,7 @@ public class MyExecution extends Execution {
 		classes.stream().map(c -> c.node).forEach(c -> {
 			//transform the classes here using the tree-API of ASM
 		});
+		return false; //did it work?
 	}
 }
 ```
@@ -50,6 +51,7 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 			Class<?> loadedClass = vm.loadClass(c.name.replace('/', '.'), true);
 			//do stuff with your class here
 			loadedClass.getMethods[0].invoke(...);
+			return true;
 		});
 	}
 	/**
