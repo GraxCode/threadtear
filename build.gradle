@@ -3,16 +3,40 @@ plugins {
     id 'eclipse'
 }
 
+version = '1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    main.resources.srcDirs = ['src']
+}
+    
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    api 'commons-io:commons-io:2.6' 
-	api 'com.github.weisj:darklaf:1.3.3.4'
+    compile 'commons-io:commons-io:2.6' 
+	compile 'com.github.weisj:darklaf:1.3.3.4'
 
-	api 'org.ow2.asm:asm:8.0.1'
-	api 'org.ow2.asm:asm-tree:8.0.1'
-	api 'org.ow2.asm:asm-analysis:8.0.1'
+	compile 'org.ow2.asm:asm:8.0.1'
+	compile 'org.ow2.asm:asm-tree:8.0.1'
+	compile 'org.ow2.asm:asm-analysis:8.0.1'
 }
 
+task fatJar(type: Jar) {
+	manifest {
+        attributes 'Implementation-Title': 'Threadtear',  
+        	'Implementation-Version': version,
+        	'Main-Class': 'me.nov.threadtear.Threadtear'
+    }
+    baseName = project.name + '-all'
+    from (configurations.compile.collect { entry -> zipTree(entry) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+    with jar
+}

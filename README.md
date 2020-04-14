@@ -14,6 +14,9 @@ Make sure to have them in the right order. Cleanup executions for example should
 Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file, an attacker could tweak the file so that malicious code would be executed.
 Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource obfuscation.
 
+## How to compile
+First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created.
+
 ## Make your own execution
 You can easily create your own execution task. Just extend `me.nov.threadtear.execution.Execution`:
 ```java
@@ -59,6 +62,7 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 	}
 }
 ```
+Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
 ## Libraries needed
 commons-io 2.6, darklaf-1.3.3.4, asm-all 8+
 
