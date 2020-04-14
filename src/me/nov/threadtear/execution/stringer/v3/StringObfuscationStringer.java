@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.stringer.v3_9;
+package me.nov.threadtear.execution.stringer.v3;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private boolean verbose;
 
 	public StringObfuscationStringer() {
-		super(ExecutionCategory.STRINGER3_9, "Remove string obfuscation by Stringer", "Should work for version 3 - 9.",
+		super(ExecutionCategory.STRINGER3, "Remove string obfuscation by Stringer", "Works for version 3 only.",
 				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
