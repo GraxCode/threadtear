@@ -1,5 +1,6 @@
 package me.nov.threadtear.execution.stringer.v3_9;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -108,7 +109,12 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 		if (m.name.equals("<init>")) {
 			loadedClone.newInstance(); // special case: constructors have to be invoked by newInstance. Sandbox.createMethodProxy automatically handles access and super call
 		} else {
-			loadedClone.getMethod(m.name).invoke(null);
+			for (Method reflectionMethod : loadedClone.getMethods()) {
+				if (reflectionMethod.getName().equals(m.name)) {
+					reflectionMethod.invoke(null);
+					break;
+				}
+			}
 		}
 		return (String) loadedClone.getFields()[0].get(null);
 	}
