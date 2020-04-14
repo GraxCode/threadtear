@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.zkm.general.v8_11;
+package me.nov.threadtear.execution.zkm;
 
 import java.util.ArrayList;
 import java.util.stream.StreamSupport;
@@ -34,8 +34,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private static final String ENCHANCED_MODE_METHOD_DESC = "(II)Ljava/lang/String;";
 
 	public StringObfuscationZKM() {
-		super(ExecutionCategory.ZKM8_11, "Remove string obfuscation by ZKM 8 - 11",
-				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br>"
+		super(ExecutionCategory.ZKM, "String obfuscation removal targeting ZKM 5 - 11",
+				"Could work for older or newer versions too.<br>"
 						+ "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
 				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}

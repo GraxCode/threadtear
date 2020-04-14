@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.stringer.v3;
+package me.nov.threadtear.execution.stringer;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
 
-public class StringObfuscationStringer extends Execution implements IVMReferenceHandler {
+public class StringObfuscationStringer3 extends Execution implements IVMReferenceHandler {
 
 	private static final String STRINGER_DECRPYTION_METHOD_DESC = "(Ljava/lang/Object;)Ljava/lang/String;";
 	private ArrayList<Clazz> classes;
@@ -31,9 +31,10 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private int decrypted;
 	private boolean verbose;
 
-	public StringObfuscationStringer() {
-		super(ExecutionCategory.STRINGER3, "Remove string obfuscation by Stringer", "Works for version 3 only.",
-				ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+	public StringObfuscationStringer3() {
+		super(ExecutionCategory.STRINGER, "String obfuscation removal targeting Stringer 3",
+				"Works for version 3 only.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE,
+				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 
 		classes.stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
-			logger.severe("No strings matching stringer 3 - 9 string obfuscation have been found!");
+			logger.severe("No strings matching stringer 3 string obfuscation have been found!");
 			return false;
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
@@ -96,7 +97,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 					}
 				} else if (verbose) {
 					logger.warning("No invokestatic in " + cn.name + "." + m.name + m.desc + ": op=" + next.getOpcode()
-							+ ", possibly decryption class itself");
+							+ ", possibly decryption class itself or newer stringer version");
 				}
 			}
 		}

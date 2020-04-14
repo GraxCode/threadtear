@@ -26,9 +26,10 @@ import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.generic.FixAccess;
 import me.nov.threadtear.execution.generic.IsolatePossiblyMalicious;
-import me.nov.threadtear.execution.stringer.v3.StringObfuscationStringer;
-import me.nov.threadtear.execution.zkm.general.TryCatchObfuscationRemover;
-import me.nov.threadtear.execution.zkm.general.v8_11.StringObfuscationZKM;
+import me.nov.threadtear.execution.stringer.StringObfuscationStringer3;
+import me.nov.threadtear.execution.stringer.StringObfuscationStringer9;
+import me.nov.threadtear.execution.zkm.StringObfuscationZKM;
+import me.nov.threadtear.execution.zkm.TryCatchObfuscationRemover;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;
 
@@ -95,10 +96,10 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 
+			addExecution(root, new StringObfuscationStringer3());
+			addExecution(root, new StringObfuscationStringer9());
+
 			addExecution(root, new TryCatchObfuscationRemover());
-
-			addExecution(root, new StringObfuscationStringer());
-
 			addExecution(root, new StringObfuscationZKM());
 
 			this.setModel(model);
