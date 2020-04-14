@@ -6,7 +6,6 @@ import java.util.stream.StreamSupport;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -35,13 +34,17 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	public StringObfuscationZKM() {
 		super(ExecutionCategory.ZKM8_11, "Remove string obfuscation by ZKM 8 - 11",
-				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br><i>Some strings are not decrypted because of the nature of ZKM</i><br><b>Can possibly run dangerous code.</b>");
+				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br>"
+						+ "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i><br>"
+						+ "<b>Can possibly run dangerous code.</b>");
 	}
 
 	/*
 	 * TODO: instead of checking through bytecode, stack analysis should be made,
 	 * because ZKM often abuses stack and pushes ints or getfields not in the place
 	 * where they normally are!
+	 * 
+	 * TODO: String encryption using DES Cipher
 	 */
 
 	@Override
@@ -66,11 +69,14 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 						&& Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
 	}
 
+	private static final String ALLOWED_CALLS = "(java/lang/String).*";
+
 	private void decrypt(ClassNode cn) {
 		MethodNode clinit = getStaticInitializer(cn);
 		// cut out decryption part and make proxy
-		MethodNode callMethod = Sandbox.createMethodProxy(Instructions.isolateNonClassCalls(cn, clinit), "clinitProxy",
-				"()V");
+		MethodNode callMethod = Sandbox.createMethodProxy(
+				Instructions.isolateCallsThatMatch(cn, clinit, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS)),
+				"clinitProxy", "()V");
 		cn.methods.add(callMethod);
 		try {
 			invokeVMAndReplace(cn);

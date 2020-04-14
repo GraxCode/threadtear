@@ -13,7 +13,7 @@ import me.nov.threadtear.asm.util.Access;
 public class VM extends ClassLoader implements Opcodes {
 	HashMap<String, Class<?>> loaded = new HashMap<>();
 
-	public static final String RT = "(com.oracle.|com.sun.|java.|javax.|jdk.|sun.).*"; // do we need to escape . ?
+	public static final String RT = "(com\\.oracle\\.|com\\.sun\\.|java\\.|javax\\.|jdk\\.|sun\\.).*";
 	private IVMReferenceHandler handler;
 
 	private VM(IVMReferenceHandler handler, ClassLoader parent) {

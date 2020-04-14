@@ -111,8 +111,8 @@ public class Threadtear extends JFrame {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());
 					boolean success = e.execute(classes, verbose, ignoreErr);
-					logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms)
-							+ " ms");
+					logger.info("Finish with " + (success ? "success" : "failure") + ". Took "
+							+ (System.currentTimeMillis() - ms) + " ms");
 				});
 				classes.addAll(ignoredClasses); // re-add ignored classes to export them
 				try {

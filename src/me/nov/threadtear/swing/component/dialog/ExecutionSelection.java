@@ -24,6 +24,7 @@ import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.generic.FixAccess;
+import me.nov.threadtear.execution.generic.IsolatePossiblyMalicious;
 import me.nov.threadtear.execution.stringer.v3_9.StringObfuscationStringer;
 import me.nov.threadtear.execution.zkm.general.TryCatchObfuscationRemover;
 import me.nov.threadtear.execution.zkm.general.v8_11.StringObfuscationZKM;
@@ -88,6 +89,7 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new InlineMethods());
 
 			addExecution(root, new FixAccess());
+			addExecution(root, new IsolatePossiblyMalicious());
 
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
@@ -95,9 +97,9 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new TryCatchObfuscationRemover());
 
 			addExecution(root, new StringObfuscationStringer());
-			
+
 			addExecution(root, new StringObfuscationZKM());
-			
+
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);
 			this.addTreeSelectionListener(this);
@@ -106,7 +108,7 @@ public class ExecutionSelection extends JDialog {
 				public void mouseClicked(MouseEvent e) {
 					if (e.getClickCount() == 2) {
 						ExecutionTreeNode tn = (ExecutionTreeNode) getLastSelectedPathComponent();
-						if (tn.member != null)
+						if (tn != null && tn.member != null)
 							ExecutionSelection.this.dispose();
 					}
 				}

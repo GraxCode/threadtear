@@ -52,23 +52,25 @@ public class Descriptor {
 				}
 				continue;
 			}
-			if (c == 'J') {
+			if (c == 'L') {
 				inObject = true;
 			}
 			if (c == '[') {
 				nextIsObject = true;
 				continue;
 			}
-			sizes.add(nextIsObject ? 1 : getSize(c));
+			sizes.add(nextIsObject ? 1 : getStackSize(c));
 			nextIsObject = false;
 		}
 		return sizes;
 
 	}
 
-	public static int getSize(char type) {
+	public static int getStackSize(char type) {
 		if (type == 'J' || type == 'D') {
 			return 2;
+		} else if(type == 'V') {
+			return 0;
 		}
 		return 1;
 	}

@@ -6,10 +6,14 @@ import org.objectweb.asm.tree.ClassNode;
 
 public class Conversion {
 	public static byte[] toBytecode(ClassNode cn, boolean useMaxs) {
-		ClassWriter cw = new ClassWriter(useMaxs ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);
-		cn.accept(cw);
-		byte[] b = cw.toByteArray();
-		return b;
+		try {
+			ClassWriter cw = new ClassWriter(useMaxs ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);
+			cn.accept(cw);
+			byte[] b = cw.toByteArray();
+			return b;
+		} catch (Exception e) {
+			return toBytecode0(cn);
+		}
 	}
 
 	public static byte[] toBytecode0(ClassNode cn) {
