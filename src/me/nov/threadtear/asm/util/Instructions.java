@@ -102,6 +102,14 @@ public class Instructions implements Opcodes {
 		return ain;
 	}
 
+	public static AbstractInsnNode getRealPrevious(AbstractInsnNode ain) {
+		do {
+			// skip labels, frames and line numbers
+			ain = ain.getPrevious();
+		} while (ain.getOpcode() == -1);
+		return ain;
+	}
+
 	public static boolean isInteger(AbstractInsnNode ain) {
 		int op = ain.getOpcode();
 
@@ -135,5 +143,4 @@ public class Instructions implements Opcodes {
 		}
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
 	}
-
 }

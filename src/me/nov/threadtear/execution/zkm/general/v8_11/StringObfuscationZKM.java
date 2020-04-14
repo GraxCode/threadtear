@@ -38,6 +38,11 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br><b>Can possibly run dangerous code.</b><br><b>UNFINISHED</b>");
 	}
 
+	/*
+	 * TODO: instead of checking through bytecode, stack analysis should be made, because ZKM often abuses stack and pushes ints or getfields not in the place where they normally are!
+	 */
+	
+	
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
 		this.classes = classes;
@@ -47,7 +52,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		return decrypted > 0;
 	}
 
-	public boolean hasZKMBlock(ClassNode cn) {
+	private boolean hasZKMBlock(ClassNode cn) {
 		if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy is not working
 											// because static methods in interfaces are not allowed
 			return false;
@@ -59,7 +64,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 						&& Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
 	}
 
-	public void decrypt(ClassNode cn) {
+	private void decrypt(ClassNode cn) {
 		MethodNode clinit = getStaticInitializer(cn);
 		MethodNode callMethod = Sandbox.createMethodProxy(modifyClinitForProxy(clinit), "clinitProxy", "()V");
 		cn.methods.add(callMethod);
@@ -93,7 +98,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 						notDecrypted++;
 					}
 				}
-				if(isZKMMethod(cn, ain)) {
+				if (isZKMMethod(cn, ain)) {
 					int status = tryReplaceDecryptionMethods(cn, callProxy, m, (MethodInsnNode) ain);
 					if (status == 1) {
 						decrypted++;
@@ -102,7 +107,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 					}
 				}
 			}
-			// TODO methods with two int arg here
 		});
 	}
 
@@ -127,13 +131,34 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		return min.owner.equals(cn.name) && min.desc.equals(ENCHANCED_MODE_METHOD_DESC);
 	}
 
-	
 	/**
-	 * Replace decryption methods that take two ints as argument and returns the decrypted String. This does only occur sometimes!
+	 * Replace decryption methods that take two ints as argument and returns the
+	 * decrypted String. This does only occur sometimes!
 	 */
-	private int tryReplaceDecryptionMethods(ClassNode cn, Class<?> callProxy, MethodNode m, MethodInsnNode ain) {
-		// TODO Auto-generated method stub
-		return 0;
+	private int tryReplaceDecryptionMethods(ClassNode cn, Class<?> callProxy, MethodNode m, MethodInsnNode min) {
+
+		try {
+			AbstractInsnNode previous = Instructions.getRealPrevious(min);
+			AbstractInsnNode prePrevious = Instructions.getRealPrevious(previous);
+			if (Instructions.isInteger(previous) && Instructions.isInteger(prePrevious)) {
+				String decrypted = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null,
+						Instructions.getIntValue(prePrevious), Instructions.getIntValue(previous));
+				if (!Strings.isHighUTF(decrypted)) {
+					// avoid concurrent modification
+					m.instructions.set(prePrevious, new InsnNode(NOP)); // remove aaload
+					m.instructions.set(previous, new InsnNode(NOP)); // remove int
+					m.instructions.set(min, new LdcInsnNode(decrypted));
+					return 1;
+				} else if (verbose) {
+					logger.severe("Failed string array decryption in " + cn.name);
+				}
+			} else if (verbose) {
+				logger.warning("Unexpected case, method is not feeded two ints " + cn.name + "." + m.name);
+			}
+		} catch (Throwable t) {
+			logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
+		}
+		return -1;
 	}
 
 	/**
@@ -186,8 +211,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 				logger.warning("Ignoring multi array in " + cn.name);
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
-			logger.severe("Failure in " + cn.name);
+			logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
 		}
 		return -1;
 	}
