@@ -16,8 +16,8 @@ public class Sandbox implements Opcodes {
 			proxy.instructions.add(generateConstructorSuperCall());
 		}
 		proxy.instructions.add(code);
-		proxy.maxStack = 10;
-		proxy.maxLocals = 20;
+		proxy.maxStack = 1337;
+		proxy.maxLocals = 1337;
 		return proxy;
 	}
 
