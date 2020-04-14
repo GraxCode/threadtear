@@ -24,7 +24,7 @@ import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.generic.FixAccess;
-import me.nov.threadtear.execution.stringer.v3.StringObfuscationStringer;
+import me.nov.threadtear.execution.stringer.v3_9.StringObfuscationStringer;
 import me.nov.threadtear.execution.zkm.general.TryCatchObfuscationRemover;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;

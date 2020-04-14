@@ -1,6 +1,5 @@
-package me.nov.threadtear.execution.stringer.v3;
+package me.nov.threadtear.execution.stringer.v3_9;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -31,8 +30,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private boolean verbose;
 
 	public StringObfuscationStringer() {
-		super(ExecutionCategory.STRINGER39, "Remove string obfuscation by Stringer",
-				"Should work for version 3 - 9. Can possibly run dangerous code.");
+		super(ExecutionCategory.STRINGER3_9, "Remove string obfuscation by Stringer",
+				"Should work for version 3 - 9.<br><b>Can possibly run dangerous code.</b>");
 	}
 
 	@Override
@@ -109,12 +108,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 		if (m.name.equals("<init>")) {
 			loadedClone.newInstance(); // special case: constructors have to be invoked by newInstance. Sandbox.createMethodProxy automatically handles access and super call
 		} else {
-			for (Method reflectionMethod : loadedClone.getMethods()) {
-				if (reflectionMethod.getName().equals(m.name)) {
-					reflectionMethod.invoke(null);
-					break;
-				}
-			}
+			loadedClone.getMethod(m.name).invoke(null);
 		}
 		return (String) loadedClone.getFields()[0].get(null);
 	}
