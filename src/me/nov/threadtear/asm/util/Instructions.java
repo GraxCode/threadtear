@@ -6,15 +6,20 @@ import java.util.Map;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.Frame;
+
+import me.nov.threadtear.asm.vm.VM;
 
 public class Instructions implements Opcodes {
 	public static InsnList copy(InsnList insnList) {
@@ -142,5 +147,70 @@ public class Instructions implements Opcodes {
 			return (Integer) ((LdcInsnNode) node).cst;
 		}
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
+	}
+
+	public static InsnList isolateNonClassCalls(ClassNode cn, MethodNode mn) {
+		InsnList copy = copy(mn.instructions);
+		if (true) {
+			return copy;
+		}
+		// TODO fix this
+		for (int i = 0; i < copy.size(); i++) {
+			AbstractInsnNode ain = copy.get(i);
+			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
+				MethodInsnNode min = (MethodInsnNode) ain;
+				if (!min.owner.equals(cn.name) && !min.owner.matches(VM.RT)) {
+					String inner = min.desc.substring(1, min.desc.lastIndexOf(')'));
+					String outer = min.desc.substring(min.desc.lastIndexOf(')'));
+					for (int size : Descriptor.calculateAmountArguments(inner)) {
+						copy.insertBefore(min, new InsnNode(size > 1 ? POP2 : POP));
+					}
+					if (min.getOpcode() != INVOKESTATIC) {
+						copy.insertBefore(min, new InsnNode(POP));
+					}
+					copy.set(min, createNullPushForType(outer));
+				}
+			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
+				FieldInsnNode fin = (FieldInsnNode) ain;
+				if (!fin.owner.equals(cn.name) && !fin.owner.matches(VM.RT)) {
+					switch (fin.getOpcode()) {
+					case GETFIELD:
+						copy.insertBefore(fin, new InsnNode(POP));
+						i += 1;
+					case GETSTATIC:
+						copy.set(fin, createNullPushForType(fin.desc));
+						break;
+					case PUTFIELD:
+						copy.insertBefore(fin, new InsnNode(POP));
+						copy.insertBefore(fin, new InsnNode(Descriptor.getSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						copy.set(fin, createNullPushForType(fin.desc));
+						i += 2;
+						break;
+					case PUTSTATIC:
+						copy.insertBefore(fin, new InsnNode(Descriptor.getSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						copy.set(fin, createNullPushForType(fin.desc));
+						i += 1;
+						break;
+					}
+				}
+			}
+			// TODO invokedynamic
+		}
+		return copy;
+	}
+
+	private static AbstractInsnNode createNullPushForType(String desc) {
+		if (desc.startsWith("L") && desc.endsWith(";") || desc.startsWith("["))
+			return new InsnNode(ACONST_NULL);
+
+		char c = desc.charAt(0);
+		if (c == 'D') {
+			return new InsnNode(DCONST_0);
+		} else if (c == 'F') {
+			return new InsnNode(FCONST_0);
+		} else if (c == 'J') {
+			return new InsnNode(LCONST_0);
+		}
+		return new InsnNode(ICONST_0);
 	}
 }

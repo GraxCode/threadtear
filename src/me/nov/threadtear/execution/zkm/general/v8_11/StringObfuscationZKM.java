@@ -35,14 +35,15 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	public StringObfuscationZKM() {
 		super(ExecutionCategory.ZKM8_11, "Remove string obfuscation by ZKM 8 - 11",
-				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br><b>Can possibly run dangerous code.</b><br><b>UNFINISHED</b>");
+				"Works for ZKM 8 - 11, but could work for older or newer versions too.<br><i>Some strings are not decrypted because of the nature of ZKM</i><br><b>Can possibly run dangerous code.</b>");
 	}
 
 	/*
-	 * TODO: instead of checking through bytecode, stack analysis should be made, because ZKM often abuses stack and pushes ints or getfields not in the place where they normally are!
+	 * TODO: instead of checking through bytecode, stack analysis should be made,
+	 * because ZKM often abuses stack and pushes ints or getfields not in the place
+	 * where they normally are!
 	 */
-	
-	
+
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
 		this.classes = classes;
@@ -53,7 +54,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	}
 
 	private boolean hasZKMBlock(ClassNode cn) {
-		if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy is not working
+		if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy would not be
+											// working
 											// because static methods in interfaces are not allowed
 			return false;
 		MethodNode mn = getStaticInitializer(cn);
@@ -66,7 +68,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	private void decrypt(ClassNode cn) {
 		MethodNode clinit = getStaticInitializer(cn);
-		MethodNode callMethod = Sandbox.createMethodProxy(modifyClinitForProxy(clinit), "clinitProxy", "()V");
+		// cut out decryption part and make proxy
+		MethodNode callMethod = Sandbox.createMethodProxy(Instructions.isolateNonClassCalls(cn, clinit), "clinitProxy",
+				"()V");
 		cn.methods.add(callMethod);
 		try {
 			invokeVMAndReplace(cn);
@@ -245,13 +249,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 			}
 		}
 		return replaces > 1 ? 1 : -1;
-	}
-
-	/**
-	 * Only cut out decryption part
-	 */
-	private InsnList modifyClinitForProxy(MethodNode clinit) {
-		return Instructions.copy(clinit.instructions);
 	}
 
 	@Override

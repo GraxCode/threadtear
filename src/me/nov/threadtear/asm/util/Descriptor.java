@@ -1,5 +1,6 @@
 package me.nov.threadtear.asm.util;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,8 +21,8 @@ public class Descriptor {
 					m.appendReplacement(sb, Matcher.quoteReplacement(fixDesc(m.group(), map)));
 				}
 				m.appendTail(sb);
-				String result =  sb.toString();
-				return result.substring(2, result.length() - 2); //remove Pattern.quote
+				String result = sb.toString();
+				return result.substring(2, result.length() - 2); // remove Pattern.quote
 			}
 		} else {
 			return map.getOrDefault(description, description);
@@ -38,5 +39,37 @@ public class Descriptor {
 			return true;
 		}
 		return false;
+	}
+
+	public static ArrayList<Integer> calculateAmountArguments(String desc) {
+		ArrayList<Integer> sizes = new ArrayList<>();
+		boolean inObject = false;
+		boolean nextIsObject = false;
+		for (char c : desc.toCharArray()) {
+			if (inObject) {
+				if (c == ';') {
+					inObject = false;
+				}
+				continue;
+			}
+			if (c == 'J') {
+				inObject = true;
+			}
+			if (c == '[') {
+				nextIsObject = true;
+				continue;
+			}
+			sizes.add(nextIsObject ? 1 : getSize(c));
+			nextIsObject = false;
+		}
+		return sizes;
+
+	}
+
+	public static int getSize(char type) {
+		if (type == 'J' || type == 'D') {
+			return 2;
+		}
+		return 1;
 	}
 }
