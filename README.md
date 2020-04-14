@@ -27,13 +27,14 @@ public class MyExecution extends Execution {
 	}
 	/**
 	* This method is invoked when the user clicks on the Run button
+	* @return true if success, false if failure
 	*/
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
 		classes.stream().map(c -> c.node).forEach(c -> {
 			//transform the classes here using the tree-API of ASM
 		});
-		return false; //did it work?
+		return false;
 	}
 }
 ```
