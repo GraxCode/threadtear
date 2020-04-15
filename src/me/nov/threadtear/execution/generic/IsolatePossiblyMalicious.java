@@ -12,11 +12,12 @@ import me.nov.threadtear.execution.ExecutionTag;
 
 public class IsolatePossiblyMalicious extends Execution {
 
-	private static final String POSSIBLY_MALICIOUS_REGEX = "(java/lang/runtime/Runtime|java/lang/reflect/).*";
+	private static final String POSSIBLY_MALICIOUS_REGEX = "(java/lang/runtime/Runtime|java/lang/reflect/|com/sun/jna|java/nio/file|java/io/File|sun/misc/Unsafe|java/io/.*Writer|java/io/.*Reader).*";
 	private int changed;
 
 	public IsolatePossiblyMalicious() {
-		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls", "Isolate runtime and reflection calls, so no code can be executed.<br>Doesn't mean it can't run malicious code afterwards.", ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls", "Isolate runtime and reflection calls, so no code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b>",
+				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
