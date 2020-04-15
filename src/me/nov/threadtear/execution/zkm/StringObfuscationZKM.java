@@ -1,18 +1,28 @@
 package me.nov.threadtear.execution.zkm;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.asm.analysis.ConstantTracker;
+import me.nov.threadtear.asm.analysis.ConstantValue;
+import me.nov.threadtear.asm.analysis.IReferenceHandler;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.asm.vm.IVMReferenceHandler;
@@ -23,11 +33,10 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
 
-public class StringObfuscationZKM extends Execution implements IVMReferenceHandler {
+public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IReferenceHandler {
 
 	private ArrayList<Clazz> classes;
 	private int decrypted;
-	private int notDecrypted;
 
 	private boolean verbose;
 
@@ -51,14 +60,13 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		this.classes = classes;
 		this.verbose = verbose;
 		classes.stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
-		logger.info("Decrypted " + decrypted + " strings successfully, failed on " + notDecrypted + " strings.");
+		logger.info("Decrypted " + decrypted + " strings successfully.");
 		return decrypted > 0;
 	}
 
 	private boolean hasZKMBlock(ClassNode cn) {
 		if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy would not be
-			// working
-			// because static methods in interfaces are not allowed
+																				// working because static methods in interfaces are not allowed
 			return false;
 		MethodNode mn = getStaticInitializer(cn);
 		if (mn == null)
@@ -76,7 +84,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		try {
 			invokeVMAndReplace(cn);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			Threadtear.logger.severe("Failed to run proxy in " + cn.name + ":" + e.getMessage());
 		}
 		cn.methods.remove(callMethod);
 	}
@@ -89,41 +97,64 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		VM vm = VM.constructVM(this);
 		Class<?> callProxy = vm.loadClass(cn.name);
 		callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit
-
 		// clinitProxy should not be handled, but <clinit> SHOULD as there could be
 		// encrypted strings too
+
 		cn.methods.stream().filter(m -> !m.name.equals("clinitProxy")).forEach(m -> {
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				if (isZKMField(cn, ain)) {
-					int status = tryReplaceFieldLoads(cn, callProxy, m, (FieldInsnNode) ain);
-					if (status == 1) {
-						decrypted++;
-					} else if (status == -1) {
-						notDecrypted++;
+			
+			decryptedField = null;
+			m.instructions.forEach(ain -> {
+				if (isLocalField(cn, ain) && ((FieldInsnNode) ain).desc.equals("[Ljava/lang/String;")) {
+					decryptedField = (FieldInsnNode) ain;
+					try {
+						decryptedFieldValue = (String[]) callProxy.getField(((FieldInsnNode) ain).name).get(null);
+					} catch (Exception e) {
 					}
 				}
+			});
+			
+			Analyzer<ConstantValue> a = new Analyzer<>(new ConstantTracker(this));
+			try {
+				a.analyze(cn.name, m);
+			} catch (AnalyzerException e) {
+				Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+				return;
+			}
+			Frame<ConstantValue>[] frames = a.getFrames();
+			InsnList rewrittenCode = new InsnList();
+			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
+
+			// as we can't add instructions because frame index and instruction index
+			// wouldn't fit together anymore we have to do it this way
+			for (int i = 0; i < m.instructions.size(); i++) {
+				AbstractInsnNode ain = m.instructions.get(i);
+				Frame<ConstantValue> frame = frames[i];
 				if (isZKMMethod(cn, ain)) {
-					int status = tryReplaceDecryptionMethods(cn, callProxy, m, (MethodInsnNode) ain);
-					if (status == 1) {
-						decrypted++;
-					} else if (status == -1) {
-						notDecrypted++;
+					for (AbstractInsnNode newInstr : decryptMethodsAndRewrite(cn, callProxy, m, (MethodInsnNode) ain, frame)) {
+						rewrittenCode.add(newInstr.clone(labels));
+					}
+				} else {
+					for (AbstractInsnNode newInstr : tryReplaceFieldLoads(cn, callProxy, m, ain, frame)) {
+						rewrittenCode.add(newInstr.clone(labels));
 					}
 				}
 			}
+			m.instructions = rewrittenCode;
+			m.tryCatchBlocks.forEach(tcb -> {
+				tcb.start = labels.get(tcb.start);
+				tcb.end = labels.get(tcb.end);
+				tcb.handler = labels.get(tcb.handler);
+				
+			});
 		});
 	}
 
-	/**
-	 * Is ain a field call to a decrypted field?
-	 */
-	private boolean isZKMField(ClassNode cn, AbstractInsnNode ain) {
+	private boolean isLocalField(ClassNode cn, AbstractInsnNode ain) {
 		if (ain.getOpcode() != GETSTATIC)
 			return false;
 		FieldInsnNode fin = ((FieldInsnNode) ain);
 		// could be either array or normal string field, two cases
-		return fin.owner.equals(cn.name) && fin.desc.endsWith("Ljava/lang/String;");
+		return fin.owner.equals(cn.name);
 	}
 
 	/**
@@ -139,20 +170,20 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	/**
 	 * Replace decryption methods that take two ints as argument and returns the
 	 * decrypted String. This does only occur sometimes!
+	 * 
+	 * @param frame
+	 * @return new instructions
 	 */
-	private int tryReplaceDecryptionMethods(ClassNode cn, Class<?> callProxy, MethodNode m, MethodInsnNode min) {
-
+	private AbstractInsnNode[] decryptMethodsAndRewrite(ClassNode cn, Class<?> callProxy, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame) {
 		try {
-			AbstractInsnNode previous = Instructions.getRealPrevious(min);
-			AbstractInsnNode prePrevious = Instructions.getRealPrevious(previous);
-			if (Instructions.isInteger(previous) && Instructions.isInteger(prePrevious)) {
-				String decrypted = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, Instructions.getIntValue(prePrevious), Instructions.getIntValue(previous));
-				if (!Strings.isHighUTF(decrypted)) {
+			ConstantValue previous = frame.getStack(frame.getStackSize() - 1);
+			ConstantValue prePrevious = frame.getStack(frame.getStackSize() - 2);
+			if (previous.isInteger() && prePrevious.isInteger()) {
+				String decryptedLDC = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, prePrevious.getInteger(), previous.getInteger());
+				if (!Strings.isHighUTF(decryptedLDC)) {
 					// avoid concurrent modification
-					m.instructions.set(prePrevious, new InsnNode(NOP)); // remove aaload
-					m.instructions.set(previous, new InsnNode(NOP)); // remove int
-					m.instructions.set(min, new LdcInsnNode(decrypted));
-					return 1;
+					decrypted++;
+					return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedLDC) };
 				} else if (verbose) {
 					logger.severe("Failed string array decryption in " + cn.name);
 				}
@@ -162,97 +193,68 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		} catch (Throwable t) {
 			logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
 		}
-		return -1;
+		return new AbstractInsnNode[] { min };
 	}
 
 	/**
 	 * Replace decrypted String[] and String fields in the code. This is the hardest
 	 * part
 	 */
-	private int tryReplaceFieldLoads(ClassNode cn, Class<?> callProxy, MethodNode m, FieldInsnNode fin) {
+	private AbstractInsnNode[] tryReplaceFieldLoads(ClassNode cn, Class<?> callProxy, MethodNode m, AbstractInsnNode ain, Frame<ConstantValue> frame) {
 		try {
-			if (fin.desc.equals("[Ljava/lang/String;")) {
-				String[] decryptedArray = (String[]) callProxy.getField(fin.name).get(null);
-				if (decryptedArray == null) {
-					if (verbose)
-						logger.warning("Possible false call in " + cn.name + " or failed decryption, array is null");
-					// could be false call, not the decrypted array
-					return 0;
-				}
-				AbstractInsnNode next = Instructions.getRealNext(fin);
-				if (!Instructions.isInteger(next)) {
-					if (next.getType() == AbstractInsnNode.VAR_INSN) {
-						return handleLocalVariableLoad(decryptedArray, cn, m, fin, (VarInsnNode) next);
+			if (ain.getOpcode() == GETSTATIC) {
+				FieldInsnNode fin = (FieldInsnNode) ain;
+				if (isLocalField(cn, fin) && fin.desc.equals("Ljava/lang/String;")) {
+					String decrypedString = (String) callProxy.getField(fin.name).get(null);
+					if (decrypedString == null) {
+						logger.warning("Possible false call in " + cn.name + " or failed decryption, single field is null");
+						// could be false call, not the decrypted string
+						return new AbstractInsnNode[] { ain };
 					} else {
-						if (verbose)
-							logger.severe("Failed replacement in " + cn.name + ", unexpected case");
-						return 0;
+						decrypted++;
+						//i don't know why we need NOP, but it only works that way :confusion:
+						return new AbstractInsnNode[] { new LdcInsnNode(decrypedString), new InsnNode(NOP) }; 
 					}
 				}
-				int arrayPos = Instructions.getIntValue(next);
-				if (arrayPos < decryptedArray.length && !Strings.isHighUTF(decryptedArray[arrayPos])) {
-					// avoid concurrent modification
-					m.instructions.set(Instructions.getRealNext(next), new InsnNode(NOP)); // remove aaload
-					m.instructions.set(next, new InsnNode(NOP)); // remove int
-					m.instructions.set(fin, new LdcInsnNode(decryptedArray[arrayPos]));
-					return 1;
-				} else if (verbose) {
-					logger.severe("Failed string array decryption in " + cn.name);
+			} else if (ain.getOpcode() == AALOAD) {
+				ConstantValue previous = frame.getStack(frame.getStackSize() - 1);
+				ConstantValue prePrevious = frame.getStack(frame.getStackSize() - 2);
+
+				if (previous.getValue() != null) {
+					int arrayIndex = previous.getInteger();
+					Object reference = prePrevious.getValue();
+					if (reference != null && reference instanceof String[]) {
+						String[] ref = (String[]) reference;
+						String decryptedString = ref[arrayIndex];
+						if (Strings.isHighUTF(decryptedString)) {
+							logger.warning("String decryption in " + cn.name + "." + m.name + " may have failed");
+						}
+						decrypted++;
+						return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedString) };
+					}
 				}
-			} else if (fin.desc.equals("Ljava/lang/String;")) {
-				String decrypedString = (String) callProxy.getField(fin.name).get(null);
-				if (decrypedString == null) {
-					// could be false call, not the decrypted string
-					return 0;
-				}
-				if (!Strings.isHighUTF(decrypedString)) {
-					m.instructions.set(fin, new LdcInsnNode(decrypedString));
-					return 1;
-				} else if (verbose) {
-					logger.severe("Failed single string decryption in " + cn.name);
-				}
-			} else if (verbose) {
-				logger.warning("Ignoring multi array in " + cn.name);
 			}
 		} catch (Throwable t) {
 			logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
 		}
-		return -1;
+		return new AbstractInsnNode[] { ain };
 	}
 
-	/**
-	 * This case is only when ZKM stores the decrypted String[] in a local variable
-	 * instead of GETSTATIC everytime
-	 */
-	private int handleLocalVariableLoad(String[] decryptedArray, ClassNode cn, MethodNode m, FieldInsnNode fin, VarInsnNode vin) {
-		int replaces = 0;
-		for (int i = 0; i < m.instructions.size(); i++) {
-			AbstractInsnNode ain = m.instructions.get(i);
-			if (ain.getOpcode() == ALOAD) {
-				VarInsnNode load = (VarInsnNode) ain;
-				if (load.var != vin.var)
-					continue;
-				AbstractInsnNode next = Instructions.getRealNext(ain);
-				if (Instructions.isInteger(next)) {
-					int arrayPos = Instructions.getIntValue(next);
-					if (arrayPos < decryptedArray.length && !Strings.isHighUTF(decryptedArray[arrayPos])) {
-						// avoid concurrent modification
-						m.instructions.set(Instructions.getRealNext(next), new InsnNode(NOP)); // remove aaload
-						m.instructions.set(next, new InsnNode(NOP)); // remove int
-						m.instructions.set(ain, new LdcInsnNode(decryptedArray[arrayPos]));
-						replaces++;
-					} else if (verbose) {
-						logger.severe("Failed string array decryption in " + cn.name + " " + m.name);
-					}
-				}
-			}
-		}
-		return replaces > 1 ? 1 : -1;
+	private FieldInsnNode decryptedField;
+	private String[] decryptedFieldValue;
+
+	@Override
+	public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
+		return decryptedField != null && decryptedField.owner.equals(owner) && decryptedField.name.equals(name) && decryptedField.desc.equals(desc) ? decryptedFieldValue : null;
+	}
+
+	@Override
+	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc) {
+		return null;
 	}
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
 		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
 	}
-
 }

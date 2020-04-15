@@ -24,6 +24,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
+import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
 import me.nov.threadtear.execution.generic.FixAccess;
 import me.nov.threadtear.execution.generic.IsolatePossiblyMalicious;
 import me.nov.threadtear.execution.stringer.StringObfuscationStringer3;
@@ -89,6 +90,7 @@ public class ExecutionSelection extends JDialog {
 				root.add(new ExecutionTreeNode(t.name));
 			}
 			addExecution(root, new InlineMethods());
+			addExecution(root, new RemoveUnnecessary());
 
 			addExecution(root, new FixAccess());
 			addExecution(root, new IsolatePossiblyMalicious());
