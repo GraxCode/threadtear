@@ -26,7 +26,7 @@ import me.nov.threadtear.util.Strings;
 
 public class StringObfuscationStringer9 extends Execution implements IVMReferenceHandler {
 
-	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;...\\)Ljava/lang/String;";
+	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;...?\\)Ljava/lang/String;";
 	private ArrayList<Clazz> classes;
 	private int encrypted;
 	private int decrypted;
