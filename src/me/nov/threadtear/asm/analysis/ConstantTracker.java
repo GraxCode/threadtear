@@ -137,7 +137,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> {
 		}
 		if (reformatted.size() > localVariables) {
 			// this shouldn't happen...
-//			throw new IllegalArgumentException();
+			// throw new IllegalArgumentException();
 		}
 		while (reformatted.size() < localVariables) {
 			// add placeholder for remaining local variables

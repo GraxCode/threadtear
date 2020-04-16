@@ -36,6 +36,10 @@ public class StringObfuscationStringer9 extends Execution implements IVMReferenc
 		super(ExecutionCategory.STRINGER, "String obfuscation removal targeting Stringer 9", "Works for version 9 only.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
+	/*
+	 * TODO: combine String Obfuscation classes and solve pre-decryption calculation using ConstantAnalyzer
+	 */
+	
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
 		this.verbose = verbose;

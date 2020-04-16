@@ -171,8 +171,7 @@ public class InlineMethods extends Execution {
 		case AbstractInsnNode.FIELD_INSN:
 		case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
 		case AbstractInsnNode.TYPE_INSN:
-		case AbstractInsnNode.JUMP_INSN: // TODO replace return (if not last, inside loop) with goto to last insn, so
-			// jumps are supported too
+		case AbstractInsnNode.JUMP_INSN:
 			return true;
 		}
 		return false;

@@ -13,13 +13,13 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.asm.analysis.ConstantAnalyzer;
 import me.nov.threadtear.asm.analysis.ConstantTracker;
 import me.nov.threadtear.asm.analysis.ConstantValue;
 import me.nov.threadtear.asm.analysis.IReferenceHandler;
@@ -52,7 +52,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 * because ZKM often abuses stack and pushes ints or getfields not in the place
 	 * where they normally are!
 	 * 
-	 * TODO: String encryption using DES Cipher
+	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation
 	 */
 
 	@Override
@@ -113,7 +113,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 				}
 			});
 			
-			Analyzer<ConstantValue> a = new Analyzer<>(new ConstantTracker(this));
+			ConstantAnalyzer a = new ConstantAnalyzer(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
 			try {
 				a.analyze(cn.name, m);
 			} catch (AnalyzerException e) {
