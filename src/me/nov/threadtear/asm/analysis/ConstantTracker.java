@@ -16,8 +16,6 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
-import me.nov.threadtear.Threadtear;
-
 /**
  * @author Holger https://stackoverflow.com/users/2711488/holger (Modified
  *         version)
@@ -221,7 +219,6 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 			case DALOAD:
 			case LALOAD:
 			case AALOAD: // this won't happen for now but let's include it
-				Threadtear.logger.info("Array.get returns " + Array.get(a.value, b.getInteger()).getClass().getName() + " array is " +a.value.getClass().getName());
 				return new ConstantValue(v, Array.get(a.value, b.getInteger()));
 			}
 		}
