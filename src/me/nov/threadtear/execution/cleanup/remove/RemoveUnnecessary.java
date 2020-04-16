@@ -72,7 +72,11 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 			Frame<ConstantValue> frame = frames[i];
 			if (frame != null) {
 				if (frame.getStackSize() > 0) {
-					Threadtear.logger.info(i + ": " + frame.getStack(frame.getStackSize() - 1) + " op: " + ain.getOpcode());
+					ConstantValue top = frame.getStack(frame.getStackSize() - 1);
+					Threadtear.logger.info(i + ": " + top + " op: " + ain.getOpcode());
+					if (top.isKnown()) {
+						Threadtear.logger.info("val type: " + top.getValue().getClass());
+					}
 				} else {
 					Threadtear.logger.info(i + ": empty stack");
 				}

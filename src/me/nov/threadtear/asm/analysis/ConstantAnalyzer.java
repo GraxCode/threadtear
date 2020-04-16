@@ -264,9 +264,9 @@ public class ConstantAnalyzer implements Opcodes {
 		if (frame.getStackSize() == 0)
 			return 0;
 		ConstantValue up = frame.getStack(frame.getStackSize() - 1);
-		Object upperVal = up.getValue();
-		if (upperVal == null)
+		if(!up.isKnown())
 			return 0;
+		Object upperVal = up.getValue();
 		switch (op) {
 		case IFEQ:
 			return ((Integer) upperVal) == 0 ? 1 : -1;
@@ -287,9 +287,9 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 		if (frame.getStackSize() >= 2) {
 			ConstantValue low = (ConstantValue) frame.getStack(frame.getStackSize() - 2);
-			Object lowerVal = low.getValue();
-			if (lowerVal == null)
+			if(!low.isKnown())
 				return 0;
+			Object lowerVal = low.getValue();
 			switch (op) {
 			case IF_ICMPEQ:
 				return ((Integer) upperVal) == ((Integer) lowerVal) ? 1 : -1;

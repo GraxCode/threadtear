@@ -1,96 +1,10 @@
 package me.nov.threadtear.asm.analysis;
 
-import static org.objectweb.asm.Opcodes.ACONST_NULL;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASM8;
-import static org.objectweb.asm.Opcodes.BIPUSH;
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.D2F;
-import static org.objectweb.asm.Opcodes.D2I;
-import static org.objectweb.asm.Opcodes.D2L;
-import static org.objectweb.asm.Opcodes.DADD;
-import static org.objectweb.asm.Opcodes.DCMPG;
-import static org.objectweb.asm.Opcodes.DCMPL;
-import static org.objectweb.asm.Opcodes.DCONST_0;
-import static org.objectweb.asm.Opcodes.DCONST_1;
-import static org.objectweb.asm.Opcodes.DDIV;
-import static org.objectweb.asm.Opcodes.DLOAD;
-import static org.objectweb.asm.Opcodes.DMUL;
-import static org.objectweb.asm.Opcodes.DNEG;
-import static org.objectweb.asm.Opcodes.DREM;
-import static org.objectweb.asm.Opcodes.DSUB;
-import static org.objectweb.asm.Opcodes.F2D;
-import static org.objectweb.asm.Opcodes.F2I;
-import static org.objectweb.asm.Opcodes.F2L;
-import static org.objectweb.asm.Opcodes.FADD;
-import static org.objectweb.asm.Opcodes.FCMPG;
-import static org.objectweb.asm.Opcodes.FCMPL;
-import static org.objectweb.asm.Opcodes.FCONST_0;
-import static org.objectweb.asm.Opcodes.FCONST_1;
-import static org.objectweb.asm.Opcodes.FCONST_2;
-import static org.objectweb.asm.Opcodes.FDIV;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.FMUL;
-import static org.objectweb.asm.Opcodes.FNEG;
-import static org.objectweb.asm.Opcodes.FREM;
-import static org.objectweb.asm.Opcodes.FSUB;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.I2B;
-import static org.objectweb.asm.Opcodes.I2C;
-import static org.objectweb.asm.Opcodes.I2D;
-import static org.objectweb.asm.Opcodes.I2F;
-import static org.objectweb.asm.Opcodes.I2L;
-import static org.objectweb.asm.Opcodes.I2S;
-import static org.objectweb.asm.Opcodes.IADD;
-import static org.objectweb.asm.Opcodes.IAND;
-import static org.objectweb.asm.Opcodes.ICONST_0;
-import static org.objectweb.asm.Opcodes.ICONST_1;
-import static org.objectweb.asm.Opcodes.ICONST_2;
-import static org.objectweb.asm.Opcodes.ICONST_3;
-import static org.objectweb.asm.Opcodes.ICONST_4;
-import static org.objectweb.asm.Opcodes.ICONST_5;
-import static org.objectweb.asm.Opcodes.ICONST_M1;
-import static org.objectweb.asm.Opcodes.IDIV;
-import static org.objectweb.asm.Opcodes.ILOAD;
-import static org.objectweb.asm.Opcodes.IMUL;
-import static org.objectweb.asm.Opcodes.INEG;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.IOR;
-import static org.objectweb.asm.Opcodes.IREM;
-import static org.objectweb.asm.Opcodes.ISHL;
-import static org.objectweb.asm.Opcodes.ISHR;
-import static org.objectweb.asm.Opcodes.ISUB;
-import static org.objectweb.asm.Opcodes.IUSHR;
-import static org.objectweb.asm.Opcodes.IXOR;
-import static org.objectweb.asm.Opcodes.L2D;
-import static org.objectweb.asm.Opcodes.L2F;
-import static org.objectweb.asm.Opcodes.L2I;
-import static org.objectweb.asm.Opcodes.LADD;
-import static org.objectweb.asm.Opcodes.LAND;
-import static org.objectweb.asm.Opcodes.LCMP;
-import static org.objectweb.asm.Opcodes.LCONST_0;
-import static org.objectweb.asm.Opcodes.LCONST_1;
-import static org.objectweb.asm.Opcodes.LDC;
-import static org.objectweb.asm.Opcodes.LDIV;
-import static org.objectweb.asm.Opcodes.LLOAD;
-import static org.objectweb.asm.Opcodes.LMUL;
-import static org.objectweb.asm.Opcodes.LNEG;
-import static org.objectweb.asm.Opcodes.LOR;
-import static org.objectweb.asm.Opcodes.LREM;
-import static org.objectweb.asm.Opcodes.LSHL;
-import static org.objectweb.asm.Opcodes.LSHR;
-import static org.objectweb.asm.Opcodes.LSUB;
-import static org.objectweb.asm.Opcodes.LUSHR;
-import static org.objectweb.asm.Opcodes.LXOR;
-import static org.objectweb.asm.Opcodes.SIPUSH;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -102,11 +16,13 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
+import me.nov.threadtear.Threadtear;
+
 /**
  * @author Holger https://stackoverflow.com/users/2711488/holger (Modified
  *         version)
  */
-public class ConstantTracker extends Interpreter<ConstantValue> {
+public class ConstantTracker extends Interpreter<ConstantValue> implements Opcodes {
 	public static final ConstantValue NULL = new ConstantValue(BasicValue.REFERENCE_VALUE, null);
 
 	SuperInterpreter basic = new SuperInterpreter();
@@ -187,7 +103,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> {
 
 	@Override
 	public ConstantValue copyOperation(AbstractInsnNode insn, ConstantValue value) {
-		if (args != null && value.getValue() == null) {
+		if (args != null && !value.isKnown()) {
 			// unloaded arguments
 			switch (insn.getOpcode()) {
 			case ALOAD:
@@ -218,6 +134,28 @@ public class ConstantTracker extends Interpreter<ConstantValue> {
 		case GETFIELD:
 			FieldInsnNode fin = (FieldInsnNode) insn;
 			return new ConstantValue(v, referenceHandler.getFieldValueOrNull(v, fin.owner, fin.name, fin.desc));
+		case NEWARRAY:
+			Integer size = value.getInteger();
+			if (size != null) {
+				switch (((IntInsnNode) insn).operand) {
+				case T_BOOLEAN:
+					return new ConstantValue(v, new boolean[size]);
+				case T_CHAR:
+					return new ConstantValue(v, new char[size]);
+				case T_BYTE:
+					return new ConstantValue(v, new byte[size]);
+				case T_SHORT:
+					return new ConstantValue(v, new short[size]);
+				case T_INT:
+					return new ConstantValue(v, new int[size]);
+				case T_FLOAT:
+					return new ConstantValue(v, new float[size]);
+				case T_DOUBLE:
+					return new ConstantValue(v, new double[size]);
+				case T_LONG:
+					return new ConstantValue(v, new long[size]);
+				}
+			}
 		default:
 			return v == null ? null : new ConstantValue(v, getUnaryValue(insn.getOpcode(), value.value));
 		}
@@ -273,6 +211,20 @@ public class ConstantTracker extends Interpreter<ConstantValue> {
 	@Override
 	public ConstantValue binaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b) throws AnalyzerException {
 		BasicValue v = basic.binaryOperation(insn, a.getType(), b.getType());
+		if (a.isKnown() && b.isKnown() && b.isInteger()) {
+			switch (insn.getOpcode()) {
+			case BALOAD:
+			case CALOAD:
+			case SALOAD:
+			case IALOAD:
+			case FALOAD:
+			case DALOAD:
+			case LALOAD:
+			case AALOAD: // this won't happen for now but let's include it
+				Threadtear.logger.info("Array.get returns " + Array.get(a.value, b.getInteger()).getClass().getName() + " array is " +a.value.getClass().getName());
+				return new ConstantValue(v, Array.get(a.value, b.getInteger()));
+			}
+		}
 		return v == null ? null : new ConstantValue(v, getBinaryValue(insn.getOpcode(), a.value, b.value));
 	}
 
@@ -369,14 +321,47 @@ public class ConstantTracker extends Interpreter<ConstantValue> {
 	}
 
 	@Override
-	public ConstantValue ternaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b, ConstantValue c) {
+	public ConstantValue ternaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b, ConstantValue c) throws AnalyzerException {
+		// only array store instructions here
+		if (a.isKnown() && b.isKnown() && c.isKnown() && c.value instanceof Number) {
+			Object array = a.value;
+			Number value = (Number) c.value;
+			switch (insn.getOpcode()) {
+			case BASTORE:
+				if (array instanceof byte[]) {
+					((byte[]) array)[b.getInteger()] = value.byteValue();
+				} else {
+					((boolean[]) array)[b.getInteger()] = value.intValue() == 1 ? true : false;
+				}
+				break;
+			case CASTORE:
+				((char[]) array)[b.getInteger()] = (char) value.intValue();
+				break;
+			case SASTORE:
+				((short[]) array)[b.getInteger()] = value.shortValue();
+				break;
+			case IASTORE:
+				((int[]) array)[b.getInteger()] = value.intValue();
+				break;
+			case FASTORE:
+				((float[]) array)[b.getInteger()] = value.floatValue();
+				break;
+			case DASTORE:
+				((double[]) array)[b.getInteger()] = value.doubleValue();
+				break;
+			case LASTORE:
+				((long[]) array)[b.getInteger()] = value.longValue();
+				break;
+			case AASTORE:
+				throw new IllegalArgumentException("unimplemented");
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public ConstantValue naryOperation(AbstractInsnNode insn, List<? extends ConstantValue> values) throws AnalyzerException {
-		List<BasicValue> unusedByBasicInterpreter = null;
-		BasicValue v = basic.naryOperation(insn, unusedByBasicInterpreter);
+		BasicValue v = basic.naryOperation(insn, null); // values unused by BasicInterpreter
 		switch (insn.getOpcode()) {
 		case INVOKEVIRTUAL:
 		case INVOKESTATIC:
