@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Value;
 
 
-public final class ConstantValue implements Value {
+public class ConstantValue implements Value {
 		private final BasicValue type;
 		Object value; // null if unknown or NULL
 

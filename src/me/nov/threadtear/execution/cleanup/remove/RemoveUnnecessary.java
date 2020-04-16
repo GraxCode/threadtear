@@ -14,10 +14,10 @@ import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.asm.analysis.ConstantAnalyzer;
 import me.nov.threadtear.asm.analysis.ConstantTracker;
 import me.nov.threadtear.asm.analysis.ConstantValue;
 import me.nov.threadtear.asm.analysis.IReferenceHandler;
-import me.nov.threadtear.asm.analysis.hack.AnalyzerHack;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
@@ -55,7 +55,7 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 	}
 
 	private InsnList simulateAndRewrite(ClassNode cn, MethodNode m, InsnList instructions) {
-		AnalyzerHack<ConstantValue> a = new AnalyzerHack<>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+		ConstantAnalyzer a = new ConstantAnalyzer(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {

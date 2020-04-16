@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.analysis.hack;
+package me.nov.threadtear.asm.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,97 +20,45 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
-import org.objectweb.asm.tree.analysis.Value;
-
-import me.nov.threadtear.asm.analysis.ConstantTracker;
-import me.nov.threadtear.asm.analysis.ConstantValue;
 
 /**
- * A semantic bytecode analyzer. <i>This class does not fully check that JSR and
- * RET instructions are valid.</i>
- *
- * @param <V> type of the Value used for the analysis.
- * @author Eric Bruneton
+ * Analyzer that uses known stack values to handle known jumps without losing
+ * stack values. Only usable with ConstantValue.
  */
-public class AnalyzerHack<V extends Value> implements Opcodes {
+public class ConstantAnalyzer implements Opcodes {
 
-	/**
-	 * The interpreter to use to symbolically interpret the bytecode instructions.
-	 */
-	private final Interpreter<V> interpreter;
+	private final Interpreter<ConstantValue> interpreter;
 
-	/** The instructions of the currently analyzed method. */
 	private InsnList insnList;
 
-	/** The size of {@link #insnList}. */
 	private int insnListSize;
 
-	/**
-	 * The exception handlers of the currently analyzed method (one list per
-	 * instruction index).
-	 */
 	private List<TryCatchBlockNode>[] handlers;
 
-	/**
-	 * The execution stack frames of the currently analyzed method (one per
-	 * instruction index).
-	 */
-	private Frame<V>[] frames;
+	private Frame<ConstantValue>[] frames;
 
-	/**
-	 * The subroutines of the currently analyzed method (one per instruction index).
-	 */
 	private Subroutine[] subroutines;
 
-	/**
-	 * The instructions that remain to process (one boolean per instruction index).
-	 */
 	private boolean[] inInstructionsToProcess;
 
-	/**
-	 * The indices of the instructions that remain to process in the currently
-	 * analyzed method.
-	 */
 	private int[] instructionsToProcess;
 
-	/**
-	 * The number of instructions that remain to process in the currently analyzed
-	 * method.
-	 */
 	private int numInstructionsToProcess;
 
-	/**
-	 * Constructs a new {@link AnalyzerHack}.
-	 *
-	 * @param interpreter the interpreter to use to symbolically interpret the
-	 *                    bytecode instructions.
-	 */
-	public AnalyzerHack(final Interpreter<V> interpreter) {
+	public ConstantAnalyzer(final Interpreter<ConstantValue> interpreter) {
 		this.interpreter = interpreter;
 	}
 
-	/**
-	 * Analyzes the given method.
-	 *
-	 * @param owner  the internal name of the class to which 'method' belongs.
-	 * @param method the method to be analyzed.
-	 * @return the symbolic state of the execution stack frame at each bytecode
-	 *         instruction of the method. The size of the returned array is equal to
-	 *         the number of instructions (and labels) of the method. A given frame
-	 *         is {@literal null} if and only if the corresponding instruction
-	 *         cannot be reached (dead code).
-	 * @throws AnalyzerException if a problem occurs during the analysis.
-	 */
 	@SuppressWarnings("unchecked")
-	public Frame<V>[] analyze(final String owner, final MethodNode method) throws AnalyzerException {
+	public Frame<ConstantValue>[] analyze(final String owner, final MethodNode method) throws AnalyzerException {
 		if ((method.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-			frames = (Frame<V>[]) new Frame<?>[0];
+			frames = (Frame<ConstantValue>[]) new Frame<?>[0];
 			return frames;
 		}
 		insnList = method.instructions;
 		insnListSize = insnList.size();
 		handlers = (List<TryCatchBlockNode>[]) new List<?>[insnListSize];
-		frames = (Frame<V>[]) new Frame<?>[insnListSize];
+		frames = (Frame<ConstantValue>[]) new Frame<?>[insnListSize];
 		subroutines = new Subroutine[insnListSize];
 		inInstructionsToProcess = new boolean[insnListSize];
 		instructionsToProcess = new int[insnListSize];
@@ -164,7 +112,7 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		}
 
 		// Initializes the data structures for the control flow analysis.
-		Frame<V> currentFrame = computeInitialFrame(owner, method);
+		Frame<ConstantValue> currentFrame = computeInitialFrame(owner, method);
 		merge(0, currentFrame, null);
 		init(owner, method);
 
@@ -172,7 +120,7 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		while (numInstructionsToProcess > 0) {
 			// Get and remove one instruction from the list of instructions to process.
 			int insnIndex = instructionsToProcess[--numInstructionsToProcess];
-			Frame<V> oldFrame = frames[insnIndex];
+			Frame<ConstantValue> oldFrame = frames[insnIndex];
 			Subroutine subroutine = subroutines[insnIndex];
 			inInstructionsToProcess[insnIndex] = false;
 
@@ -187,15 +135,13 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 					merge(insnIndex + 1, oldFrame, subroutine);
 					newControlFlowEdge(insnIndex, insnIndex + 1);
 				} else {
+					// XXX here the hack happens
+					int jump = predictJump(currentFrame, insnNode.getOpcode()); // predict possible jump outcome before popping off stack in frame execution
 					currentFrame.init(oldFrame).execute(insnNode, interpreter);
 					subroutine = subroutine == null ? null : new Subroutine(subroutine);
 
 					if (insnNode instanceof JumpInsnNode) {
 						JumpInsnNode jumpInsn = (JumpInsnNode) insnNode;
-						/*
-						 * TODO HACK
-						 */
-						int jump = predictJump(currentFrame, jumpInsn.getOpcode());
 						if (jump == 1) {
 							// jump predicted
 							int jumpInsnIndex = insnList.indexOf(jumpInsn.label);
@@ -204,12 +150,13 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 							newControlFlowEdge(insnIndex, jumpInsnIndex);
 						} else if (jump == -1) {
 							// no jump predicted, move on with next node
-//							currentFrame.initJumpTarget(insnOpcode, /* target = */ null);
-//							merge(insnIndex + 1, currentFrame, subroutine);
-//							newControlFlowEdge(insnIndex, insnIndex + 1);
+							currentFrame.initJumpTarget(insnOpcode, null);
+							merge(insnIndex + 1, currentFrame, subroutine);
+							newControlFlowEdge(insnIndex, insnIndex + 1);
 						} else {
+							// no known outcome, move on normally
 							if (insnOpcode != GOTO && insnOpcode != JSR) {
-								currentFrame.initJumpTarget(insnOpcode, /* target = */ null);
+								currentFrame.initJumpTarget(insnOpcode, null);
 								merge(insnIndex + 1, currentFrame, subroutine);
 								newControlFlowEdge(insnIndex, insnIndex + 1);
 							}
@@ -288,7 +235,7 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 							catchType = Type.getObjectType(tryCatchBlock.type);
 						}
 						if (newControlFlowExceptionEdge(insnIndex, tryCatchBlock)) {
-							Frame<V> handler = newFrame(oldFrame);
+							Frame<ConstantValue> handler = newFrame(oldFrame);
 							handler.clearStack();
 							handler.push(interpreter.newExceptionValue(tryCatchBlock, handler, catchType));
 							merge(insnList.indexOf(tryCatchBlock.handler), handler, subroutine);
@@ -307,17 +254,19 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 	}
 
 	/**
-	 * TODO HACK
+	 * XXX this predicts the outcome of a jump by knowing top frame values
 	 * 
 	 * @param frame
 	 * @param op
 	 * @return
 	 */
-	private int predictJump(Frame<V> frame, int op) {
+	private int predictJump(Frame<ConstantValue> frame, int op) {
 		if (frame.getStackSize() == 0)
 			return 0;
-		ConstantValue up = (ConstantValue) frame.getStack(frame.getStackSize() - 1);
+		ConstantValue up = frame.getStack(frame.getStackSize() - 1);
 		Object upperVal = up.getValue();
+		if (upperVal == null)
+			return 0;
 		switch (op) {
 		case IFEQ:
 			return ((Integer) upperVal) == 0 ? 1 : -1;
@@ -339,6 +288,8 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		if (frame.getStackSize() >= 2) {
 			ConstantValue low = (ConstantValue) frame.getStack(frame.getStackSize() - 2);
 			Object lowerVal = low.getValue();
+			if (lowerVal == null)
+				return 0;
 			switch (op) {
 			case IF_ICMPEQ:
 				return ((Integer) upperVal) == ((Integer) lowerVal) ? 1 : -1;
@@ -362,20 +313,6 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 
 	}
 
-	/**
-	 * Follows the control flow graph of the currently analyzed method, starting at
-	 * the given instruction index, and stores a copy of the given subroutine in
-	 * {@link #subroutines} for each encountered instruction. Jumps to nested
-	 * subroutines are <i>not</i> followed: instead, the corresponding instructions
-	 * are put in the given list.
-	 *
-	 * @param insnIndex  an instruction index.
-	 * @param subroutine a subroutine.
-	 * @param jsrInsns   where the jsr instructions for nested subroutines must be
-	 *                   put.
-	 * @throws AnalyzerException if the control flow graph can fall off the end of
-	 *                           the code.
-	 */
 	private void findSubroutine(final int insnIndex, final Subroutine subroutine, final List<AbstractInsnNode> jsrInsns) throws AnalyzerException {
 		ArrayList<Integer> instructionIndicesToProcess = new ArrayList<>();
 		instructionIndicesToProcess.add(insnIndex);
@@ -446,15 +383,8 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		}
 	}
 
-	/**
-	 * Computes the initial execution stack frame of the given method.
-	 *
-	 * @param owner  the internal name of the class to which 'method' belongs.
-	 * @param method the method to be analyzed.
-	 * @return the initial execution stack frame of the 'method'.
-	 */
-	private Frame<V> computeInitialFrame(final String owner, final MethodNode method) {
-		Frame<V> frame = newFrame(method.maxLocals, method.maxStack);
+	private Frame<ConstantValue> computeInitialFrame(final String owner, final MethodNode method) {
+		Frame<ConstantValue> frame = newFrame(method.maxLocals, method.maxStack);
 		int currentLocal = 0;
 		boolean isInstanceMethod = (method.access & ACC_STATIC) == 0;
 		if (isInstanceMethod) {
@@ -479,128 +409,43 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		return frame;
 	}
 
-	/**
-	 * Returns the symbolic execution stack frame for each instruction of the last
-	 * analyzed method.
-	 *
-	 * @return the symbolic state of the execution stack frame at each bytecode
-	 *         instruction of the method. The size of the returned array is equal to
-	 *         the number of instructions (and labels) of the method. A given frame
-	 *         is {@literal null} if the corresponding instruction cannot be
-	 *         reached, or if an error occurred during the analysis of the method.
-	 */
-	public Frame<V>[] getFrames() {
+	public Frame<ConstantValue>[] getFrames() {
 		return frames;
 	}
 
-	/**
-	 * Returns the exception handlers for the given instruction.
-	 *
-	 * @param insnIndex the index of an instruction of the last analyzed method.
-	 * @return a list of {@link TryCatchBlockNode} objects.
-	 */
 	public List<TryCatchBlockNode> getHandlers(final int insnIndex) {
 		return handlers[insnIndex];
 	}
 
-	/**
-	 * Initializes this analyzer. This method is called just before the execution of
-	 * control flow analysis loop in #analyze. The default implementation of this
-	 * method does nothing.
-	 *
-	 * @param owner  the internal name of the class to which the method belongs.
-	 * @param method the method to be analyzed.
-	 * @throws AnalyzerException if a problem occurs.
-	 */
 	protected void init(final String owner, final MethodNode method) throws AnalyzerException {
 		// Nothing to do.
 	}
 
-	/**
-	 * Constructs a new frame with the given size.
-	 *
-	 * @param numLocals the maximum number of local variables of the frame.
-	 * @param numStack  the maximum stack size of the frame.
-	 * @return the created frame.
-	 */
-	protected Frame<V> newFrame(final int numLocals, final int numStack) {
+	protected Frame<ConstantValue> newFrame(final int numLocals, final int numStack) {
 		return new Frame<>(numLocals, numStack);
 	}
 
-	/**
-	 * Constructs a copy of the given frame.
-	 *
-	 * @param frame a frame.
-	 * @return the created frame.
-	 */
-	protected Frame<V> newFrame(final Frame<? extends V> frame) {
+	protected Frame<ConstantValue> newFrame(final Frame<ConstantValue> frame) {
 		return new Frame<>(frame);
 	}
 
-	/**
-	 * Creates a control flow graph edge. The default implementation of this method
-	 * does nothing. It can be overridden in order to construct the control flow
-	 * graph of a method (this method is called by the {@link #analyze} method
-	 * during its visit of the method's code).
-	 *
-	 * @param insnIndex      an instruction index.
-	 * @param successorIndex index of a successor instruction.
-	 */
 	protected void newControlFlowEdge(final int insnIndex, final int successorIndex) {
 		// Nothing to do.
 	}
 
-	/**
-	 * Creates a control flow graph edge corresponding to an exception handler. The
-	 * default implementation of this method does nothing. It can be overridden in
-	 * order to construct the control flow graph of a method (this method is called
-	 * by the {@link #analyze} method during its visit of the method's code).
-	 *
-	 * @param insnIndex      an instruction index.
-	 * @param successorIndex index of a successor instruction.
-	 * @return true if this edge must be considered in the data flow analysis
-	 *         performed by this analyzer, or false otherwise. The default
-	 *         implementation of this method always returns true.
-	 */
 	protected boolean newControlFlowExceptionEdge(final int insnIndex, final int successorIndex) {
 		return true;
 	}
 
-	/**
-	 * Creates a control flow graph edge corresponding to an exception handler. The
-	 * default implementation of this method delegates to
-	 * {@link #newControlFlowExceptionEdge(int, int)}. It can be overridden in order
-	 * to construct the control flow graph of a method (this method is called by the
-	 * {@link #analyze} method during its visit of the method's code).
-	 *
-	 * @param insnIndex     an instruction index.
-	 * @param tryCatchBlock TryCatchBlockNode corresponding to this edge.
-	 * @return true if this edge must be considered in the data flow analysis
-	 *         performed by this analyzer, or false otherwise. The default
-	 *         implementation of this method delegates to
-	 *         {@link #newControlFlowExceptionEdge(int, int)}.
-	 */
 	protected boolean newControlFlowExceptionEdge(final int insnIndex, final TryCatchBlockNode tryCatchBlock) {
 		return newControlFlowExceptionEdge(insnIndex, insnList.indexOf(tryCatchBlock.handler));
 	}
 
 	// -----------------------------------------------------------------------------------------------
 
-	/**
-	 * Merges the given frame and subroutine into the frame and subroutines at the
-	 * given instruction index. If the frame or the subroutine at the given
-	 * instruction index changes as a result of this merge, the instruction index is
-	 * added to the list of instructions to process (if it is not already the case).
-	 *
-	 * @param insnIndex  an instruction index.
-	 * @param frame      a frame. This frame is left unchanged by this method.
-	 * @param subroutine a subroutine. This subroutine is left unchanged by this
-	 *                   method.
-	 * @throws AnalyzerException if the frames have incompatible sizes.
-	 */
-	private void merge(final int insnIndex, final Frame<V> frame, final Subroutine subroutine) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<ConstantValue> frame, final Subroutine subroutine) throws AnalyzerException {
 		boolean changed;
-		Frame<V> oldFrame = frames[insnIndex];
+		Frame<ConstantValue> oldFrame = frames[insnIndex];
 		if (oldFrame == null) {
 			frames[insnIndex] = newFrame(frame);
 			changed = true;
@@ -624,33 +469,11 @@ public class AnalyzerHack<V extends Value> implements Opcodes {
 		}
 	}
 
-	/**
-	 * Merges the given frame and subroutine into the frame and subroutines at the
-	 * given instruction index (case of a RET instruction). If the frame or the
-	 * subroutine at the given instruction index changes as a result of this merge,
-	 * the instruction index is added to the list of instructions to process (if it
-	 * is not already the case).
-	 *
-	 * @param insnIndex           the index of an instruction immediately following
-	 *                            a jsr instruction.
-	 * @param frameBeforeJsr      the execution stack frame before the jsr
-	 *                            instruction. This frame is merged into
-	 *                            'frameAfterRet'.
-	 * @param frameAfterRet       the execution stack frame after a ret instruction
-	 *                            of the subroutine. This frame is merged into the
-	 *                            frame at 'insnIndex' (after it has itself been
-	 *                            merge with 'frameBeforeJsr').
-	 * @param subroutineBeforeJsr if the jsr is itself part of a subroutine (case of
-	 *                            nested subroutine), the subroutine it belongs to.
-	 * @param localsUsed          the local variables read or written in the
-	 *                            subroutine.
-	 * @throws AnalyzerException if the frames have incompatible sizes.
-	 */
-	private void merge(final int insnIndex, final Frame<V> frameBeforeJsr, final Frame<V> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<ConstantValue> frameBeforeJsr, final Frame<ConstantValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
 		frameAfterRet.merge(frameBeforeJsr, localsUsed);
 
 		boolean changed;
-		Frame<V> oldFrame = frames[insnIndex];
+		Frame<ConstantValue> oldFrame = frames[insnIndex];
 		if (oldFrame == null) {
 			frames[insnIndex] = newFrame(frameAfterRet);
 			changed = true;

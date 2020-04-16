@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.analysis.hack;
+package me.nov.threadtear.asm.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
