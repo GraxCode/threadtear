@@ -14,7 +14,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.Utils;
-import me.nov.threadtear.swing.component.dialog.ExecutionSelection;
+import me.nov.threadtear.swing.dialog.ExecutionSelection;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;
 

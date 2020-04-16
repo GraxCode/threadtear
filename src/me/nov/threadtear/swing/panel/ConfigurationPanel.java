@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.component.panel;
+package me.nov.threadtear.swing.panel;
 
 import java.awt.GridLayout;
 import java.io.File;

@@ -23,11 +23,11 @@ import javax.swing.WindowConstants;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.CustomOutputStream;
-import me.nov.threadtear.swing.component.panel.ConfigurationPanel;
-import me.nov.threadtear.swing.component.panel.ListPanel;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
+import me.nov.threadtear.swing.panel.ConfigurationPanel;
+import me.nov.threadtear.swing.panel.ListPanel;
 
 public class Threadtear extends JFrame {
 	private static final long serialVersionUID = 1L;

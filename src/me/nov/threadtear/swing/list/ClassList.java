@@ -17,7 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.io.JarIO;
 import me.nov.threadtear.swing.Utils;
-import me.nov.threadtear.swing.component.dialog.JarAnalysis;
+import me.nov.threadtear.swing.dialog.JarAnalysis;
 import me.nov.threadtear.swing.handler.ILoader;
 import me.nov.threadtear.swing.handler.JarDropHandler;
 import me.nov.threadtear.swing.list.component.SortedTreeClassNode;

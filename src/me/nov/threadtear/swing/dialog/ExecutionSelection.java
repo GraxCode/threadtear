@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.component.dialog;
+package me.nov.threadtear.swing.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
