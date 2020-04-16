@@ -16,7 +16,7 @@ public class FixAccess extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> m.access = Access.removeAccess(m.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
 		classes.stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> f.access = Access.removeAccess(f.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
 		logger.info("Removed every synthetic, bridge and deprecated access");

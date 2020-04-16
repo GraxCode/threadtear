@@ -23,7 +23,7 @@ public class RestoreSourceFiles extends Execution {
 	private Map<String, String> map;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		logger.info("Generating mappings for source file attributes");
 		map = classes.stream().filter(c -> c.node.sourceFile != null && c.node.sourceFile.endsWith(".java")).collect(Collectors.toMap(c -> c.node.name, c -> c.node.sourceFile.substring(0, c.node.sourceFile.length() - 5)));
 		boolean duplicateFound = false;

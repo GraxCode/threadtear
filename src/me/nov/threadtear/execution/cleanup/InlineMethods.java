@@ -28,7 +28,7 @@ public class InlineMethods extends Execution {
 	public int inlines;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		HashMap<String, MethodNode> map = new HashMap<>();
 		classes.stream().map(c -> c.node).forEach(c -> {
 			c.methods.stream().filter(this::isUnnecessary).forEach(m -> map.put(c.name + "." + m.name + m.desc, m));

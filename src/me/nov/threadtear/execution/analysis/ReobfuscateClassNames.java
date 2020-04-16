@@ -28,7 +28,7 @@ public class ReobfuscateClassNames extends Execution {
 	private Map<String, String> map;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		Queue<String> words = generateWordQueue(classes.size());
 		logger.info("Generating random names");
 		map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> words.poll()));

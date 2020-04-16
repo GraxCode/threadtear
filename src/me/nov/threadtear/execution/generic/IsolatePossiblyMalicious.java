@@ -21,7 +21,7 @@ public class IsolatePossiblyMalicious extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		this.changed = 0;
 		logger.info("Isolating all " + classes.size() + " classes");
 		classes.stream().map(c -> c.node).forEach(c -> {

@@ -32,7 +32,7 @@ public abstract class Execution implements Opcodes {
 		return name;
 	}
 
-	public abstract boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr);
+	public abstract boolean execute(ArrayList<Clazz> classes, boolean verbose);
 
 	protected Clazz getClass(ArrayList<Clazz> classes, String name) {
 		return classes.stream().filter(c -> c.node.name.equals(name)).findFirst().orElse(null);

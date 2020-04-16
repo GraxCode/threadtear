@@ -58,7 +58,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		this.classes = classes;
 		this.verbose = verbose;
 		classes.stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);

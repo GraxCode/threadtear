@@ -43,7 +43,7 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		logger.info("Simulating stack for every method!");
 		classes.stream().map(c -> c.node).forEach(this::optimize);
 		return false;

@@ -69,7 +69,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErr) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		this.verbose = verbose;
 		this.classes = classes;
 		this.encrypted = 0;

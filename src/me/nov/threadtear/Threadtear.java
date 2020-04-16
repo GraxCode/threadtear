@@ -28,12 +28,12 @@ import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
 import me.nov.threadtear.swing.panel.ConfigurationPanel;
-import me.nov.threadtear.swing.panel.ListPanel;
+import me.nov.threadtear.swing.panel.TopPanel;
 
 public class Threadtear extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	public ListPanel listPanel;
+	public TopPanel listPanel;
 
 	public Threadtear() {
 		this.initBounds();
@@ -60,7 +60,7 @@ public class Threadtear extends JFrame {
 
 	private void initializeFrame() {
 		this.setLayout(new BorderLayout(16, 16));
-		this.add(listPanel = new ListPanel(), BorderLayout.CENTER);
+		this.add(listPanel = new TopPanel(), BorderLayout.CENTER);
 		this.add(new ConfigurationPanel(this), BorderLayout.SOUTH);
 	}
 
@@ -85,7 +85,7 @@ public class Threadtear extends JFrame {
 		charset.set(null, null);
 	}
 
-	public void run(boolean verbose, boolean frames, boolean ignoreErr) {
+	public void run(boolean verbose, boolean frames, boolean disableSecurity) {
 		ArrayList<Clazz> classes = listPanel.classList.classes;
 		ArrayList<Execution> executions = listPanel.executionList.getExecutions();
 		if (classes == null || classes.isEmpty()) {
@@ -96,6 +96,11 @@ public class Threadtear extends JFrame {
 			JOptionPane.showMessageDialog(this, "No executions are selected.");
 			return;
 		}
+		if (disableSecurity) {
+			if (JOptionPane.showConfirmDialog(this, "Are you sure you wan't to start without a security manager?\nMalicious code could be executed!", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
 		LogFrame logFrame = new LogFrame();
 		logFrame.setVisible(true);
 		logger.setUseParentHandlers(true);
@@ -105,8 +110,12 @@ public class Threadtear extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			new Thread(() -> {
 				logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
-				logger.info("Initializing security manager if something goes horribly wrong");
-				System.setSecurityManager(new VMSecurityManager());
+				if (disableSecurity) {
+					logger.info("Initializing security manager if something goes horribly wrong");
+					System.setSecurityManager(new VMSecurityManager());
+				} else {
+					logger.info("Starting without security manager!");
+				}
 				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
 				logger.info(ignoredClasses.size() + " classes will be ignored");
 				classes.removeIf(c -> !c.transform);
@@ -114,7 +123,7 @@ public class Threadtear extends JFrame {
 				executions.forEach(e -> {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());
-					boolean success = e.execute(classes, verbose, ignoreErr);
+					boolean success = e.execute(classes, verbose);
 					logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms) + " ms");
 				});
 				classes.addAll(ignoredClasses); // re-add ignored classes to export them

@@ -18,7 +18,7 @@ public class ConfigurationPanel extends JPanel {
 	private Threadtear main;
 	private JCheckBox verbose;
 	private JCheckBox computeFrames;
-	private JCheckBox ignoreErrors;
+	private JCheckBox disableSecurity;
 	private JCheckBox removeSignature;
 
 	public ConfigurationPanel(Threadtear main) {
@@ -33,8 +33,8 @@ public class ConfigurationPanel extends JPanel {
 	private JPanel createCheckboxes() {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 		panel.add(verbose = new JCheckBox("Verbose"));
-		panel.add(computeFrames = new JCheckBox("Compute Frames")); // TODO something else maybe
-		panel.add(ignoreErrors = new JCheckBox("Ignore Errors"));
+		panel.add(computeFrames = new JCheckBox("Compute Frames"));
+		panel.add(disableSecurity = new JCheckBox("Disable SecurityManager protection"));
 		panel.add(removeSignature = new JCheckBox("Remove Signature"));
 		return panel;
 	}
@@ -65,7 +65,7 @@ public class ConfigurationPanel extends JPanel {
 		panel.add(save);
 		JButton run = new JButton("Run");
 		run.addActionListener(l -> {
-			main.run(verbose.isSelected(), computeFrames.isSelected(), ignoreErrors.isSelected());
+			main.run(verbose.isSelected(), computeFrames.isSelected(), disableSecurity.isSelected());
 		});
 		panel.add(run);
 		return panel;

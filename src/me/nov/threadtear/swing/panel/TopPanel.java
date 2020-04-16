@@ -12,12 +12,12 @@ import javax.swing.Timer;
 import me.nov.threadtear.swing.list.ClassList;
 import me.nov.threadtear.swing.list.ExecutionList;
 
-public class ListPanel extends JPanel {
+public class TopPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public ClassList classList;
 	public ExecutionList executionList;
 
-	public ListPanel() {
+	public TopPanel() {
 		this.setLayout(new BorderLayout(16, 16));
 		this.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 		JPanel inner = new JPanel();
