@@ -61,7 +61,30 @@ public class Descriptor {
 			nextIsObject = false;
 		}
 		return sizes;
+	}
 
+	public static ArrayList<String> splitArguments(String desc) {
+		ArrayList<String> args = new ArrayList<>();
+		boolean inObject = false;
+		StringBuilder current = new StringBuilder();
+		for (char c : desc.toCharArray()) {
+			current.append(c);
+			if (inObject) {
+				if (c == ';') {
+					inObject = false;
+				} else {
+					continue;
+				}
+			} else if (c == 'L') {
+				inObject = true;
+				continue;
+			} else if (c == '[') {
+				continue;
+			}
+			args.add(current.toString());
+			current = new StringBuilder();
+		}
+		return args;
 	}
 
 	public static int getStackSize(char type) {

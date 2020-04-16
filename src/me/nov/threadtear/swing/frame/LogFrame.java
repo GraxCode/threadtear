@@ -31,7 +31,7 @@ public class LogFrame extends JFrame {
 	public LogFrame() {
 		setTitle("Execution log");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 600, 800);
+		setBounds(100, 100, 1000, 800);
 		setLayout(new BorderLayout());
 		this.setAlwaysOnTop(true);
 		area = new JTextArea();

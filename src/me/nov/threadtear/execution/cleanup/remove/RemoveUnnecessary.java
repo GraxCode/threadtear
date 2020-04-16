@@ -1,6 +1,7 @@
 package me.nov.threadtear.execution.cleanup.remove;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -53,7 +54,7 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 			m.instructions = simulateAndRewrite(cn, m, m.instructions);
 		});
 	}
-
+	//XXX this is currently used for debugging purposes
 	private InsnList simulateAndRewrite(ClassNode cn, MethodNode m, InsnList instructions) {
 		ConstantAnalyzer a = new ConstantAnalyzer(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
 		try {
@@ -66,7 +67,7 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 		Frame<ConstantValue>[] frames = a.getFrames();
 		InsnList rewrittenCode = new InsnList();
 		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-		Threadtear.logger.info(frames.length + " " + m.instructions.size());
+		Threadtear.logger.info(frames.length + " " + m.instructions.size() + "-----------" + m.name);
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			Frame<ConstantValue> frame = frames[i];
@@ -77,6 +78,8 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 					if (top.isKnown()) {
 						Threadtear.logger.info("val type: " + top.getValue().getClass());
 					}
+					Threadtear.logger.info("Full: " + frame);
+
 				} else {
 					Threadtear.logger.info(i + ": empty stack");
 				}
@@ -94,7 +97,10 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 	}
 
 	@Override
-	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc) {
+	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
+		if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
+			return ((String) values.get(0).getValue()).toCharArray();
+		}
 		return null;
 	}
 }

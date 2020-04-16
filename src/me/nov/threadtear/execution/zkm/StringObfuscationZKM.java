@@ -1,6 +1,7 @@
 package me.nov.threadtear.execution.zkm;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
@@ -13,13 +14,13 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.analysis.ConstantAnalyzer;
 import me.nov.threadtear.asm.analysis.ConstantTracker;
 import me.nov.threadtear.asm.analysis.ConstantValue;
 import me.nov.threadtear.asm.analysis.IReferenceHandler;
@@ -43,7 +44,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private static final String ENCHANCED_MODE_METHOD_DESC = "(II)Ljava/lang/String;";
 
 	public StringObfuscationZKM() {
-		super(ExecutionCategory.ZKM, "String obfuscation removal targeting ZKM 5 - 11", "Could work for older or newer versions too.<br>" + "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>", ExecutionTag.RUNNABLE,
+		super(ExecutionCategory.ZKM, "String obfuscation removal", "Tested on ZKM 5 - 11, could work on newer versions too.<br>" + "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>", ExecutionTag.RUNNABLE,
 				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
@@ -52,7 +53,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 * because ZKM often abuses stack and pushes ints or getfields not in the place
 	 * where they normally are!
 	 * 
-	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation
+	 * TODO: String encryption using DES Cipher (probably only in combination with
+	 * reflection obfuscation
 	 */
 
 	@Override
@@ -101,7 +103,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		// encrypted strings too
 
 		cn.methods.stream().filter(m -> !m.name.equals("clinitProxy")).forEach(m -> {
-			
+
 			decryptedField = null;
 			m.instructions.forEach(ain -> {
 				if (isLocalField(cn, ain) && ((FieldInsnNode) ain).desc.equals("[Ljava/lang/String;")) {
@@ -112,8 +114,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 					}
 				}
 			});
-			
-			ConstantAnalyzer a = new ConstantAnalyzer(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+
+			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
 			try {
 				a.analyze(cn.name, m);
 			} catch (AnalyzerException e) {
@@ -144,7 +146,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 				tcb.start = labels.get(tcb.start);
 				tcb.end = labels.get(tcb.end);
 				tcb.handler = labels.get(tcb.handler);
-				
 			});
 		});
 	}
@@ -212,8 +213,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 						return new AbstractInsnNode[] { ain };
 					} else {
 						decrypted++;
-						//i don't know why we need NOP, but it only works that way :confusion:
-						return new AbstractInsnNode[] { new LdcInsnNode(decrypedString), new InsnNode(NOP) }; 
+						// i don't know why we need NOP, but it only works that way :confusion:
+						return new AbstractInsnNode[] { new LdcInsnNode(decrypedString), new InsnNode(NOP) };
 					}
 				}
 			} else if (ain.getOpcode() == AALOAD) {
@@ -235,6 +236,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 				}
 			}
 		} catch (Throwable t) {
+			if (verbose) {
+				t.printStackTrace();
+			}
 			logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
 		}
 		return new AbstractInsnNode[] { ain };
@@ -249,7 +253,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	}
 
 	@Override
-	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc) {
+	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
 		return null;
 	}
 

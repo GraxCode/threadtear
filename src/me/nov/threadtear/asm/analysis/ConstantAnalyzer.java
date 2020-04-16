@@ -24,6 +24,9 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 /**
  * Analyzer that uses known stack values to handle known jumps without losing
  * stack values. Only usable with ConstantValue.
+ * 
+ * FIXME sometimes predicting jumps that shouldn't be predicted (sample: org.benf.cfr.reader.bytecode.analysis.parse.expression.AbstractExpression.class:dumpWithOuterPrecedence)
+ *
  */
 public class ConstantAnalyzer implements Opcodes {
 

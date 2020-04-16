@@ -16,6 +16,8 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
+import me.nov.threadtear.util.Casts;
+
 /**
  * @author Holger https://stackoverflow.com/users/2711488/holger (Modified
  *         version)
@@ -219,7 +221,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 			case DALOAD:
 			case LALOAD:
 			case AALOAD: // this won't happen for now but let's include it
-				return new ConstantValue(v, Array.get(a.value, b.getInteger()));
+				return new ConstantValue(v, Casts.toNumber(Array.get(a.value, b.getInteger())));
 			}
 		}
 		return v == null ? null : new ConstantValue(v, getBinaryValue(insn.getOpcode(), a.value, b.value));
@@ -364,9 +366,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 		case INVOKESTATIC:
 		case INVOKESPECIAL:
 		case INVOKEINTERFACE:
-			MethodInsnNode fin = (MethodInsnNode) insn;
-			// v is null when method returns void, no reference handling needed
-			return v == null ? null : new ConstantValue(v, referenceHandler.getMethodReturnOrNull(v, fin.owner, fin.name, fin.desc));
+			MethodInsnNode min = (MethodInsnNode) insn;
+			return v == null ? null : new ConstantValue(v, referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values));
 
 		// TODO how to handle invokedynamic here?
 		default:
@@ -376,7 +377,6 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 
 	@Override
 	public void returnOperation(AbstractInsnNode insn, ConstantValue value, ConstantValue expected) {
-
 	}
 
 	@Override
@@ -384,6 +384,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 		if (a.equals(b))
 			return a;
 		BasicValue t = basic.merge(a.getType(), b.getType());
-		return t.equals(a.getType()) && (a.value == null && a != NULL || a.value != null && a.value.equals(b.value)) ? a : t.equals(b.getType()) && b.value == null && b != NULL ? b : new ConstantValue(t, null);
+
+		return new ConstantValue(t, a.value);
+//		return t.equals(a.getType()) && (a.value == null && a != NULL || a.value != null && a.value.equals(b.value)) ? a : t.equals(b.getType()) && b.value == null && b != NULL ? b : new ConstantValue(t, null);
 	}
 }
