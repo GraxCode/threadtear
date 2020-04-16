@@ -23,6 +23,7 @@ import javax.swing.WindowConstants;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.CustomOutputStream;
+import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
@@ -104,6 +105,8 @@ public class Threadtear extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			new Thread(() -> {
 				logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
+				logger.info("Initializing security manager if something goes horribly wrong");
+				System.setSecurityManager(new VMSecurityManager());
 				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
 				logger.info(ignoredClasses.size() + " classes will be ignored");
 				classes.removeIf(c -> !c.transform);
@@ -120,6 +123,7 @@ public class Threadtear extends JFrame {
 				} catch (InterruptedException e1) {
 				}
 				logger.info("Successful finish!");
+				System.setSecurityManager(null);
 				listPanel.classList.loadTree(classes);
 			}).start();
 		});
