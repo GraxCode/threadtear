@@ -1,9 +1,10 @@
 # Threadtear
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account. 
-![Screenshot 1](https://i.imgur.com/5ihn7qy.png)
-![Screenshot 2](https://i.imgur.com/G52XocP.png)
-![Screenshot 3](https://i.imgur.com/akzWEtC.png)
+![Screenshot 1](https://i.imgur.com/s6k6NYN.png)
+![Screenshot 2](https://i.imgur.com/OaxTIKZ.png)
+![Screenshot 3](https://i.imgur.com/xKeUZsP.png)
+![Screenshot 4](https://i.imgur.com/9NTf0mf.png)
 ## Executions 
 
 An "execution" is a task that is executed and modifies all loaded class files. 
@@ -30,7 +31,7 @@ public class MyExecution extends Execution {
 	* @return true if success, false if failure
 	*/
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		classes.stream().map(c -> c.node).forEach(c -> {
 			//transform the classes here using the tree-API of ASM
 		});
@@ -45,7 +46,7 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 		super(ExecutionCategory.GENERIC, "My execution", "Loads ClassNodes at runtime");
 	}
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose, boolean ignoreErrors) {
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		classes.stream().map(c -> c.node).forEach(c -> {
 			VM vm = VM.constructVM(this);
 			//transform bytecode to java.lang.Class
