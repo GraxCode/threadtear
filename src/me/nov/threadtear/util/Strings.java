@@ -14,6 +14,14 @@ public class Strings {
 	public static boolean isHighSDev(String cst) {
 		if (cst.length() < 2)
 			return false;
+		double sdev = calcSdev(cst);
+		if (sdev > 30) {
+			return true;
+		}
+		return false;
+	}
+
+	public static double calcSdev(String cst) {
 		double sum = 0;
 		char[] ccst = cst.toCharArray();
 		for (char c : ccst)
@@ -22,10 +30,6 @@ public class Strings {
 		double sdev = 0.0;
 		for (int i = 1; i < ccst.length; i++)
 			sdev += (ccst[i] - mean) * (ccst[i] - mean);
-		sdev = Math.sqrt(sdev / (ccst.length - 1.0));
-		if (sdev > 30) {
-			return true;
-		}
-		return false;
+		return Math.sqrt(sdev / (ccst.length - 1.0));
 	}
 }

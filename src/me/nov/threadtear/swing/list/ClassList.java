@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.io.JarIO;
 import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.component.dialog.JarAnalysis;
 import me.nov.threadtear.swing.handler.ILoader;
 import me.nov.threadtear.swing.handler.JarDropHandler;
 import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
@@ -41,7 +42,11 @@ public class ClassList extends JPanel implements ILoader {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
 		ignored = new JLabel("", SwingConstants.CENTER);
 		panel.add(ignored);
-		panel.add(new JPanel());
+		JButton analysis = new JButton("Analysis");
+		analysis.addActionListener(l -> {
+			new JarAnalysis(classes).setVisible(true);
+		});
+		panel.add(analysis);
 		JButton ignore = new JButton("Ignore");
 		ignore.addActionListener(l -> {
 			SortedTreeClassNode node = (SortedTreeClassNode) tree.getLastSelectedPathComponent();

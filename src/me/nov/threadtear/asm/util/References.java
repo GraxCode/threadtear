@@ -14,6 +14,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
+import me.nov.threadtear.util.Descriptor;
+
 public class References {
 
 	public static int remapInstruction(Map<String, String> map, AbstractInsnNode ain) {

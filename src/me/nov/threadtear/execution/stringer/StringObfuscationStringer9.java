@@ -14,7 +14,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Descriptor;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.asm.vm.IVMReferenceHandler;
 import me.nov.threadtear.asm.vm.Sandbox;
@@ -22,6 +21,7 @@ import me.nov.threadtear.asm.vm.VM;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.Descriptor;
 import me.nov.threadtear.util.Strings;
 
 public class StringObfuscationStringer9 extends Execution implements IVMReferenceHandler {

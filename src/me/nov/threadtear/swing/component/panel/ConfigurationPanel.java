@@ -41,8 +41,12 @@ public class ConfigurationPanel extends JPanel {
 
 	private JPanel createBottomButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 16, 16));
-		panel.add(new JButton("Load Config"));
-		panel.add(new JButton("Save Config"));
+		JButton loadCfg = new JButton("Load Config");
+		loadCfg.setEnabled(false);
+		panel.add(loadCfg);
+		JButton saveCfg = new JButton("Save Config");
+		saveCfg.setEnabled(false);
+		panel.add(saveCfg);
 		JButton save = new JButton("Save Jar");
 		save.addActionListener(l -> {
 			File inputFile = main.listPanel.classList.inputFile;

@@ -22,6 +22,8 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.Frame;
 
+import me.nov.threadtear.util.Descriptor;
+
 public class Instructions implements Opcodes {
 	public static InsnList copy(InsnList insnList) {
 		InsnList copy = new InsnList();
