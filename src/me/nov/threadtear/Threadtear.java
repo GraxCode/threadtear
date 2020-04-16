@@ -87,6 +87,14 @@ public class Threadtear extends JFrame {
 	public void run(boolean verbose, boolean frames, boolean ignoreErr) {
 		ArrayList<Clazz> classes = listPanel.classList.classes;
 		ArrayList<Execution> executions = listPanel.executionList.getExecutions();
+		if (classes == null || classes.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
+			return;
+		}
+		if (executions.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No executions are selected.");
+			return;
+		}
 		LogFrame logFrame = new LogFrame();
 		logFrame.setVisible(true);
 		logger.setUseParentHandlers(true);
