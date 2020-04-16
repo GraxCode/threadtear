@@ -83,7 +83,7 @@ public class StringObfuscationStringer3 extends Execution implements IVMReferenc
 							} else {
 								logger.warning("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
 							}
-						} catch (Exception e) {
+						} catch (Throwable e) {
 							e.printStackTrace();
 							logger.warning("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
 						}
