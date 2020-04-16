@@ -83,7 +83,7 @@ public class JarAnalysis extends JDialog implements Opcodes {
 		print("A higher value indicates reference obfuscation.\n");
 		print("----------------------------------------------\n");
 
-		print("Normally rare stack operations per method -> ");
+		print("Rare stack operations averagely per method -> ");
 		double stackop = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.countOp(m.instructions, POP2, DUP2, DUP_X1, DUP_X2, DUP2_X1, DUP2_X2, SWAP)).average().orElse(Double.NaN);
 		print(Math.round(stackop * 100) / 100.0 + "\n");
 		print("Normally about 0.0 - 0.1.\n");
@@ -112,7 +112,7 @@ public class JarAnalysis extends JDialog implements Opcodes {
 		double nops = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.countOp(m.instructions, NOP)).average().orElse(Double.NaN);
 		print(Math.round(nops * 100) / 100.0 + "\n");
 		print("Normally about 0.0 - 0.1.\n");
-		print("A higher value indicates unoptimization.\n");
+		print("A higher value indicates unoptimized code.\n");
 		print("----------------------------------------------\n");
 
 	}
