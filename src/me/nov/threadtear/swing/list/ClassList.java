@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -122,11 +123,20 @@ public class ClassList extends JPanel implements ILoader {
 	}
 
 	public void loadTree(ArrayList<Clazz> classes) {
-		model = new DefaultTreeModel(new SortedTreeClassNode(""));
+		SortedTreeClassNode root = new SortedTreeClassNode("");
+		model = new DefaultTreeModel(root);
 		classes.forEach(c -> {
 			String[] packages = c.node.name.split("/");
 			addToTree((SortedTreeClassNode) model.getRoot(), c, packages, 0);
 		});
+		@SuppressWarnings("unchecked")
+		Enumeration<SortedTreeClassNode> e = root.depthFirstEnumeration();
+		while (e.hasMoreElements()) {
+			SortedTreeClassNode node = e.nextElement();
+			if (!node.isLeaf()) {
+				node.sort();
+			}
+		}
 		tree.setModel(model);
 	}
 

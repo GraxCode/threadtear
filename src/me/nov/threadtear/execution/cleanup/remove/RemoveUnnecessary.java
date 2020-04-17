@@ -67,10 +67,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 			logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 			return m.instructions;
 		}
-		// FIXME so this shit here is working but only when no jumps / exceptions are in
-		// the code. probably has something to do with .merge in the tracker. don't know
-		// how to handle merges with known values correctly.
-		// FIXME some references get duped
+		// TODO rewrite this whole thing without analyzer
 		Frame<CodeReferenceValue>[] frames = a.getFrames();
 		InsnList rewrittenCode = new InsnList();
 		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
