@@ -13,7 +13,6 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantAnalyzer;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
@@ -50,27 +49,27 @@ public class Debugging extends Execution implements IConstantReferenceHandler {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {
 			e.printStackTrace();
-			Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+			logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 			return m.instructions;
 		}
 		Frame<ConstantValue>[] frames = a.getFrames();
 		InsnList rewrittenCode = new InsnList();
 		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-		Threadtear.logger.info(frames.length + " " + m.instructions.size() + "-----------" + m.name);
+		logger.info(frames.length + " " + m.instructions.size() + "-----------" + m.name);
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			Frame<ConstantValue> frame = frames[i];
 			if (frame != null) {
 				if (frame.getStackSize() > 0) {
 					ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-					Threadtear.logger.info(i + ": " + top + " op: " + ain.getOpcode());
+					logger.info(i + ": " + top + " op: " + ain.getOpcode());
 					if (top.isKnown()) {
-						Threadtear.logger.info("val type: " + top.getValue().getClass());
+						logger.info("val type: " + top.getValue().getClass());
 					}
-					Threadtear.logger.info("Full: " + frame);
+					logger.info("Full: " + frame);
 
 				} else {
-					Threadtear.logger.info(i + ": empty stack");
+					logger.info(i + ": empty stack");
 				}
 			}
 			rewrittenCode.add(ain.clone(labels));

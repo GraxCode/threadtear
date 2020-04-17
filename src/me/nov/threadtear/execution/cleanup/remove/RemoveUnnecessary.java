@@ -14,10 +14,9 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.analysis.full.CodeTracker;
 import me.nov.threadtear.analysis.full.ICodeReferenceHandler;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
-import me.nov.threadtear.analysis.full.CodeTracker;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
@@ -56,14 +55,13 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		});
 	}
 
-	// XXX this is currently used for debugging purposes
 	private InsnList simulateAndRewrite(ClassNode cn, MethodNode m) {
 		Analyzer<CodeReferenceValue> a = new Analyzer<CodeReferenceValue>(new CodeTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {
 			e.printStackTrace();
-			Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+			logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 			return m.instructions;
 		}
 

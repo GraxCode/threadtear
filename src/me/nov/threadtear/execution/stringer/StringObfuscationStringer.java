@@ -21,7 +21,6 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
@@ -96,7 +95,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 				if (verbose) {
 					e.printStackTrace();
 				}
-				Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 				return;
 			}
 			Frame<ConstantValue>[] frames = a.getFrames();
@@ -157,13 +156,13 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 		ArrayList<String> args = Descriptor.splitArguments(min.desc.substring(1, min.desc.lastIndexOf(')')));
 		if (frame == null) {
 			if (verbose) {
-				Threadtear.logger.severe("Unvisited frame in " + cn.name + "." + m.name + ": " + frame);
+				logger.severe("Unvisited frame in " + cn.name + "." + m.name + ": " + frame);
 			}
 			return null;
 		}
 		if (args.size() > frame.getStackSize()) {
 			if (verbose) {
-				Threadtear.logger.severe("Stack has not enough values in " + cn.name + "." + m.name + ": " + frame);
+				logger.severe("Stack has not enough values in " + cn.name + "." + m.name + ": " + frame);
 			}
 			return null;
 		}
@@ -172,7 +171,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 			ConstantValue stackValue = frame.getStack(frame.getStackSize() - args.size() + i);
 			if (!stackValue.isKnown()) {
 				if (verbose) {
-					Threadtear.logger.severe("Stack index " + i + " is unknown in " + cn.name + "." + m.name + ": field type: " + proxyField.getType().getName() + ", stack type: " + stackValue.getType());
+					logger.severe("Stack index " + i + " is unknown in " + cn.name + "." + m.name + ": field type: " + proxyField.getType().getName() + ", stack type: " + stackValue.getType());
 				}
 				return null;
 			}
@@ -244,7 +243,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 		if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
 			if (!values.get(0).isKnown()) {
 				if (verbose) {
-					Threadtear.logger.severe("String that should be converted to char[] is unknown");
+					logger.severe("String that should be converted to char[] is unknown");
 				}
 				return null;
 			}

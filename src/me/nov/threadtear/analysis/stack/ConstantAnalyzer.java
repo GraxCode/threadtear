@@ -25,7 +25,8 @@ import org.objectweb.asm.tree.analysis.Interpreter;
  * Analyzer that uses known stack values to handle known jumps without losing
  * stack values. Only usable with ConstantValue.
  * 
- * FIXME sometimes predicting jumps that shouldn't be predicted (sample: org.benf.cfr.reader.bytecode.analysis.parse.expression.AbstractExpression.class:dumpWithOuterPrecedence)
+ * FIXME sometimes predicting jumps that shouldn't be predicted (sample:
+ * org.benf.cfr.reader.bytecode.analysis.parse.expression.AbstractExpression.class:dumpWithOuterPrecedence)
  *
  */
 public class ConstantAnalyzer implements Opcodes {
@@ -267,7 +268,7 @@ public class ConstantAnalyzer implements Opcodes {
 		if (frame.getStackSize() == 0)
 			return 0;
 		ConstantValue up = frame.getStack(frame.getStackSize() - 1);
-		if(!up.isKnown())
+		if (!up.isKnown())
 			return 0;
 		Object upperVal = up.getValue();
 		switch (op) {
@@ -290,7 +291,7 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 		if (frame.getStackSize() >= 2) {
 			ConstantValue low = (ConstantValue) frame.getStack(frame.getStackSize() - 2);
-			if(!low.isKnown())
+			if (!low.isKnown())
 				return 0;
 			Object lowerVal = low.getValue();
 			switch (op) {

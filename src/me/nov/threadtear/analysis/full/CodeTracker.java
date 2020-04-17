@@ -18,7 +18,6 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 import me.nov.threadtear.analysis.full.value.values.BinaryOpValue;
@@ -263,9 +262,6 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		if (a.equals(b))
 			return a;
 		BasicValue t = basic.merge(a.getType(), b.getType());
-		Threadtear.logger.info("merging " + a + " " + b);
-		Threadtear.logger.info("values: " + a.getStackValueOrNull() + " " + b.getStackValueOrNull());
-
 		// TODO make this work
 		a.setType(t);
 		return a;

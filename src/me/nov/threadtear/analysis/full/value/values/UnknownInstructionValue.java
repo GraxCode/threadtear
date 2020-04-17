@@ -43,7 +43,7 @@ public class UnknownInstructionValue extends CodeReferenceValue {
 	@Override
 	public InsnList toInstructions() {
 		InsnList list = new InsnList();
-		if(ain.getOpcode() == NOP) {
+		if (ain.getOpcode() == NOP) {
 //			throw new IllegalArgumentException(type.toString());
 		}
 		list.add(ain);

@@ -161,7 +161,7 @@ public class Instructions implements Opcodes {
 				if (p.test(min.owner)) {
 					String inner = min.desc.substring(1, min.desc.lastIndexOf(')'));
 					String outer = min.desc.substring(min.desc.lastIndexOf(')') + 1);
-					//TODO use ASM Type class instead
+					// TODO use ASM Type class instead
 					for (int size : Descriptor.calculateAmountArguments(inner)) {
 						copy.insertBefore(min, new InsnNode(size > 1 ? POP2 : POP));
 						i += 1;

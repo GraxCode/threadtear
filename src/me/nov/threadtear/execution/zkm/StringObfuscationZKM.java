@@ -19,7 +19,6 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
@@ -90,7 +89,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		try {
 			invokeVMAndReplace(cn);
 		} catch (Throwable e) {
-			Threadtear.logger.severe("Failed to run proxy in " + cn.name + ":" + e.getMessage());
+			logger.severe("Failed to run proxy in " + cn.name + ":" + e.getMessage());
 		}
 		cn.methods.remove(callMethod);
 		cn.methods.add(clinit);
@@ -126,7 +125,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 			try {
 				a.analyze(cn.name, m);
 			} catch (AnalyzerException e) {
-				Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 				return;
 			}
 			Frame<ConstantValue>[] frames = a.getFrames();
