@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.vm;
+package me.nov.threadtear.vm;
 
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;

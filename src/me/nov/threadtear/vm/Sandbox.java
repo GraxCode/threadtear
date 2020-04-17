@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.vm;
+package me.nov.threadtear.vm;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;

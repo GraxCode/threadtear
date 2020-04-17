@@ -26,13 +26,13 @@ import me.nov.threadtear.asm.analysis.ConstantValue;
 import me.nov.threadtear.asm.analysis.IReferenceHandler;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
-import me.nov.threadtear.asm.vm.IVMReferenceHandler;
-import me.nov.threadtear.asm.vm.Sandbox;
-import me.nov.threadtear.asm.vm.VM;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.Sandbox;
+import me.nov.threadtear.vm.VM;
 
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IReferenceHandler {
 
