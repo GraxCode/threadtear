@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.stack;
+package me.nov.threadtear.analysis.full;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,18 +22,20 @@ import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.Subroutine;
+import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.stack.ConstantTracker;
 
 /**
  * Analyzer that uses known stack values to handle known jumps without losing
- * stack values. Only usable with ConstantValue.
+ * stack values. Only usable with CodeReferenceValue.
  * 
  * FIXME sometimes predicting jumps that shouldn't be predicted (sample:
  * org.benf.cfr.reader.bytecode.analysis.parse.expression.AbstractExpression.class:dumpWithOuterPrecedence)
  *
  */
-public class ConstantAnalyzer implements Opcodes {
+public class CodeAnalyzer implements Opcodes {
 
-	private final Interpreter<ConstantValue> interpreter;
+	private final Interpreter<CodeReferenceValue> interpreter;
 
 	private InsnList insnList;
 
@@ -41,7 +43,7 @@ public class ConstantAnalyzer implements Opcodes {
 
 	private List<TryCatchBlockNode>[] handlers;
 
-	private Frame<ConstantValue>[] frames;
+	private Frame<CodeReferenceValue>[] frames;
 
 	private Subroutine[] subroutines;
 
@@ -51,20 +53,20 @@ public class ConstantAnalyzer implements Opcodes {
 
 	private int numInstructionsToProcess;
 
-	public ConstantAnalyzer(final Interpreter<ConstantValue> interpreter) {
+	public CodeAnalyzer(final Interpreter<CodeReferenceValue> interpreter) {
 		this.interpreter = interpreter;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Frame<ConstantValue>[] analyze(final String owner, final MethodNode method) throws AnalyzerException {
+	public Frame<CodeReferenceValue>[] analyze(final String owner, final MethodNode method) throws AnalyzerException {
 		if ((method.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-			frames = (Frame<ConstantValue>[]) new Frame<?>[0];
+			frames = (Frame<CodeReferenceValue>[]) new Frame<?>[0];
 			return frames;
 		}
 		insnList = method.instructions;
 		insnListSize = insnList.size();
 		handlers = (List<TryCatchBlockNode>[]) new List<?>[insnListSize];
-		frames = (Frame<ConstantValue>[]) new Frame<?>[insnListSize];
+		frames = (Frame<CodeReferenceValue>[]) new Frame<?>[insnListSize];
 		subroutines = new Subroutine[insnListSize];
 		inInstructionsToProcess = new boolean[insnListSize];
 		instructionsToProcess = new int[insnListSize];
@@ -118,7 +120,7 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 
 		// Initializes the data structures for the control flow analysis.
-		Frame<ConstantValue> currentFrame = computeInitialFrame(owner, method);
+		Frame<CodeReferenceValue> currentFrame = computeInitialFrame(owner, method);
 		merge(0, currentFrame, null);
 		init(owner, method);
 
@@ -126,7 +128,7 @@ public class ConstantAnalyzer implements Opcodes {
 		while (numInstructionsToProcess > 0) {
 			// Get and remove one instruction from the list of instructions to process.
 			int insnIndex = instructionsToProcess[--numInstructionsToProcess];
-			Frame<ConstantValue> oldFrame = frames[insnIndex];
+			Frame<CodeReferenceValue> oldFrame = frames[insnIndex];
 			Subroutine subroutine = subroutines[insnIndex];
 			inInstructionsToProcess[insnIndex] = false;
 
@@ -241,7 +243,7 @@ public class ConstantAnalyzer implements Opcodes {
 							catchType = Type.getObjectType(tryCatchBlock.type);
 						}
 						if (newControlFlowExceptionEdge(insnIndex, tryCatchBlock)) {
-							Frame<ConstantValue> handler = newFrame(oldFrame);
+							Frame<CodeReferenceValue> handler = newFrame(oldFrame);
 							handler.clearStack();
 							handler.push(interpreter.newExceptionValue(tryCatchBlock, handler, catchType));
 							merge(insnList.indexOf(tryCatchBlock.handler), handler, subroutine);
@@ -266,13 +268,13 @@ public class ConstantAnalyzer implements Opcodes {
 	 * @param op
 	 * @return
 	 */
-	private int predictJump(Frame<ConstantValue> frame, int op) {
+	private int predictJump(Frame<CodeReferenceValue> frame, int op) {
 		if (frame.getStackSize() == 0)
 			return 0;
-		ConstantValue up = frame.getStack(frame.getStackSize() - 1);
-		if (!up.isKnown())
+		CodeReferenceValue up = frame.getStack(frame.getStackSize() - 1);
+		if (!up.isKnownValue())
 			return 0;
-		Object upperVal = up.getValue();
+		Object upperVal = up.getStackValueOrNull();
 		switch (op) {
 		case IFEQ:
 			return ((Integer) upperVal) == 0 ? 1 : -1;
@@ -292,10 +294,10 @@ public class ConstantAnalyzer implements Opcodes {
 			return ((Integer) upperVal) <= 0 ? 1 : -1;
 		}
 		if (frame.getStackSize() >= 2) {
-			ConstantValue low = (ConstantValue) frame.getStack(frame.getStackSize() - 2);
-			if (!low.isKnown())
+			CodeReferenceValue low = (CodeReferenceValue) frame.getStack(frame.getStackSize() - 2);
+			if (!low.isKnownValue())
 				return 0;
-			Object lowerVal = low.getValue();
+			Object lowerVal = low.getStackValueOrNull();
 			switch (op) {
 			case IF_ICMPEQ:
 				return ((Integer) upperVal) == ((Integer) lowerVal) ? 1 : -1;
@@ -389,8 +391,8 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 	}
 
-	private Frame<ConstantValue> computeInitialFrame(final String owner, final MethodNode method) {
-		Frame<ConstantValue> frame = newFrame(method.maxLocals, method.maxStack);
+	private Frame<CodeReferenceValue> computeInitialFrame(final String owner, final MethodNode method) {
+		Frame<CodeReferenceValue> frame = newFrame(method.maxLocals, method.maxStack);
 		int currentLocal = 0;
 		boolean isInstanceMethod = (method.access & ACC_STATIC) == 0;
 		if (isInstanceMethod) {
@@ -415,7 +417,7 @@ public class ConstantAnalyzer implements Opcodes {
 		return frame;
 	}
 
-	public Frame<ConstantValue>[] getFrames() {
+	public Frame<CodeReferenceValue>[] getFrames() {
 		return frames;
 	}
 
@@ -427,11 +429,11 @@ public class ConstantAnalyzer implements Opcodes {
 		// Nothing to do.
 	}
 
-	protected Frame<ConstantValue> newFrame(final int numLocals, final int numStack) {
+	protected Frame<CodeReferenceValue> newFrame(final int numLocals, final int numStack) {
 		return new Frame<>(numLocals, numStack);
 	}
 
-	protected Frame<ConstantValue> newFrame(final Frame<ConstantValue> frame) {
+	protected Frame<CodeReferenceValue> newFrame(final Frame<CodeReferenceValue> frame) {
 		return new Frame<>(frame);
 	}
 
@@ -449,9 +451,9 @@ public class ConstantAnalyzer implements Opcodes {
 
 	// -----------------------------------------------------------------------------------------------
 
-	private void merge(final int insnIndex, final Frame<ConstantValue> frame, final Subroutine subroutine) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<CodeReferenceValue> frame, final Subroutine subroutine) throws AnalyzerException {
 		boolean changed;
-		Frame<ConstantValue> oldFrame = frames[insnIndex];
+		Frame<CodeReferenceValue> oldFrame = frames[insnIndex];
 		if (oldFrame == null) {
 			frames[insnIndex] = newFrame(frame);
 			changed = true;
@@ -475,11 +477,11 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 	}
 
-	private void merge(final int insnIndex, final Frame<ConstantValue> frameBeforeJsr, final Frame<ConstantValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<CodeReferenceValue> frameBeforeJsr, final Frame<CodeReferenceValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
 		frameAfterRet.merge(frameBeforeJsr, localsUsed);
 
 		boolean changed;
-		Frame<ConstantValue> oldFrame = frames[insnIndex];
+		Frame<CodeReferenceValue> oldFrame = frames[insnIndex];
 		if (oldFrame == null) {
 			frames[insnIndex] = newFrame(frameAfterRet);
 			changed = true;

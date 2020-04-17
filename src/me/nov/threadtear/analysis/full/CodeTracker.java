@@ -21,6 +21,7 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 import me.nov.threadtear.analysis.full.value.values.BinaryOpValue;
+import me.nov.threadtear.analysis.full.value.values.MemberAccessValue;
 import me.nov.threadtear.analysis.full.value.values.NumberValue;
 import me.nov.threadtear.analysis.full.value.values.StringValue;
 import me.nov.threadtear.analysis.full.value.values.UnaryOpValue;
@@ -103,7 +104,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 			}
 		case GETSTATIC:
 			FieldInsnNode fin = (FieldInsnNode) insn;
-			return fieldReference(v, fin);
+			return fieldReference(v, null, fin);
 		default:
 			return new UnknownInstructionValue(v, insn);
 		}
@@ -156,7 +157,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		switch (insn.getOpcode()) {
 		case GETFIELD:
 			FieldInsnNode fin = (FieldInsnNode) insn;
-			return fieldReference(v, fin);
+			return fieldReference(v, value, fin);
 		case INEG:
 		case FNEG:
 		case LNEG:
@@ -243,11 +244,13 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		BasicValue v = basic.naryOperation(insn, null); // values unused by BasicInterpreter
 		switch (insn.getOpcode()) {
 		case INVOKEVIRTUAL:
-		case INVOKESTATIC:
 		case INVOKESPECIAL:
 		case INVOKEINTERFACE:
 			MethodInsnNode min = (MethodInsnNode) insn;
-			return v == null ? null : methodReference(v, min, values);
+			return v == null ? null : methodReference(v, values.remove(0), min, values);
+		case INVOKESTATIC:
+			MethodInsnNode staticMin = (MethodInsnNode) insn;
+			return v == null ? null : methodReference(v, null, staticMin, values);
 		default:
 			return v == null ? null : new UnknownInstructionValue(v, insn);
 		}
@@ -262,16 +265,12 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		if (a.equals(b))
 			return a;
 		BasicValue t = basic.merge(a.getType(), b.getType());
-		// TODO make this work
+		// FIXME fix try catch block merges
 		a.setType(t);
 		return a;
-//		return t.equals(a.getType()) ? a : t.equals(b.getType()) ? b : a;
-		// TODO check if this works with null
-//		return t.equals(a.getType()) && (a.value == null && a != NULL || a.value != null && a.value.equals(b.value)) ? a : t.equals(b.getType()) && b.value == null && b != NULL ? b : new ConstantValue(t, null);
 	}
 
-//
-	private CodeReferenceValue fieldReference(BasicValue v, FieldInsnNode fin) {
+	private CodeReferenceValue fieldReference(BasicValue v, CodeReferenceValue reference, FieldInsnNode fin) {
 		Object o = referenceHandler.getFieldValueOrNull(v, fin.owner, fin.name, fin.desc);
 		if (o != null) {
 			if (o instanceof String) {
@@ -280,11 +279,10 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 				return new NumberValue(v, o);
 			}
 		}
-		return new UnknownInstructionValue(v, fin);
-//		return new ReferenceValue(v, fin.getOpcode(), fin.owner, fin.name, fin.desc);
+		return new MemberAccessValue(v, reference, fin.getOpcode(), fin.owner, fin.name, fin.desc);
 	}
 
-	private CodeReferenceValue methodReference(BasicValue v, MethodInsnNode min, List<? extends CodeReferenceValue> values) {
+	private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min, List<? extends CodeReferenceValue> values) {
 		Object o = referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values);
 		if (o != null) {
 			if (o instanceof String) {
@@ -293,7 +291,6 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 				return new NumberValue(v, o);
 			}
 		}
-		return new UnknownInstructionValue(v, min);
-//		return new ReferenceValue(v, min.getOpcode(), min.owner, min.name, min.desc);
+		return new MemberAccessValue(v, reference, min.getOpcode(), min.owner, min.name, min.desc);
 	}
 }

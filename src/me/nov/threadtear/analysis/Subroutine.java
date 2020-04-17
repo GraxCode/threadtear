@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.stack;
+package me.nov.threadtear.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,20 +10,20 @@ import org.objectweb.asm.tree.LabelNode;
  *
  * @author Eric Bruneton
  */
-final class Subroutine {
+public final class Subroutine {
 
 	/** The start of this subroutine. */
-	final LabelNode start;
+	public final LabelNode start;
 
 	/**
 	 * The local variables that are read or written by this subroutine. The i-th
 	 * element is true if and only if the local variable at index i is read or
 	 * written by this subroutine.
 	 */
-	final boolean[] localsUsed;
+	public final boolean[] localsUsed;
 
 	/** The JSR instructions that jump to this subroutine. */
-	final List<JumpInsnNode> callers;
+	public final List<JumpInsnNode> callers;
 
 	/**
 	 * Constructs a new {@link Subroutine}.
@@ -33,7 +33,7 @@ final class Subroutine {
 	 *                  subroutine.
 	 * @param caller    a JSR instruction that jump to this subroutine.
 	 */
-	Subroutine(final LabelNode start, final int maxLocals, final JumpInsnNode caller) {
+	public Subroutine(final LabelNode start, final int maxLocals, final JumpInsnNode caller) {
 		this.start = start;
 		this.localsUsed = new boolean[maxLocals];
 		this.callers = new ArrayList<>();
@@ -45,7 +45,7 @@ final class Subroutine {
 	 *
 	 * @param subroutine the subroutine to copy.
 	 */
-	Subroutine(final Subroutine subroutine) {
+	public Subroutine(final Subroutine subroutine) {
 		this.start = subroutine.start;
 		this.localsUsed = subroutine.localsUsed.clone();
 		this.callers = new ArrayList<>(subroutine.callers);

@@ -9,11 +9,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
+import me.nov.threadtear.analysis.full.CodeAnalyzer;
 import me.nov.threadtear.analysis.full.CodeTracker;
 import me.nov.threadtear.analysis.full.ICodeReferenceHandler;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
@@ -56,7 +56,10 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 	}
 
 	private InsnList simulateAndRewrite(ClassNode cn, MethodNode m) {
-		Analyzer<CodeReferenceValue> a = new Analyzer<CodeReferenceValue>(new CodeTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
+		m.tryCatchBlocks.clear();
+		if (m.localVariables != null)
+			m.localVariables.clear();
+		CodeAnalyzer a = new CodeAnalyzer(new CodeTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {
@@ -64,10 +67,6 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 			logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 			return m.instructions;
 		}
-
-		m.tryCatchBlocks.clear();
-		if (m.localVariables != null)
-			m.localVariables.clear();
 		// FIXME so this shit here is working but only when no jumps / exceptions are in
 		// the code. probably has something to do with .merge in the tracker. don't know
 		// how to handle merges with known values correctly.
@@ -77,7 +76,9 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			Frame<CodeReferenceValue> frame = frames[i];
-			if (ain.getType() == AbstractInsnNode.LABEL) {
+			if (frame == null) {
+				rewrittenCode.add(ain.clone(labels));
+			} else if (ain.getType() == AbstractInsnNode.LABEL) {
 				rewrittenCode.add(ain.clone(labels));
 			} else if (ain.getType() == AbstractInsnNode.METHOD_INSN || ain.getType() == AbstractInsnNode.JUMP_INSN || isObligatory(ain.getOpcode()) || Instructions.isCodeEnd(ain)) {
 				for (int j = 0; j < frame.getStackSize(); j++) {
@@ -87,7 +88,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-			// logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
+//			 logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
 		}
 		return rewrittenCode;
 	}
@@ -107,6 +108,8 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		case BASTORE:
 		case CASTORE:
 		case SASTORE:
+		case PUTFIELD:
+		case PUTSTATIC:
 //		case ISTORE:
 //		case LSTORE:
 //		case FSTORE:
