@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis;
+package me.nov.threadtear.analysis.stack;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
+import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.util.Casts;
 
 /**
@@ -30,14 +31,14 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 	private Object[] args;
 	private Type[] desc;
 
-	private IReferenceHandler referenceHandler;
+	private IConstantReferenceHandler referenceHandler;
 
-	public ConstantTracker(IReferenceHandler referenceHandler) {
+	public ConstantTracker(IConstantReferenceHandler referenceHandler) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
 	}
 
-	public ConstantTracker(IReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, Object[] args) {
+	public ConstantTracker(IConstantReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, Object[] args) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
 		this.desc = Type.getArgumentTypes(descr);

@@ -9,25 +9,26 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.analysis.ConstantAnalyzer;
-import me.nov.threadtear.analysis.ConstantTracker;
-import me.nov.threadtear.analysis.ConstantValue;
-import me.nov.threadtear.analysis.IReferenceHandler;
+import me.nov.threadtear.analysis.full.ICodeReferenceHandler;
+import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.full.CodeTracker;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 
-public class RemoveUnnecessary extends Execution implements IReferenceHandler {
+public class RemoveUnnecessary extends Execution implements ICodeReferenceHandler {
 
 	public RemoveUnnecessary() {
-		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions", "Remove unnecessary instructions that can be optimized.<br>This could include number or flow obfuscation.<br><b>Do not run this, it is unfinished!</b>");
+		super(ExecutionCategory.CLEANING, "Convert to readable instructions",
+				"Remove unnecessary instructions or flow obfuscation that can be optimized.<br>This could include number or flow obfuscation.<br><b>Do not run this, it is unfinished!</b>");
 	}
 
 	/*
@@ -57,7 +58,7 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 
 	// XXX this is currently used for debugging purposes
 	private InsnList simulateAndRewrite(ClassNode cn, MethodNode m) {
-		ConstantAnalyzer a = new ConstantAnalyzer(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+		Analyzer<CodeReferenceValue> a = new Analyzer<CodeReferenceValue>(new CodeTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {
@@ -65,38 +66,73 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 			Threadtear.logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
 			return m.instructions;
 		}
-		Frame<ConstantValue>[] frames = a.getFrames();
+
+		m.tryCatchBlocks.clear();
+		if (m.localVariables != null)
+			m.localVariables.clear();
+		// FIXME so this shit here is working but only when no jumps / exceptions are in
+		// the code. probably has something to do with .merge in the tracker. don't know
+		// how to handle merges with known values correctly.
+		Frame<CodeReferenceValue>[] frames = a.getFrames();
 		InsnList rewrittenCode = new InsnList();
 		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-		AbstractInsnNode lastInstruction = null;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
-			Frame<ConstantValue> frame = frames[i];
-			if (frame != null) {
-				if (frame.getStackSize() > 0) {
-					ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-					if (!isFullStackKnown(frame)) {
-//						addStackToCode(rewrittenCode);
-					}
-				} else {
-					rewrittenCode.add(ain.clone(labels));
+			Frame<CodeReferenceValue> frame = frames[i];
+			if (ain.getType() == AbstractInsnNode.LABEL) {
+				rewrittenCode.add(ain.clone(labels));
+			} else if (ain.getType() == AbstractInsnNode.METHOD_INSN || ain.getType() == AbstractInsnNode.JUMP_INSN || isObligatory(ain.getOpcode()) || Instructions.isCodeEnd(ain)) {
+				for (int j = 0; j < frame.getStackSize(); j++) {
+					CodeReferenceValue stack = frame.getStack(j);
+					stack = stack.combine();
+					rewrittenCode.add(stack.toInstructions());
 				}
-				lastInstruction = ain;
-			} else if (ain.getType() == AbstractInsnNode.LABEL) {
 				rewrittenCode.add(ain.clone(labels));
 			}
+			// logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
 		}
-		// TODO very much to do here...
 		return rewrittenCode;
 	}
 
-	private boolean isFullStackKnown(Frame<ConstantValue> frame) {
-		for (int i = 0; i < frame.getStackSize(); i++) {
-			if (!frame.getStack(i).isKnown()) {
-				return false;
-			}
+	private boolean isObligatory(int opcode) {
+		switch (opcode) {
+		case MONITORENTER:
+		case MONITOREXIT:
+		case LOOKUPSWITCH:
+		case TABLESWITCH:
+		case INVOKEDYNAMIC:
+		case IASTORE:
+		case LASTORE:
+		case FASTORE:
+		case DASTORE:
+		case AASTORE:
+		case BASTORE:
+		case CASTORE:
+		case SASTORE:
+//		case ISTORE:
+//		case LSTORE:
+//		case FSTORE:
+//		case DSTORE:
+//		case ASTORE:
+			return true;
 		}
-		return true;
+		return false;
+	}
+
+	public String toString(Frame<CodeReferenceValue> f) {
+		StringBuilder stringBuilder = new StringBuilder(" LOCALS: (");
+		for (int i = 0; i < f.getLocals(); ++i) {
+			stringBuilder.append(f.getLocal(i));
+			stringBuilder.append('|');
+		}
+		stringBuilder.append(") STACK: (");
+		for (int i = 0; i < f.getStackSize(); ++i) {
+			CodeReferenceValue combined = f.getStack(i).combine();
+			stringBuilder.append(combined.getStackValueOrNull() != null ? combined.getStackValueOrNull() : combined.toString());
+			stringBuilder.append('|');
+		}
+		stringBuilder.append(')');
+		return stringBuilder.toString();
 	}
 
 	@Override
@@ -105,12 +141,8 @@ public class RemoveUnnecessary extends Execution implements IReferenceHandler {
 	}
 
 	@Override
-	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
+	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends CodeReferenceValue> values) {
 		if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
-			if (!values.get(0).isKnown()) {
-				return null;
-			}
-			return ((String) values.get(0).getValue()).toCharArray();
 		}
 		return null;
 	}

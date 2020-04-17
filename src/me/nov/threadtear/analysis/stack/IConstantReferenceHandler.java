@@ -1,10 +1,10 @@
-package me.nov.threadtear.analysis;
+package me.nov.threadtear.analysis.stack;
 
 import java.util.List;
 
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-public interface IReferenceHandler {
+public interface IConstantReferenceHandler {
 
 	Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc);
 

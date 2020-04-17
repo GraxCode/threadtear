@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis;
+package me.nov.threadtear.analysis.stack;
 
 import java.util.ArrayList;
 import java.util.HashMap;

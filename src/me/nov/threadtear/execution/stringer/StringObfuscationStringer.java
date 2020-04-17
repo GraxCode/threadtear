@@ -22,9 +22,9 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.analysis.ConstantTracker;
-import me.nov.threadtear.analysis.ConstantValue;
-import me.nov.threadtear.analysis.IReferenceHandler;
+import me.nov.threadtear.analysis.stack.ConstantTracker;
+import me.nov.threadtear.analysis.stack.ConstantValue;
+import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
@@ -38,7 +38,7 @@ import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;
 import me.nov.threadtear.vm.VM;
 
-public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IReferenceHandler {
+public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
 	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;.?.?.?\\)Ljava/lang/String;";
 	private ArrayList<Clazz> classes;
