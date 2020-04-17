@@ -20,9 +20,9 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.analysis.ConstantTracker;
-import me.nov.threadtear.analysis.ConstantValue;
-import me.nov.threadtear.analysis.IReferenceHandler;
+import me.nov.threadtear.analysis.stack.ConstantTracker;
+import me.nov.threadtear.analysis.stack.ConstantValue;
+import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
@@ -34,7 +34,7 @@ import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;
 import me.nov.threadtear.vm.VM;
 
-public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IReferenceHandler {
+public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
 	private ArrayList<Clazz> classes;
 	private int decrypted;
@@ -80,15 +80,20 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	private void decrypt(ClassNode cn) {
 		MethodNode clinit = getStaticInitializer(cn);
+		if (clinit == null)
+			return;
 		// cut out decryption part and make proxy
 		MethodNode callMethod = Sandbox.createMethodProxy(Instructions.isolateCallsThatMatch(cn, clinit, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS)), "clinitProxy", "()V");
+		cn.methods.remove(clinit);
 		cn.methods.add(callMethod);
+
 		try {
 			invokeVMAndReplace(cn);
 		} catch (Throwable e) {
 			Threadtear.logger.severe("Failed to run proxy in " + cn.name + ":" + e.getMessage());
 		}
 		cn.methods.remove(callMethod);
+		cn.methods.add(clinit);
 	}
 
 	/**
@@ -98,7 +103,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private void invokeVMAndReplace(ClassNode cn) throws Throwable {
 		VM vm = VM.constructVM(this);
 		Class<?> callProxy = vm.loadClass(cn.name);
+//		Files.write(new File("proxy-dump.class").toPath(), Conversion.toBytecode(cn, true));
 		callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit
+
 		// clinitProxy should not be handled, but <clinit> SHOULD as there could be
 		// encrypted strings too
 
