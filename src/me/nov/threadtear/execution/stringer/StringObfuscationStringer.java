@@ -22,10 +22,10 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.analysis.ConstantTracker;
+import me.nov.threadtear.analysis.ConstantValue;
+import me.nov.threadtear.analysis.IReferenceHandler;
 import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.analysis.ConstantTracker;
-import me.nov.threadtear.asm.analysis.ConstantValue;
-import me.nov.threadtear.asm.analysis.IReferenceHandler;
 import me.nov.threadtear.asm.util.Access;
 import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;

@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.analysis;
+package me.nov.threadtear.analysis;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
