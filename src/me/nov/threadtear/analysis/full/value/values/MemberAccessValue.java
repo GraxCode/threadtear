@@ -41,6 +41,8 @@ public class MemberAccessValue extends CodeReferenceValue {
 	public boolean equalsWith(CodeReferenceValue obj) {
 		if (this == obj)
 			return true;
+		if (getClass() != obj.getClass())
+			return false;
 		MemberAccessValue other = (MemberAccessValue) obj;
 		if (desc == null) {
 			if (other.desc != null)
@@ -81,6 +83,8 @@ public class MemberAccessValue extends CodeReferenceValue {
 		case INVOKESPECIAL:
 			list.add(new MethodInsnNode(op, owner, name, desc));
 			break;
+		default:
+			throw new IllegalArgumentException();
 		}
 		return list;
 	}

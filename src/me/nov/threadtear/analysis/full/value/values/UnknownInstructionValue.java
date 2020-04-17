@@ -1,5 +1,7 @@
 package me.nov.threadtear.analysis.full.value.values;
 
+import java.util.Objects;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.analysis.BasicValue;
@@ -12,7 +14,9 @@ public class UnknownInstructionValue extends CodeReferenceValue {
 
 	public UnknownInstructionValue(BasicValue type, AbstractInsnNode ain) {
 		super(type);
-		this.ain = ain;
+		if (ain.getType() == AbstractInsnNode.LABEL || ain.getType() == AbstractInsnNode.JUMP_INSN)
+			throw new IllegalArgumentException();
+		this.ain = Objects.requireNonNull(ain);
 	}
 
 	@Override
@@ -46,7 +50,7 @@ public class UnknownInstructionValue extends CodeReferenceValue {
 		if (ain.getOpcode() == NOP) {
 //			throw new IllegalArgumentException(type.toString());
 		}
-		list.add(ain);
+		list.add(ain.clone(null));
 		return list;
 	}
 

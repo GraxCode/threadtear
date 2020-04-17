@@ -70,6 +70,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		// FIXME so this shit here is working but only when no jumps / exceptions are in
 		// the code. probably has something to do with .merge in the tracker. don't know
 		// how to handle merges with known values correctly.
+		// FIXME some references get duped
 		Frame<CodeReferenceValue>[] frames = a.getFrames();
 		InsnList rewrittenCode = new InsnList();
 		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
@@ -88,8 +89,9 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-//			 logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
+			logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
 		}
+		logger.info(rewrittenCode.size() + " final size");
 		return rewrittenCode;
 	}
 
@@ -110,11 +112,11 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		case SASTORE:
 		case PUTFIELD:
 		case PUTSTATIC:
-//		case ISTORE:
-//		case LSTORE:
-//		case FSTORE:
-//		case DSTORE:
-//		case ASTORE:
+		case ISTORE:
+		case LSTORE:
+		case FSTORE:
+		case DSTORE:
+		case ASTORE:
 			return true;
 		}
 		return false;
