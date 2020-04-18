@@ -66,7 +66,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 							encrypted++;
 							try {
 								CallSite callsite = loadCallSiteFromVM(vm, cn, idin, bsm);
-								MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite);
+								MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite.getTarget());
 								m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
 								decrypted++;
 							} catch (Throwable t) {

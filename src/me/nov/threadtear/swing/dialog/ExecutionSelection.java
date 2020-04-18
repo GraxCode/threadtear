@@ -32,6 +32,7 @@ import me.nov.threadtear.execution.stringer.StringObfuscationStringer;
 import me.nov.threadtear.execution.tools.IsolatePossiblyMalicious;
 import me.nov.threadtear.execution.tools.Java7Compatibility;
 import me.nov.threadtear.execution.tools.Java8Compatibility;
+import me.nov.threadtear.execution.zkm.AccessObfusationZKM;
 import me.nov.threadtear.execution.zkm.StringObfuscationZKM;
 import me.nov.threadtear.execution.zkm.TryCatchObfuscationRemover;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
@@ -106,6 +107,7 @@ public class ExecutionSelection extends JDialog {
 			
 			addExecution(root, new TryCatchObfuscationRemover());
 			addExecution(root, new StringObfuscationZKM());
+			addExecution(root, new AccessObfusationZKM());
 			
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());

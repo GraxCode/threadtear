@@ -48,6 +48,8 @@ public class VM extends ClassLoader implements Opcodes {
 		if (name.matches(RT)) {
 			return super.loadClass(name, resolve);
 		}
+		if (name.contains("/"))
+			throw new IllegalArgumentException();
 		if (loaded.containsKey(name)) {
 			return loaded.get(name);
 		}
@@ -68,6 +70,12 @@ public class VM extends ClassLoader implements Opcodes {
 		node.access = Access.makePublic(node.access);
 		byte[] bytes = Conversion.toBytecode0(node);
 		return bytes;
+	}
+
+	public boolean isLoaded(String name) {
+		if (name.contains("/"))
+			throw new IllegalArgumentException();
+		return loaded.containsKey(name);
 	}
 
 	public static VM constructVM(IVMReferenceHandler ivm) {

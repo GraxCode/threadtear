@@ -1,12 +1,12 @@
 package me.nov.threadtear.util;
 
-import java.lang.invoke.CallSite;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleInfo;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -20,18 +20,17 @@ public class DynamicReflection implements Opcodes {
 	/**
 	 * This probably only works for java 8
 	 */
-	public static MethodHandleInfo revealMethodInfo(CallSite callsite) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		MethodHandle handle = callsite.getTarget();
+	public static MethodHandleInfo revealMethodInfo(MethodHandle handle) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		if (handle.getClass().getName().startsWith(BMHL)) {
 			Field original = handle.getClass().getDeclaredField("argL0");
 			original.setAccessible(true);
 			handle = (MethodHandle) original.get(handle);
 		}
-		Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-		impl.setAccessible(true);
-		MethodHandles.Lookup trustedLookup = (Lookup) impl.get(null);
-		// MethodHandles.lookup() also works but isn't working always
-		return trustedLookup.revealDirect(handle);
+		return revealTrusted(handle);
+	}
+
+	public static MethodHandleInfo revealTrusted(MethodHandle handle) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		return getTrustedLookup().revealDirect(handle);
 	}
 
 	public static AbstractInsnNode getInstructionFromHandleInfo(MethodHandleInfo direct) throws Exception {
@@ -74,5 +73,21 @@ public class DynamicReflection implements Opcodes {
 			return INVOKEINTERFACE;
 		}
 		throw new IllegalArgumentException("not a bootstrap tag: " + tag);
+	}
+
+	public static void setFinalStatic(Field field, Object newValue) throws Exception {
+		field.setAccessible(true);
+
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+		field.set(null, newValue);
+	}
+
+	public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+		impl.setAccessible(true);
+		return (Lookup) impl.get(null);
 	}
 }
