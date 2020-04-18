@@ -25,7 +25,8 @@ import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
-import me.nov.threadtear.execution.generic.FixAccess;
+import me.nov.threadtear.execution.generic.KnownConditionalJumps;
+import me.nov.threadtear.execution.generic.ObfuscatedAccess;
 import me.nov.threadtear.execution.stringer.AccessObfusationStringer;
 import me.nov.threadtear.execution.stringer.StringObfuscationStringer;
 import me.nov.threadtear.execution.tools.IsolatePossiblyMalicious;
@@ -94,9 +95,9 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new InlineMethods());
 			addExecution(root, new RemoveUnnecessary());
 
-			addExecution(root, new FixAccess());
-			addExecution(root, new IsolatePossiblyMalicious());
-
+			addExecution(root, new ObfuscatedAccess());
+			addExecution(root, new KnownConditionalJumps());
+			
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 
@@ -108,6 +109,7 @@ public class ExecutionSelection extends JDialog {
 			
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());
+			addExecution(root, new IsolatePossiblyMalicious());
 
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);

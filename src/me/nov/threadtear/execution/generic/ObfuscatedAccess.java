@@ -9,9 +9,9 @@ import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 
-public class FixAccess extends Execution {
+public class ObfuscatedAccess extends Execution {
 
-	public FixAccess() {
+	public ObfuscatedAccess() {
 		super(ExecutionCategory.GENERIC, "Fix obfuscated access", "Fixes obfuscated access like synthetic or bridge.", ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE);
 	}
 
@@ -22,5 +22,4 @@ public class FixAccess extends Execution {
 		logger.info("Removed every synthetic, bridge and deprecated access");
 		return true;
 	}
-
 }
