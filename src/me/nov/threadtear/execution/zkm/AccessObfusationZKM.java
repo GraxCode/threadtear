@@ -60,7 +60,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 		this.encrypted = 0;
 		this.decrypted = 0;
 		logger.info("Decrypting all invokedynamic references, this could take some time!");
-		this.vm = VM.constructVM(this);
+		this.vm = VM.constructNonInitializingVM(this);
 		classes.stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
 			logger.severe("No access obfuscation matching ZKM has been found!");
@@ -68,6 +68,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
 		logger.info("Of a total " + encrypted + " encrypted references, " + (decryptionRatio) + "% were successfully decrypted");
+		logger.info("For better results use \"-noverify\" as JVM argument!");
 		return decryptionRatio > 0.25;
 	}
 
@@ -83,11 +84,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 			Frame<ConstantValue>[] frames = a.getFrames();
 			InsnList rewrittenCode = new InsnList();
 			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-
 			for (int i = 0; i < m.instructions.size(); i++) {
 				AbstractInsnNode ain = m.instructions.get(i);
 				Frame<ConstantValue> frame = frames[i];
-				if (ain.getOpcode() == INVOKEDYNAMIC) {
+				if (ain.getOpcode() == INVOKEDYNAMIC && frame != null) {
 					InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
 					if (idin.bsm != null) {
 						Handle bsm = idin.bsm;
@@ -106,7 +106,9 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 									}
 								}
 							} catch (Throwable t) {
-								t.printStackTrace();
+								if (verbose) {
+									t.printStackTrace();
+								}
 								logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
 							}
 						} else if (verbose) {
@@ -116,21 +118,19 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-			m.instructions = rewrittenCode;
-			m.tryCatchBlocks.forEach(tcb -> {
-				tcb.start = labels.get(tcb.start);
-				tcb.end = labels.get(tcb.end);
-				tcb.handler = labels.get(tcb.handler);
-			});
+			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
+		System.out.println();
 	}
 
 	private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, long decryptionLong) throws Throwable {
 		if (!vm.isLoaded(cn.name.replace('/', '.'))) {
-			cn.methods.forEach(mn -> Instructions.isolateCallsThatMatch(cn, mn, (name) -> !name.matches("java/lang/.*")));
+			cn.methods.forEach(mn -> Instructions.isolateCallsThatMatch(cn, mn, (name) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
+			logger.warning("loaded class " + cn.name);
+//			Files.write(new File("dump.class").toPath(), Conversion.toBytecode0(cn));
+			vm.explicitlyLoadWithClinit(cn); // make sure bootstrap class class has <clinit>
 		}
 		Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
-
 		Method bootstrap = null;
 		for (Method m : proxyClass.getDeclaredMethods()) {
 			if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC)) {

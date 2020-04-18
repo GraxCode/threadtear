@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
 
 import me.nov.threadtear.asm.io.Conversion;
 import me.nov.threadtear.asm.util.Access;
@@ -16,9 +17,12 @@ public class VM extends ClassLoader implements Opcodes {
 	public static final String RT = "(com\\.oracle\\.|com\\.sun\\.|java\\.|javax\\.|jdk\\.|sun\\.).*";
 	private IVMReferenceHandler handler;
 
-	private VM(IVMReferenceHandler handler, ClassLoader parent) {
+	private boolean removeClinit;
+
+	private VM(IVMReferenceHandler handler, ClassLoader parent, boolean clinit) {
 		super(parent);
 		this.handler = handler;
+		this.removeClinit = clinit;
 	}
 
 	public Class<?> bytesToClass(String name, byte[] bytes) {
@@ -53,7 +57,7 @@ public class VM extends ClassLoader implements Opcodes {
 		if (loaded.containsKey(name)) {
 			return loaded.get(name);
 		}
-		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')));
+		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')), removeClinit);
 		if (clazz == null) {
 			return null;
 		}
@@ -62,14 +66,29 @@ public class VM extends ClassLoader implements Opcodes {
 		return loadedClass;
 	}
 
-	private byte[] convert(ClassNode node) {
+	private byte[] convert(ClassNode node, boolean removeClinit) {
 		if (node == null)
 			return null;
-		node.methods.forEach(m -> m.access = Access.makePublic(m.access));
-		node.fields.forEach(f -> f.access = Access.makePublic(f.access));
-		node.access = Access.makePublic(node.access);
-		byte[] bytes = Conversion.toBytecode0(node);
-		return bytes;
+		ClassNode vmnode = Conversion.toNode(Conversion.toBytecode0(node)); // clone ClassNode the easy way
+		vmnode.methods.forEach(m -> m.access = Access.makePublic(m.access));
+		vmnode.fields.forEach(f -> f.access = Access.makePublic(f.access));
+		vmnode.access = Access.makePublic(node.access);
+		if (removeClinit) {
+			vmnode.methods.stream().filter(m -> m.name.equals("<clinit>")).forEach(m -> {
+				m.instructions.clear();
+				m.instructions.add(new InsnNode(RETURN));
+				m.tryCatchBlocks.clear();
+				m.localVariables = null;
+			});
+		}
+		return Conversion.toBytecode0(vmnode);
+	}
+
+	public void explicitlyLoadWithClinit(ClassNode node) {
+		String name = node.name.replace('/', '.');
+		byte[] clazz = convert(node, false);
+		Class<?> loadedClass = bytesToClass(name, clazz);
+		loaded.put(name, loadedClass);
 	}
 
 	public boolean isLoaded(String name) {
@@ -79,6 +98,10 @@ public class VM extends ClassLoader implements Opcodes {
 	}
 
 	public static VM constructVM(IVMReferenceHandler ivm) {
-		return new VM(ivm, ClassLoader.getSystemClassLoader());
+		return new VM(ivm, ClassLoader.getSystemClassLoader(), false);
+	}
+
+	public static VM constructNonInitializingVM(IVMReferenceHandler ivm) {
+		return new VM(ivm, ClassLoader.getSystemClassLoader(), true);
 	}
 }

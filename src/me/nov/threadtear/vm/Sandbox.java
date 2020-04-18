@@ -1,11 +1,17 @@
 package me.nov.threadtear.vm;
 
+import java.util.Map;
+
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import me.nov.threadtear.asm.util.Instructions;
 
 public class Sandbox implements Opcodes {
 
@@ -35,5 +41,20 @@ public class Sandbox implements Opcodes {
 		proxy.name = name;
 		proxy.superName = "java/lang/Object";
 		return proxy;
+	}
+
+	public static MethodNode copyMethod(MethodNode clinit) {
+		MethodNode mn = new MethodNode(clinit.access, clinit.name, clinit.desc, clinit.signature, clinit.exceptions.toArray(new String[0]));
+		InsnList copy = new InsnList();
+		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(clinit.instructions);
+		for (AbstractInsnNode ain : clinit.instructions) {
+			copy.add(ain.clone(labels));
+		}
+		mn.tryCatchBlocks = clinit.tryCatchBlocks;
+		mn.localVariables = clinit.localVariables;
+		Instructions.updateInstructions(mn, labels, copy);
+		mn.maxStack = 1337;
+		mn.maxLocals = 1337;
+		return mn;
 	}
 }

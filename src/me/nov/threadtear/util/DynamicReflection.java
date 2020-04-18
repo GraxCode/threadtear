@@ -37,9 +37,10 @@ public class DynamicReflection implements Opcodes {
 		Class<?> declaringClass = direct.getDeclaringClass();
 		String name = direct.getName();
 		MethodType methodType = direct.getMethodType();
-		int op = bootstrapTagToOp(direct.getReferenceKind());
-		if (op <= H_PUTSTATIC) {
-			if (op <= H_GETSTATIC) {
+		int refKind = direct.getReferenceKind();
+		int op = bootstrapTagToOp(refKind);
+		if (refKind <= H_PUTSTATIC) {
+			if (refKind <= H_GETSTATIC) {
 				// method handle treats field retrieving as a method ()X
 				return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType.toMethodDescriptorString().substring(2));
 			} else {

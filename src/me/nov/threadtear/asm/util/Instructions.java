@@ -152,10 +152,9 @@ public class Instructions implements Opcodes {
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
 	}
 
-	public static InsnList isolateCallsThatMatch(ClassNode cn, MethodNode mn, Predicate<String> p) {
-		InsnList copy = copy(mn.instructions);
-		for (int i = 0; i < copy.size(); i++) {
-			AbstractInsnNode ain = copy.get(i);
+	public static void isolateCallsThatMatch(ClassNode cn, MethodNode mn, Predicate<String> p) {
+		for (int i = 0; i < mn.instructions.size(); i++) {
+			AbstractInsnNode ain = mn.instructions.get(i);
 			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
 				MethodInsnNode min = (MethodInsnNode) ain;
 				if (p.test(min.owner)) {
@@ -163,33 +162,33 @@ public class Instructions implements Opcodes {
 					String outer = min.desc.substring(min.desc.lastIndexOf(')') + 1);
 					// TODO use ASM Type class instead
 					for (int size : Descriptor.calculateAmountArguments(inner)) {
-						copy.insertBefore(min, new InsnNode(size > 1 ? POP2 : POP));
+						mn.instructions.insertBefore(min, new InsnNode(size > 1 ? POP2 : POP));
 						i += 1;
 					}
 					if (min.getOpcode() != INVOKESTATIC) {
-						copy.insertBefore(min, new InsnNode(POP)); // pop reference
+						mn.instructions.insertBefore(min, new InsnNode(POP)); // pop reference
 					}
-					copy.set(min, createNullPushForType(outer));
+					mn.instructions.set(min, createNullPushForType(outer));
 				}
 			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
 				FieldInsnNode fin = (FieldInsnNode) ain;
 				if (p.test(fin.owner)) {
 					switch (fin.getOpcode()) {
 					case GETFIELD:
-						copy.insertBefore(fin, new InsnNode(POP)); // pop reference
+						mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
 						i += 1;
 					case GETSTATIC:
-						copy.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.set(fin, createNullPushForType(fin.desc));
 						break;
 					case PUTFIELD:
-						copy.insertBefore(fin, new InsnNode(POP)); // pop reference
-						copy.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
-						copy.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
+						mn.instructions.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						mn.instructions.set(fin, createNullPushForType(fin.desc));
 						i += 2;
 						break;
 					case PUTSTATIC:
-						copy.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
-						copy.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
+						mn.instructions.set(fin, createNullPushForType(fin.desc));
 						i += 1;
 						break;
 					}
@@ -199,15 +198,15 @@ public class Instructions implements Opcodes {
 				if (p.test(tin.desc)) {
 					switch (tin.getOpcode()) {
 					case NEW:
-						copy.set(tin, new InsnNode(ACONST_NULL));
+						mn.instructions.set(tin, new InsnNode(ACONST_NULL));
 						break;
 					case INSTANCEOF:
-						copy.insertBefore(tin, new InsnNode(POP));
-						copy.set(tin, new InsnNode(ICONST_0));
+						mn.instructions.insertBefore(tin, new InsnNode(POP));
+						mn.instructions.set(tin, new InsnNode(ICONST_0));
 						i += 1;
 						break;
 					case CHECKCAST:
-						copy.set(tin, new InsnNode(NOP));
+						mn.instructions.set(tin, new InsnNode(NOP));
 						break;
 					}
 				}
@@ -215,16 +214,15 @@ public class Instructions implements Opcodes {
 				MultiANewArrayInsnNode marr = (MultiANewArrayInsnNode) ain;
 				if (p.test(marr.desc)) {
 					for (int j = 0; j < marr.dims; j++) {
-						copy.insertBefore(marr, new InsnNode(POP));
+						mn.instructions.insertBefore(marr, new InsnNode(POP));
 						i += 1;
 					}
-					copy.set(marr, new InsnNode(ACONST_NULL));
+					mn.instructions.set(marr, new InsnNode(ACONST_NULL));
 				}
 			} else if (ain.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN) {
 				// TODO fix invokedynamic here
 			}
 		}
-		return copy;
 	}
 
 	private static AbstractInsnNode createNullPushForType(String desc) {
@@ -258,5 +256,23 @@ public class Instructions implements Opcodes {
 			}
 		}
 		return true;
+	}
+
+	public static void updateInstructions(MethodNode m, Map<LabelNode, LabelNode> labels, InsnList rewrittenCode) {
+		m.instructions.clear();
+		m.instructions = rewrittenCode;
+		m.tryCatchBlocks.forEach(tcb -> {
+			tcb.start = labels.get(tcb.start);
+			tcb.end = labels.get(tcb.end);
+			tcb.handler = labels.get(tcb.handler);
+		});
+		if (m.localVariables != null) {
+			m.localVariables.forEach(lv -> {
+				lv.start = labels.get(lv.start);
+				lv.end = labels.get(lv.end);
+			});
+		}
+		m.visibleLocalVariableAnnotations = null;
+		m.invisibleLocalVariableAnnotations = null;
 	}
 }
