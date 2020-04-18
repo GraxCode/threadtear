@@ -101,8 +101,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 */
 	private void invokeVMAndReplace(ClassNode cn) throws Throwable {
 		VM vm = VM.constructVM(this);
-		Class<?> callProxy = vm.loadClass(cn.name);
-//		Files.write(new File("proxy-dump.class").toPath(), Conversion.toBytecode(cn, true));
+		Class<?> callProxy = vm.loadClass(cn.name.replace('/', '.'));
 		callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit
 
 		// clinitProxy should not be handled, but <clinit> SHOULD as there could be
