@@ -66,6 +66,80 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 	}
 }
 ```
+Using the ConstantTracker (`me.nov.threadtear.analysis.stack.ConstantTracker`) you can analyze methods and keep track of non-variable stack values. 
+If for example `iconst_0` is pushed to the stack, the value itself isn't lost like in the basic ASM analyzer, and you can use it to predict things later on in the code.
+```java
+public class MyExecution extends Execution implements IConstantReferenceHandler {
+	public MyExecution() {
+		super(ExecutionCategory.GENERIC, "My execution", "Performs stack analysis and replaces code.");
+	}
+	@Override
+	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+		classes.stream().map(c -> c.node).forEach(this::analyzeAndRewrite);
+		return true;
+	}
+	public void analyzeAndRewrite(ClassNode cn) {
+		cn.methods.forEach(m -> {
+			// this analyzer keeps known stack values, e.g. can be useful for jump prediction
+			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+			try {
+				a.analyze(cn.name, m);
+			} catch (AnalyzerException e) {
+				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+				return;
+			}
+			Frame<ConstantValue>[] frames = a.getFrames();
+			InsnList rewrittenCode = new InsnList();
+			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
+
+			// rewrite method instructions
+			for (int i = 0; i < m.instructions.size(); i++) {
+				AbstractInsnNode ain = m.instructions.get(i);
+				Frame<ConstantValue> frame = frames[i];
+				// replace / modify instructions, etc...
+				if (frame.getStackSize() > 0) {
+					ConstantValue top = frame.getStack(frame.getStackSize() - 1);
+					if (top.isKnown() && top.isInteger()) {
+						int knownTopStackValue = top.getInteger();
+						// use the known stack to remove jumps, simplify code, etc...
+						// if(...) { rewrittenCode.add(...); }
+						continue;
+					}
+				}
+				rewrittenCode.add(ain.clone(labels));
+			}
+			// set instructions and fix try catch blocks
+			m.instructions = rewrittenCode;
+			m.tryCatchBlocks.forEach(tcb -> {
+				tcb.start = labels.get(tcb.start);
+				tcb.end = labels.get(tcb.end);
+				tcb.handler = labels.get(tcb.handler);
+			});
+		});
+	}
+	/**
+	 * Use this method to predict stack values if fields are loaded
+	 */
+	@Override
+	public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
+		return null;
+	}
+	/**
+	 * Use this method to predict stack values if methods are invoked on known objects
+	 */
+	@Override
+	public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
+		if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
+			if (!values.get(0).isKnown()) {
+				// invocation target is not known, we can't compute the return
+				return null;
+			}
+			return ((String) values.get(0).getValue()).toCharArray();
+		}
+		return null;
+	}
+}
+```
 Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
 ## Libraries needed
 commons-io 2.6, darklaf-1.3.3.4, asm-all 8+
