@@ -101,12 +101,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-			m.instructions = rewrittenCode;
-			m.tryCatchBlocks.forEach(tcb -> {
-				tcb.start = labels.get(tcb.start);
-				tcb.end = labels.get(tcb.end);
-				tcb.handler = labels.get(tcb.handler);
-			});
+			Instructions.updateInstructions(m, labels, rewrittenCode);
 			Instructions.removeDeadCode(cn, m);
 		});
 	}
