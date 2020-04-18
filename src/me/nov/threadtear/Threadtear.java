@@ -110,7 +110,7 @@ public class Threadtear extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			new Thread(() -> {
 				logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
-				if (disableSecurity) {
+				if (!disableSecurity) {
 					logger.info("Initializing security manager if something goes horribly wrong");
 					System.setSecurityManager(new VMSecurityManager());
 				} else {
