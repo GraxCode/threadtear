@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.other;
+package me.nov.threadtear.execution.tools;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import me.nov.threadtear.execution.ExecutionTag;
 public class Java8Compatibility extends Execution {
 
 	public Java8Compatibility() {
-		super(ExecutionCategory.OTHER, "Make java 8 compatible", "Only works when no java 9+ specific methods are present.", ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.TOOLS, "Make java 8 compatible", "Only works when no java 9+ specific methods are present.", ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override

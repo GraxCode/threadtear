@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.generic;
+package me.nov.threadtear.execution.tools;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class IsolatePossiblyMalicious extends Execution {
 	private int changed;
 
 	public IsolatePossiblyMalicious() {
-		super(ExecutionCategory.GENERIC, "Isolate runtime and reflection calls", "Isolate runtime and reflection calls, so no code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b>",
+		super(ExecutionCategory.TOOLS, "Isolate dangerous calls", "Isolate runtime, reflection and IO calls, so no damaging code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b>",
 				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
