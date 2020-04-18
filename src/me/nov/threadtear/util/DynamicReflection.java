@@ -33,6 +33,12 @@ public class DynamicReflection implements Opcodes {
 		return getTrustedLookup().revealDirect(handle);
 	}
 
+	public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+		impl.setAccessible(true);
+		return (Lookup) impl.get(null);
+	}
+	
 	public static AbstractInsnNode getInstructionFromHandleInfo(MethodHandleInfo direct) throws Exception {
 		Class<?> declaringClass = direct.getDeclaringClass();
 		String name = direct.getName();
@@ -84,11 +90,5 @@ public class DynamicReflection implements Opcodes {
 		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
 		field.set(null, newValue);
-	}
-
-	public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-		impl.setAccessible(true);
-		return (Lookup) impl.get(null);
 	}
 }

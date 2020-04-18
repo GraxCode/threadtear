@@ -39,4 +39,17 @@ public class Casts {
 
 		return object;
 	}
+
+	public static Integer toInteger(Object object) {
+		if (object instanceof Character) {
+			return (int) ((Character) object).charValue();
+		}
+		if (object instanceof Boolean) {
+			return ((Boolean) object) ? 1 : 0;
+		}
+		if (object instanceof Number) {
+			return ((Number) object).intValue();
+		}
+		throw new IllegalArgumentException(object.getClass().getName());
+	}
 }

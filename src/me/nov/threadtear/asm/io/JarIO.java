@@ -34,7 +34,7 @@ public class JarIO {
 			if (isClassFile(bytes)) {
 				try {
 					final ClassNode cn = Conversion.toNode(bytes);
-					if (cn != null && (cn.superName != null || cn.name.equals("java/lang/Object"))) {
+					if (cn != null && (cn.superName != null || (cn.name != null && cn.name.equals("java/lang/Object")))) {
 						classes.add(new Clazz(cn, en));
 					}
 				} catch (Exception e) {

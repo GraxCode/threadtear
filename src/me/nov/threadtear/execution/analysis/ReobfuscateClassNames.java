@@ -57,7 +57,7 @@ public class ReobfuscateClassNames extends Execution {
 			String[] words = nouns.split("\n");
 			int i = 0;
 			while (queue.size() < amount) {
-				String word = i >= words.length ? generateWord(6) : words[i];
+				String word = i >= words.length ? generateWord(8) : words[i];
 				if (SourceVersion.isName(word)) {
 					queue.add(word);
 				}

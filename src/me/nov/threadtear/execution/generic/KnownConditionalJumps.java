@@ -27,6 +27,7 @@ import me.nov.threadtear.asm.util.Instructions;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.Casts;
 
 public class KnownConditionalJumps extends Execution implements IConstantReferenceHandler {
 
@@ -62,14 +63,18 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 				AbstractInsnNode ain = m.instructions.get(i);
 				Frame<ConstantValue> frame = frames[i];
 				if (ain.getType() == AbstractInsnNode.JUMP_INSN) {
-					int predicted = predictJump(frame, ain.getOpcode());
-					if (predicted != 0) {
-						rewrittenCode.add(new InsnNode(Math.abs(predicted) == 2 ? POP2 : POP));
-						if (predicted > 0) {
-							rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(((JumpInsnNode) ain).label)));
+					try {
+						int predicted = predictJump(frame, ain.getOpcode());
+						if (predicted != 0) {
+							rewrittenCode.add(new InsnNode(Math.abs(predicted) == 2 ? POP2 : POP));
+							if (predicted > 0) {
+								rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(((JumpInsnNode) ain).label)));
+							}
+							predictedJumps++;
+							continue;
 						}
-						predictedJumps++;
-						continue;
+					} catch (Exception e) {
+						logger.severe("Invalid stack in " + cn.name + "." + m.name + ":" + e.getMessage());
 					}
 				} else if (ain.getOpcode() == LOOKUPSWITCH) {
 					LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) ain;
@@ -115,21 +120,21 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 		Object upperVal = up.getValue();
 		switch (op) {
 		case IFEQ:
-			return ((Integer) upperVal) == 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) == 0 ? 1 : -1;
 		case IFNE:
-			return ((Integer) upperVal) != 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) != 0 ? 1 : -1;
 		case IFNULL:
 			return upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
 		case IFNONNULL:
 			return !upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
 		case IFGT:
-			return ((Integer) upperVal) > 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) > 0 ? 1 : -1;
 		case IFGE:
-			return ((Integer) upperVal) >= 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) >= 0 ? 1 : -1;
 		case IFLT:
-			return ((Integer) upperVal) < 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) < 0 ? 1 : -1;
 		case IFLE:
-			return ((Integer) upperVal) <= 0 ? 1 : -1;
+			return Casts.toInteger(upperVal) <= 0 ? 1 : -1;
 		}
 		if (frame.getStackSize() >= 2) {
 			ConstantValue low = (ConstantValue) frame.getStack(frame.getStackSize() - 2);
@@ -138,17 +143,17 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 			Object lowerVal = low.getValue();
 			switch (op) {
 			case IF_ICMPEQ:
-				return ((Integer) upperVal) == ((Integer) lowerVal) ? 2 : -2;
+				return Casts.toInteger(upperVal) == Casts.toInteger(lowerVal) ? 2 : -2;
 			case IF_ICMPNE:
-				return ((Integer) upperVal) != ((Integer) lowerVal) ? 2 : -2;
+				return Casts.toInteger(upperVal) != Casts.toInteger(lowerVal) ? 2 : -2;
 			case IF_ICMPLT:
-				return ((Integer) lowerVal) < ((Integer) upperVal) ? 2 : -2;
+				return Casts.toInteger(lowerVal) < Casts.toInteger(upperVal) ? 2 : -2;
 			case IF_ICMPGE:
-				return ((Integer) lowerVal) >= ((Integer) upperVal) ? 2 : -2;
+				return Casts.toInteger(lowerVal) >= Casts.toInteger(upperVal) ? 2 : -2;
 			case IF_ICMPGT:
-				return ((Integer) lowerVal) > ((Integer) upperVal) ? 2 : -2;
+				return Casts.toInteger(lowerVal) > Casts.toInteger(upperVal) ? 2 : -2;
 			case IF_ICMPLE:
-				return ((Integer) lowerVal) <= ((Integer) upperVal) ? 2 : -2;
+				return Casts.toInteger(lowerVal) <= Casts.toInteger(upperVal) ? 2 : -2;
 			case IF_ACMPEQ:
 				return up.equals(low) ? 2 : -2;
 			case IF_ACMPNE:
