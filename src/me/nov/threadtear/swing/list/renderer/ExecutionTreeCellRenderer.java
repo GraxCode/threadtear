@@ -43,6 +43,7 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
 					this.setIcon(this.executionGreen);
 					break;
 				case CLEANING:
+				case OTHER:
 					this.setIcon(this.executionBlue);
 					break;
 				default:

@@ -1,7 +1,7 @@
 package me.nov.threadtear.execution;
 
 public enum ExecutionCategory {
-	GENERIC("Generic"), CLEANING("Cleaning"), ANALYSIS("Analysis"), STRINGER("Stringer Obfuscator"), ZKM("ZKM Obfuscator");
+	GENERIC("Generic"), CLEANING("Cleaning"), ANALYSIS("Analysis"), STRINGER("Stringer Obfuscator"), ZKM("ZKM Obfuscator"), OTHER("Other");
 
 	public final String name;
 
