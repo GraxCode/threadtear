@@ -6,7 +6,7 @@ import java.security.Permission;
 import me.nov.threadtear.Threadtear;
 
 public class VMSecurityManager extends SecurityManager {
-	private static final String MSG = "This shouldn't happen. An execution ran code that it's not supposed to. Please open an issue on github!";
+	private static final String MSG = "An execution ran code that it's not supposed to. If you think this is a false call, open an issue on GitHub.";
 
 	@Override
 	public void checkPermission(Permission perm) {

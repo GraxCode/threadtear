@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -39,6 +40,7 @@ public class Threadtear extends JFrame {
 	public Threadtear() {
 		this.initBounds();
 		this.setTitle("Threadtear");
+		this.setIconImage(new ImageIcon(getClass().getResource("/res/threadtear.png")).getImage());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new ExitListener(this));
 		this.initializeFrame();
