@@ -1,14 +1,17 @@
 package me.nov.threadtear.vm;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import me.nov.threadtear.asm.util.Instructions;
@@ -43,15 +46,15 @@ public class Sandbox implements Opcodes {
 		return proxy;
 	}
 
-	public static MethodNode copyMethod(MethodNode clinit) {
-		MethodNode mn = new MethodNode(clinit.access, clinit.name, clinit.desc, clinit.signature, clinit.exceptions.toArray(new String[0]));
+	public static MethodNode copyMethod(MethodNode original) {
+		MethodNode mn = new MethodNode(original.access, original.name, original.desc, original.signature, original.exceptions.toArray(new String[0]));
 		InsnList copy = new InsnList();
-		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(clinit.instructions);
-		for (AbstractInsnNode ain : clinit.instructions) {
+		Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(original.instructions);
+		for (AbstractInsnNode ain : original.instructions) {
 			copy.add(ain.clone(labels));
 		}
-		mn.tryCatchBlocks = clinit.tryCatchBlocks;
-		mn.localVariables = clinit.localVariables;
+		mn.tryCatchBlocks = original.tryCatchBlocks.stream().map(tcb -> new TryCatchBlockNode(tcb.start, tcb.end, tcb.handler, tcb.type)).collect(Collectors.toList());
+		mn.localVariables = original.localVariables.stream().map(lv -> new LocalVariableNode(lv.name, lv.desc, lv.signature, lv.start, lv.end, lv.index)).collect(Collectors.toList());
 		Instructions.updateInstructions(mn, labels, copy);
 		mn.maxStack = 1337;
 		mn.maxLocals = 1337;
