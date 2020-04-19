@@ -62,6 +62,10 @@ public class ConstantValue implements Value {
 		return value instanceof String;
 	}
 
+	public boolean isLong() {
+		return getType() == BasicValue.LONG_VALUE;
+	}
+
 	public Integer getInteger() {
 		if (value == null)
 			return null;
@@ -75,4 +79,5 @@ public class ConstantValue implements Value {
 	public boolean isKnown() {
 		return value != null;
 	}
+
 }

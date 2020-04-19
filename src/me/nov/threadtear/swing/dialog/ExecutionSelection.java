@@ -21,6 +21,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.allatori.ExpirationDateRemoverAllatori;
 import me.nov.threadtear.execution.allatori.StringObfuscationAllatori;
 import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
@@ -111,6 +112,7 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new AccessObfusationZKM());
 			
 			addExecution(root, new StringObfuscationAllatori());
+			addExecution(root, new ExpirationDateRemoverAllatori());
 			
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());
