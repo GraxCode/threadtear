@@ -134,8 +134,9 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 		ClassNode decryptionMethodOwner = getClass(classes, min.owner).node;
 		if (decryptionMethodOwner == null)
 			return null;
-		vm.explicitlyLoadWithoutClinitAndIsolate(decryptionMethodOwner, (name) -> !name.matches("java/lang/.*"));
-		vm.explicitlyLoadWithClinit(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
+		vm.explicitlyPreloadWithClinit(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
+		if (!vm.isLoaded(decryptionMethodOwner.name.replace('/', '.'))) // decryption class could be the same class
+			vm.explicitlyPreloadNoClinitAndIsolate(decryptionMethodOwner, (name) -> !name.matches("java/lang/.*"));
 		Class<?> loadedClone = vm.loadClass(fakeInvocationClone.name.replace('/', '.'), true); // load dupe class
 
 		if (m.name.equals("<init>")) {
@@ -162,6 +163,10 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 
 		node.fields.add(new FieldNode(ACC_PUBLIC | ACC_STATIC, "proxyReturn", "Ljava/lang/String;", null, null));
 		node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()V")); // method should return real string
+		if (min.owner.equals(cn.name)) {
+			// decryption method is in own class
+			node.methods.add(Sandbox.copyMethod(getMethod(getClass(classes, min.owner).node, min.name, min.desc)));
+		}
 		fakeInvocationClone = node;
 	}
 

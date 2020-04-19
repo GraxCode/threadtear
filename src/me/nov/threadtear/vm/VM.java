@@ -89,21 +89,21 @@ public class VM extends ClassLoader implements Opcodes {
 		return Conversion.toBytecode0(vmnode);
 	}
 
-	public void explicitlyLoadWithClinit(ClassNode node) {
+	public void explicitlyPreloadWithClinit(ClassNode node) {
 		String name = node.name.replace('/', '.');
 		byte[] clazz = convert(node, false, null);
 		Class<?> loadedClass = bytesToClass(name, clazz);
 		loaded.put(name, loadedClass);
 	}
 
-	public void explicitlyLoadWithoutClinit(ClassNode node) {
+	public void explicitlyPreloadNoClinit(ClassNode node) {
 		String name = node.name.replace('/', '.');
 		byte[] clazz = convert(node, true, null);
 		Class<?> loadedClass = bytesToClass(name, clazz);
 		loaded.put(name, loadedClass);
 	}
 
-	public void explicitlyLoadWithoutClinitAndIsolate(ClassNode node, Predicate<String> p) {
+	public void explicitlyPreloadNoClinitAndIsolate(ClassNode node, Predicate<String> p) {
 		String name = node.name.replace('/', '.');
 		byte[] clazz = convert(node, true, p);
 		Class<?> loadedClass = bytesToClass(name, clazz);
