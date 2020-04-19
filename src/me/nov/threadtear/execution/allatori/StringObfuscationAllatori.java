@@ -107,9 +107,8 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 						if (realString != null) {
 							if (Strings.isHighUTF(realString)) {
 								logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
-							} else {
-								this.decrypted++;
 							}
+							this.decrypted++;
 							return new AbstractInsnNode[] { new InsnNode(POP), new LdcInsnNode(realString) };
 						} else {
 							logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
