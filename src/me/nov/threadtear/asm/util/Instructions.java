@@ -152,7 +152,7 @@ public class Instructions implements Opcodes {
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
 	}
 
-	public static void isolateCallsThatMatch(ClassNode cn, MethodNode mn, Predicate<String> p) {
+	public static void isolateCallsThatMatch(MethodNode mn, Predicate<String> p) {
 		for (int i = 0; i < mn.instructions.size(); i++) {
 			AbstractInsnNode ain = mn.instructions.get(i);
 			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {

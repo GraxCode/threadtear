@@ -3,6 +3,7 @@ package me.nov.threadtear.vm;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.HashMap;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -10,6 +11,7 @@ import org.objectweb.asm.tree.InsnNode;
 
 import me.nov.threadtear.asm.io.Conversion;
 import me.nov.threadtear.asm.util.Access;
+import me.nov.threadtear.asm.util.Instructions;
 
 public class VM extends ClassLoader implements Opcodes {
 	HashMap<String, Class<?>> loaded = new HashMap<>();
@@ -57,7 +59,7 @@ public class VM extends ClassLoader implements Opcodes {
 		if (loaded.containsKey(name)) {
 			return loaded.get(name);
 		}
-		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')), removeClinit);
+		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')), removeClinit, null);
 		if (clazz == null) {
 			return null;
 		}
@@ -66,7 +68,7 @@ public class VM extends ClassLoader implements Opcodes {
 		return loadedClass;
 	}
 
-	private byte[] convert(ClassNode node, boolean removeClinit) {
+	private byte[] convert(ClassNode node, boolean removeClinit, Predicate<String> removalPredicate) {
 		if (node == null)
 			return null;
 		ClassNode vmnode = Conversion.toNode(Conversion.toBytecode0(node)); // clone ClassNode the easy way
@@ -80,13 +82,30 @@ public class VM extends ClassLoader implements Opcodes {
 				m.tryCatchBlocks.clear();
 				m.localVariables = null;
 			});
+			if (removalPredicate != null) {
+				vmnode.methods.forEach(m -> Instructions.isolateCallsThatMatch(m, removalPredicate));
+			}
 		}
 		return Conversion.toBytecode0(vmnode);
 	}
 
 	public void explicitlyLoadWithClinit(ClassNode node) {
 		String name = node.name.replace('/', '.');
-		byte[] clazz = convert(node, false);
+		byte[] clazz = convert(node, false, null);
+		Class<?> loadedClass = bytesToClass(name, clazz);
+		loaded.put(name, loadedClass);
+	}
+
+	public void explicitlyLoadWithoutClinit(ClassNode node) {
+		String name = node.name.replace('/', '.');
+		byte[] clazz = convert(node, true, null);
+		Class<?> loadedClass = bytesToClass(name, clazz);
+		loaded.put(name, loadedClass);
+	}
+
+	public void explicitlyLoadWithoutClinitAndIsolate(ClassNode node, Predicate<String> p) {
+		String name = node.name.replace('/', '.');
+		byte[] clazz = convert(node, true, p);
 		Class<?> loadedClass = bytesToClass(name, clazz);
 		loaded.put(name, loadedClass);
 	}

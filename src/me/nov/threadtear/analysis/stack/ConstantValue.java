@@ -58,6 +58,10 @@ public class ConstantValue implements Value {
 		return getType() == BasicValue.INT_VALUE;
 	}
 
+	public boolean isString() {
+		return value instanceof String;
+	}
+
 	public Integer getInteger() {
 		if (value == null)
 			return null;

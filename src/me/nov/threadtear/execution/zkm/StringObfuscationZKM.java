@@ -84,9 +84,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		
 		MethodNode callMethod = Sandbox.copyMethod(clinit);
 		callMethod.name = "clinitProxy";
-		Instructions.isolateCallsThatMatch(cn, callMethod, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS));
+		Instructions.isolateCallsThatMatch(callMethod, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS));
 		// cut out decryption part and make proxy
-//		MethodNode callMethod = Sandbox.createMethodProxy(Instructions.isolateCallsThatMatch(cn, clinit, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS)), "clinitProxy", "()V");
 		cn.methods.remove(clinit);
 		cn.methods.add(callMethod);
 
