@@ -111,12 +111,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 					rewrittenCode.add(newInstr.clone(labels));
 				}
 			}
-			m.instructions = rewrittenCode;
-			m.tryCatchBlocks.forEach(tcb -> {
-				tcb.start = labels.get(tcb.start);
-				tcb.end = labels.get(tcb.end);
-				tcb.handler = labels.get(tcb.handler);
-			});
+			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
 	}
 
