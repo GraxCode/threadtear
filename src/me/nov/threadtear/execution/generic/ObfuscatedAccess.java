@@ -12,7 +12,7 @@ import me.nov.threadtear.execution.ExecutionTag;
 public class ObfuscatedAccess extends Execution {
 
 	public ObfuscatedAccess() {
-		super(ExecutionCategory.GENERIC, "Fix obfuscated access", "Fixes obfuscated access like synthetic or bridge.", ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE);
+		super(ExecutionCategory.GENERIC, "Fix obfuscated access", "Fixes obfuscated access like synthetic or bridge.<br>Can break some decompilers, but mostly improves readability", ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE);
 	}
 
 	@Override
