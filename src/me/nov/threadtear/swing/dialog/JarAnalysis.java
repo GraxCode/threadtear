@@ -70,21 +70,24 @@ public class JarAnalysis extends JDialog implements Opcodes {
 		print("Analyzing instructions...\n\n");
 		print("Jumps in proportion to references -> ");
 		double jumpPercentage = classes.stream().map(c -> c.node.methods).flatMap(List::stream)
-				.mapToDouble(m -> Counting.percentOf(AbstractInsnNode.JUMP_INSN, m.instructions, AbstractInsnNode.METHOD_INSN, AbstractInsnNode.FIELD_INSN, AbstractInsnNode.TYPE_INSN)).average().orElse(Double.NaN);
+				.mapToDouble(m -> Counting.percentOf(AbstractInsnNode.JUMP_INSN, m.instructions, AbstractInsnNode.METHOD_INSN, AbstractInsnNode.FIELD_INSN, AbstractInsnNode.TYPE_INSN)).average()
+				.orElse(Double.NaN);
 		print(Math.round(jumpPercentage * 10000) / 100.0 + "%\n");
 		print("Normal proportion is about 11%.\n");
 		print("A higher value indicates flow obfuscation.\n");
 		print("----------------------------------------------\n");
 
 		print("Average invokedynamics per method -> ");
-		double invokedynamics = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.count(m.instructions, AbstractInsnNode.INVOKE_DYNAMIC_INSN)).average().orElse(Double.NaN);
+		double invokedynamics = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.count(m.instructions, AbstractInsnNode.INVOKE_DYNAMIC_INSN)).average()
+				.orElse(Double.NaN);
 		print(Math.round(invokedynamics * 100) / 100.0 + "\n");
 		print("Normally about 0.0 - 0.4.\n");
 		print("A higher value indicates reference obfuscation.\n");
 		print("----------------------------------------------\n");
 
 		print("Rare stack operations averagely per method -> ");
-		double stackop = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.countOp(m.instructions, POP2, DUP2, DUP_X1, DUP_X2, DUP2_X1, DUP2_X2, SWAP)).average().orElse(Double.NaN);
+		double stackop = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting.countOp(m.instructions, POP2, DUP2, DUP_X1, DUP_X2, DUP2_X1, DUP2_X2, SWAP)).average()
+				.orElse(Double.NaN);
 		print(Math.round(stackop * 100) / 100.0 + "\n");
 		print("Normally about 0.0 - 0.1.\n");
 		print("A higher value indicates flow obfuscation.\n");
@@ -92,8 +95,8 @@ public class JarAnalysis extends JDialog implements Opcodes {
 
 		print("Average standard deviation of letters in strings -> ");
 		double sdev = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst.toString().length() > 2).mapToDouble(ain -> Strings.calcSdev(((LdcInsnNode) ain).cst.toString())).average()
-				.orElse(Double.NaN);
+				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst.toString().length() > 2)
+				.mapToDouble(ain -> Strings.calcSdev(((LdcInsnNode) ain).cst.toString())).average().orElse(Double.NaN);
 		print(Math.round(sdev * 100) / 100.0 + "\n");
 		print("Normally around 15 - 40.\n");
 		print("A higher value could indicate string obfuscation.\n");
@@ -101,8 +104,8 @@ public class JarAnalysis extends JDialog implements Opcodes {
 
 		print("Percentage of high character value strings -> ");
 		double highutf = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst.toString().length() > 2).mapToDouble(ain -> Strings.isHighUTF(((LdcInsnNode) ain).cst.toString()) ? 1 : 0).average()
-				.orElse(Double.NaN);
+				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst.toString().length() > 2)
+				.mapToDouble(ain -> Strings.isHighUTF(((LdcInsnNode) ain).cst.toString()) ? 1 : 0).average().orElse(Double.NaN);
 		print(Math.round(highutf * 10000) / 100.0 + "\n");
 		print("Normally around 0% - 1%.\n");
 		print("A higher value could indicate string obfuscation.\n");

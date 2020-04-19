@@ -96,7 +96,8 @@ public class References {
 					String owner = handle.getOwner();
 					String name = handle.getName();
 					String desc = handle.getDesc();
-					idin.bsmArgs[i] = new Handle(handle.getTag(), owner, methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
+					idin.bsmArgs[i] = new Handle(handle.getTag(), owner,
+							methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
 							handle.isInterface());
 				}
 			}
@@ -104,7 +105,8 @@ public class References {
 				String owner = idin.bsm.getOwner();
 				String name = idin.bsm.getName();
 				String desc = idin.bsm.getDesc();
-				idin.bsm = new Handle(idin.bsm.getTag(), owner, methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
+				idin.bsm = new Handle(idin.bsm.getTag(), owner,
+						methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
 						idin.bsm.isInterface());
 			}
 		} else {

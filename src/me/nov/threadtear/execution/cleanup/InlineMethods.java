@@ -22,7 +22,8 @@ import me.nov.threadtear.execution.ExecutionTag;
 public class InlineMethods extends Execution {
 
 	public InlineMethods() {
-		super(ExecutionCategory.CLEANING, "Inline static methods without invocation", "Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.", ExecutionTag.RUNNABLE);
+		super(ExecutionCategory.CLEANING, "Inline static methods without invocation", "Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.",
+				ExecutionTag.RUNNABLE);
 	}
 
 	public int inlines;
@@ -60,7 +61,8 @@ public class InlineMethods extends Execution {
 		InsnList fakeVarList = createFakeVarList(method);
 		copy.insert(fakeVarList);
 
-		StreamSupport.stream(copy.spliterator(), false).filter(ain -> ain.getType() == AbstractInsnNode.VAR_INSN).map(ain -> (VarInsnNode) ain).forEach(v -> v.var += m.maxLocals + 4); // offset local variables to not
+		StreamSupport.stream(copy.spliterator(), false).filter(ain -> ain.getType() == AbstractInsnNode.VAR_INSN).map(ain -> (VarInsnNode) ain).forEach(v -> v.var += m.maxLocals + 4); // offset local
+																																																																																										// variables to not
 		// collide with existing ones
 		m.instructions.insert(min, copy);
 		m.instructions.remove(min);

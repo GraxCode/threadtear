@@ -16,7 +16,7 @@ public class Java8Compatibility extends Execution {
 	@Override
 	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
 		classes.stream().map(c -> c.node).forEach(c -> c.version = 52);
-		//TODO check if bytecode is compatible
+		// TODO check if bytecode is compatible
 		logger.info("Compatibility changed to Java 8+");
 		return true;
 	}

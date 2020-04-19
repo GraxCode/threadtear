@@ -28,8 +28,8 @@ public class ReobfuscateMembers extends Execution {
 	private boolean verbose;
 
 	public ReobfuscateMembers() {
-		super(ExecutionCategory.ANALYSIS, "Reobfuscate methods and fields", "Reobfuscate method and field names for easier analysis.<br>Gets rid of annoying method names like 恼人的名字.", ExecutionTag.BETTER_DECOMPILE,
-				ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.ANALYSIS, "Reobfuscate methods and fields", "Reobfuscate method and field names for easier analysis.<br>Gets rid of annoying method names like 恼人的名字.",
+				ExecutionTag.BETTER_DECOMPILE, ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
@@ -50,7 +50,8 @@ public class ReobfuscateMembers extends Execution {
 		});
 
 		logger.info("Updating method references in code");
-		int mrefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapMethodReference(methods, ain)).sum();
+		int mrefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
+				.mapToInt(ain -> References.remapMethodReference(methods, ain)).sum();
 		logger.info(mrefs + " method references updated successfully!");
 
 		logger.info("Making field mappings");
@@ -62,7 +63,8 @@ public class ReobfuscateMembers extends Execution {
 		});
 
 		logger.info("Updating field references in code");
-		int frefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapFieldReference(fields, ain)).sum();
+		int frefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapFieldReference(fields, ain))
+				.sum();
 		logger.info(frefs + " field references updated successfully!");
 		return frefs > 0 && mrefs > 0;
 	}
@@ -109,7 +111,8 @@ public class ReobfuscateMembers extends Execution {
 	}
 
 	private String makeName(ArrayList<ClassNode> parents, MethodNode m) {
-		MappedMember overriddenMethod = parents.stream().map(c -> c.name).filter(methods::containsKey).map(methods::get).flatMap(List::stream).filter(mapped -> mapped.equalsMethod(m)).findFirst().orElse(null);
+		MappedMember overriddenMethod = parents.stream().map(c -> c.name).filter(methods::containsKey).map(methods::get).flatMap(List::stream).filter(mapped -> mapped.equalsMethod(m)).findFirst()
+				.orElse(null);
 		if (overriddenMethod != null) {
 			// return parent name
 			return overriddenMethod.newName;

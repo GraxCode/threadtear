@@ -17,7 +17,8 @@ import me.nov.threadtear.util.Strings;
 public class ReobfuscateClassNames extends Execution {
 
 	public ReobfuscateClassNames() {
-		super(ExecutionCategory.ANALYSIS, "Reobfuscate class names", "Reobfuscate class names for easier analysis.<br>Gets rid of annoying class names like IlIllIlI.", ExecutionTag.BETTER_DECOMPILE, ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.ANALYSIS, "Reobfuscate class names", "Reobfuscate class names for easier analysis.<br>Gets rid of annoying class names like IlIllIlI.", ExecutionTag.BETTER_DECOMPILE,
+				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
@@ -34,7 +35,8 @@ public class ReobfuscateClassNames extends Execution {
 			c.node.name = map.getOrDefault(c.node.name, c.node.name);
 		});
 		logger.info("Updating code references");
-		int refs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstructionDescs(map, ain)).sum();
+		int refs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstructionDescs(map, ain))
+				.sum();
 		logger.info(refs + " code references updated successfully!");
 		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> References.remapMethodType(map, m));
 		classes.stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> References.remapFieldType(map, f));

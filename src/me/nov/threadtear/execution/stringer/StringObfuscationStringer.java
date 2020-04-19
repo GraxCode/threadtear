@@ -46,7 +46,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private boolean verbose;
 
 	public StringObfuscationStringer() {
-		super(ExecutionCategory.STRINGER, "String obfuscation removal", "Works for version 3 - 9.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+		super(ExecutionCategory.STRINGER, "String obfuscation removal", "Works for version 3 - 9.<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE,
+				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	/*

@@ -52,8 +52,10 @@ public class Threadtear extends JFrame {
 		JMenu help = new JMenu("Help");
 		JMenuItem about = new JMenuItem("About Threadtear");
 		about.addActionListener(e -> {
-			JOptionPane.showMessageDialog(this, "<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
-					+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by noverify a.k.a GraxCode.", "About", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this,
+					"<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
+							+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by noverify a.k.a GraxCode.",
+					"About", JOptionPane.INFORMATION_MESSAGE);
 		});
 		help.add(about);
 		JMenuItem log = new JMenuItem("Open Log");
@@ -107,7 +109,8 @@ public class Threadtear extends JFrame {
 			return;
 		}
 		if (disableSecurity) {
-			if (JOptionPane.showConfirmDialog(this, "Are you sure you wan't to start without a security manager?\nMalicious code could be executed!", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+			if (JOptionPane.showConfirmDialog(this, "Are you sure you wan't to start without a security manager?\nMalicious code could be executed!", "Warning",
+					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 				return;
 			}
 		}

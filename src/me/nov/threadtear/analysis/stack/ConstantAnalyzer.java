@@ -475,7 +475,8 @@ public class ConstantAnalyzer implements Opcodes {
 		}
 	}
 
-	private void merge(final int insnIndex, final Frame<ConstantValue> frameBeforeJsr, final Frame<ConstantValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<ConstantValue> frameBeforeJsr, final Frame<ConstantValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed)
+			throws AnalyzerException {
 		frameAfterRet.merge(frameBeforeJsr, localsUsed);
 
 		boolean changed;

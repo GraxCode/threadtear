@@ -43,7 +43,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	private static final String ENCHANCED_MODE_METHOD_DESC = "(II)Ljava/lang/String;";
 
 	public StringObfuscationZKM() {
-		super(ExecutionCategory.ZKM, "String obfuscation removal", "Tested on ZKM 5 - 11, could work on newer versions too.<br>" + "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>", ExecutionTag.RUNNABLE,
+		super(ExecutionCategory.ZKM, "String obfuscation removal",
+				"Tested on ZKM 5 - 11, could work on newer versions too.<br>" + "<i>String encryption using DES Cipher is currently <b>NOT</b> supported.</i>", ExecutionTag.RUNNABLE,
 				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
@@ -81,7 +82,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		MethodNode clinit = getStaticInitializer(cn);
 		if (clinit == null)
 			return;
-		
+
 		MethodNode callMethod = Sandbox.copyMethod(clinit);
 		callMethod.name = "clinitProxy";
 		Instructions.isolateCallsThatMatch(callMethod, (s) -> !s.equals(cn.name) && !s.matches(ALLOWED_CALLS));

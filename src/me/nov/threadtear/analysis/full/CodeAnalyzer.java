@@ -477,7 +477,8 @@ public class CodeAnalyzer implements Opcodes {
 		}
 	}
 
-	private void merge(final int insnIndex, final Frame<CodeReferenceValue> frameBeforeJsr, final Frame<CodeReferenceValue> frameAfterRet, final Subroutine subroutineBeforeJsr, final boolean[] localsUsed) throws AnalyzerException {
+	private void merge(final int insnIndex, final Frame<CodeReferenceValue> frameBeforeJsr, final Frame<CodeReferenceValue> frameAfterRet, final Subroutine subroutineBeforeJsr,
+			final boolean[] localsUsed) throws AnalyzerException {
 		frameAfterRet.merge(frameBeforeJsr, localsUsed);
 
 		boolean changed;

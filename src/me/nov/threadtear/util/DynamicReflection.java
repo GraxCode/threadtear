@@ -38,7 +38,7 @@ public class DynamicReflection implements Opcodes {
 		impl.setAccessible(true);
 		return (Lookup) impl.get(null);
 	}
-	
+
 	public static AbstractInsnNode getInstructionFromHandleInfo(MethodHandleInfo direct) throws Exception {
 		Class<?> declaringClass = direct.getDeclaringClass();
 		String name = direct.getName();

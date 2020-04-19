@@ -103,7 +103,8 @@ public class LogFrame extends JFrame {
 		}
 
 		private String format(LogRecord record) {
-			return String.format("[%1$tF %1$tT] [%4$-7s] %5$s %n", new Date(record.getMillis()), record.getSourceClassName(), record.getLoggerName(), record.getLevel().getLocalizedName(), record.getMessage(), record.getThrown());
+			return String.format("[%1$tF %1$tT] [%4$-7s] %5$s %n", new Date(record.getMillis()), record.getSourceClassName(), record.getLoggerName(), record.getLevel().getLocalizedName(),
+					record.getMessage(), record.getThrown());
 		}
 
 		@Override

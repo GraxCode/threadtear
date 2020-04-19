@@ -26,7 +26,8 @@ public class TryCatchObfuscationRemover extends Execution {
 	private boolean verbose;
 
 	public TryCatchObfuscationRemover() {
-		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks", "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
+		super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks", "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", ExecutionTag.RUNNABLE,
+				ExecutionTag.BETTER_DECOMPILE);
 	}
 
 	@Override

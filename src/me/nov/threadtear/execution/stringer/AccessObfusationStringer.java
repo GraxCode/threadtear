@@ -30,7 +30,8 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 	private boolean verbose;
 
 	public AccessObfusationStringer() {
-		super(ExecutionCategory.STRINGER, "Access obfuscation removal", "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+		super(ExecutionCategory.STRINGER, "Access obfuscation removal", "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE,
+				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override

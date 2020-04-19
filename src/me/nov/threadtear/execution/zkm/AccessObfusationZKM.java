@@ -50,7 +50,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 	private VM vm;
 
 	public AccessObfusationZKM() {
-		super(ExecutionCategory.ZKM, "Access obfuscation removal", "Tested on ZKM 8 - 11, could work on newer versions too.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+		super(ExecutionCategory.ZKM, "Access obfuscation removal", "Tested on ZKM 8 - 11, could work on newer versions too.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE,
+				ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override
@@ -96,7 +97,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 							try {
 								ConstantValue top = frame.getStack(frame.getStackSize() - 1);
 								if (top.isKnown()) {
-									MethodHandle handle = loadZKMBuriedHandleFromVM(classes.stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm, (long) top.getValue());
+									MethodHandle handle = loadZKMBuriedHandleFromVM(classes.stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
+											(long) top.getValue());
 									if (handle != null) {
 										MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
 										rewrittenCode.add(new InsnNode(POP2)); // pop the long
@@ -140,7 +142,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 			logger.warning("Failed to find real bootstrap method in " + cn.name + ": " + bsm);
 			return null;
 		}
-		return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm), decryptionLong);
+		return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm),
+				decryptionLong);
 	}
 
 	@Override

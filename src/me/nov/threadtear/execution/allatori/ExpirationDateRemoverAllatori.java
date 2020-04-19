@@ -22,7 +22,8 @@ import me.nov.threadtear.execution.ExecutionTag;
 public class ExpirationDateRemoverAllatori extends Execution implements IConstantReferenceHandler {
 
 	public ExpirationDateRemoverAllatori() {
-		super(ExecutionCategory.ALLATORI, "Remove expiry date", "Allatori adds expiration dates to the code<br>that stop the jar from running after being passed.<br>They can be removed easily", ExecutionTag.POSSIBLE_DAMAGE);
+		super(ExecutionCategory.ALLATORI, "Remove expiry date", "Allatori adds expiration dates to the code<br>that stop the jar from running after being passed.<br>They can be removed easily",
+				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
@@ -32,8 +33,9 @@ public class ExpirationDateRemoverAllatori extends Execution implements IConstan
 //				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof Long).map(ain -> (LdcInsnNode) ain).filter(ldc -> Math.abs((long) ldc.cst - System.currentTimeMillis()) < 157784760000L).count());
 
 		long mostCommon = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof Long).map(ain -> (LdcInsnNode) ain).filter(ldc -> Math.abs((long) ldc.cst - System.currentTimeMillis()) < 157784760000L)
-				.collect(Collectors.groupingBy(ldc -> (long) ldc.cst, Collectors.counting())).entrySet().stream().max(Comparator.comparing(Entry::getValue)).map(Entry::getKey).orElseThrow(RuntimeException::new);
+				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof Long).map(ain -> (LdcInsnNode) ain)
+				.filter(ldc -> Math.abs((long) ldc.cst - System.currentTimeMillis()) < 157784760000L).collect(Collectors.groupingBy(ldc -> (long) ldc.cst, Collectors.counting())).entrySet().stream()
+				.max(Comparator.comparing(Entry::getValue)).map(Entry::getKey).orElseThrow(RuntimeException::new);
 		logger.info("Expiration date is " + new Date(mostCommon).toString() + ", replacing");
 		classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
 				.filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst.equals(mostCommon)).map(ain -> (LdcInsnNode) ain).forEach(ldc -> ldc.cst = 1337133713371337L);
