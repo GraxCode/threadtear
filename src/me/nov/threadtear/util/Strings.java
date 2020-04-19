@@ -1,5 +1,19 @@
 package me.nov.threadtear.util;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+
+import javax.lang.model.SourceVersion;
+
+import org.apache.commons.io.IOUtils;
+
+import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
+
 public class Strings {
 	public static boolean isHighUTF(String cst) {
 		int unicodes = 0;
@@ -31,5 +45,43 @@ public class Strings {
 		for (int i = 1; i < ccst.length; i++)
 			sdev += (ccst[i] - mean) * (ccst[i] - mean);
 		return Math.sqrt(sdev / (ccst.length - 1.0));
+	}
+
+	public static Queue<String> generateWordQueue(int amount) {
+		Queue<String> queue = new LinkedList<>();
+		try {
+			String nouns = IOUtils.toString(ReobfuscateMembers.class.getResourceAsStream("/res/english-words.txt"), "UTF-8");
+			List<String> words = Arrays.asList(nouns.split("\n"));
+			Collections.shuffle(words);
+			int i = 0;
+			while (queue.size() < amount) {
+				String word = i >= words.size() ? generateWord(8) : words.get(i);
+				if (SourceVersion.isName(word)) {
+					queue.add(word);
+				}
+				i++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return queue;
+	}
+
+	private static final String goodConsonants = "bcdfglmnprstvyz";
+	private static final String vocals = "aeiou";
+	private static final Random random = new Random();
+
+	public static String generateWord(int len) {
+		boolean vocal = random.nextBoolean();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < len; i++) {
+			if (vocal) {
+				sb.append(goodConsonants.charAt(random.nextInt(goodConsonants.length())));
+			} else {
+				sb.append(vocals.charAt(random.nextInt(vocals.length())));
+			}
+			vocal = !vocal;
+		}
+		return sb.toString();
 	}
 }
