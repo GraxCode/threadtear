@@ -50,6 +50,8 @@ public class ConfigurationPanel extends JPanel {
 		JButton save = new JButton("Save Jar");
 		save.addActionListener(l -> {
 			File inputFile = main.listPanel.classList.inputFile;
+			if (inputFile == null)
+				return;
 			JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
 			jfc.setAcceptAllFileFilterUsed(false);
 			jfc.setSelectedFile(inputFile);

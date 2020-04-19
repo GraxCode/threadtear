@@ -34,6 +34,7 @@ public class Threadtear extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	public TopPanel listPanel;
+	private LogFrame logFrame;
 
 	public Threadtear() {
 		this.initBounds();
@@ -53,6 +54,13 @@ public class Threadtear extends JFrame {
 					+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by noverify a.k.a GraxCode.", "About", JOptionPane.INFORMATION_MESSAGE);
 		});
 		help.add(about);
+		JMenuItem log = new JMenuItem("Open Log");
+		log.addActionListener(e -> {
+			if (logFrame != null) {
+				logFrame.setVisible(true);
+			}
+		});
+		help.add(log);
 		bar.add(help);
 		this.setJMenuBar(bar);
 
@@ -101,7 +109,8 @@ public class Threadtear extends JFrame {
 				return;
 			}
 		}
-		LogFrame logFrame = new LogFrame();
+		if (logFrame == null)
+			logFrame = new LogFrame();
 		logFrame.setVisible(true);
 		logger.setUseParentHandlers(true);
 		logger.addHandler(new LogFrame.LogHandler(logFrame.area));
