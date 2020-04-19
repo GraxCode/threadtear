@@ -141,6 +141,31 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 }
 ```
 Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
+## Tips & Tricks
+There are some tricks that can help you identify and deobfuscate jar files successfully.
+### Deobfuscation order
+The best order for deobfuscation is `generic executions > access deobfuscation > string deobfuscation > cleaning executions`.
+### Identification
+Obfuscators exhibit patterns which you can use to identify obfuscators. The easiest way to identify an obfuscator is to skim the `META-INF/MANIFEST.MF` file. It's possible that there is an `Obfuscated-By: XXX` or `Protected-By: XXX` attribute.
+
+#### ZKM
+Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches, or string decryption methods with a very long switch block (about 250 cases).
+ZKM is one of the best obfuscators for java, and also very expensive.
+![ZKM](https://i.imgur.com/Psdagyb.png)
+#### Stringer
+If your jar file contains some special classes with huge decryption algorithms that are used by string obfuscation and access obfuscation, it's probably Stringer.
+If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten.
+Stringer also is very protecting and one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
+![Stringer](https://i.imgur.com/LmI9SYz.png)
+![Stringer 2](https://i.imgur.com/M72plII.png)
+#### Allatori
+Class names like IiIlIlIiIl or aUx, cOn, PrX indicate Allatori obfuscation.
+Allatori is very common, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
+![Allatori](https://i.imgur.com/eWYKtR4.png)
+
+### Other obfuscators
+For other obfuscators you can try generic executions or open an issue and I'll see what i can do.
+
 ## Libraries needed
 commons-io 2.6, darklaf-1.3.3.4, asm-all 8+
 
