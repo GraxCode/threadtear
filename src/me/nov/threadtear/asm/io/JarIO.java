@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Manifest;
 
@@ -77,14 +78,18 @@ public class JarIO {
 					out.write(IOUtils.toByteArray(jar.getInputStream(z)));
 					out.closeEntry();
 				} catch (Exception e) {
-					throw new RuntimeException("Failed at entry " + z.getName(), e);
+					Threadtear.logger.severe("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
 				}
 			});
 			for (Clazz c : classes) {
-				// add updated classes
-				out.putNextEntry(cloneOldEntry(c.oldEntry, c.node.name + ".class"));
-				out.write(Conversion.toBytecode(c.node, true));
-				out.closeEntry();
+				try {
+					// add updated classes
+					out.putNextEntry(cloneOldEntry(c.oldEntry, c.node.name + ".class"));
+					out.write(Conversion.toBytecode(c.node, true));
+					out.closeEntry();
+				} catch (Exception e) {
+					Threadtear.logger.severe("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
+				}
 			}
 			jar.close();
 			out.close();

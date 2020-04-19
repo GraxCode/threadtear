@@ -34,7 +34,7 @@ public class ReobfuscateClassNames extends Execution {
 			c.node.name = map.getOrDefault(c.node.name, c.node.name);
 		});
 		logger.info("Updating code references");
-		int refs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstruction(map, ain)).sum();
+		int refs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstructionDescs(map, ain)).sum();
 		logger.info(refs + " code references updated successfully!");
 		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> References.remapMethodType(map, m));
 		classes.stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> References.remapFieldType(map, f));

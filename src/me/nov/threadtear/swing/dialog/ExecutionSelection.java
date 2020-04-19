@@ -24,6 +24,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.allatori.ExpirationDateRemoverAllatori;
 import me.nov.threadtear.execution.allatori.StringObfuscationAllatori;
 import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
+import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
@@ -100,20 +101,21 @@ public class ExecutionSelection extends JDialog {
 
 			addExecution(root, new ObfuscatedAccess());
 			addExecution(root, new KnownConditionalJumps());
-			
+
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
-
+			addExecution(root, new ReobfuscateMembers());
+			
 			addExecution(root, new StringObfuscationStringer());
 			addExecution(root, new AccessObfusationStringer());
-			
+
 			addExecution(root, new TryCatchObfuscationRemover());
 			addExecution(root, new StringObfuscationZKM());
 			addExecution(root, new AccessObfusationZKM());
-			
+
 			addExecution(root, new StringObfuscationAllatori());
 			addExecution(root, new ExpirationDateRemoverAllatori());
-			
+
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());
 			addExecution(root, new IsolatePossiblyMalicious());
