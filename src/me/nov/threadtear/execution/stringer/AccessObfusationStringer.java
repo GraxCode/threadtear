@@ -41,11 +41,11 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 		this.classes = classes;
 		this.encrypted = 0;
 		this.decrypted = 0;
-		logger.info("Decrypting all invokedynamic references, this could take some time!");
+		logger.info("Decrypting all invokedynamic references");
 		this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
 		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
-			logger.severe("No access obfuscation matching stringer has been found!");
+			logger.severe("No access obfuscation matching stringer 3 - 9 has been found!");
 			return false;
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
