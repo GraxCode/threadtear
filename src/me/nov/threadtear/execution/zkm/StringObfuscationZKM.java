@@ -48,10 +48,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	}
 
 	/*
-	 * TODO: instead of checking through bytecode, stack analysis should be made,
-	 * because ZKM often abuses stack and pushes ints or getfields not in the place
-	 * where they normally are!
-	 * 
 	 * TODO: String encryption using DES Cipher (probably only in combination with
 	 * reflection obfuscation
 	 */
