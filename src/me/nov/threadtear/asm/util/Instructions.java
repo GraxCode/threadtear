@@ -106,7 +106,7 @@ public class Instructions implements Opcodes {
 		do {
 			// skip labels, frames and line numbers
 			ain = ain.getNext();
-		} while (ain.getOpcode() == -1);
+		} while (ain != null && ain.getOpcode() == -1);
 		return ain;
 	}
 
@@ -114,7 +114,7 @@ public class Instructions implements Opcodes {
 		do {
 			// skip labels, frames and line numbers
 			ain = ain.getPrevious();
-		} while (ain.getOpcode() == -1);
+		} while (ain != null && ain.getOpcode() == -1);
 		return ain;
 	}
 

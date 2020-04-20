@@ -28,6 +28,7 @@ import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
+import me.nov.threadtear.execution.generic.ConvertCompareInstructions;
 import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
 import me.nov.threadtear.execution.stringer.AccessObfusationStringer;
@@ -101,7 +102,8 @@ public class ExecutionSelection extends JDialog {
 
 			addExecution(root, new ObfuscatedAccess());
 			addExecution(root, new KnownConditionalJumps());
-
+			addExecution(root, new ConvertCompareInstructions());
+			
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 			addExecution(root, new ReobfuscateMembers());

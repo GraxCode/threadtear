@@ -2,7 +2,6 @@ package me.nov.threadtear.analysis.full.value.values;
 
 import java.util.Objects;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
