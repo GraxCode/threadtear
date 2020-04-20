@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -12,18 +13,19 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.objectweb.asm.Opcodes;
 
+import com.github.weisj.darklaf.icons.IconLoader;
+
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
 
 public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
 	private static final long serialVersionUID = 1L;
 
-	private ImageIcon executionRed, executionGreen, executionBlue, directory;
+	private Icon executionRed, executionGreen, executionBlue, directory;
 
 	public ExecutionTreeCellRenderer() {
+		this.directory = IconLoader.get().loadSVGIcon("/res/folder.svg", false);
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		this.directory = new ImageIcon(tk.getImage(this.getClass().getResource("/res/directory.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-
 		this.executionRed = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_red.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 		this.executionGreen = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_green.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 		this.executionBlue = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_blue.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));

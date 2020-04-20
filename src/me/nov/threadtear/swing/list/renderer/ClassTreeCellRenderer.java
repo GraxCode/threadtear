@@ -2,16 +2,16 @@ package me.nov.threadtear.swing.list.renderer;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.Toolkit;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+
+import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Access;
@@ -20,14 +20,13 @@ import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
 	private static final long serialVersionUID = 1L;
 
-	private ImageIcon pack, clazz, enu, itf;
+	private Icon pack, clazz, enu, itf;
 
 	public ClassTreeCellRenderer() {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		this.pack = new ImageIcon(tk.getImage(this.getClass().getResource("/res/package.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-		this.clazz = new ImageIcon(tk.getImage(this.getClass().getResource("/res/class.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-		this.enu = new ImageIcon(tk.getImage(this.getClass().getResource("/res/enum.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-		this.itf = new ImageIcon(tk.getImage(this.getClass().getResource("/res/interface.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		this.pack = IconLoader.get().loadSVGIcon("/res/package.svg", false);
+		this.clazz = IconLoader.get().loadSVGIcon("/res/class.svg", false);
+		this.enu = IconLoader.get().loadSVGIcon("/res/enum.svg", false);
+		this.itf = IconLoader.get().loadSVGIcon("/res/interface.svg", false);
 	}
 
 	@Override
