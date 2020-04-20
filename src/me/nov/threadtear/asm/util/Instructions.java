@@ -275,4 +275,10 @@ public class Instructions implements Opcodes {
 		m.visibleLocalVariableAnnotations = null;
 		m.invisibleLocalVariableAnnotations = null;
 	}
+	
+	public static InsnList singleton(AbstractInsnNode ain) {
+		InsnList list = new InsnList();
+		list.add(ain);
+		return list;
+	}
 }

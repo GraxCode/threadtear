@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Value;
@@ -15,14 +16,18 @@ public abstract class CodeReferenceValue implements Value, Opcodes {
 
 	public abstract boolean equalsWith(CodeReferenceValue obj);
 
-	public abstract InsnList toInstructions();
+	public abstract InsnList cloneInstructions();
+
+	public abstract InsnList getInstructions();
 
 	public abstract Object getStackValueOrNull();
 
 	protected BasicValue type;
+	protected AbstractInsnNode node;
 
-	protected CodeReferenceValue(BasicValue type) {
+	protected CodeReferenceValue(BasicValue type, AbstractInsnNode node) {
 		this.type = Objects.requireNonNull(type);
+		this.node = Objects.requireNonNull(node);
 	}
 
 	@Override

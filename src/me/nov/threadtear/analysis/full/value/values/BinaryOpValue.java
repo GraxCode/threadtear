@@ -4,19 +4,18 @@ import java.util.Objects;
 
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 
 public class BinaryOpValue extends CodeReferenceValue {
 
-	public int opcode;
 	public CodeReferenceValue left;
 	public CodeReferenceValue right;
 
-	public BinaryOpValue(BasicValue type, int opcode, CodeReferenceValue left, CodeReferenceValue right) {
-		super(type);
-		this.opcode = opcode;
+	public BinaryOpValue(BasicValue type, InsnNode node, CodeReferenceValue left, CodeReferenceValue right) {
+		super(type, node);
 		this.left = Objects.requireNonNull(left);
 		this.right = Objects.requireNonNull(right);
 	}
@@ -31,7 +30,8 @@ public class BinaryOpValue extends CodeReferenceValue {
 		if (!isKnownValue()) {
 			return this;
 		}
-		return new NumberValue(type, getStackValueOrNull());
+		Object stack = getStackValueOrNull();
+		return new NumberValue(type, new LdcInsnNode(stack), stack);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class BinaryOpValue extends CodeReferenceValue {
 				return false;
 		} else if (!left.equals(other.left))
 			return false;
-		if (opcode != other.opcode)
+		if (node.getOpcode() != other.node.getOpcode())
 			return false;
 		if (right == null) {
 			if (other.right != null)
@@ -55,11 +55,20 @@ public class BinaryOpValue extends CodeReferenceValue {
 	}
 
 	@Override
-	public InsnList toInstructions() {
+	public InsnList cloneInstructions() {
 		InsnList list = new InsnList();
-		list.add(left.toInstructions());
-		list.add(right.toInstructions());
-		list.add(new InsnNode(opcode));
+		list.add(left.cloneInstructions());
+		list.add(right.cloneInstructions());
+		list.add(new InsnNode(node.getOpcode()));
+		return list;
+	}
+
+	@Override
+	public InsnList getInstructions() {
+		InsnList list = new InsnList();
+		list.add(left.getInstructions());
+		list.add(right.getInstructions());
+		list.add(node);
 		return list;
 	}
 
@@ -70,7 +79,7 @@ public class BinaryOpValue extends CodeReferenceValue {
 		}
 		Number num1 = (Number) left.getStackValueOrNull();
 		Number num2 = (Number) right.getStackValueOrNull();
-		switch (opcode) {
+		switch (node.getOpcode()) {
 		case IADD:
 			return num1.intValue() + num2.intValue();
 		case ISUB:

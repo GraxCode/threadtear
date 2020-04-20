@@ -79,26 +79,26 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		case ICONST_3:
 		case ICONST_4:
 		case ICONST_5:
-			return new NumberValue(BasicValue.INT_VALUE, insn.getOpcode() - ICONST_0);
+			return new NumberValue(BasicValue.INT_VALUE, insn, insn.getOpcode() - ICONST_0);
 		case LCONST_0:
 		case LCONST_1:
-			return new NumberValue(BasicValue.LONG_VALUE, (long) (insn.getOpcode() - LCONST_0));
+			return new NumberValue(BasicValue.LONG_VALUE, insn, (long) (insn.getOpcode() - LCONST_0));
 		case FCONST_0:
 		case FCONST_1:
 		case FCONST_2:
-			return new NumberValue(BasicValue.FLOAT_VALUE, (float) (insn.getOpcode() - FCONST_0));
+			return new NumberValue(BasicValue.FLOAT_VALUE, insn, (float) (insn.getOpcode() - FCONST_0));
 		case DCONST_0:
 		case DCONST_1:
-			return new NumberValue(BasicValue.DOUBLE_VALUE, (double) (insn.getOpcode() - DCONST_0));
+			return new NumberValue(BasicValue.DOUBLE_VALUE, insn, (double) (insn.getOpcode() - DCONST_0));
 		case BIPUSH:
 		case SIPUSH:
-			return new NumberValue(BasicValue.INT_VALUE, ((IntInsnNode) insn).operand);
+			return new NumberValue(BasicValue.INT_VALUE, insn, ((IntInsnNode) insn).operand);
 		case LDC:
 			Object cst = ((LdcInsnNode) insn).cst;
 			if (cst instanceof String) {
-				return new StringValue(v, cst.toString());
+				return new StringValue(v, (LdcInsnNode) insn, cst.toString());
 			} else if (cst instanceof Number) {
-				return new NumberValue(v, cst);
+				return new NumberValue(v, insn, cst);
 			} else {
 				return new UnknownInstructionValue(v, insn);
 			}
@@ -177,7 +177,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		case I2D:
 		case L2D:
 		case F2D:
-			return new UnaryOpValue(v, insn.getOpcode(), value);
+			return new UnaryOpValue(v, (InsnNode) insn, value);
 		default:
 			return v == null ? null : new UnknownInstructionValue(v, insn);
 		}
@@ -228,7 +228,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		case DMUL:
 		case DDIV:
 		case DREM:
-			return new BinaryOpValue(v, insn.getOpcode(), a, b);
+			return new BinaryOpValue(v, (InsnNode) insn, a, b);
 		}
 		return v == null ? null : new UnknownInstructionValue(v, insn);
 	}
@@ -274,23 +274,23 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 		Object o = referenceHandler.getFieldValueOrNull(v, fin.owner, fin.name, fin.desc);
 		if (o != null) {
 			if (o instanceof String) {
-				return new StringValue(v, o.toString());
+				return new StringValue(v, fin, o.toString());
 			} else if (o instanceof Number || o instanceof Character || o instanceof Boolean) {
-				return new NumberValue(v, o);
+				return new NumberValue(v, fin, o);
 			}
 		}
-		return new MemberAccessValue(v, reference, fin.getOpcode(), fin.owner, fin.name, fin.desc);
+		return new MemberAccessValue(v, reference, fin, fin.owner, fin.name, fin.desc);
 	}
 
 	private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min, List<? extends CodeReferenceValue> values) {
 		Object o = referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values);
 		if (o != null) {
 			if (o instanceof String) {
-				return new StringValue(v, o.toString());
+				return new StringValue(v, min, o.toString());
 			} else if (o instanceof Number || o instanceof Character || o instanceof Boolean) {
-				return new NumberValue(v, o);
+				return new NumberValue(v, min, o);
 			}
 		}
-		return new MemberAccessValue(v, reference, min.getOpcode(), min.owner, min.name, min.desc);
+		return new MemberAccessValue(v, reference, min, min.owner, min.name, min.desc);
 	}
 }

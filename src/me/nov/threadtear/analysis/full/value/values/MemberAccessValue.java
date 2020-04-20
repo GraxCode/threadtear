@@ -2,6 +2,7 @@ package me.nov.threadtear.analysis.full.value.values;
 
 import java.util.Objects;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -11,16 +12,16 @@ import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 
 public class MemberAccessValue extends CodeReferenceValue {
 
-	public int op;
-
 	private CodeReferenceValue ownerRef;
 	public String owner;
 	public String name;
 	public String desc;
 
-	public MemberAccessValue(BasicValue type, CodeReferenceValue ownerReference, int op, String owner, String name, String desc) {
-		super(type);
-		this.op = op;
+	public MemberAccessValue(BasicValue type, CodeReferenceValue ownerReference, AbstractInsnNode node, String owner, String name, String desc) {
+		super(type, node);
+		if (!(node instanceof MethodInsnNode || node instanceof FieldInsnNode)) {
+			throw new IllegalArgumentException();
+		}
 		this.ownerRef = ownerReference;
 		this.owner = Objects.requireNonNull(owner);
 		this.name = Objects.requireNonNull(name);
@@ -54,7 +55,7 @@ public class MemberAccessValue extends CodeReferenceValue {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (op != other.op)
+		if (node != other.node)
 			return false;
 		if (owner == null) {
 			if (other.owner != null)
@@ -65,27 +66,37 @@ public class MemberAccessValue extends CodeReferenceValue {
 	}
 
 	@Override
-	public InsnList toInstructions() {
+	public InsnList cloneInstructions() {
 		InsnList list = new InsnList();
 		if (ownerRef != null) {
-			list.add(ownerRef.toInstructions());
+			list.add(ownerRef.cloneInstructions());
 		}
-		switch (op) {
+		switch (node.getOpcode()) {
 		case GETSTATIC:
 		case PUTSTATIC:
 		case GETFIELD:
 		case PUTFIELD:
-			list.add(new FieldInsnNode(op, owner, name, desc));
+			list.add(new FieldInsnNode(node.getOpcode(), owner, name, desc));
 			break;
 		case INVOKEINTERFACE:
 		case INVOKESTATIC:
 		case INVOKEVIRTUAL:
 		case INVOKESPECIAL:
-			list.add(new MethodInsnNode(op, owner, name, desc));
+			list.add(new MethodInsnNode(node.getOpcode(), owner, name, desc));
 			break;
 		default:
 			throw new IllegalArgumentException();
 		}
+		return list;
+	}
+
+	@Override
+	public InsnList getInstructions() {
+		InsnList list = new InsnList();
+		if (ownerRef != null) {
+			list.add(ownerRef.getInstructions());
+		}
+		list.add(node);
 		return list;
 	}
 

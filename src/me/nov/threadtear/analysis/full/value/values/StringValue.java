@@ -2,19 +2,20 @@ package me.nov.threadtear.analysis.full.value.values;
 
 import java.util.Objects;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.asm.util.Instructions;
 
 public class StringValue extends CodeReferenceValue {
 
-	private String value; // leave this object so we don't have problems with java.lang.Character or
-												// java.lang.Boolean
+	private String value;
 
-	public StringValue(BasicValue type, String value) {
-		super(type);
+	public StringValue(BasicValue type, AbstractInsnNode node, String value) {
+		super(type, node);
 		this.value = Objects.requireNonNull(value);
 	}
 
@@ -39,10 +40,13 @@ public class StringValue extends CodeReferenceValue {
 	}
 
 	@Override
-	public InsnList toInstructions() {
-		InsnList list = new InsnList();
-		list.add(new LdcInsnNode(value));
-		return list;
+	public InsnList cloneInstructions() {
+		return Instructions.singleton(new LdcInsnNode(value));
+	}
+
+	@Override
+	public InsnList getInstructions() {
+		return Instructions.singleton(node);
 	}
 
 	@Override

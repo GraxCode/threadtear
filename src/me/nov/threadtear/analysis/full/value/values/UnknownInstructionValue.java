@@ -1,22 +1,19 @@
 package me.nov.threadtear.analysis.full.value.values;
 
-import java.util.Objects;
-
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.asm.util.Instructions;
 
 public class UnknownInstructionValue extends CodeReferenceValue {
 
-	public AbstractInsnNode ain;
 
-	public UnknownInstructionValue(BasicValue type, AbstractInsnNode ain) {
-		super(type);
-		if (ain.getType() == AbstractInsnNode.LABEL || ain.getType() == AbstractInsnNode.JUMP_INSN)
+	public UnknownInstructionValue(BasicValue type, AbstractInsnNode node) {
+		super(type, node);
+		if (node.getType() == AbstractInsnNode.LABEL || node.getType() == AbstractInsnNode.JUMP_INSN)
 			throw new IllegalArgumentException();
-		this.ain = Objects.requireNonNull(ain);
 	}
 
 	@Override
@@ -36,22 +33,19 @@ public class UnknownInstructionValue extends CodeReferenceValue {
 		if (getClass() != obj.getClass())
 			return false;
 		UnknownInstructionValue other = (UnknownInstructionValue) obj;
-		if (ain == null) {
-			if (other.ain != null)
-				return false;
-		} else if (!ain.equals(other.ain))
+		if (!node.equals(other.node))
 			return false;
 		return true;
 	}
 
 	@Override
-	public InsnList toInstructions() {
-		InsnList list = new InsnList();
-		if (ain.getOpcode() == NOP) {
-//			throw new IllegalArgumentException(type.toString());
-		}
-		list.add(ain.clone(null));
-		return list;
+	public InsnList cloneInstructions() {
+		return Instructions.singleton(node.clone(null));
+	}
+
+	@Override
+	public InsnList getInstructions() {
+		return Instructions.singleton(node);
 	}
 
 	@Override

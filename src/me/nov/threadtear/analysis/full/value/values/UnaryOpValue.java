@@ -2,20 +2,20 @@ package me.nov.threadtear.analysis.full.value.values;
 
 import java.util.Objects;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 
 public class UnaryOpValue extends CodeReferenceValue {
 
-	public int opcode;
 	public CodeReferenceValue value;
 
-	public UnaryOpValue(BasicValue type, int opcode, CodeReferenceValue value) {
-		super(type);
-		this.opcode = opcode;
+	public UnaryOpValue(BasicValue type, InsnNode node, CodeReferenceValue value) {
+		super(type, node);
 		this.value = Objects.requireNonNull(value);
 	}
 
@@ -29,7 +29,8 @@ public class UnaryOpValue extends CodeReferenceValue {
 		if (!isKnownValue()) {
 			return this;
 		}
-		return new NumberValue(type, getStackValueOrNull());
+		Object stack = getStackValueOrNull();
+		return new NumberValue(type, new LdcInsnNode(stack), stack);
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class UnaryOpValue extends CodeReferenceValue {
 		if (getClass() != obj.getClass())
 			return false;
 		UnaryOpValue other = (UnaryOpValue) obj;
-		if (opcode != other.opcode)
+		if (node.getOpcode() != other.node.getOpcode())
 			return false;
 		if (value == null) {
 			if (other.value != null)
@@ -48,17 +49,25 @@ public class UnaryOpValue extends CodeReferenceValue {
 	}
 
 	@Override
-	public InsnList toInstructions() {
+	public InsnList cloneInstructions() {
 		InsnList list = new InsnList();
-		list.add(value.toInstructions());
-		list.add(new InsnNode(opcode));
+		list.add(value.cloneInstructions());
+		list.add(new InsnNode(node.getOpcode()));
+		return list;
+	}
+
+	@Override
+	public InsnList getInstructions() {
+		InsnList list = new InsnList();
+		list.add(value.getInstructions());
+		list.add(node);
 		return list;
 	}
 
 	@Override
 	public Object getStackValueOrNull() {
 		Number num = (Number) value.getStackValueOrNull();
-		switch (opcode) {
+		switch (node.getOpcode()) {
 		case INEG:
 			return -((int) num.intValue());
 		case FNEG:

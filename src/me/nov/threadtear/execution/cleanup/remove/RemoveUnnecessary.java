@@ -82,7 +82,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 				for (int j = 0; j < frame.getStackSize(); j++) {
 					CodeReferenceValue stack = frame.getStack(j);
 					stack = stack.combine();
-					rewrittenCode.add(stack.toInstructions());
+					rewrittenCode.add(stack.cloneInstructions());
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
