@@ -31,8 +31,8 @@ public class MyExecution extends Execution {
 	* @return true if success, false if failure
 	*/
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node).forEach(c -> {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			//transform the classes here using the tree-API of ASM
 		});
 		return false;
@@ -46,8 +46,8 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 		super(ExecutionCategory.GENERIC, "My execution", "Loads ClassNodes at runtime");
 	}
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node).forEach(c -> {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			VM vm = VM.constructVM(this);
 			//transform bytecode to java.lang.Class
 			Class<?> loadedClass = vm.loadClass(c.name.replace('/', '.'), true);
@@ -62,7 +62,7 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 	@Override
 	public ClassNode tryClassLoad(String name) {
 		//try to find the class to be loaded in open jar archive
-		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+		return classes.containsKey(name) ? classes.get(name).node : null;
 	}
 }
 ```
@@ -74,8 +74,8 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 		super(ExecutionCategory.GENERIC, "My execution", "Performs stack analysis and replaces code.");
 	}
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node).forEach(this::analyzeAndRewrite);
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node).forEach(this::analyzeAndRewrite);
 		return true;
 	}
 	public void analyzeAndRewrite(ClassNode cn) {
@@ -108,13 +108,8 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-			// set instructions and fix try catch blocks
-			m.instructions = rewrittenCode;
-			m.tryCatchBlocks.forEach(tcb -> {
-				tcb.start = labels.get(tcb.start);
-				tcb.end = labels.get(tcb.end);
-				tcb.handler = labels.get(tcb.handler);
-			});
+			// update instructions and fix try catch blocks, local variables, etc...
+			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
 	}
 	/**
