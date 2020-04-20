@@ -42,7 +42,7 @@ public class ClassList extends JPanel implements ILoader {
 
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
-		panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
 		ignored = new JLabel("", SwingConstants.CENTER);
 		panel.add(ignored);
 		JButton analysis = new JButton("Analysis");

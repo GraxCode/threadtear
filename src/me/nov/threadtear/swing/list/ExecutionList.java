@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,6 +32,7 @@ public class ExecutionList extends JPanel {
 
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
+		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
 		JButton add = new JButton("Add");
 		add.addActionListener(e -> {
 			ExecutionSelection es = new ExecutionSelection();
