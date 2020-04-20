@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -53,7 +54,7 @@ public class InlineUnchangedFields extends Execution {
 					if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						if (isGetReferenceTo(cn, fin, fn)) {
-							m.instructions.set(ain, Instructions.createNullPushForType(fn.desc));
+							m.instructions.set(ain, Instructions.makeNullPush(Type.getType(fn.desc)));
 							inlines++;
 						}
 					}

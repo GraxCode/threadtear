@@ -2,10 +2,10 @@ package me.nov.threadtear.execution.stringer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -29,7 +29,6 @@ import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Casts;
-import me.nov.threadtear.util.Descriptor;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
@@ -148,22 +147,22 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 
 		Class<?> proxyFieldClass = vm.loadClass(invocationFieldClass.name.replace('/', '.'), true);
 		// set proxyFields to stack values
-		ArrayList<String> args = Descriptor.splitArguments(min.desc.substring(1, min.desc.lastIndexOf(')')));
 		if (frame == null) {
 			if (verbose) {
 				logger.severe("Unvisited frame in " + cn.name + "." + m.name + ": " + frame);
 			}
 			return null;
 		}
-		if (args.size() > frame.getStackSize()) {
+		int arguments = Type.getArgumentTypes(min.desc).length;
+		if (arguments > frame.getStackSize()) {
 			if (verbose) {
 				logger.severe("Stack has not enough values in " + cn.name + "." + m.name + ": " + frame);
 			}
 			return null;
 		}
-		for (int i = 0; i < args.size(); i++) {
+		for (int i = 0; i < arguments; i++) {
 			Field proxyField = proxyFieldClass.getDeclaredField("proxyField_" + i);
-			ConstantValue stackValue = frame.getStack(frame.getStackSize() - args.size() + i);
+			ConstantValue stackValue = frame.getStack(frame.getStackSize() - arguments + i);
 			if (!stackValue.isKnown()) {
 				if (verbose) {
 					logger.severe("Stack index " + i + " is unknown in " + cn.name + "." + m.name + ": field type: " + proxyField.getType().getName() + ", stack type: " + stackValue.getType());
@@ -192,14 +191,15 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 
 	private void createFakeCloneAndFieldGetter(ClassNode cn, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame) {
 		ClassNode node = Sandbox.createClassProxy(cn.name);
-		ClassNode fieldClass = Sandbox.createClassProxy("ProxyFields"); // we can't put the fields in the same class, as setting them via reflection
-																																		// would run <clinit>
+		// we can't put the fields in the same class, as setting them via reflection
+		// would execute <clinit>
+		ClassNode fieldClass = Sandbox.createClassProxy("ProxyFields");
 		InsnList instructions = new InsnList();
-		ArrayList<String> args = Descriptor.splitArguments(min.desc.substring(1, min.desc.lastIndexOf(')')));
-		for (int i = 0; i < args.size(); i++) {
+		Type[] types = Type.getArgumentTypes(min.desc);
+		for (int i = 0; i < types.length; i++) {
 			// make fields as stack placeholder, that's the easiest way of transferring
 			// stack to method
-			String desc = args.get(i);
+			String desc = types[i].getDescriptor();
 			fieldClass.fields.add(new FieldNode(ACC_PUBLIC | ACC_STATIC, "proxyField_" + i, desc, null, null));
 			instructions.add(new FieldInsnNode(GETSTATIC, fieldClass.name, "proxyField_" + i, desc));
 		}

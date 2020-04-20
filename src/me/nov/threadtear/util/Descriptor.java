@@ -1,32 +1,49 @@
 package me.nov.threadtear.util;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.objectweb.asm.Type;
 
 public class Descriptor {
-	public static String fixDesc(String description, Map<String, String> map) {
-		if (description == null || description.isEmpty() || isPrimitive(description)) {
-			return description;
+	public static String fixMethodDesc(String desc, Map<String, String> map) {
+		assert (desc.contains("(") && desc.contains(")"));
+		StringBuilder newDesc = new StringBuilder("(");
+		for (Type t : Type.getArgumentTypes(desc)) {
+			appendRemappedType(map, newDesc, t);
 		}
-		if (description.contains("L") && description.contains(";")) {
-			if (description.startsWith("(") || (description.startsWith("L") || description.startsWith("[")) && description.endsWith(";")) {
-				String regex = "(?<=[L])[^;]*(?=;)";
-				Pattern p = Pattern.compile(regex);
-				Matcher m = p.matcher(Pattern.quote(description));
-				StringBuffer sb = new StringBuffer(description.length());
-				while (m.find()) {
-					m.appendReplacement(sb, Matcher.quoteReplacement(fixDesc(m.group(), map)));
-				}
-				m.appendTail(sb);
-				String result = sb.toString();
-				return result.substring(2, result.length() - 2); // remove Pattern.quote
-			}
+		newDesc.append(")");
+		appendRemappedType(map, newDesc, Type.getReturnType(desc));
+		return newDesc.toString();
+	}
+
+	public static String fixTypeDesc(String type, Map<String, String> map) {
+		StringBuilder newDesc = new StringBuilder();
+		appendRemappedType(map, newDesc, Type.getType(type));
+		return newDesc.toString();
+	}
+
+	public static Type fixType(Type type, Map<String, String> map) {
+		StringBuilder newDesc = new StringBuilder();
+		appendRemappedType(map, newDesc, type);
+		return Type.getType(newDesc.toString());
+	}
+
+	private static void appendRemappedType(Map<String, String> map, StringBuilder sb, Type t) {
+		if (t.getSort() == Type.OBJECT) {
+			String internalName = t.getInternalName();
+			sb.append("L");
+			sb.append(map.getOrDefault(internalName, internalName));
+			sb.append(";");
+		} else if (t.getSort() == Type.ARRAY && t.getElementType().getSort() == Type.OBJECT) {
+			for (int i = 0; i < t.getDimensions(); i++)
+				sb.append("[");
+			String internalName = t.getElementType().getInternalName();
+			sb.append("L");
+			sb.append(map.getOrDefault(internalName, internalName));
+			sb.append(";");
 		} else {
-			return map.getOrDefault(description, description);
+			sb.append(t.getDescriptor());
 		}
-		return description;
 	}
 
 	public static boolean isPrimitive(String description) {
@@ -37,62 +54,5 @@ public class Descriptor {
 			return true;
 		}
 		return false;
-	}
-
-	public static ArrayList<Integer> calculateAmountArguments(String desc) {
-		ArrayList<Integer> sizes = new ArrayList<>();
-		boolean inObject = false;
-		boolean nextIsObject = false;
-		for (char c : desc.toCharArray()) {
-			if (inObject) {
-				if (c == ';') {
-					inObject = false;
-				}
-				continue;
-			}
-			if (c == 'L') {
-				inObject = true;
-			}
-			if (c == '[') {
-				nextIsObject = true;
-				continue;
-			}
-			sizes.add(nextIsObject ? 1 : getStackSize(c));
-			nextIsObject = false;
-		}
-		return sizes;
-	}
-
-	public static ArrayList<String> splitArguments(String desc) {
-		ArrayList<String> args = new ArrayList<>();
-		boolean inObject = false;
-		StringBuilder current = new StringBuilder();
-		for (char c : desc.toCharArray()) {
-			current.append(c);
-			if (inObject) {
-				if (c == ';') {
-					inObject = false;
-				} else {
-					continue;
-				}
-			} else if (c == 'L') {
-				inObject = true;
-				continue;
-			} else if (c == '[') {
-				continue;
-			}
-			args.add(current.toString());
-			current = new StringBuilder();
-		}
-		return args;
-	}
-
-	public static int getStackSize(char type) {
-		if (type == 'J' || type == 'D') {
-			return 2;
-		} else if (type == 'V') {
-			return 0;
-		}
-		return 1;
 	}
 }

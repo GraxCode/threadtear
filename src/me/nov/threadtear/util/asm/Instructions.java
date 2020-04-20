@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -21,8 +22,6 @@ import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.Frame;
-
-import me.nov.threadtear.util.Descriptor;
 
 public class Instructions implements Opcodes {
 	public static InsnList copy(InsnList insnList) {
@@ -158,37 +157,35 @@ public class Instructions implements Opcodes {
 			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
 				MethodInsnNode min = (MethodInsnNode) ain;
 				if (p.test(min.owner)) {
-					String inner = min.desc.substring(1, min.desc.lastIndexOf(')'));
-					String outer = min.desc.substring(min.desc.lastIndexOf(')') + 1);
-					// TODO use ASM Type class instead
-					for (int size : Descriptor.calculateAmountArguments(inner)) {
-						mn.instructions.insertBefore(min, new InsnNode(size > 1 ? POP2 : POP));
+					for (Type t : Type.getArgumentTypes(min.desc)) {
+						mn.instructions.insertBefore(min, new InsnNode(t.getSize() > 1 ? POP2 : POP));
 						i += 1;
 					}
 					if (min.getOpcode() != INVOKESTATIC) {
 						mn.instructions.insertBefore(min, new InsnNode(POP)); // pop reference
 					}
-					mn.instructions.set(min, createNullPushForType(outer));
+					mn.instructions.set(min, makeNullPush(Type.getReturnType(min.desc)));
 				}
 			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
 				FieldInsnNode fin = (FieldInsnNode) ain;
 				if (p.test(fin.owner)) {
+					Type type = Type.getType(fin.desc);
 					switch (fin.getOpcode()) {
 					case GETFIELD:
 						mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
 						i += 1;
 					case GETSTATIC:
-						mn.instructions.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.set(fin, makeNullPush(type));
 						break;
 					case PUTFIELD:
 						mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
-						mn.instructions.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
-						mn.instructions.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
+						mn.instructions.set(fin, makeNullPush(type));
 						i += 2;
 						break;
 					case PUTSTATIC:
-						mn.instructions.insertBefore(fin, new InsnNode(Descriptor.getStackSize(fin.desc.charAt(0)) > 1 ? POP2 : POP));
-						mn.instructions.set(fin, createNullPushForType(fin.desc));
+						mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
+						mn.instructions.set(fin, makeNullPush(type));
 						i += 1;
 						break;
 					}
@@ -225,19 +222,17 @@ public class Instructions implements Opcodes {
 		}
 	}
 
-	public static AbstractInsnNode createNullPushForType(String desc) {
-		if (desc.length() > 1) {
-			// arrays and objects: [* or L*;
+	public static AbstractInsnNode makeNullPush(Type type) {
+		switch (type.getSort()) {
+		case Type.OBJECT:
 			return new InsnNode(ACONST_NULL);
-		}
-		switch (desc.charAt(0)) {
-		case 'V':
+		case Type.VOID:
 			return new InsnNode(NOP);
-		case 'D':
+		case Type.DOUBLE:
 			return new InsnNode(DCONST_0);
-		case 'F':
+		case Type.FLOAT:
 			return new InsnNode(FCONST_0);
-		case 'J':
+		case Type.LONG:
 			return new InsnNode(LCONST_0);
 		default:
 			return new InsnNode(ICONST_0);
