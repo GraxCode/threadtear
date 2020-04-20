@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
@@ -25,7 +26,7 @@ public class ExecutionList extends JPanel {
 
 	public ExecutionList() {
 		this.setLayout(new BorderLayout());
-		this.add(Utils.addTitleAndBorder("Executions in order", new JScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
+		this.add(Utils.addTitleAndBorder("Executions in order (top to bottom)", new JScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
 
 		this.add(createButtons(), BorderLayout.SOUTH);
 	}
@@ -37,12 +38,22 @@ public class ExecutionList extends JPanel {
 		add.addActionListener(e -> {
 			ExecutionSelection es = new ExecutionSelection();
 			es.setVisible(true);
-			ExecutionTreeNode node = (ExecutionTreeNode) es.tree.getLastSelectedPathComponent();
-			if (node != null && node.member != null) {
-				((ExecutionTreeNode) model.getRoot()).add(new ExecutionTreeNode(node.member, true));
-				model.reload();
-				executions.repaint();
+			ExecutionTreeNode root = ((ExecutionTreeNode) model.getRoot());
+			if (es.tree.getSelectionPath() == null) {
+				ExecutionTreeNode node = (ExecutionTreeNode) es.tree.getLastSelectedPathComponent();
+				if (node != null && node.member != null) {
+					root.add(new ExecutionTreeNode(node.member, true));
+				}
+			} else {
+				for (TreePath path : es.tree.getSelectionPaths()) {
+					ExecutionTreeNode node = (ExecutionTreeNode) path.getLastPathComponent();
+					if (node != null && node.member != null) {
+						root.add(new ExecutionTreeNode(node.member, true));
+					}
+				}
 			}
+			model.reload();
+			executions.repaint();
 		});
 		panel.add(add);
 		JButton remove = new JButton("Remove");

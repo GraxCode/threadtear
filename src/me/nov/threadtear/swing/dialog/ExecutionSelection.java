@@ -16,7 +16,9 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
@@ -93,7 +95,7 @@ public class ExecutionSelection extends JDialog {
 			this.setCellRenderer(new ExecutionTreeCellRenderer());
 			ExecutionTreeNode root = new ExecutionTreeNode("");
 			DefaultTreeModel model = new DefaultTreeModel(root);
-			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 			for (ExecutionCategory t : ExecutionCategory.values()) {
 				root.add(new ExecutionTreeNode(t.name));
 			}
@@ -103,7 +105,7 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new ObfuscatedAccess());
 			addExecution(root, new KnownConditionalJumps());
 			addExecution(root, new ConvertCompareInstructions());
-			
+
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());
 			addExecution(root, new ReobfuscateMembers());
@@ -133,6 +135,14 @@ public class ExecutionSelection extends JDialog {
 						if (tn != null && tn.member != null)
 							ExecutionSelection.this.dispose();
 					}
+				}
+			});
+			this.addTreeSelectionListener(e -> {
+				TreePath[] paths = e.getPaths();
+				for (int i = 0; i < paths.length; i++) {
+					DefaultMutableTreeNode tn = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
+					if (tn.getChildCount() > 0)
+						removeSelectionPath(paths[i]);
 				}
 			});
 		}

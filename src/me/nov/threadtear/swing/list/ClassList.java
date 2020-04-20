@@ -35,7 +35,7 @@ public class ClassList extends JPanel implements ILoader {
 
 	public ClassList() {
 		this.setLayout(new BorderLayout());
-		this.add(Utils.addTitleAndBorder("Classes", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
+		this.add(Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
 		this.add(createButtons(), BorderLayout.SOUTH);
 		this.setTransferHandler(new JarDropHandler(this));
 	}
