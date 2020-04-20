@@ -10,11 +10,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class InlineUnchangedFields extends Execution {
 

@@ -9,9 +9,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnNode;
 
-import me.nov.threadtear.asm.io.Conversion;
-import me.nov.threadtear.asm.util.Access;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class VM extends ClassLoader implements Opcodes {
 	HashMap<String, Class<?>> loaded = new HashMap<>();

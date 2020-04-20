@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class NumberValue extends CodeReferenceValue {
 

@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.util;
+package me.nov.threadtear.util.asm;
 
 import java.util.ArrayList;
 import java.util.HashMap;

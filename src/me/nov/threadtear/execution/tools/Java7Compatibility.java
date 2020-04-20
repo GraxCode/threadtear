@@ -3,7 +3,7 @@ package me.nov.threadtear.execution.tools;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;

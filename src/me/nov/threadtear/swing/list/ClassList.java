@@ -16,8 +16,8 @@ import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.io.JarIO;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.io.JarIO;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;
 import me.nov.threadtear.swing.handler.ILoader;

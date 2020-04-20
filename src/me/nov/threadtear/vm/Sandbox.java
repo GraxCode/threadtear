@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class Sandbox implements Opcodes {
 

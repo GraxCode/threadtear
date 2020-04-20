@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.io;
+package me.nov.threadtear.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,8 +14,8 @@ import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Manifest;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.util.asm.Manifest;
 
 public class JarIO {
 

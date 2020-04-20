@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;

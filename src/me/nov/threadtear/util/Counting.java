@@ -15,8 +15,7 @@ public class Counting {
 			int type = insn.getType();
 			if (type == nodeType) {
 				typeCount++;
-			} else if (IntStream.of(searchFor).anyMatch(x -> x == type)) { // type != AbstractInsnNode.LABEL && type != AbstractInsnNode.FRAME && type !=
-																																			// AbstractInsnNode.LINE
+			} else if (IntStream.of(searchFor).anyMatch(x -> x == type)) {
 				count++;
 			}
 			insn = insn.getNext();

@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.asm.io.JarIO;
+import me.nov.threadtear.io.JarIO;
 
 public class ConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;

@@ -13,9 +13,9 @@ import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Access;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
+import me.nov.threadtear.util.asm.Access;
 
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
 	private static final long serialVersionUID = 1L;

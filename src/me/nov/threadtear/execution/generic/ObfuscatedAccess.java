@@ -6,11 +6,11 @@ import java.util.Map;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Access;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Access;
 
 public class ObfuscatedAccess extends Execution {
 

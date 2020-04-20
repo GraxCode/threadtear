@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm;
+package me.nov.threadtear.execution;
 
 import java.util.jar.JarEntry;
 

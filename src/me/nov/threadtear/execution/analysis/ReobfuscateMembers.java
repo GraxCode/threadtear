@@ -14,14 +14,14 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.io.Conversion;
-import me.nov.threadtear.asm.util.Access;
-import me.nov.threadtear.asm.util.References;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.References;
 
 public class ReobfuscateMembers extends Execution {
 	private Map<String, Clazz> classes;

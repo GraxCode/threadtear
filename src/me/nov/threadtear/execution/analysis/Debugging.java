@@ -16,11 +16,11 @@ import me.nov.threadtear.analysis.stack.ConstantAnalyzer;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Access;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class Debugging extends Execution implements IConstantReferenceHandler {
 

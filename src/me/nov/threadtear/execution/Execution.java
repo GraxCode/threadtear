@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.asm.Clazz;
 
 public abstract class Execution implements Opcodes {
 	public final String name;

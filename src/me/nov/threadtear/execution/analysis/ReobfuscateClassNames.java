@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.References;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.asm.References;
 
 public class ReobfuscateClassNames extends Execution {
 

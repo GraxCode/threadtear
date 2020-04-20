@@ -6,11 +6,11 @@ import java.util.Map;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class ConvertCompareInstructions extends Execution {
 

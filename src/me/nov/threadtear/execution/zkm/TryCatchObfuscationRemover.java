@@ -11,11 +11,11 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Instructions;
 
 /**
  * Works with ZKM 8 - 11, newer versions remain untested

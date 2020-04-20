@@ -2,11 +2,11 @@ package me.nov.threadtear.execution.tools;
 
 import java.util.Map;
 
-import me.nov.threadtear.asm.Clazz;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class IsolatePossiblyMalicious extends Execution {
 

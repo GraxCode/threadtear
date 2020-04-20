@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.io;
+package me.nov.threadtear.io;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;

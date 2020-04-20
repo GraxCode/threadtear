@@ -1,4 +1,4 @@
-package me.nov.threadtear.asm.util;
+package me.nov.threadtear.util.asm;
 
 import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
 import static org.objectweb.asm.Opcodes.ACC_ANNOTATION;

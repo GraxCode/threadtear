@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import me.nov.threadtear.asm.Clazz;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.CustomOutputStream;
 import me.nov.threadtear.security.VMSecurityManager;

@@ -5,7 +5,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
-import me.nov.threadtear.asm.util.Instructions;
+import me.nov.threadtear.util.asm.Instructions;
 
 public class UnknownInstructionValue extends CodeReferenceValue {
 
