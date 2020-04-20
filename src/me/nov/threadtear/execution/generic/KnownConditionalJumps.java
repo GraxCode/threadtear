@@ -36,7 +36,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 
 	public KnownConditionalJumps() {
 		super(ExecutionCategory.GENERIC, "Remove obvious flow obfuscation", "Removes conditional jumps that are predictable.<br>This works for obfuscators like smoke or superblaubeere27.",
-				ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE);
+				ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
 	}
 
 	@Override

@@ -225,13 +225,12 @@ public class Instructions implements Opcodes {
 		}
 	}
 
-	private static AbstractInsnNode createNullPushForType(String desc) {
+	public static AbstractInsnNode createNullPushForType(String desc) {
 		if (desc.length() > 1) {
 			// arrays and objects: [* or L*;
 			return new InsnNode(ACONST_NULL);
 		}
-		char c = desc.charAt(0);
-		switch (c) {
+		switch (desc.charAt(0)) {
 		case 'V':
 			return new InsnNode(NOP);
 		case 'D':
@@ -275,7 +274,7 @@ public class Instructions implements Opcodes {
 		m.visibleLocalVariableAnnotations = null;
 		m.invisibleLocalVariableAnnotations = null;
 	}
-	
+
 	public static InsnList singleton(AbstractInsnNode ain) {
 		InsnList list = new InsnList();
 		list.add(ain);
