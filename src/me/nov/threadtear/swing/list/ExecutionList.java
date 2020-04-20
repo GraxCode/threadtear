@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -69,10 +68,11 @@ public class ExecutionList extends JPanel {
 		return panel;
 	}
 
-	public class ExecutionTree extends JTree {
+	public class ExecutionTree extends JTreeWithHint {
 		private static final long serialVersionUID = 1L;
 
 		public ExecutionTree() {
+			super("Select your executions here");
 			this.setRootVisible(false);
 			this.setShowsRootHandles(true);
 			this.setFocusable(true);

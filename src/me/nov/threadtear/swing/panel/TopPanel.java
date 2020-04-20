@@ -23,6 +23,7 @@ public class TopPanel extends JPanel {
 		JPanel inner = new JPanel();
 		inner.setLayout(new GridLayout(1, 2, 16, 16));
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, executionList = new ExecutionList(), classList = new ClassList());
+		split.putClientProperty("JSplitPane.style", "invisible");
 		inner.add(split);
 		this.add(inner, BorderLayout.CENTER);
 		this.add(new JSeparator(), BorderLayout.PAGE_END);

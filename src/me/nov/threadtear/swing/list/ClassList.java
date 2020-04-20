@@ -61,7 +61,7 @@ public class ClassList extends JPanel implements ILoader {
 			}
 		});
 		panel.add(ignore);
-		JButton toggle = new JButton("Toggle All");
+		JButton toggle = new JButton("Toggle all");
 		toggle.addActionListener(l -> {
 			ignoreChilds((SortedTreeClassNode) model.getRoot());
 			refreshIgnored();

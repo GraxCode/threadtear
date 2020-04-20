@@ -33,21 +33,21 @@ public class ConfigurationPanel extends JPanel {
 	private JPanel createCheckboxes() {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 		panel.add(verbose = new JCheckBox("Verbose"));
-		panel.add(computeFrames = new JCheckBox("Compute Frames"));
+		panel.add(computeFrames = new JCheckBox("Compute frames"));
 		panel.add(disableSecurity = new JCheckBox("Disable SecurityManager protection"));
-		panel.add(removeSignature = new JCheckBox("Remove Signature"));
+		panel.add(removeSignature = new JCheckBox("Remove signature"));
 		return panel;
 	}
 
 	private JPanel createBottomButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 16, 16));
-		JButton loadCfg = new JButton("Load Config");
+		JButton loadCfg = new JButton("Load config");
 		loadCfg.setEnabled(false);
 		panel.add(loadCfg);
-		JButton saveCfg = new JButton("Save Config");
+		JButton saveCfg = new JButton("Save config");
 		saveCfg.setEnabled(false);
 		panel.add(saveCfg);
-		JButton save = new JButton("Save Jar");
+		JButton save = new JButton("Save as jar file");
 		save.addActionListener(l -> {
 			File inputFile = main.listPanel.classList.inputFile;
 			if (inputFile == null)

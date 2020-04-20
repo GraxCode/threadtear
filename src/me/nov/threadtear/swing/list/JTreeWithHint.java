@@ -14,6 +14,8 @@ public class JTreeWithHint extends JTree {
 
 	public JTreeWithHint(String hint) {
 		this.hint = hint;
+//		this.putClientProperty("JTree.alternateRowColor", true);
+//		this.putClientProperty("JTree.lineStyle", "none");
 	}
 
 	@Override
