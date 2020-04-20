@@ -1,7 +1,7 @@
 package me.nov.threadtear.execution.generic;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -20,9 +20,9 @@ public class ObfuscatedAccess extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node.methods).flatMap(List::stream).filter(this::shouldRemove).forEach(m -> m.access = Access.removeAccess(m.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
-		classes.stream().map(c -> c.node.fields).flatMap(List::stream).filter(this::shouldRemove).forEach(f -> f.access = Access.removeAccess(f.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).filter(this::shouldRemove).forEach(m -> m.access = Access.removeAccess(m.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
+		classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).filter(this::shouldRemove).forEach(f -> f.access = Access.removeAccess(f.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
 		logger.info("Removed every synthetic, bridge and deprecated access");
 		return true;
 	}

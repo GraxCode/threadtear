@@ -1,7 +1,7 @@
 package me.nov.threadtear.execution.generic;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -23,28 +23,28 @@ public class InlineUnchangedFields extends Execution {
 	}
 
 	public int inlines;
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.classes = classes;
 		this.inlines = 0;
 		// TODO filter out static initializer
 		// TODO takes too long
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.fields.stream().filter(f -> isReferenced(c, f)).forEach(f -> inline(c, f));
 		});
 		logger.info("Inlined " + inlines + " field references!");
-		return true;
+		return inlines > 0;
 	}
 
 	private boolean isReferenced(ClassNode cn, FieldNode f) {
-		return classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
+		return classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
 				.filter(ain -> ain.getType() == AbstractInsnNode.FIELD_INSN).map(ain -> (FieldInsnNode) ain).allMatch(fin -> !isPutReferenceTo(cn, fin, f));
 	}
 
 	public void inline(ClassNode cn, FieldNode fn) {
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
 				for (AbstractInsnNode ain : m.instructions) {
 					if (ain.getType() == AbstractInsnNode.FIELD_INSN) {

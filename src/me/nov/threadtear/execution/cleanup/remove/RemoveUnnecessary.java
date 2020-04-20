@@ -1,6 +1,5 @@
 package me.nov.threadtear.execution.cleanup.remove;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +42,9 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		logger.info("Simulating stack for every method!");
-		classes.stream().map(c -> c.node).forEach(this::optimize);
+		classes.values().stream().map(c -> c.node).forEach(this::optimize);
 		return false;
 	}
 

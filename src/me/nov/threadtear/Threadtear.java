@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -134,11 +135,12 @@ public class Threadtear extends JFrame {
 				List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
 				logger.info(ignoredClasses.size() + " classes will be ignored");
 				classes.removeIf(c -> !c.transform);
+				Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> (String) c.node.name, c -> c));
 				logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
 				executions.forEach(e -> {
 					long ms = System.currentTimeMillis();
 					logger.info("Executing " + e.getClass().getName());
-					boolean success = e.execute(classes, verbose);
+					boolean success = e.execute(map, verbose);
 					logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms) + " ms");
 				});
 				classes.addAll(ignoredClasses); // re-add ignored classes to export them

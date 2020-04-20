@@ -1,6 +1,6 @@
 package me.nov.threadtear.execution.tools;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.asm.util.Instructions;
@@ -19,10 +19,10 @@ public class IsolatePossiblyMalicious extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.changed = 0;
 		logger.info("Isolating all " + classes.size() + " classes");
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
 				int oldSize = m.instructions.size();
 				Instructions.isolateCallsThatMatch(m, (s) -> s.matches(POSSIBLY_MALICIOUS_REGEX));

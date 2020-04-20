@@ -1,6 +1,6 @@
 package me.nov.threadtear.execution;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -32,10 +32,10 @@ public abstract class Execution implements Opcodes {
 		return name;
 	}
 
-	public abstract boolean execute(ArrayList<Clazz> classes, boolean verbose);
+	public abstract boolean execute(Map<String, Clazz> map, boolean verbose);
 
-	protected Clazz getClass(ArrayList<Clazz> classes, String name) {
-		return classes.stream().filter(c -> c.node.name.equals(name)).findFirst().orElse(null);
+	protected Clazz getClass(Map<String, Clazz> classes, String name) {
+		return classes.get(name);
 	}
 
 	protected MethodNode getMethod(ClassNode node, String name, String desc) {

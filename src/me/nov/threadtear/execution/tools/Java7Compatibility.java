@@ -1,6 +1,6 @@
 package me.nov.threadtear.execution.tools;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import me.nov.threadtear.asm.Clazz;
@@ -17,10 +17,10 @@ public class Java7Compatibility extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node).forEach(c -> c.version = 51);
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node).forEach(c -> c.version = 51);
 		success = true;
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
 				if (StreamSupport.stream(m.instructions.spliterator(), false).anyMatch(ain -> ain.getOpcode() == INVOKEDYNAMIC)) {
 					logger.severe(c.name + "." + m.name + m.desc + " contains instructions that are not supported by Java 7.");

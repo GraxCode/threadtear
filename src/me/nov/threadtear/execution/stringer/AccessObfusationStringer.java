@@ -5,7 +5,7 @@ import java.lang.invoke.MethodHandleInfo;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Map;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -24,7 +24,7 @@ import me.nov.threadtear.vm.VM;
 public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
 
 	private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC = "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private int encrypted;
 	private int decrypted;
 	private boolean verbose;
@@ -35,13 +35,13 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.verbose = verbose;
 		this.classes = classes;
 		this.encrypted = 0;
 		this.decrypted = 0;
 		logger.info("Decrypting all invokedynamic references, this could take some time!");
-		classes.stream().map(c -> c.node).forEach(this::decrypt);
+		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
 			logger.severe("No access obfuscation matching stringer has been found!");
 			return false;
@@ -93,7 +93,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+		return classes.containsKey(name) ? classes.get(name).node : null;
 	}
 
 }

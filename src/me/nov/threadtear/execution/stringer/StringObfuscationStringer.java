@@ -40,7 +40,7 @@ import me.nov.threadtear.vm.VM;
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
 	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;.?.?.?\\)Ljava/lang/String;";
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private int encrypted;
 	private int decrypted;
 	private boolean verbose;
@@ -69,13 +69,13 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.verbose = verbose;
 		this.classes = classes;
 		this.encrypted = 0;
 		this.decrypted = 0;
 
-		classes.stream().map(c -> c.node).forEach(this::decrypt);
+		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
 			logger.severe("No strings matching stringer 9 string obfuscation have been found!");
 			return false;
@@ -224,8 +224,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 		if (name.equals(invocationFieldClass.name)) {
 			return invocationFieldClass;
 		}
-		// try to find decryption class in loaded jar file
-		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+		return classes.containsKey(name) ? classes.get(name).node : null;
 	}
 
 	@Override

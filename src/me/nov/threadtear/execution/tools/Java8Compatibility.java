@@ -1,6 +1,6 @@
 package me.nov.threadtear.execution.tools;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 import me.nov.threadtear.asm.Clazz;
 import me.nov.threadtear.execution.Execution;
@@ -14,9 +14,9 @@ public class Java8Compatibility extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		logger.info("Changing compability to Java 8+. Only works when no Java 9+ specific methods are present.");
-		classes.stream().map(c -> c.node).forEach(c -> c.version = 52);
+		classes.values().stream().map(c -> c.node).forEach(c -> c.version = 52);
 		// TODO check if bytecode is compatible
 		logger.info("Compatibility changed to Java 8+");
 		return true;

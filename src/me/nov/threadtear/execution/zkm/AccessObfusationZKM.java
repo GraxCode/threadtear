@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleInfo;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 	 */
 	private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;J)Ljava/lang/invoke/MethodHandle;";
 
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private int encrypted;
 	private int decrypted;
 	private boolean verbose;
@@ -55,14 +54,14 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.verbose = verbose;
 		this.classes = classes;
 		this.encrypted = 0;
 		this.decrypted = 0;
 		logger.info("Decrypting all invokedynamic references, this could take some time!");
 		this.vm = VM.constructNonInitializingVM(this);
-		classes.stream().map(c -> c.node).forEach(this::decrypt);
+		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
 			logger.severe("No access obfuscation matching ZKM has been found!");
 			return false;
@@ -92,12 +91,12 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 					InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
 					if (idin.bsm != null) {
 						Handle bsm = idin.bsm;
-						if (bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC) && classes.stream().map(c -> c.node).anyMatch(node -> node.name.equals(bsm.getOwner()))) {
+						if (bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC) && classes.values().stream().map(c -> c.node).anyMatch(node -> node.name.equals(bsm.getOwner()))) {
 							encrypted++;
 							try {
 								ConstantValue top = frame.getStack(frame.getStackSize() - 1);
 								if (top.isKnown()) {
-									MethodHandle handle = loadZKMBuriedHandleFromVM(classes.stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
+									MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
 											(long) top.getValue());
 									if (handle != null) {
 										MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
@@ -148,7 +147,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+		return classes.containsKey(name) ? classes.get(name).node : null;
 	}
 
 	@Override

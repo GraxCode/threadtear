@@ -1,7 +1,6 @@
 package me.nov.threadtear.execution.generic;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +39,8 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
-		classes.stream().map(c -> c.node).forEach(this::decrypt);
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
+		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		logger.info("Removed " + predictedJumps + " unnecessary conditional jumps and " + predictedSwitches + " unnecessary switches.");
 		return true;
 	}

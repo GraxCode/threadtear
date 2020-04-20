@@ -1,7 +1,7 @@
 package me.nov.threadtear.execution.zkm;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -22,7 +22,7 @@ import me.nov.threadtear.execution.ExecutionTag;
  */
 public class TryCatchObfuscationRemover extends Execution {
 
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private boolean verbose;
 
 	public TryCatchObfuscationRemover() {
@@ -31,19 +31,19 @@ public class TryCatchObfuscationRemover extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.verbose = verbose;
 		this.classes = classes;
 		logger.info("Removing redundant try catch blocks by ZKM");
 		long tcbs = getAmountBlocks();
-		classes.stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
+		classes.values().stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
 		long amount = (tcbs - getAmountBlocks());
 		logger.info("Finished, removed " + amount + " blocks of " + tcbs + " total blocks!");
 		return amount > 0;
 	}
 
 	private long getAmountBlocks() {
-		return classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks).flatMap(List::stream).count();
+		return classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks).flatMap(List::stream).count();
 	}
 
 	public void checkTCBs(ClassNode c, List<MethodNode> methods) {

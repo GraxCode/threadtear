@@ -2,6 +2,7 @@ package me.nov.threadtear.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 

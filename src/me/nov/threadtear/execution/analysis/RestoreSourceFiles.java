@@ -1,6 +1,5 @@
 package me.nov.threadtear.execution.analysis;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +22,9 @@ public class RestoreSourceFiles extends Execution {
 	private Map<String, String> map;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		logger.info("Generating mappings for source file attributes");
-		map = classes.stream().filter(c -> c.node.sourceFile != null && c.node.sourceFile.endsWith(".java"))
+		map = classes.values().stream().filter(c -> c.node.sourceFile != null && c.node.sourceFile.endsWith(".java"))
 				.collect(Collectors.toMap(c -> c.node.name, c -> c.node.sourceFile.substring(0, c.node.sourceFile.length() - 5)));
 		boolean duplicateFound = false;
 		if (map.size() < classes.size()) {
@@ -51,14 +50,14 @@ public class RestoreSourceFiles extends Execution {
 			}
 		}
 		logger.info("Updating class names");
-		classes.stream().forEach(c -> c.node.name = map.getOrDefault(c.node.name, c.node.name));
+		classes.values().stream().forEach(c -> c.node.name = map.getOrDefault(c.node.name, c.node.name));
 		logger.info("Updating code references");
-		int refs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstructionDescs(map, ain))
+		int refs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapInstructionDescs(map, ain))
 				.sum();
 		logger.info(refs + " code references updated successfully!");
-		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> References.remapMethodType(map, m));
-		classes.stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> References.remapFieldType(map, f));
-		classes.stream().map(c -> c.node).forEach(c -> References.remapClassType(map, c));
+		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> References.remapMethodType(map, m));
+		classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> References.remapFieldType(map, f));
+		classes.values().stream().map(c -> c.node).forEach(c -> References.remapClassType(map, c));
 		logger.info("Successfully updated remaining references");
 		return true;
 	}

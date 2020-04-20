@@ -1,9 +1,9 @@
 package me.nov.threadtear.execution.cleanup;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -29,14 +29,14 @@ public class InlineMethods extends Execution {
 	public int inlines;
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		HashMap<String, MethodNode> map = new HashMap<>();
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.stream().filter(this::isUnnecessary).forEach(m -> map.put(c.name + "." + m.name + m.desc, m));
 		});
 		logger.info(map.size() + " unnecessary methods found that could be inlined");
 		inlines = 0;
-		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
+		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
 			m.instructions.forEach(ain -> {
 				if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be
 					// superclass and real overrides

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import org.apache.commons.io.IOUtils;
@@ -23,7 +24,7 @@ import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.Strings;
 
 public class ReobfuscateMembers extends Execution {
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private Queue<String> words;
 	private boolean verbose;
 
@@ -33,38 +34,39 @@ public class ReobfuscateMembers extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.classes = classes;
 		this.verbose = verbose;
 
 		logger.info("Generating random names");
-		this.words = Strings.generateWordQueue((int) (classes.stream().map(c -> c.node.fields).flatMap(List::stream).count() + classes.stream().map(c -> c.node.methods).flatMap(List::stream).count()));
+		this.words = Strings
+				.generateWordQueue((int) (classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).count() + classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).count()));
 
 		logger.info("Making method mappings");
-		classes.stream().map(c -> c.node).forEach(c -> makeMethodMappings(c));
+		classes.values().stream().map(c -> c.node).forEach(c -> makeMethodMappings(c));
 		logger.info(methods.size() + " method mappings created for classes and superclasses");
 
 		logger.info("Renaming methods");
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> m.name = methods.get(c.name).stream().filter(mapped -> mapped.equalsMethod(m)).findFirst().get().newName);
 		});
 
 		logger.info("Updating method references in code");
-		int mrefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
+		int mrefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
 				.mapToInt(ain -> References.remapMethodReference(methods, ain)).sum();
 		logger.info(mrefs + " method references updated successfully!");
 
 		logger.info("Making field mappings");
-		classes.stream().map(c -> c.node).forEach(c -> makeFieldMappings(c));
+		classes.values().stream().map(c -> c.node).forEach(c -> makeFieldMappings(c));
 
 		logger.info("Renaming fields");
-		classes.stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.fields.forEach(f -> f.name = fields.get(c.name).stream().filter(mapped -> mapped.equalsField(f)).findFirst().get().newName);
 		});
 
 		logger.info("Updating field references in code");
-		int frefs = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapFieldReference(fields, ain))
-				.sum();
+		int frefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
+				.mapToInt(ain -> References.remapFieldReference(fields, ain)).sum();
 		logger.info(frefs + " field references updated successfully!");
 		return frefs > 0 && mrefs > 0;
 	}
@@ -81,7 +83,7 @@ public class ReobfuscateMembers extends Execution {
 	private void makeMethodMappings(ClassNode c) {
 		if (methods.containsKey(c.name))
 			return;
-		boolean isLocal = classes.stream().anyMatch(clazz -> clazz.node.equals(c));
+		boolean isLocal = classes.values().stream().anyMatch(clazz -> clazz.node.equals(c));
 		ArrayList<ClassNode> parents = new ArrayList<>();
 		// first remap parents
 		if (c.superName != null) {

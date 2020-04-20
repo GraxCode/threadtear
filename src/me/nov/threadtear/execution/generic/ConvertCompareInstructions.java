@@ -1,7 +1,7 @@
 package me.nov.threadtear.execution.generic;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -23,9 +23,9 @@ public class ConvertCompareInstructions extends Execution {
 	}
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.count = 0;
-		classes.stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
+		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
 			for (AbstractInsnNode ain : m.instructions) {
 				AbstractInsnNode next = Instructions.getRealNext(ain);
 				// keep them if they are jvm generated (for loops)

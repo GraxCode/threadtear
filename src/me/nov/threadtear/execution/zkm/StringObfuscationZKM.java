@@ -1,6 +1,5 @@
 package me.nov.threadtear.execution.zkm;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -35,7 +34,7 @@ import me.nov.threadtear.vm.VM;
 
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-	private ArrayList<Clazz> classes;
+	private Map<String, Clazz> classes;
 	private int decrypted;
 
 	private boolean verbose;
@@ -58,10 +57,10 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	 */
 
 	@Override
-	public boolean execute(ArrayList<Clazz> classes, boolean verbose) {
+	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.classes = classes;
 		this.verbose = verbose;
-		classes.stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
+		classes.values().stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
 		logger.info("Decrypted " + decrypted + " strings successfully.");
 		return decrypted > 0;
 	}
@@ -263,6 +262,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		return classes.stream().map(c -> c.node).filter(c -> c.name.equals(name)).findFirst().orElse(null);
+		return classes.containsKey(name) ? classes.get(name).node : null;
 	}
 }
