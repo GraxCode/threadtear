@@ -28,6 +28,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 	private int encrypted;
 	private int decrypted;
 	private boolean verbose;
+	private VM vm;
 
 	public AccessObfusationStringer() {
 		super(ExecutionCategory.STRINGER, "Access obfuscation removal", "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE,
@@ -41,6 +42,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 		this.encrypted = 0;
 		this.decrypted = 0;
 		logger.info("Decrypting all invokedynamic references, this could take some time!");
+		this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
 		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
 			logger.severe("No access obfuscation matching stringer has been found!");
@@ -55,7 +57,6 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 		MethodNode clinit = getStaticInitializer(cn);
 		if (clinit != null)
 			cn.methods.remove(clinit);
-		VM vm = VM.constructVM(this);
 		cn.methods.forEach(m -> {
 			for (int i = 0; i < m.instructions.size(); i++) {
 				AbstractInsnNode ain = m.instructions.get(i);
@@ -71,6 +72,9 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 								m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
 								decrypted++;
 							} catch (Throwable t) {
+								if (verbose) {
+									t.printStackTrace();
+								}
 								logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
 							}
 						} else if (verbose) {
