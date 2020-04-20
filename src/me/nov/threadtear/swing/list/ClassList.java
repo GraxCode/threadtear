@@ -2,6 +2,8 @@ package me.nov.threadtear.swing.list;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,10 +11,8 @@ import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -20,6 +20,7 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.JarIO;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;
+import me.nov.threadtear.swing.frame.DecompilerFrame;
 import me.nov.threadtear.swing.handler.ILoader;
 import me.nov.threadtear.swing.handler.JarDropHandler;
 import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
@@ -31,11 +32,11 @@ public class ClassList extends JPanel implements ILoader {
 	public ArrayList<Clazz> classes;
 	public DefaultTreeModel model;
 	private ClassTree tree;
-	private JLabel ignored;
+	private JPanel outerPanel;
 
 	public ClassList() {
 		this.setLayout(new BorderLayout());
-		this.add(Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
+		this.add(outerPanel = Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
 		this.add(createButtons(), BorderLayout.SOUTH);
 		this.setTransferHandler(new JarDropHandler(this));
 	}
@@ -43,13 +44,20 @@ public class ClassList extends JPanel implements ILoader {
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		ignored = new JLabel("", SwingConstants.CENTER);
-		panel.add(ignored);
-		JButton analysis = new JButton("Analysis");
+		JButton analysis = new JButton("Full analysis");
 		analysis.addActionListener(l -> {
 			new JarAnalysis(classes).setVisible(true);
 		});
 		panel.add(analysis);
+		JButton decompile = new JButton("Decompile");
+		decompile.addActionListener(l -> {
+			SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
+			if (tn != null && tn.member != null) {
+				new DecompilerFrame(tn.member.node).setVisible(true);
+			}
+		});
+		panel.add(decompile);
+		
 		JButton ignore = new JButton("Ignore");
 		ignore.addActionListener(l -> {
 			SortedTreeClassNode node = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
@@ -76,7 +84,7 @@ public class ClassList extends JPanel implements ILoader {
 	private void refreshIgnored() {
 		if (classes != null) {
 			long disabled = classes.stream().filter(c -> !c.transform).count();
-			ignored.setText("<html>" + classes.size() + " classes<br>" + disabled + " ignored");
+			outerPanel.setBorder(BorderFactory.createTitledBorder("Class list - " + classes.size() + " classes (" + disabled + " ignored)"));
 		}
 	}
 
@@ -104,6 +112,17 @@ public class ClassList extends JPanel implements ILoader {
 			model = new DefaultTreeModel(new SortedTreeClassNode(""));
 			this.setModel(model);
 			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			this.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() == 2) {
+						SortedTreeClassNode tn = (SortedTreeClassNode) getLastSelectedPathComponent();
+						if (tn != null && tn.member != null) {
+							new DecompilerFrame(tn.member.node).setVisible(true);
+						}
+					}
+				}
+			});
 		}
 	}
 

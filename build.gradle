@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
 }
 
-version = '1.4'
+version = '1.5'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -18,11 +18,15 @@ repositories {
 
 dependencies {
 	compile 'commons-io:commons-io:2.6' 
+	
 	compile 'com.github.weisj:darklaf-core:2.0.2'
 
 	compile 'org.ow2.asm:asm:8.0.1'
 	compile 'org.ow2.asm:asm-tree:8.0.1'
 	compile 'org.ow2.asm:asm-analysis:8.0.1'
+	
+	compile 'org.benf:cfr:0.149'
+	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'
 }
 
 task fatJar(type: Jar) {
