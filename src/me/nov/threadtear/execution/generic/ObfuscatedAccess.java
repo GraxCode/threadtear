@@ -21,8 +21,10 @@ public class ObfuscatedAccess extends Execution {
 
 	@Override
 	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).filter(this::shouldRemove).forEach(m -> m.access = Access.removeAccess(m.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
-		classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).filter(this::shouldRemove).forEach(f -> f.access = Access.removeAccess(f.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
+		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).filter(this::shouldRemove)
+				.forEach(m -> m.access = Access.removeAccess(m.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
+		classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).filter(this::shouldRemove)
+				.forEach(f -> f.access = Access.removeAccess(f.access, ACC_SYNTHETIC, ACC_BRIDGE, ACC_DEPRECATED));
 		logger.info("Removed every synthetic, bridge and deprecated access");
 		return true;
 	}
@@ -32,6 +34,6 @@ public class ObfuscatedAccess extends Execution {
 	}
 
 	public boolean shouldRemove(MethodNode mn) {
-		return !(Access.isStatic(mn.access) && mn.name.startsWith("access$"));
+		return !(Access.isStatic(mn.access) && mn.name.matches("(access\\$|lambda\\$).*"));
 	}
 }
