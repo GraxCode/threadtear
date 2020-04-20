@@ -116,13 +116,14 @@ public class Threadtear extends JFrame {
 				return;
 			}
 		}
-		if (logFrame == null)
+		if (logFrame == null) {
 			logFrame = new LogFrame();
+			logger.setUseParentHandlers(true);
+			logger.addHandler(new LogFrame.LogHandler(logFrame.area));
+			System.setErr(new PrintStream(new CustomOutputStream(logger, Level.SEVERE)));
+			System.setOut(new PrintStream(new CustomOutputStream(logger, Level.FINE)));
+		}
 		logFrame.setVisible(true);
-		logger.setUseParentHandlers(true);
-		logger.addHandler(new LogFrame.LogHandler(logFrame.area));
-		System.setErr(new PrintStream(new CustomOutputStream(logger, Level.SEVERE)));
-		System.setOut(new PrintStream(new CustomOutputStream(logger, Level.FINE)));
 		SwingUtilities.invokeLater(() -> {
 			new Thread(() -> {
 				logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
