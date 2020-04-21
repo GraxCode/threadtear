@@ -65,6 +65,9 @@ public class UnaryOpValue extends CodeReferenceValue {
 
 	@Override
 	public Object getStackValueOrNull() {
+		if (!isKnownValue()) {
+			return null;
+		}
 		Number num = (Number) value.getStackValueOrNull();
 		switch (node.getOpcode()) {
 		case INEG:
