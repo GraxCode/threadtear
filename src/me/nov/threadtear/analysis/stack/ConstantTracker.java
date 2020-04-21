@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.SuperInterpreter;
-import me.nov.threadtear.util.Casts;
+import me.nov.threadtear.util.reflection.Casts;
 
 /**
  * @author Holger https://stackoverflow.com/users/2711488/holger (Modified

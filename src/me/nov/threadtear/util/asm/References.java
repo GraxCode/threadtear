@@ -18,7 +18,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 import me.nov.threadtear.execution.analysis.ReobfuscateMembers.MappedMember;
-import me.nov.threadtear.util.Descriptor;
 
 public class References {
 

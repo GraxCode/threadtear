@@ -1,4 +1,4 @@
-package me.nov.threadtear.util;
+package me.nov.threadtear.util.reflection;
 
 /**
  * This class is needed because of how shitty java is

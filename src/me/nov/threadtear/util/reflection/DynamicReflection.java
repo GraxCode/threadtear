@@ -1,4 +1,4 @@
-package me.nov.threadtear.util;
+package me.nov.threadtear.util.reflection;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleInfo;

@@ -27,9 +27,9 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
-import me.nov.threadtear.util.DynamicReflection;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.VM;
 

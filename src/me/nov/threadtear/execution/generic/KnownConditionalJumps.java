@@ -24,9 +24,9 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
-import me.nov.threadtear.util.Casts;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.reflection.Casts;
 
 public class KnownConditionalJumps extends Execution implements IConstantReferenceHandler {
 

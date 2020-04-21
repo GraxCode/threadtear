@@ -1,4 +1,4 @@
-package me.nov.threadtear.util;
+package me.nov.threadtear.util.asm;
 
 import java.util.Map;
 
