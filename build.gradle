@@ -11,7 +11,11 @@ sourceSets {
     main.java.srcDirs = ['src']
     main.resources.srcDirs = ['src']
 }
-    
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+javadoc.options.encoding = 'UTF-8'
+ 
 repositories {
     mavenCentral()
 }
