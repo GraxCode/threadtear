@@ -29,9 +29,10 @@ import me.nov.threadtear.execution.analysis.ReobfuscateClassNames;
 import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
 import me.nov.threadtear.execution.analysis.RestoreSourceFiles;
 import me.nov.threadtear.execution.cleanup.InlineMethods;
+import me.nov.threadtear.execution.cleanup.InlineUnchangedFields;
+import me.nov.threadtear.execution.cleanup.RemoveAttributes;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
 import me.nov.threadtear.execution.generic.ConvertCompareInstructions;
-import me.nov.threadtear.execution.generic.InlineUnchangedFields;
 import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
 import me.nov.threadtear.execution.stringer.AccessObfusationStringer;
@@ -101,12 +102,14 @@ public class ExecutionSelection extends JDialog {
 				root.add(new ExecutionTreeNode(t.name));
 			}
 			addExecution(root, new InlineMethods());
+			addExecution(root, new InlineUnchangedFields());
 			addExecution(root, new RemoveUnnecessary());
+			addExecution(root, new RemoveAttributes());
+			
 
 			addExecution(root, new ObfuscatedAccess());
 			addExecution(root, new KnownConditionalJumps());
 			addExecution(root, new ConvertCompareInstructions());
-			addExecution(root, new InlineUnchangedFields());
 
 			addExecution(root, new RestoreSourceFiles());
 			addExecution(root, new ReobfuscateClassNames());

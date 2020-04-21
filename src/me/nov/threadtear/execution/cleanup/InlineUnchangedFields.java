@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.generic;
+package me.nov.threadtear.execution.cleanup;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,8 @@ public class InlineUnchangedFields extends Execution {
 	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		this.classes = classes;
 		this.inlines = 0;
-		// TODO static initializer should be excluded, we can still calculate the field value
+		// TODO static initializer should be excluded, we can still calculate the field
+		// value
 		this.fieldPuts = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
 				.filter(ain -> ain.getOpcode() == PUTFIELD || ain.getOpcode() == PUTSTATIC).map(ain -> (FieldInsnNode) ain).collect(Collectors.toList());
 
@@ -61,6 +62,7 @@ public class InlineUnchangedFields extends Execution {
 				}
 			});
 		});
+		cn.fields.remove(fn);
 	}
 
 	private boolean isGetReferenceTo(ClassNode cn, FieldInsnNode fin, FieldNode fn) {

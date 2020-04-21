@@ -25,7 +25,7 @@ import me.nov.threadtear.util.asm.Instructions;
 public class RemoveUnnecessary extends Execution implements ICodeReferenceHandler {
 
 	public RemoveUnnecessary() {
-		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions",
+		super(ExecutionCategory.CLEANING, "<html><s>Remove unnecessary instructions</s>",
 				"Remove unnecessary instructions or flow obfuscation that can be optimized.<br>This could include number or flow obfuscation.<br><b>Do not run this, it is unfinished!</b>");
 	}
 

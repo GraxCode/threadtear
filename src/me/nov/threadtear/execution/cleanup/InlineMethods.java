@@ -23,7 +23,7 @@ public class InlineMethods extends Execution {
 
 	public InlineMethods() {
 		super(ExecutionCategory.CLEANING, "Inline static methods without invocation", "Inline static methods that only return or throw.<br>Can be useful for deobfuscating try catch block obfuscation.",
-				ExecutionTag.RUNNABLE);
+				ExecutionTag.SHRINK, ExecutionTag.RUNNABLE);
 	}
 
 	public int inlines;
