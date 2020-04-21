@@ -15,6 +15,7 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 
 public class InlineUnchangedFields extends Execution {
@@ -37,7 +38,7 @@ public class InlineUnchangedFields extends Execution {
 		this.fieldPuts = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
 				.filter(ain -> ain.getOpcode() == PUTFIELD || ain.getOpcode() == PUTSTATIC).map(ain -> (FieldInsnNode) ain).collect(Collectors.toList());
 
-		classes.values().stream().map(c -> c.node).forEach(c -> {
+		classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access)).forEach(c -> {
 			c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f));
 		});
 		logger.info("Inlined " + inlines + " field references!");
