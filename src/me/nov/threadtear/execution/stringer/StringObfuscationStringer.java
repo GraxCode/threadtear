@@ -129,7 +129,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 						this.decrypted++;
 						return new AbstractInsnNode[] { min, new InsnNode(POP), new LdcInsnNode(realString) };
 					} else {
-						logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
+						logger.severe("Failed to decrypt string or false call in " + cn.name + "." + m.name + m.desc);
 					}
 				} catch (Throwable e) {
 					e.printStackTrace();
@@ -141,18 +141,18 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	}
 
 	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame) throws Exception {
-		VM vm = VM.constructVM(this);
-		createFakeCloneAndFieldGetter(cn, m, min, frame); // create a duplicate of the current class,
-		// we need this because stringer checks for stacktrace method name and class
-
-		Class<?> proxyFieldClass = vm.loadClass(invocationFieldClass.name.replace('/', '.'), true);
-		// set proxyFields to stack values
 		if (frame == null) {
 			if (verbose) {
 				logger.severe("Unvisited frame in " + cn.name + "." + m.name + ": " + frame);
 			}
 			return null;
 		}
+		VM vm = VM.constructVM(this);
+		createFakeCloneAndFieldGetter(cn, m, min, frame); // create a duplicate of the current class,
+		// we need this because stringer checks for stacktrace method name and class
+
+		Class<?> proxyFieldClass = vm.loadClass(invocationFieldClass.name.replace('/', '.'), true);
+		// set proxyFields to stack values
 		int arguments = Type.getArgumentTypes(min.desc).length;
 		if (arguments > frame.getStackSize()) {
 			if (verbose) {
