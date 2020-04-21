@@ -23,7 +23,7 @@ public class ReobfuscateClassNames extends Execution {
 	@Override
 	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
 		logger.info("Generating random names");
-		Queue<String> words = Strings.generateWordQueue(classes.size());
+		Queue<String> words = Strings.generateWordQueue(classes.size(), ReobfuscateClassNames.class.getResourceAsStream("/res/names.txt"));
 		Map<String, String> map = classes.values().stream().collect(Collectors.toMap(c -> c.node.name, c -> words.poll()));
 		if (verbose) {
 			logger.info("Generated " + map.size() + " unique easy-to-remember strings");

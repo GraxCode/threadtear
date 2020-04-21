@@ -39,8 +39,9 @@ public class ReobfuscateMembers extends Execution {
 		this.verbose = verbose;
 
 		logger.info("Generating random names");
-		this.words = Strings
-				.generateWordQueue((int) (classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).count() + classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).count()));
+		this.words = Strings.generateWordQueue(
+				(int) (classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).count() + classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).count()),
+				ReobfuscateMembers.class.getResourceAsStream("/res/english-words.txt"));
 
 		logger.info("Making method mappings");
 		classes.values().stream().map(c -> c.node).forEach(c -> makeMethodMappings(c));

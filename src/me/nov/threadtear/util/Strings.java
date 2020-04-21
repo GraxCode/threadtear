@@ -1,6 +1,7 @@
 package me.nov.threadtear.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -11,8 +12,6 @@ import java.util.Random;
 import javax.lang.model.SourceVersion;
 
 import org.apache.commons.io.IOUtils;
-
-import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
 
 public class Strings {
 	public static boolean isHighUTF(String cst) {
@@ -26,13 +25,7 @@ public class Strings {
 	}
 
 	public static boolean isHighSDev(String cst) {
-		if (cst.length() < 2)
-			return false;
-		double sdev = calcSdev(cst);
-		if (sdev > 30) {
-			return true;
-		}
-		return false;
+		return cst.length() >= 2 ? (calcSdev(cst) > 30) : false;
 	}
 
 	public static double calcSdev(String cst) {
@@ -47,11 +40,11 @@ public class Strings {
 		return Math.sqrt(sdev / (ccst.length - 1.0));
 	}
 
-	public static Queue<String> generateWordQueue(int amount) {
+	public static Queue<String> generateWordQueue(int amount, InputStream wordList) {
 		Queue<String> queue = new LinkedList<>();
 		try {
-			String nouns = IOUtils.toString(ReobfuscateMembers.class.getResourceAsStream("/res/english-words.txt"), "UTF-8");
-			List<String> words = Arrays.asList(nouns.split("\n"));
+			String list = IOUtils.toString(wordList, "UTF-8");
+			List<String> words = Arrays.asList(list.split("\n"));
 			Collections.shuffle(words);
 			int i = 0;
 			while (queue.size() < amount) {

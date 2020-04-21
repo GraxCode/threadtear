@@ -25,7 +25,7 @@ import me.nov.threadtear.util.asm.Instructions;
 public class RemoveUnnecessary extends Execution implements ICodeReferenceHandler {
 
 	public RemoveUnnecessary() {
-		super(ExecutionCategory.CLEANING, "Convert to readable instructions",
+		super(ExecutionCategory.CLEANING, "Remove unnecessary instructions",
 				"Remove unnecessary instructions or flow obfuscation that can be optimized.<br>This could include number or flow obfuscation.<br><b>Do not run this, it is unfinished!</b>");
 	}
 
@@ -85,9 +85,9 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 				}
 				rewrittenCode.add(ain.clone(labels));
 			}
-			logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
+//			logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
 		}
-		logger.info(rewrittenCode.size() + " final size");
+//		logger.info(rewrittenCode.size() + " final size");
 		return rewrittenCode;
 	}
 
