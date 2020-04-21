@@ -2,7 +2,9 @@ package me.nov.threadtear.swing.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
@@ -20,6 +22,8 @@ import javax.swing.text.Highlighter;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
+import com.github.weisj.darklaf.icons.IconLoader;
+
 import me.nov.threadtear.decompiler.CFR;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
 
@@ -33,15 +37,14 @@ public class DecompilerPanel extends JPanel {
 
 	public DecompilerPanel(ClassNode cn) {
 		this.setLayout(new BorderLayout(4, 4));
-		JPanel leftSide = new JPanel();
-		leftSide.setBorder(new EmptyBorder(1, 5, 0, 1));
-		leftSide.setLayout(new GridLayout());
-		leftSide.add(new JLabel("CFR Decompiler 0.149"));
 		JPanel actionPanel = new JPanel();
-		actionPanel.setLayout(new GridLayout(1, 5, 4, 4));
-		for (int i = 0; i < 3; i++)
-			actionPanel.add(new JPanel());
+		actionPanel.setLayout(new GridBagLayout());
+		JButton reload = new JButton(IconLoader.get().loadSVGIcon("/res/refresh.svg", false));
+		reload.addActionListener(l -> {
+			textArea.setText(CFR.decompile(cn));
+		});
 		JTextField search = new JTextField();
+		search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
 		search.addActionListener(l -> {
 			try {
 				String text = search.getText();
@@ -82,14 +85,17 @@ public class DecompilerPanel extends JPanel {
 				e.printStackTrace();
 			}
 		});
+
 		actionPanel.add(search);
-		JButton reload = new JButton("Reload");
-		reload.addActionListener(l -> {
-			textArea.setText(CFR.decompile(cn));
-		});
-		actionPanel.add(reload);
-		leftSide.add(actionPanel);
-		this.add(leftSide, BorderLayout.NORTH);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.EAST;
+		actionPanel.add(reload, gbc);
+		JPanel topPanel = new JPanel();
+		topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
+		topPanel.setLayout(new BorderLayout());
+		topPanel.add(new JLabel("CFR Decompiler 0.149"), BorderLayout.WEST);
+		topPanel.add(actionPanel, BorderLayout.EAST);
+		this.add(topPanel, BorderLayout.NORTH);
 		this.textArea = new DecompilerTextArea();
 		textArea.setText(CFR.decompile(cn));
 		JScrollPane scp = new RTextScrollPane(textArea);
