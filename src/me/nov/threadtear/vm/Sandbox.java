@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LocalVariableNode;
@@ -60,4 +61,17 @@ public class Sandbox implements Opcodes {
 		mn.maxLocals = 1337;
 		return mn;
 	}
+
+	public static ClassNode fullClassProxy(ClassNode cn) {
+		ClassNode clone = new ClassNode();
+		clone.access = ACC_PUBLIC;
+		clone.version = 52;
+		clone.name = cn.name;
+		clone.sourceFile = cn.sourceFile;
+		clone.superName = "java/lang/Object";
+		cn.fields.forEach(f -> clone.fields.add(new FieldNode(f.access, f.name, f.desc, f.signature, f.value)));
+		cn.methods.forEach(m -> clone.methods.add(copyMethod(m)));
+		return clone;
+	}
+
 }

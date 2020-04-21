@@ -153,6 +153,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 
 	@Override
 	public CodeReferenceValue unaryOperation(AbstractInsnNode insn, CodeReferenceValue value) throws AnalyzerException {
+		//TODO checkcast, instanceof
 		BasicValue v = basic.unaryOperation(insn, value.getType());
 		switch (insn.getOpcode()) {
 		case GETFIELD:

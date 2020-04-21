@@ -18,7 +18,7 @@ public class DecompilerTextArea extends RSyntaxTextArea {
 
 		// change theme to java
 		try {
-			Theme theme = Theme.load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/monokai.xml"));
+			Theme theme = Theme.load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml"));
 			theme.apply(this);
 		} catch (IOException e) {
 			e.printStackTrace();

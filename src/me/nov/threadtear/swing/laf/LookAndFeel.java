@@ -4,7 +4,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.github.weisj.darklaf.LafManager;
-import com.github.weisj.darklaf.theme.DarculaTheme;
+import com.github.weisj.darklaf.theme.OneDarkTheme;
 
 public class LookAndFeel {
 	public static void setLookAndFeel() {
@@ -23,7 +23,7 @@ public class LookAndFeel {
 			}
 		}
 		LafManager.enableLogging(false);
-		LafManager.install(new DarculaTheme());
+		LafManager.install(new OneDarkTheme());
 		UIManager.put("Tree.background", UIManager.getColor("Tree.background").darker());
 	}
 }
