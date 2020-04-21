@@ -38,7 +38,7 @@ import me.nov.threadtear.vm.VM;
 
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;.?.?.?.?\\)Ljava/lang/String;";
+	private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;[^\\[L]?[^\\[L]?[^\\[L]?[^\\[L]?\\)Ljava/lang/String;";
 	private Map<String, Clazz> classes;
 	private int encrypted;
 	private int decrypted;
