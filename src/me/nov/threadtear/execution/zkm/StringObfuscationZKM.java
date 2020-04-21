@@ -1,5 +1,7 @@
 package me.nov.threadtear.execution.zkm;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -25,6 +27,7 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
@@ -86,8 +89,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		callMethod.access = ACC_PUBLIC | ACC_STATIC;
 		Instructions.isolateCallsThatMatch(callMethod, (s) -> !s.matches(ALLOWED_CALLS), (desc) -> !desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;"), true);
 		proxyClass.methods.add(callMethod);
-
 		try {
+			Files.write(new File("proxy.class").toPath(), Conversion.toBytecode0(proxyClass));
 			invokeVMAndReplace(proxyClass);
 		} catch (Throwable e) {
 			if (verbose)
