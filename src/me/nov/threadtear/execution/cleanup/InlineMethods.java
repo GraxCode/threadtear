@@ -38,8 +38,7 @@ public class InlineMethods extends Execution {
 		inlines = 0;
 		classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
 			m.instructions.forEach(ain -> {
-				if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be
-					// superclass and real overrides
+				if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be superclass and real overrides
 					MethodInsnNode min = (MethodInsnNode) ain;
 					String key = min.owner + "." + min.name + min.desc;
 					if (map.containsKey(key)) {
@@ -49,7 +48,10 @@ public class InlineMethods extends Execution {
 				}
 			});
 		});
-		logger.info("Inlined " + inlines + " references!");
+
+		// map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.removeIf(m -> m.equals(method) && !Access.isPublic(method.access)));
+		map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.remove(method));
+		logger.info("Inlined " + inlines + " method references!");
 		return true;
 	}
 
@@ -75,9 +77,7 @@ public class InlineMethods extends Execution {
 		for (int var : varTypes.keySet()) {
 			fakeVarList.insert(new VarInsnNode(varTypes.get(var), var)); // make sure its reversed
 		}
-		/**
-		 * pop object here for non static invoke: fakeVarList.add(new InsnNode(POP));
-		 */
+		// pop object here for non static invoke: fakeVarList.add(new InsnNode(POP));
 		return fakeVarList;
 	}
 

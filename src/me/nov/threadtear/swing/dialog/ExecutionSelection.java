@@ -106,7 +106,6 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new RemoveUnnecessary());
 			addExecution(root, new RemoveAttributes());
 			
-
 			addExecution(root, new ObfuscatedAccess());
 			addExecution(root, new KnownConditionalJumps());
 			addExecution(root, new ConvertCompareInstructions());
