@@ -83,7 +83,7 @@ public class VM extends ClassLoader implements Opcodes {
 				m.localVariables = null;
 			});
 			if (removalPredicate != null) {
-				vmnode.methods.forEach(m -> Instructions.isolateCallsThatMatch(m, removalPredicate));
+				vmnode.methods.forEach(m -> Instructions.isolateCallsThatMatch(m, removalPredicate, (desc) -> true, true));
 			}
 		}
 		return Conversion.toBytecode0(vmnode);

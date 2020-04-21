@@ -151,12 +151,12 @@ public class Instructions implements Opcodes {
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
 	}
 
-	public static void isolateCallsThatMatch(MethodNode mn, Predicate<String> p) {
+	public static void isolateCallsThatMatch(MethodNode mn, Predicate<String> names, Predicate<String> descs, boolean fields) {
 		for (int i = 0; i < mn.instructions.size(); i++) {
 			AbstractInsnNode ain = mn.instructions.get(i);
 			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
 				MethodInsnNode min = (MethodInsnNode) ain;
-				if (p.test(min.owner)) {
+				if (names.test(min.owner) && descs.test(min.desc)) {
 					for (Type t : Type.getArgumentTypes(min.desc)) {
 						mn.instructions.insertBefore(min, new InsnNode(t.getSize() > 1 ? POP2 : POP));
 						i += 1;
@@ -166,9 +166,9 @@ public class Instructions implements Opcodes {
 					}
 					mn.instructions.set(min, makeNullPush(Type.getReturnType(min.desc)));
 				}
-			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
+			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN && fields) {
 				FieldInsnNode fin = (FieldInsnNode) ain;
-				if (p.test(fin.owner)) {
+				if (names.test(fin.owner) && descs.test(fin.desc)) {
 					Type type = Type.getType(fin.desc);
 					switch (fin.getOpcode()) {
 					case GETFIELD:
@@ -192,10 +192,13 @@ public class Instructions implements Opcodes {
 				}
 			} else if (ain.getType() == AbstractInsnNode.TYPE_INSN) {
 				TypeInsnNode tin = (TypeInsnNode) ain;
-				if (p.test(tin.desc)) {
+				if (names.test(tin.desc)) {
 					switch (tin.getOpcode()) {
 					case NEW:
 						mn.instructions.set(tin, new InsnNode(ACONST_NULL));
+						break;
+					case ANEWARRAY:
+						mn.instructions.set(tin, new TypeInsnNode(tin.getOpcode(), "java/lang/Object"));
 						break;
 					case INSTANCEOF:
 						mn.instructions.insertBefore(tin, new InsnNode(POP));
@@ -209,7 +212,7 @@ public class Instructions implements Opcodes {
 				}
 			} else if (ain.getType() == AbstractInsnNode.MULTIANEWARRAY_INSN) {
 				MultiANewArrayInsnNode marr = (MultiANewArrayInsnNode) ain;
-				if (p.test(marr.desc)) {
+				if (names.test(marr.desc)) {
 					for (int j = 0; j < marr.dims; j++) {
 						mn.instructions.insertBefore(marr, new InsnNode(POP));
 						i += 1;

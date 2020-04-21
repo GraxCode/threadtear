@@ -54,8 +54,10 @@ public class Sandbox implements Opcodes {
 		for (AbstractInsnNode ain : original.instructions) {
 			copy.add(ain.clone(labels));
 		}
+		if (original.tryCatchBlocks != null)
 		mn.tryCatchBlocks = original.tryCatchBlocks.stream().map(tcb -> new TryCatchBlockNode(tcb.start, tcb.end, tcb.handler, tcb.type)).collect(Collectors.toList());
-		mn.localVariables = original.localVariables.stream().map(lv -> new LocalVariableNode(lv.name, lv.desc, lv.signature, lv.start, lv.end, lv.index)).collect(Collectors.toList());
+		if (original.localVariables != null)
+			mn.localVariables = original.localVariables.stream().map(lv -> new LocalVariableNode(lv.name, lv.desc, lv.signature, lv.start, lv.end, lv.index)).collect(Collectors.toList());
 		Instructions.updateInstructions(mn, labels, copy);
 		mn.maxStack = 1337;
 		mn.maxLocals = 1337;
@@ -64,7 +66,7 @@ public class Sandbox implements Opcodes {
 
 	public static ClassNode fullClassProxy(ClassNode cn) {
 		ClassNode clone = new ClassNode();
-		clone.access = ACC_PUBLIC;
+		clone.access = cn.access;
 		clone.version = 52;
 		clone.name = cn.name;
 		clone.sourceFile = cn.sourceFile;

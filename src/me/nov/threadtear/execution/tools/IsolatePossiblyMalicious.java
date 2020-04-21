@@ -15,7 +15,8 @@ public class IsolatePossiblyMalicious extends Execution {
 
 	public IsolatePossiblyMalicious() {
 		super(ExecutionCategory.TOOLS, "Isolate dangerous calls",
-				"Isolate runtime, reflection and IO calls, so no damaging code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b><br>Libraries can be used to bypass the regex.", ExecutionTag.POSSIBLE_DAMAGE);
+				"Isolate runtime, reflection and IO calls, so no damaging code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b><br>Libraries can be used to bypass the regex.",
+				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
 	@Override
@@ -25,7 +26,7 @@ public class IsolatePossiblyMalicious extends Execution {
 		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
 				int oldSize = m.instructions.size();
-				Instructions.isolateCallsThatMatch(m, (s) -> s.matches(POSSIBLY_MALICIOUS_REGEX));
+				Instructions.isolateCallsThatMatch(m, (s) -> s.matches(POSSIBLY_MALICIOUS_REGEX), (desc) -> true, true);
 				if (oldSize != m.instructions.size()) {
 					changed++;
 					if (verbose) {
