@@ -23,7 +23,9 @@ repositories {
 dependencies {
 	compile 'commons-io:commons-io:2.6' 
 	
-	compile 'com.github.weisj:darklaf-core:2.0.2'
+	compile 'com.github.weisj:darklaf-core:2.0.3'
+	compile 'com.github.weisj:darklaf-theme:2.0.3'
+	compile 'com.github.weisj:darklaf-property-loader:2.0.3'
 
 	compile 'org.ow2.asm:asm:8.0.1'
 	compile 'org.ow2.asm:asm-tree:8.0.1'
