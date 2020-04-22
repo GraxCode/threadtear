@@ -22,7 +22,7 @@ public class LookAndFeel {
 				}
 			}
 		}
-		LafManager.enableLogging(false);
+		LafManager.enableLogging(true);
 		LafManager.install(new OneDarkTheme());
 		UIManager.put("Tree.background", UIManager.getColor("Tree.background").darker());
 	}

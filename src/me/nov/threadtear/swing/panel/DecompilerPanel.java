@@ -39,7 +39,7 @@ public class DecompilerPanel extends JPanel {
 		this.setLayout(new BorderLayout(4, 4));
 		JPanel actionPanel = new JPanel();
 		actionPanel.setLayout(new GridBagLayout());
-		JButton reload = new JButton(IconLoader.get().loadSVGIcon("/res/refresh.svg", false));
+		JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
 		reload.addActionListener(l -> {
 			textArea.setText(CFR.decompile(cn));
 		});

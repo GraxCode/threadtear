@@ -24,7 +24,7 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
 	private Icon executionRed, executionGreen, executionBlue, directory;
 
 	public ExecutionTreeCellRenderer() {
-		this.directory = IconLoader.get().loadSVGIcon("/res/folder.svg", false);
+		this.directory = IconLoader.get().loadSVGIcon("res/folder.svg", false);
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		this.executionRed = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_red.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 		this.executionGreen = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_green.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));

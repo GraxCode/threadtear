@@ -23,10 +23,10 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
 	private Icon pack, clazz, enu, itf;
 
 	public ClassTreeCellRenderer() {
-		this.pack = IconLoader.get().loadSVGIcon("/res/package.svg", false);
-		this.clazz = IconLoader.get().loadSVGIcon("/res/class.svg", false);
-		this.enu = IconLoader.get().loadSVGIcon("/res/enum.svg", false);
-		this.itf = IconLoader.get().loadSVGIcon("/res/interface.svg", false);
+		this.pack = IconLoader.get().loadSVGIcon("res/package.svg", false);
+		this.clazz = IconLoader.get().loadSVGIcon("res/class.svg", false);
+		this.enu = IconLoader.get().loadSVGIcon("res/enum.svg", false);
+		this.itf = IconLoader.get().loadSVGIcon("res/interface.svg", false);
 	}
 
 	@Override
