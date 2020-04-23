@@ -126,7 +126,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 
 	private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, long decryptionLong) throws Throwable {
 		if (!vm.isLoaded(cn.name.replace('/', '.'))) {
-			cn.methods.forEach(mn -> Instructions.isolateCallsThatMatch(mn, (name) -> !name.equals(cn.name) && !name.matches("java/lang/.*"), (desc) -> true, true));
+			cn.methods.forEach(
+					mn -> Instructions.isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"), (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
 			vm.explicitlyPreloadWithClinit(cn); // make sure bootstrap class class has <clinit>
 		}
 		Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
@@ -147,7 +148,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		return classes.containsKey(name) ? classes.get(name).node : null;
+		return classes.containsKey(name.replace('.', '/')) ? classes.get(name).node : null;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.CustomOutputStream;
 import me.nov.threadtear.security.VMSecurityManager;
+import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
@@ -40,7 +41,7 @@ public class Threadtear extends JFrame {
 
 	public Threadtear() {
 		this.initBounds();
-		this.setTitle("Threadtear");
+		this.setTitle("Threadtear " + Utils.getVersion());
 		this.setIconImage(new ImageIcon(getClass().getResource("/res/threadtear.png")).getImage());
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new ExitListener(this));

@@ -2,8 +2,9 @@ package me.nov.threadtear.vm;
 
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -14,22 +15,22 @@ import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 
 public class VM extends ClassLoader implements Opcodes {
-	HashMap<String, Class<?>> loaded = new HashMap<>();
+	public HashMap<String, Class<?>> loaded = new HashMap<>();
 
 	public static final String RT = "(com\\.oracle\\.|com\\.sun\\.|java\\.|javax\\.|jdk\\.|sun\\.).*";
 	private IVMReferenceHandler handler;
 
-	private boolean removeClinit;
+	public boolean noInitialization;
 
 	private VM(IVMReferenceHandler handler, ClassLoader parent, boolean clinit) {
 		super(parent);
 		this.handler = handler;
-		this.removeClinit = clinit;
+		this.noInitialization = clinit;
 	}
 
 	public Class<?> bytesToClass(String name, byte[] bytes) {
 		if (loaded.containsKey(name))
-			throw new RuntimeException();
+			throw new RuntimeException("class " + name + " is already defined");
 		try {
 			Method define = ClassLoader.class.getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
 			define.setAccessible(true);
@@ -59,7 +60,7 @@ public class VM extends ClassLoader implements Opcodes {
 		if (loaded.containsKey(name)) {
 			return loaded.get(name);
 		}
-		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')), removeClinit, null);
+		byte[] clazz = convert(handler.tryClassLoad(name.replace('.', '/')), noInitialization, null);
 		if (clazz == null) {
 			return null;
 		}
@@ -68,25 +69,34 @@ public class VM extends ClassLoader implements Opcodes {
 		return loadedClass;
 	}
 
-	private byte[] convert(ClassNode node, boolean removeClinit, Predicate<String> removalPredicate) {
+	private byte[] convert(ClassNode node, boolean noInitialization, BiPredicate<String, String> removalPredicate) {
 		if (node == null)
 			return null;
 		ClassNode vmnode = Conversion.toNode(Conversion.toBytecode0(node)); // clone ClassNode the easy way
-		vmnode.methods.forEach(m -> m.access = Access.makePublic(m.access));
-		vmnode.fields.forEach(f -> f.access = Access.makePublic(f.access));
-		vmnode.access = Access.makePublic(node.access);
-		if (removeClinit) {
+		vmnode.methods.forEach(m -> m.access = fixAccess(m.access));
+		vmnode.fields.forEach(f -> f.access = fixAccess(f.access));
+		vmnode.access = fixAccess(node.access);
+		if (noInitialization) {
 			vmnode.methods.stream().filter(m -> m.name.equals("<clinit>")).forEach(m -> {
 				m.instructions.clear();
 				m.instructions.add(new InsnNode(RETURN));
 				m.tryCatchBlocks.clear();
 				m.localVariables = null;
 			});
-			if (removalPredicate != null) {
-				vmnode.methods.forEach(m -> Instructions.isolateCallsThatMatch(m, removalPredicate, (desc) -> true, true));
-			}
+			vmnode.superName = "java/lang/Object";
+			vmnode.interfaces = new ArrayList<>();
+		}
+		if (removalPredicate != null) {
+			vmnode.methods.forEach(m -> Instructions.isolateCallsThatMatch(m, removalPredicate, removalPredicate));
 		}
 		return Conversion.toBytecode0(vmnode);
+	}
+
+	private int fixAccess(int access) {
+		if (Access.isStatic(access)) {
+			return ACC_PUBLIC | ACC_STATIC;
+		}
+		return ACC_PUBLIC;
 	}
 
 	public void explicitlyPreloadWithClinit(ClassNode node) {
@@ -103,7 +113,7 @@ public class VM extends ClassLoader implements Opcodes {
 		loaded.put(name, loadedClass);
 	}
 
-	public void explicitlyPreloadNoClinitAndIsolate(ClassNode node, Predicate<String> p) {
+	public void explicitlyPreloadNoClinitAndIsolate(ClassNode node, BiPredicate<String, String> p) {
 		String name = node.name.replace('/', '.');
 		byte[] clazz = convert(node, true, p);
 		Class<?> loadedClass = bytesToClass(name, clazz);

@@ -134,7 +134,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 			return null;
 		vm.explicitlyPreloadWithClinit(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
 		if (!vm.isLoaded(decryptionMethodOwner.name.replace('/', '.'))) // decryption class could be the same class
-			vm.explicitlyPreloadNoClinitAndIsolate(decryptionMethodOwner, (name) -> !name.matches("java/lang/.*"));
+			vm.explicitlyPreloadNoClinitAndIsolate(decryptionMethodOwner, (name, desc) -> !name.matches("java/lang/.*"));
 		Class<?> loadedClone = vm.loadClass(fakeInvocationClone.name.replace('/', '.'), true); // load dupe class
 
 		if (m.name.equals("<init>")) {

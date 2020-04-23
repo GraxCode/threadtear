@@ -2,6 +2,7 @@ package me.nov.threadtear.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -41,5 +42,13 @@ public class Utils {
 		tree.scrollPathToVisible(path);
 		// select the newly added node
 		tree.setSelectionPath(path);
+	}
+
+	public static String getVersion() {
+		try {
+			return Objects.requireNonNull(Utils.class.getPackage().getImplementationVersion());
+		} catch (NullPointerException e) {
+			return "(dev)";
+		}
 	}
 }

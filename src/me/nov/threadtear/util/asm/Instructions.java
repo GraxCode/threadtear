@@ -2,7 +2,7 @@ package me.nov.threadtear.util.asm;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -151,12 +151,12 @@ public class Instructions implements Opcodes {
 		throw new IllegalArgumentException("not an int: " + node.getClass().getName());
 	}
 
-	public static void isolateCallsThatMatch(MethodNode mn, Predicate<String> names, Predicate<String> descs, boolean fields) {
+	public static void isolateCallsThatMatch(MethodNode mn, BiPredicate<String, String> methodRemove, BiPredicate<String, String> fieldRemove) {
 		for (int i = 0; i < mn.instructions.size(); i++) {
 			AbstractInsnNode ain = mn.instructions.get(i);
 			if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
 				MethodInsnNode min = (MethodInsnNode) ain;
-				if (names.test(min.owner) && descs.test(min.desc)) {
+				if (methodRemove != null && methodRemove.test(min.owner, min.desc)) {
 					for (Type t : Type.getArgumentTypes(min.desc)) {
 						mn.instructions.insertBefore(min, new InsnNode(t.getSize() > 1 ? POP2 : POP));
 						i += 1;
@@ -166,9 +166,9 @@ public class Instructions implements Opcodes {
 					}
 					mn.instructions.set(min, makeNullPush(Type.getReturnType(min.desc)));
 				}
-			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN && fields) {
+			} else if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
 				FieldInsnNode fin = (FieldInsnNode) ain;
-				if (names.test(fin.owner) && descs.test(fin.desc)) {
+				if (fieldRemove != null && fieldRemove.test(fin.owner, fin.desc)) {
 					Type type = Type.getType(fin.desc);
 					switch (fin.getOpcode()) {
 					case GETFIELD:
@@ -192,7 +192,7 @@ public class Instructions implements Opcodes {
 				}
 			} else if (ain.getType() == AbstractInsnNode.TYPE_INSN) {
 				TypeInsnNode tin = (TypeInsnNode) ain;
-				if (names.test(tin.desc)) {
+				if (methodRemove != null && methodRemove.test(tin.desc, "")) {
 					switch (tin.getOpcode()) {
 					case NEW:
 						mn.instructions.set(tin, new InsnNode(ACONST_NULL));
@@ -212,7 +212,7 @@ public class Instructions implements Opcodes {
 				}
 			} else if (ain.getType() == AbstractInsnNode.MULTIANEWARRAY_INSN) {
 				MultiANewArrayInsnNode marr = (MultiANewArrayInsnNode) ain;
-				if (names.test(marr.desc)) {
+				if (methodRemove != null && methodRemove.test(marr.desc, "")) {
 					for (int j = 0; j < marr.dims; j++) {
 						mn.instructions.insertBefore(marr, new InsnNode(POP));
 						i += 1;
@@ -221,13 +221,22 @@ public class Instructions implements Opcodes {
 				}
 			} else if (ain.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN) {
 				// TODO fix invokedynamic here
+			} else if (ain.getType() == AbstractInsnNode.LDC_INSN) {
+				LdcInsnNode ldc = (LdcInsnNode) ain;
+				if (ldc.cst instanceof Type) {
+					if (methodRemove.test(((Type) ldc.cst).getInternalName(), "")) {
+						mn.instructions.set(ldc, new InsnNode(ACONST_NULL));
+					}
+				}
 			}
+
 		}
 	}
 
 	public static AbstractInsnNode makeNullPush(Type type) {
 		switch (type.getSort()) {
 		case Type.OBJECT:
+		case Type.ARRAY:
 			return new InsnNode(ACONST_NULL);
 		case Type.VOID:
 			return new InsnNode(NOP);

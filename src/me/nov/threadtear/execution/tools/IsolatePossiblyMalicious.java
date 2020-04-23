@@ -26,7 +26,7 @@ public class IsolatePossiblyMalicious extends Execution {
 		classes.values().stream().map(c -> c.node).forEach(c -> {
 			c.methods.forEach(m -> {
 				int oldSize = m.instructions.size();
-				Instructions.isolateCallsThatMatch(m, (s) -> s.matches(POSSIBLY_MALICIOUS_REGEX), (desc) -> true, true);
+				Instructions.isolateCallsThatMatch(m, (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX), (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX));
 				if (oldSize != m.instructions.size()) {
 					changed++;
 					if (verbose) {

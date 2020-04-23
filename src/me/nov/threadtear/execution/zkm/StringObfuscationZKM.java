@@ -1,7 +1,8 @@
 package me.nov.threadtear.execution.zkm;
 
-import java.io.File;
-import java.nio.file.Files;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -27,17 +28,16 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
-import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.References;
 import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;
 import me.nov.threadtear.vm.VM;
 
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-	private Map<String, Clazz> classes;
 	private int decrypted;
 
 	private boolean verbose;
@@ -51,12 +51,11 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	}
 
 	/*
-	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation
+	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation TODO: single field doesn't seem to work
 	 */
 
 	@Override
 	public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-		this.classes = classes;
 		this.verbose = verbose;
 		classes.values().stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
 		logger.info("Decrypted " + decrypted + " strings successfully.");
@@ -79,19 +78,29 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		MethodNode clinit = getStaticInitializer(cn);
 		if (clinit == null)
 			return;
-
-		ClassNode proxyClass = Sandbox.fullClassProxy(cn);
-		proxyClass.methods.removeIf(m -> m.name.equals("<clinit>"));
-		proxyClass.methods.removeIf(m -> m.name.equals("<init>"));
-
+		if (clinit.instructions.size() > 2000) {
+			logger.severe("Static initializer too huge to decrypt in " + cn.name);
+			return;
+		}
+		ClassNode proxyClass = Sandbox.createClassProxy("ProxyClass");
 		MethodNode callMethod = Sandbox.copyMethod(clinit);
 		callMethod.name = "clinitProxy";
 		callMethod.access = ACC_PUBLIC | ACC_STATIC;
-		Instructions.isolateCallsThatMatch(callMethod, (s) -> !s.matches(ALLOWED_CALLS), (desc) -> !desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;"), true);
+		Instructions.isolateCallsThatMatch(callMethod, (name, desc) -> !name.matches(ALLOWED_CALLS),
+				(name, desc) -> !name.equals(cn.name) || (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
 		proxyClass.methods.add(callMethod);
+
+		// add decryption methods
+		cn.methods.stream().filter(m -> m.desc.equals(ENCHANCED_MODE_METHOD_DESC)).forEach(m -> {
+			proxyClass.methods.add(m);
+			Instructions.isolateCallsThatMatch(callMethod, (name, desc) -> !name.matches(ALLOWED_CALLS),
+					(name, desc) -> !name.equals(cn.name) || (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
+		});
+		cn.fields.stream().filter(m -> m.desc.equals("[Ljava/lang/String;") || m.desc.equals("Ljava/lang/String;")).forEach(f -> proxyClass.fields.add(f));
+		Map<String, String> singleMap = Collections.singletonMap(cn.name, proxyClass.name);
+		proxyClass.methods.stream().map(m -> m.instructions.toArray()).flatMap(Arrays::stream).forEach(ain -> References.remapInstructionDescs(singleMap, ain));
 		try {
-			Files.write(new File("proxy.class").toPath(), Conversion.toBytecode0(proxyClass));
-			invokeVMAndReplace(proxyClass);
+			invokeVMAndReplace(proxyClass, cn);
 		} catch (Throwable e) {
 			if (verbose)
 				e.printStackTrace();
@@ -102,20 +111,26 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	/**
 	 * Creates a VM with the same class, but with a new method called "clinitProxy" that is a cutout of the original static initializer with the decryption ONLY.
 	 */
-	private void invokeVMAndReplace(ClassNode proxy) throws Throwable {
+	private void invokeVMAndReplace(ClassNode proxy, ClassNode realClass) throws Throwable {
 		VM vm = VM.constructNonInitializingVM(this);
 		vm.explicitlyPreloadNoClinit(proxy);
-		Class<?> callProxy = vm.loadClass(proxy.name.replace('/', '.'));
-		callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit
-
-		// clinitProxy should not be handled, but <clinit> SHOULD as there could be
-		// encrypted strings too
-		proxy.methods.stream().filter(m -> !m.name.equals("clinitProxy")).forEach(m -> {
-
-			decryptedField = null;
+		vm.explicitlyPreloadNoClinit(realClass);
+		Class<?> callProxy = vm.loadClass("ProxyClass");
+		try {
+			callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit, fields in original class in vm get set
+		} catch (InvocationTargetException e) {
+			if (!(e.getCause() instanceof NullPointerException)) {
+				// only ignore NPE from instruction removal
+				throw e;
+			} else {
+				logger.info("NPE in " + realClass.name);
+			}
+		}
+		realClass.methods.stream().forEach(m -> {
+			decryptedArrayField = null;
 			m.instructions.forEach(ain -> {
-				if (isLocalField(proxy, ain) && ((FieldInsnNode) ain).desc.equals("[Ljava/lang/String;")) {
-					decryptedField = (FieldInsnNode) ain;
+				if (isLocalField(realClass, ain) && ((FieldInsnNode) ain).desc.equals("[Ljava/lang/String;")) {
+					decryptedArrayField = (FieldInsnNode) ain;
 					try {
 						decryptedFieldValue = (String[]) callProxy.getField(((FieldInsnNode) ain).name).get(null);
 					} catch (Exception e) {
@@ -125,9 +140,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
 			try {
-				a.analyze(proxy.name, m);
+				a.analyze(realClass.name, m);
 			} catch (AnalyzerException e) {
-				logger.severe("Failed stack analysis in " + proxy.name + "." + m.name + ":" + e.getMessage());
+				logger.severe("Failed stack analysis in " + realClass.name + "." + m.name + ":" + e.getMessage());
 				return;
 			}
 			Frame<ConstantValue>[] frames = a.getFrames();
@@ -139,12 +154,12 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 			for (int i = 0; i < m.instructions.size(); i++) {
 				AbstractInsnNode ain = m.instructions.get(i);
 				Frame<ConstantValue> frame = frames[i];
-				if (isZKMMethod(proxy, ain)) {
-					for (AbstractInsnNode newInstr : decryptMethodsAndRewrite(proxy, callProxy, m, (MethodInsnNode) ain, frame)) {
+				if (isZKMMethod(realClass, ain)) {
+					for (AbstractInsnNode newInstr : decryptMethodsAndRewrite(realClass, callProxy, m, (MethodInsnNode) ain, frame)) {
 						rewrittenCode.add(newInstr.clone(labels));
 					}
 				} else {
-					for (AbstractInsnNode newInstr : tryReplaceFieldLoads(proxy, callProxy, m, ain, frame)) {
+					for (AbstractInsnNode newInstr : tryReplaceFieldLoads(realClass, callProxy, m, ain, frame, proxy)) {
 						rewrittenCode.add(newInstr.clone(labels));
 					}
 				}
@@ -201,15 +216,17 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	/**
 	 * Replace decrypted String[] and String fields in the code. This is the hardest part
+	 * 
+	 * @param proxy
 	 */
-	private AbstractInsnNode[] tryReplaceFieldLoads(ClassNode cn, Class<?> callProxy, MethodNode m, AbstractInsnNode ain, Frame<ConstantValue> frame) {
+	private AbstractInsnNode[] tryReplaceFieldLoads(ClassNode cn, Class<?> callProxy, MethodNode m, AbstractInsnNode ain, Frame<ConstantValue> frame, ClassNode proxy) {
 		try {
 			if (ain.getOpcode() == GETSTATIC) {
 				FieldInsnNode fin = (FieldInsnNode) ain;
 				if (isLocalField(cn, fin) && fin.desc.equals("Ljava/lang/String;")) {
-					String decrypedString = (String) callProxy.getField(fin.name).get(null);
+					String decrypedString = (String) callProxy.getDeclaredField(fin.name).get(null);
 					if (decrypedString == null) {
-						logger.warning("Possible false call in " + cn.name + " or failed decryption, single field is null");
+						logger.warning("Possible false call in " + cn.name + " or failed decryption, single field is null (" + fin.name + ")");
 						// could be false call, not the decrypted string
 						return new AbstractInsnNode[] { ain };
 					} else {
@@ -245,12 +262,12 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 		return new AbstractInsnNode[] { ain };
 	}
 
-	private FieldInsnNode decryptedField;
+	private FieldInsnNode decryptedArrayField;
 	private String[] decryptedFieldValue;
 
 	@Override
 	public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
-		return decryptedField != null && decryptedField.owner.equals(owner) && decryptedField.name.equals(name) && decryptedField.desc.equals(desc) ? decryptedFieldValue : null;
+		return decryptedArrayField != null && decryptedArrayField.owner.equals(owner) && decryptedArrayField.name.equals(name) && decryptedArrayField.desc.equals(desc) ? decryptedFieldValue : null;
 	}
 
 	@Override
@@ -260,6 +277,6 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
 	@Override
 	public ClassNode tryClassLoad(String name) {
-		return classes.containsKey(name) ? classes.get(name).node : null;
+		return null;
 	}
 }
