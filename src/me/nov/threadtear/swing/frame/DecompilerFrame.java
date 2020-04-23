@@ -11,6 +11,9 @@ import javax.swing.WindowConstants;
 
 import org.objectweb.asm.tree.ClassNode;
 
+import com.github.weisj.darklaf.icons.IconLoader;
+
+import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.panel.DecompilerPanel;
 
 public class DecompilerFrame extends JFrame {
@@ -21,6 +24,7 @@ public class DecompilerFrame extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		setLayout(new BorderLayout());
+		setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/decompile.svg", 64, 64, false)));
 		setAlwaysOnTop(true);
 		JPanel cp = new JPanel(new BorderLayout());
 		cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));

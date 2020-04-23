@@ -2,9 +2,13 @@ package me.nov.threadtear.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
@@ -49,6 +53,16 @@ public class Utils {
 			return Objects.requireNonNull(Utils.class.getPackage().getImplementationVersion());
 		} catch (NullPointerException e) {
 			return "(dev)";
+		}
+	}
+
+	public static Image iconToImage(Icon icon) {
+		if (icon instanceof ImageIcon) {
+			return ((ImageIcon) icon).getImage();
+		} else {
+			BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+			icon.paintIcon(null, image.getGraphics(), 0, 0);
+			return image;
 		}
 	}
 }

@@ -93,7 +93,7 @@ public class DecompilerPanel extends JPanel {
 		JPanel topPanel = new JPanel();
 		topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
 		topPanel.setLayout(new BorderLayout());
-		topPanel.add(new JLabel("CFR Decompiler 0.149"), BorderLayout.WEST);
+		topPanel.add(new JLabel("<html>CFR Decompiler 0.149 (<i>www.benf.org/other/cfr</i>)"), BorderLayout.WEST);
 		topPanel.add(actionPanel, BorderLayout.EAST);
 		this.add(topPanel, BorderLayout.NORTH);
 		this.textArea = new DecompilerTextArea();
