@@ -44,6 +44,7 @@ public class DecompilerPanel extends JPanel {
 			textArea.setText(CFR.decompile(cn));
 		});
 		JTextField search = new JTextField();
+		//search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search...");
 		search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
 		search.addActionListener(l -> {
 			try {

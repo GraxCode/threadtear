@@ -8,15 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.benf.cfr.reader.api.CfrDriver;
+import org.benf.cfr.reader.api.ClassFileSource;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 import org.benf.cfr.reader.api.SinkReturns;
-import org.benf.cfr.reader.apiunreleased.ClassFileSource2;
-import org.benf.cfr.reader.apiunreleased.JarContent;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
-import org.benf.cfr.reader.util.AnalysisType;
 import org.objectweb.asm.tree.ClassNode;
 
 import me.nov.threadtear.io.Conversion;
@@ -89,7 +86,7 @@ public class CFR {
 
 	public static String decompile(ClassNode cn) {
 		try {
-			byte[] b = Conversion.toBytecode0(cn);
+			byte[] bytes = Conversion.toBytecode0(cn);
 			decompiled = null;
 			OutputSinkFactory mySink = new OutputSinkFactory() {
 				@Override
@@ -100,21 +97,15 @@ public class CFR {
 						return Collections.singletonList(SinkClass.STRING);
 					}
 				}
-
-				Consumer<SinkReturns.Decompiled> dumpDecompiled = d -> {
-					decompiled = d.getJava().substring(31);
-				};
-
 				@Override
 				public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
 					if (sinkType == SinkType.JAVA && sinkClass == SinkClass.DECOMPILED) {
-						return x -> dumpDecompiled.accept((SinkReturns.Decompiled) x);
+						return x -> { decompiled = ((SinkReturns.Decompiled)x).getJava().substring(31); };
 					}
-					return ignore -> {
-					};
+					return ignore -> {};
 				}
 			};
-			ClassFileSource2 cfs2 = new ClassFileSource2() {
+			ClassFileSource source = new ClassFileSource() {
 				@Override
 				public void informAnalysisRelativePathDetail(String a, String b) {
 				}
@@ -128,7 +119,7 @@ public class CFR {
 				public Pair<byte[], String> getClassFileContent(String path) throws IOException {
 					String name = path.substring(0, path.length() - 6);
 					if (name.equals(cn.name)) {
-						return Pair.make(b, name);
+						return Pair.make(bytes, name);
 					}
 					ClassNode dummy = new ClassNode();
 					dummy.name = name;
@@ -140,13 +131,8 @@ public class CFR {
 				public Collection<String> addJar(String arg0) {
 					throw new RuntimeException();
 				}
-
-				@Override
-				public JarContent addJarContent(String jarPath, AnalysisType analysisType) {
-					return null;
-				}
 			};
-			CfrDriver cfrDriver = new CfrDriver.Builder().withClassFileSource(cfs2).withOutputSink(mySink).withOptions(options).build();
+			CfrDriver cfrDriver = new CfrDriver.Builder().withClassFileSource(source).withOutputSink(mySink).withOptions(options).build();
 			cfrDriver.analyse(Arrays.asList(cn.name));
 		} catch (Exception e) {
 			e.printStackTrace();
