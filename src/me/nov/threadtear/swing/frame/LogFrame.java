@@ -30,7 +30,10 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.github.weisj.darklaf.icons.IconLoader;
+
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.swing.Utils;
 
 public class LogFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -43,6 +46,7 @@ public class LogFrame extends JFrame {
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		setBounds(100, 100, 1000, 800);
 		setLayout(new BorderLayout());
+		setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/run.svg", 64, 64, false)));
 		this.setAlwaysOnTop(true);
 		area = new JTextArea();
 		area.setEditable(false);
