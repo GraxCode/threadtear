@@ -32,10 +32,10 @@ public class ConfigurationPanel extends JPanel {
 
 	private JPanel createCheckboxes() {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
-		panel.add(verbose = new JCheckBox("Verbose"));
+		panel.add(verbose = new JCheckBox("Verbose logging"));
 		panel.add(computeFrames = new JCheckBox("Compute frames"));
 		panel.add(disableSecurity = new JCheckBox("Disable SecurityManager protection"));
-		panel.add(removeSignature = new JCheckBox("Remove signature"));
+		panel.add(removeSignature = new JCheckBox("Remove manifest signature"));
 		return panel;
 	}
 

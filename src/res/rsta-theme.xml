@@ -29,9 +29,9 @@
 
     <!-- Syntax tokens. -->
     <tokenStyles>
-        <style token="IDENTIFIER" fg="F9F9F9"/>
-        <style token="RESERVED_WORD" fg="F92672" bold="false"/>
-        <style token="RESERVED_WORD_2" fg="A6E22E" bold="true"/>
+        <style token="IDENTIFIER" fg="d7dae0"/>
+        <style token="RESERVED_WORD" fg="568AF2" bold="false"/>
+        <style token="RESERVED_WORD_2" fg="568AF2" bold="true"/>
         <style token="ANNOTATION" fg="FD971F"/>
         <style token="COMMENT_DOCUMENTATION" fg="878787"/>
         <style token="COMMENT_EOL" fg="6C6C6C"/>
@@ -57,17 +57,17 @@
         <style token="MARKUP_CDATA" fg="d5e6f0"/>
         <style token="MARKUP_CDATA_DELIMITER" fg="FD971F"/>
         <style token="MARKUP_ENTITY_REFERENCE" fg="F92672"/>
-        <style token="OPERATOR" fg="F92672"/>
+        <style token="OPERATOR" fg="EEEEEE"/>
         <style token="PREPROCESSOR" fg="A082BD"/>
         <style token="REGEX" fg="AE81FF"/>
         <style token="SEPARATOR" fg="F0F0F0"/>
         <style token="VARIABLE" fg="FD971F" bold="false"/>
-        <style token="WHITESPACE" fg="F9F9F9"/>
+        <style token="WHITESPACE" fg="d7dae0"/>
 
-        <style token="ERROR_IDENTIFIER" fg="F9F9F9" bg="d82323"/>
-        <style token="ERROR_NUMBER_FORMAT" fg="F9F9F9" bg="d82323"/>
-        <style token="ERROR_STRING_DOUBLE" fg="F9F9F9" bg="d82323"/>
-        <style token="ERROR_CHAR" fg="F9F9F9" bg="d82323"/>
+        <style token="ERROR_IDENTIFIER" fg="d7dae0" bg="d82323"/>
+        <style token="ERROR_NUMBER_FORMAT" fg="d7dae0" bg="d82323"/>
+        <style token="ERROR_STRING_DOUBLE" fg="d7dae0" bg="d82323"/>
+        <style token="ERROR_CHAR" fg="d7dae0" bg="d82323"/>
     </tokenStyles>
 
 </RSyntaxTheme>
