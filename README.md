@@ -1,6 +1,7 @@
 # Threadtear
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
-Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account. 
+Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account, but it can also be useful for other stuff. 
+Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is also not a problem anymore (of course only when no version specific methods are used).
 ![Screenshot 1](https://i.imgur.com/s6k6NYN.png)
 ![Screenshot 2](https://i.imgur.com/OaxTIKZ.png)
 ![Screenshot 3](https://i.imgur.com/xKeUZsP.png)
@@ -9,11 +10,11 @@ Even the most expensive obfuscators like ZKM or Stringer are included. It also c
 
 An "execution" is a task that is executed and modifies all loaded class files. 
 There are multiple types of executions, varying from bytecode cleanup to string deobfuscation. 
-Make sure to have them in the right order. Cleanup executions for example should be executed at last.
+Make sure to have them in the right order. Cleanup executions for example should be executed at last, but also can help other executions if executed first.
 
 ## Warning
 Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file, an attacker could tweak the file so that malicious code would be executed.
-Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource obfuscation.
+Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource / access obfuscation.
 
 ## How to compile
 First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created.
@@ -137,7 +138,7 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 ```
 Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
 ## Tips & Tricks
-There are some tricks that can help you identify and deobfuscate jar files successfully.
+There are some tricks that can help you identify and deobfuscate jar files successfully. Before running executions, decompile the code to find out what needs to be used. You can use the implemented decompiler for that.
 ### Deobfuscation order
 The best order for deobfuscation is `generic executions > access deobfuscation > string deobfuscation > cleaning executions`.
 ### Identification

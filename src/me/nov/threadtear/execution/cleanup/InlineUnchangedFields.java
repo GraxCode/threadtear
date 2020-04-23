@@ -63,7 +63,6 @@ public class InlineUnchangedFields extends Execution {
 				}
 			});
 		});
-		cn.fields.remove(fn);
 	}
 
 	private boolean isGetReferenceTo(ClassNode cn, FieldInsnNode fin, FieldNode fn) {
