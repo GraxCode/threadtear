@@ -1,6 +1,7 @@
 package me.nov.threadtear.swing.list;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+
+import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.JarIO;
@@ -41,15 +44,22 @@ public class ClassList extends JPanel implements ILoader {
 		this.setTransferHandler(new JarDropHandler(this));
 	}
 
+	@Override
+	public Dimension getMinimumSize() {
+		Dimension minSize = super.getMinimumSize();
+		minSize.width = 150;
+		return minSize;
+	}
+
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		JButton analysis = new JButton("Full analysis");
+		JButton analysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
 		analysis.addActionListener(l -> {
 			new JarAnalysis(classes).setVisible(true);
 		});
 		panel.add(analysis);
-		JButton decompile = new JButton("Decompile");
+		JButton decompile = new JButton("Decompile", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
 		decompile.addActionListener(l -> {
 			SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
 			if (tn != null && tn.member != null) {
@@ -57,8 +67,8 @@ public class ClassList extends JPanel implements ILoader {
 			}
 		});
 		panel.add(decompile);
-		
-		JButton ignore = new JButton("Ignore");
+
+		JButton ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
 		ignore.addActionListener(l -> {
 			SortedTreeClassNode node = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
 			if (node != null) {
@@ -69,7 +79,7 @@ public class ClassList extends JPanel implements ILoader {
 			}
 		});
 		panel.add(ignore);
-		JButton toggle = new JButton("Toggle all");
+		JButton toggle = new JButton("Toggle all", IconLoader.get().loadSVGIcon("res/toggle.svg", false));
 		toggle.addActionListener(l -> {
 			ignoreChilds((SortedTreeClassNode) model.getRoot());
 			refreshIgnored();

@@ -10,6 +10,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.github.weisj.darklaf.icons.IconLoader;
+
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.io.JarIO;
 
@@ -41,13 +43,13 @@ public class ConfigurationPanel extends JPanel {
 
 	private JPanel createBottomButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 16, 16));
-		JButton loadCfg = new JButton("Load config");
+		JButton loadCfg = new JButton("Load config", IconLoader.get().loadSVGIcon("res/load_config.svg", false));
 		loadCfg.setEnabled(false);
 		panel.add(loadCfg);
-		JButton saveCfg = new JButton("Save config");
+		JButton saveCfg = new JButton("Save config", IconLoader.get().loadSVGIcon("res/save_config.svg", false));
 		saveCfg.setEnabled(false);
 		panel.add(saveCfg);
-		JButton save = new JButton("Save as jar file");
+		JButton save = new JButton("Save as jar file", IconLoader.get().loadSVGIcon("res/save.svg", false));
 		save.addActionListener(l -> {
 			File inputFile = main.listPanel.classList.inputFile;
 			if (inputFile == null)
@@ -65,7 +67,7 @@ public class ConfigurationPanel extends JPanel {
 			}
 		});
 		panel.add(save);
-		JButton run = new JButton("Run");
+		JButton run = new JButton("Run", IconLoader.get().loadSVGIcon("res/run.svg", false));
 		run.addActionListener(l -> {
 			main.run(verbose.isSelected(), computeFrames.isSelected(), disableSecurity.isSelected());
 		});

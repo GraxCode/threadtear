@@ -1,6 +1,7 @@
 package me.nov.threadtear.swing.list;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
@@ -12,6 +13,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.Utils;
@@ -30,11 +33,16 @@ public class ExecutionList extends JPanel {
 
 		this.add(createButtons(), BorderLayout.SOUTH);
 	}
-
+	@Override
+	public Dimension getMinimumSize() {
+		Dimension minSize = super.getMinimumSize();
+		minSize.width = 150;
+		return minSize;
+	}
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		JButton add = new JButton("Add");
+		JButton add = new JButton("Add", IconLoader.get().loadSVGIcon("res/add.svg", false));
 		add.addActionListener(e -> {
 			ExecutionSelection es = new ExecutionSelection();
 			es.setVisible(true);
@@ -56,7 +64,7 @@ public class ExecutionList extends JPanel {
 			executions.repaint();
 		});
 		panel.add(add);
-		JButton remove = new JButton("Remove");
+		JButton remove = new JButton("Remove", IconLoader.get().loadSVGIcon("res/remove.svg", false));
 		remove.addActionListener(e -> {
 			ExecutionTreeNode node = (ExecutionTreeNode) executions.getLastSelectedPathComponent();
 			if (node != null && node.member != null) {
@@ -66,13 +74,13 @@ public class ExecutionList extends JPanel {
 			}
 		});
 		panel.add(remove);
-		JButton up = new JButton("Move up");
+		JButton up = new JButton("Move up",IconLoader.get().loadSVGIcon("res/move_up.svg", false));
 		up.addActionListener(e -> {
 			Utils.moveTreeItem(executions, -1);
 			executions.grabFocus();
 		});
 		panel.add(up);
-		JButton down = new JButton("Move down");
+		JButton down = new JButton("Move down", IconLoader.get().loadSVGIcon("res/move_down.svg", false));
 		down.addActionListener(e -> {
 			Utils.moveTreeItem(executions, 1);
 			executions.grabFocus();
