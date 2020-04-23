@@ -37,6 +37,7 @@ import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
 import me.nov.threadtear.execution.stringer.AccessObfusationStringer;
 import me.nov.threadtear.execution.stringer.StringObfuscationStringer;
+import me.nov.threadtear.execution.tools.AddLineNumbers;
 import me.nov.threadtear.execution.tools.IsolatePossiblyMalicious;
 import me.nov.threadtear.execution.tools.Java7Compatibility;
 import me.nov.threadtear.execution.tools.Java8Compatibility;
@@ -127,6 +128,7 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());
 			addExecution(root, new IsolatePossiblyMalicious());
+			addExecution(root, new AddLineNumbers());
 
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);
