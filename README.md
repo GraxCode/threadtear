@@ -2,10 +2,12 @@
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account, but it can also be useful for other stuff. 
 Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is also not a problem anymore (of course only when no version specific methods are used).
-![Screenshot 1](https://i.imgur.com/s6k6NYN.png)
-![Screenshot 2](https://i.imgur.com/OaxTIKZ.png)
-![Screenshot 3](https://i.imgur.com/xKeUZsP.png)
-![Screenshot 4](https://i.imgur.com/9NTf0mf.png)
+![Screenshot 1](https://i.imgur.com/NH4Nnvy.png)
+![Screenshot 2](https://i.imgur.com/EylBxBY.png)
+![Screenshot 3](https://i.imgur.com/ZQFprgH.png)
+![Screenshot 4](https://i.imgur.com/gXB4w8K.png)
+![Screenshot 5](https://i.imgur.com/cdtJqQI.png)
+
 ## Executions 
 
 An "execution" is a task that is executed and modifies all loaded class files. 
