@@ -129,7 +129,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 		createFakeClone(cn, m, min, encrypted); // create a duplicate of the current class,
 		// we need this because stringer checks for stacktrace method name and class
 
-		ClassNode decryptionMethodOwner = getClass(classes, min.owner).node;
+		ClassNode decryptionMethodOwner = classes.get(min.owner).node;
 		if (decryptionMethodOwner == null)
 			return null;
 		vm.explicitlyPreloadWithClinit(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
@@ -163,7 +163,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 		node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()V")); // method should return real string
 		if (min.owner.equals(cn.name)) {
 			// decryption method is in own class
-			node.methods.add(Sandbox.copyMethod(getMethod(getClass(classes, min.owner).node, min.name, min.desc)));
+			node.methods.add(Sandbox.copyMethod(getMethod(classes.get(min.owner).node, min.name, min.desc)));
 		}
 		fakeInvocationClone = node;
 	}

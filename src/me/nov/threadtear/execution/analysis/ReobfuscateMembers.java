@@ -138,7 +138,7 @@ public class ReobfuscateMembers extends Execution {
 	}
 
 	private ClassNode findClass(String name) {
-		Clazz node = getClass(classes, name);
+		Clazz node = classes.get(name);
 		return node == null ? findInRT(name) : node.node;
 	}
 

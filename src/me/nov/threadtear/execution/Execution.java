@@ -34,10 +34,6 @@ public abstract class Execution implements Opcodes {
 
 	public abstract boolean execute(Map<String, Clazz> map, boolean verbose);
 
-	protected Clazz getClass(Map<String, Clazz> classes, String name) {
-		return classes.get(name);
-	}
-
 	protected MethodNode getMethod(ClassNode node, String name, String desc) {
 		if (node == null)
 			return null;

@@ -63,7 +63,7 @@ public class TryCatchObfuscationRemover extends Execution {
 			return true;
 		} else if (ain.getType() == AbstractInsnNode.METHOD_INSN && ain.getNext().getOpcode() == ATHROW) {
 			MethodInsnNode min = (MethodInsnNode) ain;
-			Clazz clazz = getClass(classes, min.owner);
+			Clazz clazz = classes.get(min.owner);
 			if (clazz == null) {
 				if (verbose)
 					logger.warning("Class " + min.owner + " not found, possibly library");
