@@ -7,6 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -35,9 +36,13 @@ public class ConfigurationPanel extends JPanel {
 	private JPanel createCheckboxes() {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 		panel.add(verbose = new JCheckBox("Verbose logging"));
+		verbose.setToolTipText("Log more information and print full stack traces.");
 		panel.add(computeFrames = new JCheckBox("Compute frames"));
-		panel.add(disableSecurity = new JCheckBox("Disable SecurityManager protection"));
+		computeFrames.setEnabled(false);
+		panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"));
+		disableSecurity.setToolTipText("Remove the protection agains unwanted executions. Could improve deobfuscation.");
 		panel.add(removeSignature = new JCheckBox("Remove manifest signature"));
+		removeSignature.setToolTipText("Remove the signature from the manifest file, if available.");
 		return panel;
 	}
 
@@ -52,8 +57,10 @@ public class ConfigurationPanel extends JPanel {
 		JButton save = new JButton("Save as jar file", IconLoader.get().loadSVGIcon("res/save.svg", false));
 		save.addActionListener(l -> {
 			File inputFile = main.listPanel.classList.inputFile;
-			if (inputFile == null)
+			if (inputFile == null) {
+				JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
 				return;
+			}
 			JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
 			jfc.setAcceptAllFileFilterUsed(false);
 			jfc.setSelectedFile(inputFile);

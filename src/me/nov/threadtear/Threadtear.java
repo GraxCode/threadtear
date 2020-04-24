@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import com.github.weisj.darklaf.settings.ThemeSettings;
+
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.logging.CustomOutputStream;
@@ -54,6 +56,7 @@ public class Threadtear extends JFrame {
 		JMenu help = new JMenu("Help");
 		JMenuItem about = new JMenuItem("About Threadtear");
 		about.addActionListener(e -> {
+			ThemeSettings.showSettingsDialog(this);
 			JOptionPane.showMessageDialog(this,
 					"<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
 							+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by <i>noverify</i> a.k.a <i>GraxCode</i> in 2020.<br><br>"

@@ -25,16 +25,16 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
 		if (member == null)
 			return null;
 		StringBuilder b = new StringBuilder();
-		b.append("<html>");
+		b.append("<html><h3>" + member.name);
+		b.append("</h3>");
 		b.append(member.description);
 		b.append("<br><i><b>");
 		for (ExecutionTag tag : member.tags) {
 			b.append("<br>");
 			b.append(tag.info);
 		}
-		b.append("</b><br><br>Class: ");
+		b.append("</b></i><br><br><tt>");
 		b.append(member.getClass().getName());
-		b.append("</i>");
 		return b.toString();
 	}
 

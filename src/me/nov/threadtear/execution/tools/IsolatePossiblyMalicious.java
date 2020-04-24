@@ -15,7 +15,7 @@ public class IsolatePossiblyMalicious extends Execution {
 
 	public IsolatePossiblyMalicious() {
 		super(ExecutionCategory.TOOLS, "Isolate dangerous calls",
-				"Isolate runtime, reflection and IO calls, so no damaging code can be executed.<br><b>This <i>DOESN'T</i> protect you fully against malicious code!</b><br>Libraries can be used to bypass the regex.",
+				"Isolate runtime, reflection and IO calls, so no damaging code can be executed.<br><p style=\"color:#e74c3c\"><b>This <i>DOESN'T</i> protect you fully against malicious code!</b></p><br>Libraries can be used to bypass the regex.",
 				ExecutionTag.POSSIBLE_DAMAGE);
 	}
 
