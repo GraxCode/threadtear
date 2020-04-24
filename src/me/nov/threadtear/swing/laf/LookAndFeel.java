@@ -24,6 +24,10 @@ public class LookAndFeel {
 		}
 		LafManager.enableLogging(true);
 		LafManager.install(new OneDarkTheme());
+		applyCustomChanges();
+	}
+
+	public static void applyCustomChanges() {
 		UIManager.put("Tree.background", UIManager.getColor("Tree.background").darker());
 	}
 }

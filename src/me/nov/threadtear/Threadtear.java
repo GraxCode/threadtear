@@ -54,9 +54,8 @@ public class Threadtear extends JFrame {
 	private void initializeMenu() {
 		JMenuBar bar = new JMenuBar();
 		JMenu help = new JMenu("Help");
-		JMenuItem about = new JMenuItem("About Threadtear");
-		about.addActionListener(e -> {
-			ThemeSettings.showSettingsDialog(this);
+		JMenuItem about = new JMenuItem("About threadtear " + Utils.getVersion());
+		about.addActionListener(l -> {
 			JOptionPane.showMessageDialog(this,
 					"<html>This tool is not intended to produce runnable code, but rather analyzable code.<br>Add executions to the list on the left side. Make sure to have them in right order."
 							+ "<br>If you click \"Run\", they will get executed in order and transform the loaded classes.<br><br>Threadtear was made by <i>noverify</i> a.k.a <i>GraxCode</i> in 2020.<br><br>"
@@ -64,13 +63,19 @@ public class Threadtear extends JFrame {
 					"About", JOptionPane.INFORMATION_MESSAGE);
 		});
 		help.add(about);
-		JMenuItem log = new JMenuItem("Open Log");
-		log.addActionListener(e -> {
+		JMenuItem log = new JMenuItem("Open log frame");
+		log.addActionListener(l -> {
 			if (logFrame != null) {
 				logFrame.setVisible(true);
 			}
 		});
 		help.add(log);
+		JMenuItem laf = new JMenuItem("Look and feel");
+		laf.addActionListener(l -> {
+			ThemeSettings.showSettingsDialog(this);
+			LookAndFeel.applyCustomChanges();
+		});
+		help.add(laf);
 		bar.add(help);
 		this.setJMenuBar(bar);
 
