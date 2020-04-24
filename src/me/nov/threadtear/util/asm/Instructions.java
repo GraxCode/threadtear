@@ -222,36 +222,25 @@ public class Instructions implements Opcodes {
 					mn.instructions.set(marr, new InsnNode(ACONST_NULL));
 				}
 			} else if (ain.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN) {
-				// i have no idea if this is right or not TODO: check
+				if (methodRemove == null)
+					return;
 				InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
+				boolean remove = methodRemove.test(idin.bsm.getOwner(), idin.desc);
 				if (idin.bsmArgs != null) {
 					for (int j = 0; j < idin.bsmArgs.length; j++) {
 						Object o = idin.bsmArgs[j];
 						if (o instanceof Handle) {
 							Handle handle = (Handle) o;
-							if (methodRemove != null && methodRemove.test(handle.getOwner(), handle.getDesc())) {
-								for (Type t : Type.getArgumentTypes(handle.getDesc())) {
-									mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
-									i += 1;
-								}
-								mn.instructions.set(idin, makeNullPush(Type.getReturnType(handle.getDesc())));
-								// can there be two handles? i have no fucking idea
-								return;
-							}
+							remove |= methodRemove.test(handle.getOwner(), handle.getDesc());
 						}
 					}
 				}
-				// what if the invokedynamic desc takes arguments AND the bsmArgs Handle???
-
-				if (idin.bsm != null) {
-					// use bootstrap method, but desc of invokedynamic itself
-					if (methodRemove != null && methodRemove.test(idin.bsm.getOwner(), idin.desc)) {
-						for (Type t : Type.getArgumentTypes(idin.desc)) {
-							mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
-							i += 1;
-						}
-						mn.instructions.set(idin, makeNullPush(Type.getReturnType(idin.desc)));
+				if (remove) {
+					for (Type t : Type.getArgumentTypes(idin.desc)) {
+						mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
+						i += 1;
 					}
+					mn.instructions.set(idin, makeNullPush(Type.getReturnType(idin.desc)));
 				}
 			} else if (ain.getType() == AbstractInsnNode.LDC_INSN) {
 				LdcInsnNode ldc = (LdcInsnNode) ain;
