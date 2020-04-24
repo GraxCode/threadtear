@@ -14,8 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.util.asm.Manifest;
 
 public class JarIO {
 

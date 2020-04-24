@@ -19,7 +19,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 
-import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.io.JarIO;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;

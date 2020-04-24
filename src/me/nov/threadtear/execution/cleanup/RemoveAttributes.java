@@ -3,10 +3,10 @@ package me.nov.threadtear.execution.cleanup;
 import java.util.List;
 import java.util.Map;
 
-import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Clazz;
 
 public class RemoveAttributes extends Execution {
 

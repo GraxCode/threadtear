@@ -12,10 +12,10 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 
-import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;

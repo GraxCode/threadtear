@@ -22,7 +22,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 
-import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Counting;
 import me.nov.threadtear.util.Strings;
 

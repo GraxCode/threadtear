@@ -16,9 +16,9 @@ import me.nov.threadtear.analysis.full.CodeAnalyzer;
 import me.nov.threadtear.analysis.full.CodeTracker;
 import me.nov.threadtear.analysis.full.ICodeReferenceHandler;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
-import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 

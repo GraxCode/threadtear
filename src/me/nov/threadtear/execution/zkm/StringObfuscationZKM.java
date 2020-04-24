@@ -24,10 +24,10 @@ import org.objectweb.asm.tree.analysis.Frame;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
@@ -51,7 +51,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 	}
 
 	/*
-	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation TODO: single field doesn't seem to work
+	 * TODO: String encryption using DES Cipher (probably only in combination with reflection obfuscation
 	 */
 
 	@Override

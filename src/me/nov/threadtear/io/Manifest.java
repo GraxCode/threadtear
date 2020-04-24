@@ -1,4 +1,4 @@
-package me.nov.threadtear.util.asm;
+package me.nov.threadtear.io;
 
 import java.io.UnsupportedEncodingException;
 

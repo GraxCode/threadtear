@@ -13,7 +13,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 
-import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
 import me.nov.threadtear.util.asm.Access;
 

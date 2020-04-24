@@ -14,10 +14,10 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Access;
