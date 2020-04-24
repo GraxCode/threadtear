@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -12,6 +13,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -220,7 +222,37 @@ public class Instructions implements Opcodes {
 					mn.instructions.set(marr, new InsnNode(ACONST_NULL));
 				}
 			} else if (ain.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN) {
-				// TODO fix invokedynamic here
+				// i have no idea if this is right or not TODO: check
+				InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
+				if (idin.bsmArgs != null) {
+					for (int j = 0; j < idin.bsmArgs.length; j++) {
+						Object o = idin.bsmArgs[j];
+						if (o instanceof Handle) {
+							Handle handle = (Handle) o;
+							if (methodRemove != null && methodRemove.test(handle.getOwner(), handle.getDesc())) {
+								for (Type t : Type.getArgumentTypes(handle.getDesc())) {
+									mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
+									i += 1;
+								}
+								mn.instructions.set(idin, makeNullPush(Type.getReturnType(handle.getDesc())));
+								// can there be two handles? i have no fucking idea
+								return;
+							}
+						}
+					}
+				}
+				// what if the invokedynamic desc takes arguments AND the bsmArgs Handle???
+
+				if (idin.bsm != null) {
+					// use bootstrap method, but desc of invokedynamic itself
+					if (methodRemove != null && methodRemove.test(idin.bsm.getOwner(), idin.desc)) {
+						for (Type t : Type.getArgumentTypes(idin.desc)) {
+							mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
+							i += 1;
+						}
+						mn.instructions.set(idin, makeNullPush(Type.getReturnType(idin.desc)));
+					}
+				}
 			} else if (ain.getType() == AbstractInsnNode.LDC_INSN) {
 				LdcInsnNode ldc = (LdcInsnNode) ain;
 				if (ldc.cst instanceof Type) {
