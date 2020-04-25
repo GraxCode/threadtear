@@ -1,4 +1,4 @@
-# Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear) [![Release](https://img.shields.io/github/v/release/GraxCode/threadtear)](https://github.com/GraxCode/threadtear/releases)
+# Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear) [![Release](https://img.shields.io/github/v/release/GraxCode/threadtear)](https://github.com/GraxCode/threadtear/releases) [![Downloads](https://img.shields.io/github/downloads/GraxCode/threadtear/total)](https://github.com/GraxCode/threadtear/releases)
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. For easier debugging there are also other tools included. 
 Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is not a problem anymore, if no version specific methods are used.
@@ -19,7 +19,7 @@ Use this tool at your own risk. Some executions use implemented ClassLoaders to 
 Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource / access obfuscation, as it is much easier to execute the decryption methods remotely.
 
 ## How to compile 
-First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release. [![Downloads](https://img.shields.io/github/downloads/GraxCode/threadtear/total)](https://github.com/GraxCode/threadtear/releases)
+First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release.
 
 ## Make your own execution
 You can easily create your own execution task. Just extend `me.nov.threadtear.execution.Execution`:
@@ -146,22 +146,22 @@ The best order for deobfuscation is `generic executions > access deobfuscation >
 ### Identification
 Obfuscators exhibit patterns which you can use to identify obfuscators. The easiest way to identify an obfuscator is to skim the `META-INF/MANIFEST.MF` file. It's possible that there is an `Obfuscated-By: XXX` or `Protected-By: XXX` attribute.
 
-#### ZKM
+##### ZKM
 Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches, or string decryption methods with a very long switch block (about 250 cases).
 ZKM is one of the best (and oldest) obfuscators for java, and also very expensive.
 ![ZKM](https://i.imgur.com/Psdagyb.png)
-#### Stringer
+##### Stringer
 If your jar file contains some special classes with huge decryption algorithms that are used by string obfuscation and access obfuscation, it's probably Stringer.
 If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten. (Due to custom JAR signature and usage of method names during string decryption)
 The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
 ![Stringer](https://i.imgur.com/LmI9SYz.png)
 ![Stringer 2](https://i.imgur.com/M72plII.png)
-#### Allatori
+##### Allatori
 Class names like IiIlIlIiIl or aUx, cOn, PrX indicate Allatori obfuscation.
 Allatori is very common, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
 ![Allatori](https://i.imgur.com/eWYKtR4.png)
 
-#### Other obfuscators
+##### Other obfuscators
 For other obfuscators you can try generic executions or open an issue and I'll see what i can do.
 
 ### Description and tags
@@ -169,7 +169,7 @@ Before selecting an execution, check out the tool-tip texts while hovering. They
 ## License
 Threadtear is licensed under the GNU General Public License 3.0
 
-### Notice
+## Notice
 Do NOT deobfuscate files that don't belong to you.  
 Please open an issue or send me an email if a transformer doesn't work properly and attach the log.   
 Note that output files are most likely not runnable. If you still want to try to run them use `-noverify` as JVM argument!   
