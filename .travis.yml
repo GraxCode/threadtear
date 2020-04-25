@@ -1,0 +1,9 @@
+language: java
+install: true
+dist: trusty
+
+jdk:
+  - oraclejdk8
+
+script:
+  - ./gradlew build
