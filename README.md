@@ -1,4 +1,4 @@
-# Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear)
+# Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear) [![Release](https://img.shields.io/github/v/release/GraxCode/threadtear)](https://github.com/GraxCode/threadtear/releases)
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account, but it can also be useful for other stuff. 
 Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is also not a problem anymore (of course only when no version specific methods are used).
