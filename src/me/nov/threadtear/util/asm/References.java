@@ -168,6 +168,11 @@ public class References {
 		if (cn.visibleTypeAnnotations != null)
 			cn.visibleTypeAnnotations.forEach(a -> a.desc = Descriptor.fixTypeDesc(a.desc, map));
 		cn.signature = null;
+		if (cn.innerClasses != null)
+			cn.innerClasses.forEach(i -> {
+				i.innerName = map.getOrDefault(i.innerName, i.innerName);
+				i.outerName = map.getOrDefault(i.outerName, i.outerName);
+			});
 		// TODO more cases
 	}
 
