@@ -1,8 +1,12 @@
 package me.nov.threadtear.io;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 public class Conversion {
 	public static byte[] toBytecode(ClassNode cn, boolean useMaxs) {
@@ -37,5 +41,11 @@ public class Conversion {
 		}
 		cr = null;
 		return cn;
+	}
+
+	public static String textify(ClassNode cn) {
+		StringWriter out = new StringWriter();
+		new ClassReader(toBytecode0(cn)).accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
+		return out.toString();
 	}
 }

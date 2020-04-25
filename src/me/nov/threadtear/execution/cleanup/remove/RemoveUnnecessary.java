@@ -13,8 +13,8 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.analysis.full.CodeAnalyzer;
-import me.nov.threadtear.analysis.full.CodeTracker;
-import me.nov.threadtear.analysis.full.ICodeReferenceHandler;
+import me.nov.threadtear.analysis.full.CodeRewriter;
+import me.nov.threadtear.analysis.full.ICRReferenceHandler;
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
@@ -22,7 +22,7 @@ import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 
-public class RemoveUnnecessary extends Execution implements ICodeReferenceHandler {
+public class RemoveUnnecessary extends Execution implements ICRReferenceHandler {
 
 	public RemoveUnnecessary() {
 		super(ExecutionCategory.CLEANING, "<html><s>Remove unnecessary instructions</s>",
@@ -30,8 +30,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 	}
 
 	/*
-	 * TODO Nothing done here yet, this class should simulate stack and
-	 * simultaneously rewrite the code.
+	 * TODO Nothing done here yet, this class should simulate stack and simultaneously rewrite the code.
 	 * 
 	 * eg. ICONST_4 ICONST_1 IADD INVOKESTATIC ...
 	 * 
@@ -58,7 +57,7 @@ public class RemoveUnnecessary extends Execution implements ICodeReferenceHandle
 		m.tryCatchBlocks.clear();
 		if (m.localVariables != null)
 			m.localVariables.clear();
-		CodeAnalyzer a = new CodeAnalyzer(new CodeTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
+		CodeAnalyzer a = new CodeAnalyzer(new CodeRewriter(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {

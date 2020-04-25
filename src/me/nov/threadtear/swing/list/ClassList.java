@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.github.weisj.darklaf.icons.IconLoader;
@@ -23,6 +24,7 @@ import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.io.JarIO;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;
+import me.nov.threadtear.swing.frame.BytecodeFrame;
 import me.nov.threadtear.swing.frame.DecompilerFrame;
 import me.nov.threadtear.swing.handler.ILoader;
 import me.nov.threadtear.swing.handler.JarDropHandler;
@@ -67,27 +69,27 @@ public class ClassList extends JPanel implements ILoader {
 			}
 		});
 		panel.add(decompile);
-
-		JButton ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
-		ignore.addActionListener(l -> {
-			SortedTreeClassNode node = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
-			if (node != null) {
-				ignoreChilds(node);
-				refreshIgnored();
-				repaint();
-				tree.grabFocus();
+		JButton bytecode = new JButton("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
+		bytecode.addActionListener(l -> {
+			SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
+			if (tn != null && tn.member != null) {
+				new BytecodeFrame(tn.member.node).setVisible(true);
 			}
 		});
-		panel.add(ignore);
-		JButton toggle = new JButton("Toggle all", IconLoader.get().loadSVGIcon("res/toggle.svg", false));
-		toggle.addActionListener(l -> {
-			ignoreChilds((SortedTreeClassNode) model.getRoot());
+
+		panel.add(bytecode);
+		JButton ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
+		ignore.addActionListener(l -> {
+			TreePath[] paths = tree.getSelectionPaths();
+			for (int i = 0; i < paths.length; i++) {
+				SortedTreeClassNode tn = (SortedTreeClassNode) paths[i].getLastPathComponent();
+				ignoreChilds(tn);
+			}
 			refreshIgnored();
 			repaint();
 			tree.grabFocus();
 		});
-
-		panel.add(toggle);
+		panel.add(ignore);
 		return panel;
 	}
 
@@ -121,7 +123,7 @@ public class ClassList extends JPanel implements ILoader {
 			this.setCellRenderer(new ClassTreeCellRenderer());
 			model = new DefaultTreeModel(new SortedTreeClassNode(""));
 			this.setModel(model);
-			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 			this.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {

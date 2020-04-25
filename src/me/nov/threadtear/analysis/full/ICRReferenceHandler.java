@@ -6,7 +6,7 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
 
-public interface ICodeReferenceHandler {
+public interface ICRReferenceHandler {
 
 	Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc);
 

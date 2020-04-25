@@ -6,11 +6,11 @@ import java.io.IOException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 
-public class DecompilerTextArea extends RSyntaxTextArea {
+public class BytecodeTextArea extends RSyntaxTextArea {
 	private static final long serialVersionUID = 1L;
 
-	public DecompilerTextArea() {
-		this.setSyntaxEditingStyle("text/java");
+	public BytecodeTextArea() {
+		this.setSyntaxEditingStyle(SYNTAX_STYLE_CPLUSPLUS);
 		this.setCodeFoldingEnabled(true);
 		this.setAntiAliasingEnabled(true);
 		this.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));

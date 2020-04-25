@@ -27,21 +27,21 @@ import me.nov.threadtear.analysis.full.value.values.StringValue;
 import me.nov.threadtear.analysis.full.value.values.UnaryOpValue;
 import me.nov.threadtear.analysis.full.value.values.UnknownInstructionValue;
 
-public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opcodes {
+public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opcodes {
 
 	SuperInterpreter basic = new SuperInterpreter();
 
 	private CodeReferenceValue[] presetArgs;
 	private Type[] desc;
 
-	private ICodeReferenceHandler referenceHandler;
+	private ICRReferenceHandler referenceHandler;
 
-	public CodeTracker(ICodeReferenceHandler referenceHandler) {
+	public CodeRewriter(ICRReferenceHandler referenceHandler) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
 	}
 
-	public CodeTracker(ICodeReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, CodeReferenceValue[] args) {
+	public CodeRewriter(ICRReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, CodeReferenceValue[] args) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
 		this.desc = Type.getArgumentTypes(descr);
@@ -153,7 +153,7 @@ public class CodeTracker extends Interpreter<CodeReferenceValue> implements Opco
 
 	@Override
 	public CodeReferenceValue unaryOperation(AbstractInsnNode insn, CodeReferenceValue value) throws AnalyzerException {
-		//TODO checkcast, instanceof
+		// TODO checkcast, instanceof
 		BasicValue v = basic.unaryOperation(insn, value.getType());
 		switch (insn.getOpcode()) {
 		case GETFIELD:
