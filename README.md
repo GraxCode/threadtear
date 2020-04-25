@@ -1,7 +1,7 @@
 # Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear) [![Release](https://img.shields.io/github/v/release/GraxCode/threadtear)](https://github.com/GraxCode/threadtear/releases)
 Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
-Even the most expensive obfuscators like ZKM or Stringer are included. It also contains older deobfuscation tools from my github account, but it can also be useful for other stuff. 
-Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is also not a problem anymore (of course only when no version specific methods are used).
+Even the most expensive obfuscators like ZKM or Stringer are included. For easier debugging there are also other tools included. 
+Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is not a problem anymore, if no version specific methods are used.
 ![Screenshot 1](https://i.imgur.com/NH4Nnvy.png)
 ![Screenshot 2](https://i.imgur.com/EylBxBY.png)
 ![Screenshot 3](https://i.imgur.com/ZQFprgH.png)
@@ -9,17 +9,17 @@ Insert debug line numbers to better understand where exceptions originate, or ad
 ![Screenshot 5](https://i.imgur.com/cdtJqQI.png)
 
 ## Executions 
-
 An "execution" is a task that is executed and modifies all loaded class files. 
 There are multiple types of executions, varying from bytecode cleanup to string deobfuscation. 
 Make sure to have them in the right order. Cleanup executions for example should be executed at last, but also can help other executions if executed first.
+If you are ready, click on the "Run" button and they will be executed in order.
 
 ## Warning
-Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file, an attacker could tweak the file so that malicious code would be executed.
-Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource / access obfuscation.
+Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file. An attacker could tweak the bytecode so that malicious code could be executed.
+Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource / access obfuscation, as it is much easier to execute the decryption methods remotely.
 
-## How to compile
-First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created.
+## How to compile 
+First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release. [![Downloads](https://img.shields.io/github/downloads/GraxCode/threadtear/total)](https://github.com/GraxCode/threadtear/releases)
 
 ## Make your own execution
 You can easily create your own execution task. Just extend `me.nov.threadtear.execution.Execution`:
@@ -148,12 +148,12 @@ Obfuscators exhibit patterns which you can use to identify obfuscators. The easi
 
 #### ZKM
 Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches, or string decryption methods with a very long switch block (about 250 cases).
-ZKM is one of the best obfuscators for java, and also very expensive.
+ZKM is one of the best (and oldest) obfuscators for java, and also very expensive.
 ![ZKM](https://i.imgur.com/Psdagyb.png)
 #### Stringer
 If your jar file contains some special classes with huge decryption algorithms that are used by string obfuscation and access obfuscation, it's probably Stringer.
-If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten.
-Stringer also is very protecting and one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
+If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten. (Due to custom JAR signature and usage of method names during string decryption)
+The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
 ![Stringer](https://i.imgur.com/LmI9SYz.png)
 ![Stringer 2](https://i.imgur.com/M72plII.png)
 #### Allatori
@@ -161,18 +161,16 @@ Class names like IiIlIlIiIl or aUx, cOn, PrX indicate Allatori obfuscation.
 Allatori is very common, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
 ![Allatori](https://i.imgur.com/eWYKtR4.png)
 
-### Other obfuscators
+#### Other obfuscators
 For other obfuscators you can try generic executions or open an issue and I'll see what i can do.
 
-## Libraries needed
-commons-io 2.6, darklaf-1.3.3.4, asm-all 8+
-
+### Description and tags
+Before selecting an execution, check out the tool-tip texts while hovering. They contain a small description about what they do, but also tags that help you understand how the behavior of your JAR file is changed.
 ## License
 Threadtear is licensed under the GNU General Public License 3.0
 
 ### Notice
-Do not deobfuscate any file that doesn't belong to you.  
+Do NOT deobfuscate files that don't belong to you.  
 Please open an issue or send me an email if a transformer doesn't work properly and attach the log.   
 Note that output files are most likely not runnable. If you still want to try to run them use `-noverify` as JVM argument!   
 This tool is intended for Java 8 but it will probably run on higher versions too. 
-<em>*Note that not everything written in this README is implemented yet.*</em>
