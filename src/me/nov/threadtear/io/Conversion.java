@@ -1,7 +1,10 @@
 package me.nov.threadtear.io;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -47,5 +50,13 @@ public class Conversion {
 		StringWriter out = new StringWriter();
 		new ClassReader(toBytecode0(cn)).accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
 		return out.toString();
+	}
+
+	public static void saveDebugFile(ClassNode cn) {
+		try {
+			Files.write(new File(cn.name.replace('/', '.') + "-debug.class").toPath(), Conversion.toBytecode0(cn));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
