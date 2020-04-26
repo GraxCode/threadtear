@@ -1,14 +1,13 @@
-package me.nov.threadtear.analysis.full.value.values;
+package me.nov.threadtear.analysis.rewriter.value.values;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.util.asm.Instructions;
 
 public class UnknownInstructionValue extends CodeReferenceValue {
-
 
 	public UnknownInstructionValue(BasicValue type, AbstractInsnNode node) {
 		super(type, node);
@@ -19,6 +18,11 @@ public class UnknownInstructionValue extends CodeReferenceValue {
 	@Override
 	public boolean isKnownValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isFixedPosition() {
+		return true;
 	}
 
 	@Override

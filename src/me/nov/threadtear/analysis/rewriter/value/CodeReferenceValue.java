@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full.value;
+package me.nov.threadtear.analysis.rewriter.value;
 
 import java.util.Objects;
 
@@ -12,6 +12,8 @@ import org.objectweb.asm.tree.analysis.Value;
 public abstract class CodeReferenceValue implements Value, Opcodes {
 	public abstract boolean isKnownValue();
 
+	public abstract boolean isFixedPosition();
+
 	public abstract CodeReferenceValue combine();
 
 	public abstract boolean equalsWith(CodeReferenceValue obj);
@@ -22,6 +24,7 @@ public abstract class CodeReferenceValue implements Value, Opcodes {
 
 	public abstract Object getStackValueOrNull();
 
+	
 	protected BasicValue type;
 	protected AbstractInsnNode node;
 

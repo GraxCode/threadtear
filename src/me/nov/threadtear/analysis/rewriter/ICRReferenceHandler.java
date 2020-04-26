@@ -1,10 +1,10 @@
-package me.nov.threadtear.analysis.full;
+package me.nov.threadtear.analysis.rewriter;
 
 import java.util.List;
 
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 
 public interface ICRReferenceHandler {
 

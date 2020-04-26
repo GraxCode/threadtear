@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full.value.values;
+package me.nov.threadtear.analysis.rewriter.value.values;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.util.asm.Instructions;
 
 public class StringValue extends CodeReferenceValue {
@@ -22,6 +22,11 @@ public class StringValue extends CodeReferenceValue {
 	@Override
 	public boolean isKnownValue() {
 		return true;
+	}
+
+	@Override
+	public boolean isFixedPosition() {
+		return false;
 	}
 
 	@Override

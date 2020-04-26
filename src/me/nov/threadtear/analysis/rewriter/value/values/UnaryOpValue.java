@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full.value.values;
+package me.nov.threadtear.analysis.rewriter.value.values;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 
 public class UnaryOpValue extends CodeReferenceValue {
 
@@ -21,6 +21,11 @@ public class UnaryOpValue extends CodeReferenceValue {
 	@Override
 	public boolean isKnownValue() {
 		return value.isKnownValue();
+	}
+
+	@Override
+	public boolean isFixedPosition() {
+		return false;
 	}
 
 	@Override

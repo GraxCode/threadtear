@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full;
+package me.nov.threadtear.analysis.rewriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.Subroutine;
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 
 /**

@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full;
+package me.nov.threadtear.analysis.rewriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
@@ -19,51 +20,38 @@ import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.SuperInterpreter;
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
-import me.nov.threadtear.analysis.full.value.values.BinaryOpValue;
-import me.nov.threadtear.analysis.full.value.values.MemberAccessValue;
-import me.nov.threadtear.analysis.full.value.values.NumberValue;
-import me.nov.threadtear.analysis.full.value.values.StringValue;
-import me.nov.threadtear.analysis.full.value.values.UnaryOpValue;
-import me.nov.threadtear.analysis.full.value.values.UnknownInstructionValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.values.BinaryOpValue;
+import me.nov.threadtear.analysis.rewriter.value.values.MemberAccessValue;
+import me.nov.threadtear.analysis.rewriter.value.values.NumberValue;
+import me.nov.threadtear.analysis.rewriter.value.values.StringValue;
+import me.nov.threadtear.analysis.rewriter.value.values.UnaryOpValue;
+import me.nov.threadtear.analysis.rewriter.value.values.UnknownInstructionValue;
 
 public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opcodes {
 
 	SuperInterpreter basic = new SuperInterpreter();
 
 	private CodeReferenceValue[] presetArgs;
-	private Type[] desc;
-
 	private ICRReferenceHandler referenceHandler;
+
+	public InsnList rewritten = new InsnList();
 
 	public CodeRewriter(ICRReferenceHandler referenceHandler) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
 	}
 
-	public CodeRewriter(ICRReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, CodeReferenceValue[] args) {
+	public CodeRewriter(ICRReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr) {
 		super(ASM8);
 		this.referenceHandler = referenceHandler;
-		this.desc = Type.getArgumentTypes(descr);
-		ArrayList<CodeReferenceValue> reformatted = new ArrayList<>();
-		if (!isStatic) {
-			reformatted.add(null); // this reference
-		}
-		for (int i = 0; i < desc.length; ++i) {
-			reformatted.add(i >= args.length ? null : args[i]);
-			if (desc[i].getSize() == 2) {
-				reformatted.add(null); // placeholder for long and double
-			}
-		}
-		if (reformatted.size() > localVariables) {
-			// this shouldn't happen...
-			// throw new IllegalArgumentException();
-		}
-		while (reformatted.size() < localVariables) {
+		Type.getArgumentTypes(descr);
+		ArrayList<CodeReferenceValue> args = new ArrayList<>();
+		while (args.size() < localVariables) {
 			// add placeholder for remaining local variables
-			reformatted.add(null);
+			args.add(null);
 		}
-		this.presetArgs = reformatted.toArray(new CodeReferenceValue[0]);
+		this.presetArgs = args.toArray(new CodeReferenceValue[0]);
 	}
 
 	@Override
@@ -128,6 +116,13 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
 			if (presetArgs != null) {
 				presetArgs[((VarInsnNode) insn).var] = value;
 			}
+		case DUP:
+		case DUP_X1:
+		case DUP_X2:
+		case DUP2:
+		case DUP2_X1:
+		case DUP2_X2:
+		case SWAP:
 		default:
 			break;
 		}
@@ -143,7 +138,7 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
 	@Override
 	public CodeReferenceValue newExceptionValue(TryCatchBlockNode tryCatchBlockNode, Frame<CodeReferenceValue> handlerFrame, Type exceptionType) {
 		BasicValue v = basic.newValue(exceptionType);
-		return new UnknownInstructionValue(v, new InsnNode(ACONST_NULL)); // TODO make AlreadyOnStackInstruction
+		return new UnknownInstructionValue(v, new InsnNode(ACONST_NULL)); // TODO make AlreadyOnStackInstruction so that aconst_null doesn't end up in code
 	}
 
 	@Override
@@ -179,6 +174,17 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
 		case L2D:
 		case F2D:
 			return new UnaryOpValue(v, (InsnNode) insn, value);
+		case IFEQ:
+		case IFNE:
+		case IFLT:
+		case IFGE:
+		case IFGT:
+		case IFLE:
+		case TABLESWITCH:
+		case LOOKUPSWITCH:
+		case MONITORENTER:
+		case MONITOREXIT:
+		case PUTSTATIC:
 		default:
 			return v == null ? null : new UnknownInstructionValue(v, insn);
 		}
@@ -236,6 +242,8 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
 
 	@Override
 	public CodeReferenceValue ternaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b, CodeReferenceValue c) throws AnalyzerException {
+		// add to code
+
 		// no stack push here, we don't care
 		return null;
 	}

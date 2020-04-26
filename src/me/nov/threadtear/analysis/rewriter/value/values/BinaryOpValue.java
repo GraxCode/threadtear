@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full.value.values;
+package me.nov.threadtear.analysis.rewriter.value.values;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 
 public class BinaryOpValue extends CodeReferenceValue {
 
@@ -23,6 +23,12 @@ public class BinaryOpValue extends CodeReferenceValue {
 	@Override
 	public boolean isKnownValue() {
 		return left.isKnownValue() && right.isKnownValue();
+	}
+
+	@Override
+	public boolean isFixedPosition() {
+		//TODO check for idiv 0 and similar things
+		return left.isFixedPosition() || right.isFixedPosition();
 	}
 
 	@Override

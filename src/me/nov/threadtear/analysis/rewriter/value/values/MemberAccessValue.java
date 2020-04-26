@@ -1,4 +1,4 @@
-package me.nov.threadtear.analysis.full.value.values;
+package me.nov.threadtear.analysis.rewriter.value.values;
 
 import java.util.Objects;
 
@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 
 public class MemberAccessValue extends CodeReferenceValue {
 
@@ -31,6 +31,11 @@ public class MemberAccessValue extends CodeReferenceValue {
 	@Override
 	public boolean isKnownValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isFixedPosition() {
+		return true;
 	}
 
 	@Override

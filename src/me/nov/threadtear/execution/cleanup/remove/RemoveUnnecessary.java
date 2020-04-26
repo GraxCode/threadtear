@@ -12,10 +12,10 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.analysis.full.CodeAnalyzer;
-import me.nov.threadtear.analysis.full.CodeRewriter;
-import me.nov.threadtear.analysis.full.ICRReferenceHandler;
-import me.nov.threadtear.analysis.full.value.CodeReferenceValue;
+import me.nov.threadtear.analysis.rewriter.CodeAnalyzer;
+import me.nov.threadtear.analysis.rewriter.CodeRewriter;
+import me.nov.threadtear.analysis.rewriter.ICRReferenceHandler;
+import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.io.Clazz;
