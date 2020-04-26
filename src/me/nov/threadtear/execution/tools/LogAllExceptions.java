@@ -25,13 +25,28 @@ public class LogAllExceptions extends Execution {
 			if (m.tryCatchBlocks == null)
 				return;
 			m.tryCatchBlocks.forEach(tcb -> {
-				AbstractInsnNode handler = Instructions.getRealNext(tcb.handler);
-				m.instructions.insertBefore(handler, new InsnNode(DUP));
-				m.instructions.insertBefore(handler, new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V"));
+				AbstractInsnNode firstInstructionAfterHandler = Instructions.getRealNext(tcb.handler);
+				if (!printsAlready(firstInstructionAfterHandler)) {
+					m.instructions.insertBefore(firstInstructionAfterHandler, new InsnNode(DUP));
+					m.instructions.insertBefore(firstInstructionAfterHandler, new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V"));
+				}
 			});
 			m.maxStack = Math.max(m.maxStack, 2);
 		});
 		logger.info("Inserted .printStackTrace() in every catch block!");
 		return true;
+	}
+
+	private boolean printsAlready(AbstractInsnNode ain) {
+		if (ain == null || ain.getType() == AbstractInsnNode.JUMP_INSN || Instructions.isCodeEnd(ain)) {
+			return false;
+		}
+		if (ain.getOpcode() == INVOKEVIRTUAL) {
+			MethodInsnNode min = (MethodInsnNode) ain;
+			if (min.name.equals("printStackTrace") && min.desc.equals("()V")) {
+				return true;
+			}
+		}
+		return printsAlready(Instructions.getRealNext(ain));
 	}
 }

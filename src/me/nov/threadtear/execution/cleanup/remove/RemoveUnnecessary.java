@@ -57,7 +57,7 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
 		m.tryCatchBlocks.clear();
 		if (m.localVariables != null)
 			m.localVariables.clear();
-		CodeAnalyzer a = new CodeAnalyzer(new CodeRewriter(this, Access.isStatic(m.access), m.maxLocals, m.desc, new CodeReferenceValue[0]));
+		CodeAnalyzer a = new CodeAnalyzer(new CodeRewriter(this, Access.isStatic(m.access), m.maxLocals, m.desc));
 		try {
 			a.analyze(cn.name, m);
 		} catch (AnalyzerException e) {
