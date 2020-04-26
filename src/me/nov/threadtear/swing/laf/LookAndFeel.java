@@ -1,10 +1,12 @@
 package me.nov.threadtear.swing.laf;
 
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.OneDarkTheme;
+import com.github.weisj.darklaf.theme.Theme;
 
 public class LookAndFeel {
 	public static void setLookAndFeel() {
@@ -23,11 +25,13 @@ public class LookAndFeel {
 			}
 		}
 		LafManager.enableLogging(true);
+		LafManager.registerInitTask(LookAndFeel::applyCustomChanges);
 		LafManager.install(new OneDarkTheme());
-		applyCustomChanges();
 	}
 
-	public static void applyCustomChanges() {
-		UIManager.put("Tree.background", UIManager.getColor("Tree.background").darker());
+	public static void applyCustomChanges(Theme t, UIDefaults d) {
+		if (Theme.isDark(t)) {
+			d.put("Tree.background", d.getColor("Tree.background").darker());
+		}
 	}
 }

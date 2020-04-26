@@ -73,7 +73,6 @@ public class Threadtear extends JFrame {
 		JMenuItem laf = new JMenuItem("Look and feel");
 		laf.addActionListener(l -> {
 			ThemeSettings.showSettingsDialog(this);
-			LookAndFeel.applyCustomChanges();
 		});
 		help.add(laf);
 		bar.add(help);
