@@ -1,8 +1,10 @@
 package me.nov.threadtear.swing.laf;
 
-import javax.swing.UIDefaults;
+import java.awt.Color;
+
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.plaf.ColorUIResource;
 
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.OneDarkTheme;
@@ -25,13 +27,14 @@ public class LookAndFeel {
 			}
 		}
 		LafManager.enableLogging(true);
-		LafManager.registerInitTask(LookAndFeel::applyCustomChanges);
+		LafManager.registerDefaultsAdjustmentTask((t, d) -> {
+			if (Theme.isDark(t)) {
+				Object p = d.get("backgroundContainer");
+				if (p instanceof Color) {
+					d.put("backgroundContainer", new ColorUIResource(((Color) p).darker()));
+				}
+			}
+		});
 		LafManager.install(new OneDarkTheme());
-	}
-
-	public static void applyCustomChanges(Theme t, UIDefaults d) {
-		if (Theme.isDark(t)) {
-			d.put("Tree.background", d.getColor("Tree.background").darker());
-		}
 	}
 }

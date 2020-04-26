@@ -97,12 +97,16 @@ public class CFR {
 						return Collections.singletonList(SinkClass.STRING);
 					}
 				}
+
 				@Override
 				public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
 					if (sinkType == SinkType.JAVA && sinkClass == SinkClass.DECOMPILED) {
-						return x -> { decompiled = ((SinkReturns.Decompiled)x).getJava().substring(31); };
+						return x -> {
+							decompiled = ((SinkReturns.Decompiled) x).getJava().substring(31);
+						};
 					}
-					return ignore -> {};
+					return ignore -> {
+					};
 				}
 			};
 			ClassFileSource source = new ClassFileSource() {
@@ -121,10 +125,11 @@ public class CFR {
 					if (name.equals(cn.name)) {
 						return Pair.make(bytes, name);
 					}
+					// cfr loads unnecessary classes. normally you should throw a FNF exception here, but this way, no long comment at the top of the code is created
 					ClassNode dummy = new ClassNode();
 					dummy.name = name;
 					dummy.version = 52;
-					return Pair.make(Conversion.toBytecode0(dummy), name); // cfr loads unnecessary classes
+					return Pair.make(Conversion.toBytecode0(dummy), name);
 				}
 
 				@Override
