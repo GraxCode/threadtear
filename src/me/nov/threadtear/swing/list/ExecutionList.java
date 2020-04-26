@@ -26,6 +26,9 @@ public class ExecutionList extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public DefaultTreeModel model;
 	private ExecutionTree executions;
+	private JButton remove;
+	private JButton up;
+	private JButton down;
 
 	public ExecutionList() {
 		this.setLayout(new BorderLayout());
@@ -64,7 +67,7 @@ public class ExecutionList extends JPanel {
 			executions.repaint();
 		});
 		panel.add(add);
-		JButton remove = new JButton("Remove", IconLoader.get().loadSVGIcon("res/remove.svg", false));
+		remove = new JButton("Remove", IconLoader.get().loadSVGIcon("res/remove.svg", false));
 		remove.addActionListener(e -> {
 			ExecutionTreeNode node = (ExecutionTreeNode) executions.getLastSelectedPathComponent();
 			if (node != null && node.member != null) {
@@ -74,18 +77,21 @@ public class ExecutionList extends JPanel {
 			}
 		});
 		panel.add(remove);
-		JButton up = new JButton("Move up",IconLoader.get().loadSVGIcon("res/move_up.svg", false));
+		remove.setEnabled(false);
+		up = new JButton("Move up",IconLoader.get().loadSVGIcon("res/move_up.svg", false));
 		up.addActionListener(e -> {
 			Utils.moveTreeItem(executions, -1);
 			executions.grabFocus();
 		});
 		panel.add(up);
-		JButton down = new JButton("Move down", IconLoader.get().loadSVGIcon("res/move_down.svg", false));
+		up.setEnabled(false);
+		down = new JButton("Move down", IconLoader.get().loadSVGIcon("res/move_down.svg", false));
 		down.addActionListener(e -> {
 			Utils.moveTreeItem(executions, 1);
 			executions.grabFocus();
 		});
 		panel.add(down);
+		down.setEnabled(false);
 		return panel;
 	}
 
@@ -103,6 +109,13 @@ public class ExecutionList extends JPanel {
 			this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);
+			this.addTreeSelectionListener(l -> {
+				ExecutionTreeNode tn = (ExecutionTreeNode) getLastSelectedPathComponent();
+				boolean selected = tn != null;
+				remove.setEnabled(selected);
+				up.setEnabled(selected && root.getChildCount() > 1);
+				down.setEnabled(selected && root.getChildCount() > 1);
+			});
 		}
 	}
 

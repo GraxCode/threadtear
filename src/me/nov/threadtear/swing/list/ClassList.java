@@ -39,6 +39,11 @@ public class ClassList extends JPanel implements ILoader {
 	private ClassTree tree;
 	private JPanel outerPanel;
 
+	private JButton analysis;
+	private JButton decompile;
+	private JButton bytecode;
+	private JButton ignore;
+
 	public ClassList() {
 		this.setLayout(new BorderLayout());
 		this.add(outerPanel = Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
@@ -56,12 +61,13 @@ public class ClassList extends JPanel implements ILoader {
 	private JPanel createButtons() {
 		JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		JButton analysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
+		analysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
 		analysis.addActionListener(l -> {
 			new JarAnalysis(classes).setVisible(true);
 		});
+		analysis.setEnabled(false);
 		panel.add(analysis);
-		JButton decompile = new JButton("Decompile", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
+		decompile = new JButton("Decompile", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
 		decompile.addActionListener(l -> {
 			SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
 			if (tn != null && tn.member != null) {
@@ -69,7 +75,8 @@ public class ClassList extends JPanel implements ILoader {
 			}
 		});
 		panel.add(decompile);
-		JButton bytecode = new JButton("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
+		decompile.setEnabled(false);
+		bytecode = new JButton("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
 		bytecode.addActionListener(l -> {
 			SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
 			if (tn != null && tn.member != null) {
@@ -78,7 +85,8 @@ public class ClassList extends JPanel implements ILoader {
 		});
 
 		panel.add(bytecode);
-		JButton ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
+		bytecode.setEnabled(false);
+		ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
 		ignore.addActionListener(l -> {
 			TreePath[] paths = tree.getSelectionPaths();
 			for (int i = 0; i < paths.length; i++) {
@@ -89,6 +97,7 @@ public class ClassList extends JPanel implements ILoader {
 			repaint();
 			tree.grabFocus();
 		});
+		ignore.setEnabled(false);
 		panel.add(ignore);
 		return panel;
 	}
@@ -135,6 +144,13 @@ public class ClassList extends JPanel implements ILoader {
 					}
 				}
 			});
+			this.addTreeSelectionListener(l -> {
+				SortedTreeClassNode tn = (SortedTreeClassNode) getLastSelectedPathComponent();
+				boolean selected = tn != null;
+				decompile.setEnabled(selected && tn.member != null);
+				bytecode.setEnabled(selected && tn.member != null);
+				ignore.setEnabled(selected);
+			});
 		}
 	}
 
@@ -150,6 +166,7 @@ public class ClassList extends JPanel implements ILoader {
 			loadTree(classes);
 			refreshIgnored();
 			model.reload();
+			analysis.setEnabled(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
