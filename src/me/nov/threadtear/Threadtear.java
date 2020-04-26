@@ -108,7 +108,7 @@ public class Threadtear extends JFrame {
 		charset.set(null, null);
 	}
 
-	public void run(boolean verbose, boolean frames, boolean disableSecurity) {
+	public void run(boolean verbose, boolean disableSecurity) {
 		ArrayList<Clazz> classes = listPanel.classList.classes;
 		ArrayList<Execution> executions = listPanel.executionList.getExecutions();
 		if (classes == null || classes.isEmpty()) {

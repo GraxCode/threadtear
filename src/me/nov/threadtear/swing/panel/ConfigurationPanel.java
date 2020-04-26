@@ -20,7 +20,7 @@ public class ConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Threadtear main;
 	private JCheckBox verbose;
-	private JCheckBox computeFrames;
+	private JCheckBox watermark;
 	private JCheckBox disableSecurity;
 	private JCheckBox removeSignature;
 
@@ -37,8 +37,9 @@ public class ConfigurationPanel extends JPanel {
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 		panel.add(verbose = new JCheckBox("Verbose logging"));
 		verbose.setToolTipText("Log more information and print full stack traces.");
-		panel.add(computeFrames = new JCheckBox("Compute frames"));
-		computeFrames.setEnabled(false);
+		panel.add(watermark = new JCheckBox("<html>Watermark <tt>MANIFEST.MF</tt>"));
+		watermark.setToolTipText("<html>Adds a \"<tt>Deobfuscated-By\" attribute to the manifest file.");
+		watermark.setSelected(true);
 		panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"));
 		disableSecurity.setToolTipText("Remove the protection agains unwanted executions. Could improve deobfuscation.");
 		panel.add(removeSignature = new JCheckBox("Remove manifest signature"));
@@ -69,14 +70,14 @@ public class ConfigurationPanel extends JPanel {
 			int result = jfc.showSaveDialog(this);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File output = jfc.getSelectedFile();
-				JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected());
+				JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(), watermark.isSelected());
 				Threadtear.logger.info("Saved to " + output.getAbsolutePath());
 			}
 		});
 		panel.add(save);
 		JButton run = new JButton("Run", IconLoader.get().loadSVGIcon("res/run.svg", false));
 		run.addActionListener(l -> {
-			main.run(verbose.isSelected(), computeFrames.isSelected(), disableSecurity.isSelected());
+			main.run(verbose.isSelected(), disableSecurity.isSelected());
 		});
 		panel.add(run);
 		return panel;

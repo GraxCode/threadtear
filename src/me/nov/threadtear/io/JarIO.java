@@ -47,7 +47,7 @@ public class JarIO {
 		return classes;
 	}
 
-	public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSignature) {
+	public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSignature, boolean watermark) {
 		try {
 			JarOutputStream out = new JarOutputStream(new FileOutputStream(output));
 			JarFile jar = new JarFile(original);
@@ -64,12 +64,19 @@ public class JarIO {
 							// export no certificates
 							return;
 						}
-						if (name.equals("META-INF/MANIFEST.MF")) {
-							out.putNextEntry(cloneOldEntry(z, z.getName()));
-							out.write(Manifest.patchManifest(IOUtils.toByteArray(jar.getInputStream(z))));
-							out.closeEntry();
-							return;
+					}
+					if (name.equals("META-INF/MANIFEST.MF")) {
+						byte[] manifest = IOUtils.toByteArray(jar.getInputStream(z));
+						if (noSignature) {
+							manifest = Manifest.patchManifest(manifest);
 						}
+						if (watermark) {
+							manifest = Manifest.watermark(manifest);
+						}
+						out.putNextEntry(cloneOldEntry(z, z.getName()));
+						out.write(manifest);
+						out.closeEntry();
+						return;
 					}
 					// export resources
 					out.putNextEntry(cloneOldEntry(z, z.getName()));
