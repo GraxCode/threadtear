@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.list.renderer;
+package me.nov.threadtear.swing.tree.renderer;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.ClassNode;
 import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
+import me.nov.threadtear.swing.tree.component.SortedTreeClassNode;
 import me.nov.threadtear.util.asm.Access;
 
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {

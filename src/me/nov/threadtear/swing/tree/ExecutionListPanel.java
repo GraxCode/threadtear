@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.list;
+package me.nov.threadtear.swing.tree;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,10 +19,10 @@ import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.ExecutionSelection;
-import me.nov.threadtear.swing.list.component.ExecutionTreeNode;
-import me.nov.threadtear.swing.list.renderer.ExecutionTreeCellRenderer;
+import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
+import me.nov.threadtear.swing.tree.renderer.ExecutionTreeCellRenderer;
 
-public class ExecutionList extends JPanel {
+public class ExecutionListPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public DefaultTreeModel model;
 	private ExecutionTree executions;
@@ -30,7 +30,7 @@ public class ExecutionList extends JPanel {
 	private JButton up;
 	private JButton down;
 
-	public ExecutionList() {
+	public ExecutionListPanel() {
 		this.setLayout(new BorderLayout());
 		this.add(Utils.addTitleAndBorder("Executions in order (top to bottom)", new JScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
 

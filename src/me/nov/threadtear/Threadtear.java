@@ -33,12 +33,12 @@ import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
 import me.nov.threadtear.swing.panel.ConfigurationPanel;
-import me.nov.threadtear.swing.panel.TopPanel;
+import me.nov.threadtear.swing.panel.TreePanel;
 
 public class Threadtear extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	public TopPanel listPanel;
+	public TreePanel listPanel;
 	private LogFrame logFrame;
 
 	public Threadtear() {
@@ -83,7 +83,7 @@ public class Threadtear extends JFrame {
 
 	private void initializeFrame() {
 		this.setLayout(new BorderLayout(16, 16));
-		this.add(listPanel = new TopPanel(), BorderLayout.CENTER);
+		this.add(listPanel = new TreePanel(), BorderLayout.CENTER);
 		this.add(new ConfigurationPanel(this), BorderLayout.SOUTH);
 	}
 

@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.list;
+package me.nov.threadtear.swing.tree;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,10 +28,10 @@ import me.nov.threadtear.swing.frame.BytecodeFrame;
 import me.nov.threadtear.swing.frame.DecompilerFrame;
 import me.nov.threadtear.swing.handler.ILoader;
 import me.nov.threadtear.swing.handler.JarDropHandler;
-import me.nov.threadtear.swing.list.component.SortedTreeClassNode;
-import me.nov.threadtear.swing.list.renderer.ClassTreeCellRenderer;
+import me.nov.threadtear.swing.tree.component.SortedTreeClassNode;
+import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
 
-public class ClassList extends JPanel implements ILoader {
+public class ClassTreePanel extends JPanel implements ILoader {
 	private static final long serialVersionUID = 1L;
 	public File inputFile;
 	public ArrayList<Clazz> classes;
@@ -44,7 +44,7 @@ public class ClassList extends JPanel implements ILoader {
 	private JButton bytecode;
 	private JButton ignore;
 
-	public ClassList() {
+	public ClassTreePanel() {
 		this.setLayout(new BorderLayout());
 		this.add(outerPanel = Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
 		this.add(createButtons(), BorderLayout.SOUTH);

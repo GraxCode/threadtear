@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.list.component;
+package me.nov.threadtear.swing.tree.component;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 

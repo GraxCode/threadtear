@@ -1,4 +1,4 @@
-package me.nov.threadtear.swing.list;
+package me.nov.threadtear.swing.tree;
 
 import java.awt.Font;
 import java.awt.Graphics;
