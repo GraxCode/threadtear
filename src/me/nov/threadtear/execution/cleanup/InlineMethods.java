@@ -43,6 +43,8 @@ public class InlineMethods extends Execution {
 					String key = min.owner + "." + min.name + min.desc;
 					if (map.containsKey(key)) {
 						inlineMethod(m, min, map.get(key));
+						m.maxStack = Math.max(map.get(key).maxStack, m.maxStack);
+						m.maxLocals = Math.max(map.get(key).maxLocals, m.maxLocals);
 						inlines++;
 					}
 				}

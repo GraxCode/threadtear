@@ -90,7 +90,7 @@ public class JarIO {
 				try {
 					// add updated classes
 					out.putNextEntry(cloneOldEntry(c.oldEntry, c.node.name + ".class"));
-					out.write(Conversion.toBytecode(c.node, true));
+					out.write(Conversion.toBytecode0(c.node));
 					out.closeEntry();
 				} catch (Exception e) {
 					Threadtear.logger.severe("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());

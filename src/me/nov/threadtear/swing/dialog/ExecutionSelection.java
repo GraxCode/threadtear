@@ -42,6 +42,7 @@ import me.nov.threadtear.execution.tools.IsolatePossiblyMalicious;
 import me.nov.threadtear.execution.tools.Java7Compatibility;
 import me.nov.threadtear.execution.tools.Java8Compatibility;
 import me.nov.threadtear.execution.tools.LogAllExceptions;
+import me.nov.threadtear.execution.tools.RemoveMaxs;
 import me.nov.threadtear.execution.zkm.AccessObfusationZKM;
 import me.nov.threadtear.execution.zkm.StringObfuscationZKM;
 import me.nov.threadtear.execution.zkm.TryCatchObfuscationRemover;
@@ -131,6 +132,7 @@ public class ExecutionSelection extends JDialog {
 			addExecution(root, new IsolatePossiblyMalicious());
 			addExecution(root, new AddLineNumbers());
 			addExecution(root, new LogAllExceptions());
+			addExecution(root, new RemoveMaxs());
 
 			this.setModel(model);
 			ToolTipManager.sharedInstance().registerComponent(this);
