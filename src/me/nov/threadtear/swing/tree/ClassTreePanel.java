@@ -12,6 +12,7 @@ import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
@@ -172,6 +173,11 @@ public class ClassTreePanel extends JPanel implements ILoader {
 			this.inputFile = input;
 			try {
 				this.classes = JarIO.loadClasses(input);
+				if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
+					JOptionPane.showMessageDialog(this,
+							"<html>Warning: File is signed and may not load correctly if already modified, remove the signature<br>(<tt>META-INF\\MANIFEST.MF</tt>) and certificates (<tt>META-INF\\*.SF/.RSA</tt>) first!",
+							"Signature warning", JOptionPane.WARNING_MESSAGE);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
