@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.allatori;
+package me.nov.threadtear.execution.dasho;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -33,16 +33,18 @@ import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;
 import me.nov.threadtear.vm.VM;
 
-public class StringObfuscationAllatori extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
+public class StringObfuscationDashO extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-	private static final String ALLATORI_DECRPYTION_METHOD_DESC = "(Ljava/lang/String;)Ljava/lang/String;";
+	private static final String DASHO_DECRPYTION_METHOD_DESC1 = "(ILjava/lang/String;)Ljava/lang/String;";
+	private static final String DASHO_DECRPYTION_METHOD_DESC2 = "(Ljava/lang/String;I)Ljava/lang/String;";
+
 	private Map<String, Clazz> classes;
 	private int encrypted;
 	private int decrypted;
 	private boolean verbose;
 
-	public StringObfuscationAllatori() {
-		super(ExecutionCategory.ALLATORI, "String obfuscation removal", "Tested on version 7.3, should work for older versions too.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+	public StringObfuscationDashO() {
+		super(ExecutionCategory.DASHO, "String obfuscation removal", "Tested on version 10.3, should work for older versions too.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 
 		classes.values().stream().map(c -> c.node).forEach(this::decrypt);
 		if (encrypted == 0) {
-			logger.severe("No strings matching Allatori 7.3 string obfuscation have been found!");
+			logger.severe("No strings matching DashO 7.3 string obfuscation have been found!");
 			return false;
 		}
 		float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
@@ -95,20 +97,20 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 	private AbstractInsnNode[] tryReplaceMethods(ClassNode cn, MethodNode m, AbstractInsnNode ain, Frame<ConstantValue> frame) {
 		if (ain.getOpcode() == INVOKESTATIC) {
 			MethodInsnNode min = (MethodInsnNode) ain;
-			if (min.desc.equals(ALLATORI_DECRPYTION_METHOD_DESC)) {
+			if (min.desc.equals(DASHO_DECRPYTION_METHOD_DESC1) || min.desc.equals(DASHO_DECRPYTION_METHOD_DESC2)) {
 				try {
 					encrypted++;
+					ConstantValue second = frame.getStack(frame.getStackSize() - 2);
 					ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-					if (top.isKnown() && top.isString()) {
-						String encryptedString = (String) top.getValue();
+					if (top.isKnown() && second.isKnown()) {
 						// strings are not high utf and no high sdev, don't check
-						String realString = invokeProxy(cn, m, min, encryptedString);
+						String realString = invokeProxy(cn, m, min, top, second);
 						if (realString != null) {
 							if (Strings.isHighUTF(realString)) {
 								logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
 							}
 							this.decrypted++;
-							return new AbstractInsnNode[] { new InsnNode(POP), new LdcInsnNode(realString) };
+							return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(realString) };
 						} else {
 							logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
 						}
@@ -124,9 +126,9 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 		return new AbstractInsnNode[] { ain };
 	}
 
-	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, String encrypted) throws Exception {
+	private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second) throws Exception {
 		VM vm = VM.constructNonInitializingVM(this);
-		createFakeClone(cn, m, min, encrypted); // create a duplicate of the current class,
+		createFakeClone(cn, m, min, top, second); // create a duplicate of the current class,
 		// we need this because stringer checks for stacktrace method name and class
 
 		ClassNode decryptionMethodOwner = classes.get(min.owner).node;
@@ -151,10 +153,11 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 		return (String) loadedClone.getDeclaredField("proxyReturn").get(null);
 	}
 
-	private void createFakeClone(ClassNode cn, MethodNode m, MethodInsnNode min, String encrypted) {
+	private void createFakeClone(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second) {
 		ClassNode node = Sandbox.createClassProxy(cn.name);
 		InsnList instructions = new InsnList();
-		instructions.add(new LdcInsnNode(encrypted));
+		instructions.add(new LdcInsnNode(second.getValue()));
+		instructions.add(new LdcInsnNode(top.getValue()));
 		instructions.add(min.clone(null)); // we can clone original method here
 		instructions.add(new FieldInsnNode(PUTSTATIC, node.name, "proxyReturn", "Ljava/lang/String;"));
 		instructions.add(new InsnNode(RETURN));

@@ -22,7 +22,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.allatori.ExpirationDateRemoverAllatori;
 import me.nov.threadtear.execution.allatori.StringObfuscationAllatori;
 import me.nov.threadtear.execution.analysis.RemoveMonitors;
@@ -34,6 +33,7 @@ import me.nov.threadtear.execution.cleanup.InlineMethods;
 import me.nov.threadtear.execution.cleanup.InlineUnchangedFields;
 import me.nov.threadtear.execution.cleanup.RemoveAttributes;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
+import me.nov.threadtear.execution.dasho.StringObfuscationDashO;
 import me.nov.threadtear.execution.generic.ConvertCompareInstructions;
 import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
@@ -103,9 +103,6 @@ public class ExecutionSelection extends JDialog {
 			ExecutionTreeNode root = new ExecutionTreeNode("");
 			DefaultTreeModel model = new DefaultTreeModel(root);
 			this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-			for (ExecutionCategory t : ExecutionCategory.values()) {
-				root.add(new ExecutionTreeNode(t.name));
-			}
 			addExecution(root, new InlineMethods());
 			addExecution(root, new InlineUnchangedFields());
 			addExecution(root, new RemoveUnnecessary());
@@ -130,6 +127,8 @@ public class ExecutionSelection extends JDialog {
 
 			addExecution(root, new StringObfuscationAllatori());
 			addExecution(root, new ExpirationDateRemoverAllatori());
+
+			addExecution(root, new StringObfuscationDashO());
 
 			addExecution(root, new Java7Compatibility());
 			addExecution(root, new Java8Compatibility());
@@ -162,14 +161,26 @@ public class ExecutionSelection extends JDialog {
 		}
 
 		private void addExecution(ExecutionTreeNode root, Execution e) {
-			for (int i = 0; i < root.getChildCount(); i++) {
+			String[] split = (e.type.name + "." + e.name).split("\\.");
+			addToTree(root, e, split, 0);
+		}
 
-				ExecutionTreeNode child = (ExecutionTreeNode) root.getChildAt(i);
-				if (child.toString().equalsIgnoreCase(e.type.name)) {
-					child.add(new ExecutionTreeNode(e, false));
+		public void addToTree(ExecutionTreeNode current, Execution e, String[] subfolders, int folder) {
+			String node = subfolders[folder];
+			if (subfolders.length - folder <= 1) {
+				current.add(new ExecutionTreeNode(e, false));
+				return;
+			}
+			for (int i = 0; i < current.getChildCount(); i++) {
+				ExecutionTreeNode child = (ExecutionTreeNode) current.getChildAt(i);
+				if (child.toString().equals(node)) {
+					addToTree(child, e, subfolders, ++folder);
 					return;
 				}
 			}
+			ExecutionTreeNode newChild = new ExecutionTreeNode(node);
+			current.add(newChild);
+			addToTree(newChild, e, subfolders, ++folder);
 		}
 
 		@Override

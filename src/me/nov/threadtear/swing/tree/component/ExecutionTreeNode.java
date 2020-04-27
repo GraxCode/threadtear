@@ -16,7 +16,8 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
 		if (member != null) {
 			this.text = member.name;
 			if (suffix) {
-				text += " (" + ex.type.name + ")";
+				String[] split = ex.type.name.split("\\.");
+				text += " (" + split[split.length - 1] + ")";
 			}
 		}
 	}
@@ -47,6 +48,5 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
 	public String toString() {
 		return text;
 	}
-	
-	
+
 }
