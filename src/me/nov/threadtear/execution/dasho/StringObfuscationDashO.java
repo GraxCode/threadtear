@@ -14,12 +14,9 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
 import me.nov.threadtear.execution.Execution;
@@ -27,7 +24,6 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
-import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.vm.IVMReferenceHandler;
 import me.nov.threadtear.vm.Sandbox;
@@ -67,30 +63,19 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
 	private void decrypt(ClassNode cn) {
 
 		cn.methods.forEach(m -> {
-			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
-			try {
-				a.analyze(cn.name, m);
-			} catch (AnalyzerException e) {
-				if (verbose) {
-					e.printStackTrace();
-				}
-				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
-				return;
-			}
-			Frame<ConstantValue>[] frames = a.getFrames();
 			InsnList rewrittenCode = new InsnList();
 			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
 
 			// as we can't add instructions because frame index and instruction index
 			// wouldn't fit together anymore we have to do it this way
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				Frame<ConstantValue> frame = frames[i];
+			loopConstantFrames(cn, m, this, (ain, frame) -> {
 				for (AbstractInsnNode newInstr : tryReplaceMethods(cn, m, ain, frame)) {
 					rewrittenCode.add(newInstr.clone(labels));
 				}
+			});
+			if (rewrittenCode.size() > 0) {
+				Instructions.updateInstructions(m, labels, rewrittenCode);
 			}
-			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
 	}
 

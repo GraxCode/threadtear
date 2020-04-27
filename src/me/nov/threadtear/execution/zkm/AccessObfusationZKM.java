@@ -74,19 +74,9 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 
 	private void decrypt(ClassNode cn) {
 		cn.methods.forEach(m -> {
-			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
-			try {
-				a.analyze(cn.name, m);
-			} catch (AnalyzerException e) {
-				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
-				return;
-			}
-			Frame<ConstantValue>[] frames = a.getFrames();
 			InsnList rewrittenCode = new InsnList();
 			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				Frame<ConstantValue> frame = frames[i];
+			loopConstantFrames(cn, m, this, (ain, frame) -> {
 				if (ain.getOpcode() == INVOKEDYNAMIC && frame != null) {
 					InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
 					if (idin.bsm != null) {
@@ -103,7 +93,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 										rewrittenCode.add(new InsnNode(POP2)); // pop the long
 										rewrittenCode.add(DynamicReflection.getInstructionFromHandleInfo(methodInfo));
 										decrypted++;
-										continue;
+										return;
 									}
 								}
 							} catch (Throwable t) {
@@ -118,8 +108,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
 					}
 				}
 				rewrittenCode.add(ain.clone(labels));
+			});
+			if (rewrittenCode.size() > 0) {
+				Instructions.updateInstructions(m, labels, rewrittenCode);
 			}
-			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
 		System.out.println();
 	}

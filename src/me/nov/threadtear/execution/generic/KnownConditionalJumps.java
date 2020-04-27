@@ -47,20 +47,10 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 
 	public void decrypt(ClassNode cn) {
 		cn.methods.forEach(m -> {
-			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
-			try {
-				a.analyze(cn.name, m);
-			} catch (AnalyzerException e) {
-				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
-				return;
-			}
-			Frame<ConstantValue>[] frames = a.getFrames();
 			InsnList rewrittenCode = new InsnList();
 			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
 
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				Frame<ConstantValue> frame = frames[i];
+			loopConstantFrames(cn, m, this, (ain, frame) -> {
 				if (ain.getType() == AbstractInsnNode.JUMP_INSN) {
 					try {
 						int predicted = predictJump(frame, ain.getOpcode());
@@ -70,7 +60,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 								rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(((JumpInsnNode) ain).label)));
 							}
 							predictedJumps++;
-							continue;
+							return;
 						}
 					} catch (Exception e) {
 						logger.severe("Invalid stack in " + cn.name + "." + m.name + ":" + e.getMessage());
@@ -85,7 +75,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 							rewrittenCode.add(new InsnNode(POP));
 							rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(index == -1 ? lsin.dflt : lsin.labels.get(index))));
 							predictedSwitches++;
-							continue;
+							return;
 						}
 					}
 				} else if (ain.getOpcode() == TABLESWITCH) {
@@ -99,14 +89,16 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 							rewrittenCode.add(new InsnNode(POP));
 							rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(dflt ? tsin.dflt : tsin.labels.get(index))));
 							predictedSwitches++;
-							continue;
+							return;
 						}
 					}
 				}
 				rewrittenCode.add(ain.clone(labels));
+			});
+			if (rewrittenCode.size() > 0) {
+				Instructions.updateInstructions(m, labels, rewrittenCode);
+				Instructions.removeDeadCode(cn, m);
 			}
-			Instructions.updateInstructions(m, labels, rewrittenCode);
-			Instructions.removeDeadCode(cn, m);
 		});
 	}
 

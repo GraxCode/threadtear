@@ -58,9 +58,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	 * 
 	 * in method, invoke decryption method and set result to field in class
 	 * 
-	 * method parameters are loaded with fields (getstatic) but from another class,
-	 * because reflection calls <clinit> when setting a field (fuck you, java) (and
-	 * it's impossible to change method names, stringer forces us to)
+	 * method parameters are loaded with fields (getstatic) but from another class, because reflection calls <clinit> when setting a field (fuck you, java) (and it's impossible to
+	 * change method names, stringer forces us to)
 	 * 
 	 * method is run -> replace in code
 	 * 
@@ -87,31 +86,19 @@ public class StringObfuscationStringer extends Execution implements IVMReference
 	private void decrypt(ClassNode cn) {
 
 		cn.methods.forEach(m -> {
-
-			Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(this, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
-			try {
-				a.analyze(cn.name, m);
-			} catch (AnalyzerException e) {
-				if (verbose) {
-					e.printStackTrace();
-				}
-				logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
-				return;
-			}
-			Frame<ConstantValue>[] frames = a.getFrames();
 			InsnList rewrittenCode = new InsnList();
 			Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
 
 			// as we can't add instructions because frame index and instruction index
 			// wouldn't fit together anymore we have to do it this way
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				Frame<ConstantValue> frame = frames[i];
+			loopConstantFrames(cn, m, this, (ain, frame) -> {
 				for (AbstractInsnNode newInstr : tryReplaceMethods(cn, m, ain, frame)) {
 					rewrittenCode.add(newInstr.clone(labels));
 				}
+			});
+			if (rewrittenCode.size() > 0) {
+				Instructions.updateInstructions(m, labels, rewrittenCode);
 			}
-			Instructions.updateInstructions(m, labels, rewrittenCode);
 		});
 	}
 
