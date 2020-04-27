@@ -47,6 +47,8 @@ public class JarIO {
 		return classes;
 	}
 
+	public static final String CERT_REGEX = "META-INF\\/.+(\\.SF|\\.RSA)";
+
 	public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSignature, boolean watermark) {
 		try {
 			JarOutputStream out = new JarOutputStream(new FileOutputStream(output));
@@ -59,11 +61,9 @@ public class JarIO {
 						return;
 					}
 					String name = z.getName();
-					if (noSignature && name.startsWith("META-INF/")) {
-						if (name.startsWith("META-INF/CERT.")) {
-							// export no certificates
-							return;
-						}
+					if (noSignature && name.matches(CERT_REGEX)) {
+						// export no certificates
+						return;
 					}
 					if (name.equals("META-INF/MANIFEST.MF")) {
 						byte[] manifest = IOUtils.toByteArray(jar.getInputStream(z));
