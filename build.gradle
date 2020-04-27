@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
 }
 
-version = '2.2.2'
+version = '2.3.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -23,6 +23,10 @@ repositories {
 dependencies {
 	compile 'commons-io:commons-io:2.6' 
 	
+	compile 'org.apache.commons:commons-configuration2:2.7' 
+	compile 'commons-beanutils:commons-beanutils:1.9.4' 
+	
+	
 	compile 'com.github.weisj:darklaf-core:2.0.3'
 	compile 'com.github.weisj:darklaf-theme:2.0.3'
 	compile 'com.github.weisj:darklaf-property-loader:2.0.3'
@@ -33,6 +37,7 @@ dependencies {
 	compile 'org.ow2.asm:asm-util:8.0.1'
 	
 	compile 'org.benf:cfr:0.149'
+	
 	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'
 }
 

@@ -94,7 +94,6 @@ public class ClassTreePanel extends JPanel implements ILoader {
 				ignoreChilds(tn);
 			}
 			refreshIgnored();
-			repaint();
 			tree.grabFocus();
 		});
 		ignore.setEnabled(false);
@@ -102,10 +101,23 @@ public class ClassTreePanel extends JPanel implements ILoader {
 		return panel;
 	}
 
-	private void refreshIgnored() {
+	public void refreshIgnored() {
 		if (classes != null) {
 			long disabled = classes.stream().filter(c -> !c.transform).count();
 			outerPanel.setBorder(BorderFactory.createTitledBorder("Class list - " + classes.size() + " classes (" + disabled + " ignored)"));
+		}
+		repaint();
+	}
+
+	public void ignore(String className) {
+		classes.stream().filter(c -> c.node.name.equals(className)).forEach(c -> c.transform = false);
+	}
+
+	public void updateAllNames(SortedTreeClassNode root) {
+		root.updateClassName();
+		for (int i = 0; i < root.getChildCount(); i++) {
+			SortedTreeClassNode child = (SortedTreeClassNode) root.getChildAt(i);
+			updateAllNames(child);
 		}
 	}
 
