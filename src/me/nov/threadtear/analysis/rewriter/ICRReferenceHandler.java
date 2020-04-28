@@ -8,8 +8,8 @@ import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 
 public interface ICRReferenceHandler {
 
-	Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc);
+  Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc);
 
-	Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends CodeReferenceValue> values);
+  Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends CodeReferenceValue> values);
 
 }

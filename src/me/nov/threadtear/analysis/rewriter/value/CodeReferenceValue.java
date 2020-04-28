@@ -10,57 +10,56 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Value;
 
 public abstract class CodeReferenceValue implements Value, Opcodes {
-	public abstract boolean isKnownValue();
+  public abstract boolean isKnownValue();
 
-	public abstract boolean isFixedPosition();
+  public abstract boolean isFixedPosition();
 
-	public abstract CodeReferenceValue combine();
+  public abstract CodeReferenceValue combine();
 
-	public abstract boolean equalsWith(CodeReferenceValue obj);
+  public abstract boolean equalsWith(CodeReferenceValue obj);
 
-	public abstract InsnList cloneInstructions();
+  public abstract InsnList cloneInstructions();
 
-	public abstract InsnList getInstructions();
+  public abstract InsnList getInstructions();
 
-	public abstract Object getStackValueOrNull();
+  public abstract Object getStackValueOrNull();
 
-	
-	protected BasicValue type;
-	protected AbstractInsnNode node;
+  protected BasicValue type;
+  protected AbstractInsnNode node;
 
-	protected CodeReferenceValue(BasicValue type, AbstractInsnNode node) {
-		this.type = Objects.requireNonNull(type);
-		this.node = Objects.requireNonNull(node);
-	}
+  protected CodeReferenceValue(BasicValue type, AbstractInsnNode node) {
+    this.type = Objects.requireNonNull(type);
+    this.node = Objects.requireNonNull(node);
+  }
 
-	@Override
-	public int getSize() {
-		return getType().getSize();
-	}
+  @Override
+  public int getSize() {
+    return getType().getSize();
+  }
 
-	@Override
-	public String toString() {
-		Type t = getType().getType();
-		if (t == null)
-			return "uninitialized";
-		return this.getClass().getName() + " (" + getType().toString() + ")";
-	}
+  @Override
+  public String toString() {
+    Type t = getType().getType();
+    if (t == null)
+      return "uninitialized";
+    return this.getClass().getName() + " (" + getType().toString() + ")";
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof CodeReferenceValue) {
-			return equalsWith((CodeReferenceValue) obj);
-		}
-		return false;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof CodeReferenceValue) {
+      return equalsWith((CodeReferenceValue) obj);
+    }
+    return false;
+  }
 
-	public BasicValue getType() {
-		return type;
-	}
+  public BasicValue getType() {
+    return type;
+  }
 
-	public CodeReferenceValue setType(BasicValue type) {
-		this.type = Objects.requireNonNull(type);
-		return this;
-	}
+  public CodeReferenceValue setType(BasicValue type) {
+    this.type = Objects.requireNonNull(type);
+    return this;
+  }
 
 }
