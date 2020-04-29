@@ -16,6 +16,11 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 javadoc.options.encoding = 'UTF-8'
  
+ext {
+    darklaf_ver = "2.0.3"
+    asm_ver = "8.0.1"
+}
+ 
 repositories {
     mavenCentral()
 }
@@ -26,15 +31,14 @@ dependencies {
 	compile 'org.apache.commons:commons-configuration2:2.7' 
 	compile 'commons-beanutils:commons-beanutils:1.9.4' 
 	
-	
-	compile 'com.github.weisj:darklaf-core:2.0.3'
-	compile 'com.github.weisj:darklaf-theme:2.0.3'
-	compile 'com.github.weisj:darklaf-property-loader:2.0.3'
+	compile "com.github.weisj:darklaf-core:${darklaf_ver}"
+	compile "com.github.weisj:darklaf-theme:${darklaf_ver}"
+	compile "com.github.weisj:darklaf-property-loader:${darklaf_ver}"
 
-	compile 'org.ow2.asm:asm:8.0.1'
-	compile 'org.ow2.asm:asm-tree:8.0.1'
-	compile 'org.ow2.asm:asm-analysis:8.0.1'
-	compile 'org.ow2.asm:asm-util:8.0.1'
+	compile "org.ow2.asm:asm:${asm_ver}"
+	compile "org.ow2.asm:asm-tree:${asm_ver}"
+	compile "org.ow2.asm:asm-analysis:${asm_ver}"
+	compile "org.ow2.asm:asm-util:${asm_ver}"
 	
 	compile 'org.benf:cfr:0.149'
 	
@@ -43,16 +47,17 @@ dependencies {
 
 task fatJar(type: Jar) {
 	manifest {
-        attributes 'Implementation-Title': 'Threadtear',  
-        	'Implementation-Version': version,
-        	'Main-Class': 'me.nov.threadtear.Threadtear'
+        attributes 'Implementation-Title': "${project.name}",
+                'Implementation-Version': "${project.version}",
+                'Main-Class': "me.nov.threadtear.Threadtear"
     }
-    baseName = project.name + '-all'
+    baseName(project.name + '-all')
     from (configurations.compile.collect { entry -> zipTree(entry) }) {
         exclude 'META-INF/MANIFEST.MF'
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
+        exclude 'module-info.*'
     }
     with jar
 }
