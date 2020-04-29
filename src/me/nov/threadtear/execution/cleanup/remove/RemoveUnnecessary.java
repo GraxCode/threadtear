@@ -3,10 +3,14 @@ package me.nov.threadtear.execution.cleanup.remove;
 import java.util.List;
 import java.util.Map;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
@@ -70,51 +74,153 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
     InsnList rewrittenCode = new InsnList();
     Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
     for (int i = 0; i < m.instructions.size(); i++) {
+      if (rewrittenCode.size() > Math.max(25, m.instructions.size() * 4)) {
+        logger.severe("Code got too huge in " + cn.name + "." + m.name + " -> returning old code");
+        return m.instructions;
+      }
       AbstractInsnNode ain = m.instructions.get(i);
       Frame<CodeReferenceValue> frame = frames[i];
       if (frame == null) {
-        rewrittenCode.add(ain.clone(labels));
-      } else if (ain.getType() == AbstractInsnNode.LABEL) {
-        rewrittenCode.add(ain.clone(labels));
-      } else if (ain.getType() == AbstractInsnNode.METHOD_INSN || ain.getType() == AbstractInsnNode.JUMP_INSN || isObligatory(ain.getOpcode()) || Instructions.isCodeEnd(ain)) {
-        for (int j = 0; j < frame.getStackSize(); j++) {
-          CodeReferenceValue stack = frame.getStack(j);
-          stack = stack.combine();
-          rewrittenCode.add(stack.cloneInstructions());
-        }
-        rewrittenCode.add(ain.clone(labels));
+//        rewrittenCode.add(ain.clone(labels));
+        continue;
       }
-//			logger.info(i + ": " + (frame == null ? "null" : toString(frame)));
-    }
-//		logger.info(rewrittenCode.size() + " final size");
-    return rewrittenCode;
-  }
+      int stackSize = frame.getStackSize();
+      if (ain.getType() == AbstractInsnNode.LABEL) {
+        rewrittenCode.add(ain.clone(labels));
+      } else {
+        // all instructions that remove from the stack take their arguments and rewrite
+        switch (ain.getOpcode()) {
+        case ATHROW:
+        case ARETURN:
+        case DRETURN:
+        case FRETURN:
+        case IRETURN:
+        case LRETURN:
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
+        case RETURN:
+        case GOTO:
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case MONITORENTER:
+        case MONITOREXIT:
+        case LOOKUPSWITCH:
+        case TABLESWITCH:
+        case ISTORE:
+        case LSTORE:
+        case FSTORE:
+        case DSTORE:
+        case ASTORE:
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case IASTORE:
+        case LASTORE:
+        case FASTORE:
+        case DASTORE:
+        case AASTORE:
+        case BASTORE:
+        case CASTORE:
+        case SASTORE:
+          rewrittenCode.add(frame.getStack(stackSize - 3).combine().cloneInstructions()); // array
+          rewrittenCode.add(frame.getStack(stackSize - 2).combine().cloneInstructions()); // index
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions()); // value
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case PUTFIELD:
+          rewrittenCode.add(frame.getStack(stackSize - 2).combine().cloneInstructions()); // object reference
+        case PUTSTATIC:
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions()); // value
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case POP:
+          CodeReferenceValue top = frame.getStack(stackSize - 1);
+          if (top.isRequiredInCode()) {
+            rewrittenCode.add(top.combine().cloneInstructions());
+            rewrittenCode.add(ain.clone(labels));
+          }
+          break;
+        case POP2:
+          CodeReferenceValue first = frame.getStack(stackSize - 1);
+          if (first.getSize() == 1) {
+            CodeReferenceValue second = frame.getStack(stackSize - 2);
+            if (second.isRequiredInCode() && first.isRequiredInCode()) {
+              rewrittenCode.add(second.combine().cloneInstructions());
+              rewrittenCode.add(first.combine().cloneInstructions());
+              rewrittenCode.add(ain.clone(labels));
+            } else if (second.isRequiredInCode()) {
+              rewrittenCode.add(second.combine().cloneInstructions());
+              rewrittenCode.add(new InsnNode(POP));
+            } else if (first.isRequiredInCode()) {
+              rewrittenCode.add(first.combine().cloneInstructions());
+              rewrittenCode.add(new InsnNode(POP));
+            }
+          } else if (first.isRequiredInCode()) {
+            rewrittenCode.add(first.combine().cloneInstructions());
+            rewrittenCode.add(ain.clone(null));
+          }
+          break;
+        case IFEQ:
+        case IFNE:
+        case IFNULL:
+        case IFNONNULL:
+        case IFGT:
+        case IFGE:
+        case IFLT:
+        case IFLE:
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case IF_ICMPEQ:
+        case IF_ICMPNE:
+        case IF_ICMPLT:
+        case IF_ICMPGE:
+        case IF_ICMPGT:
+        case IF_ICMPLE:
+        case IF_ACMPEQ:
+        case IF_ACMPNE:
+          rewrittenCode.add(frame.getStack(stackSize - 2).combine().cloneInstructions());
+          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
+          rewrittenCode.add(ain.clone(labels));
+          break;
+        case INVOKEVIRTUAL:
+        case INVOKESPECIAL:
+        case INVOKEINTERFACE:
+          String desc1 = ((MethodInsnNode) ain).desc;
+          if (desc1.endsWith(")V")) {
+            int parameters = Type.getArgumentTypes(desc1).length + 1; // one for reference
+            while (parameters > 0) {
+              rewrittenCode.add(frame.getStack(stackSize - (parameters--)).combine().cloneInstructions());
+            }
+            rewrittenCode.add(ain.clone(labels));
+          }
+          break;
+        case INVOKESTATIC:
+          String desc2 = ((MethodInsnNode) ain).desc;
+          if (desc2.endsWith(")V")) {
+            int parameters = Type.getArgumentTypes(desc2).length;
+            while (parameters > 0) {
+              rewrittenCode.add(frame.getStack(stackSize - (parameters--)).combine().cloneInstructions());
 
-  private boolean isObligatory(int opcode) {
-    switch (opcode) {
-    case MONITORENTER:
-    case MONITOREXIT:
-    case LOOKUPSWITCH:
-    case TABLESWITCH:
-    case INVOKEDYNAMIC:
-    case IASTORE:
-    case LASTORE:
-    case FASTORE:
-    case DASTORE:
-    case AASTORE:
-    case BASTORE:
-    case CASTORE:
-    case SASTORE:
-    case PUTFIELD:
-    case PUTSTATIC:
-    case ISTORE:
-    case LSTORE:
-    case FSTORE:
-    case DSTORE:
-    case ASTORE:
-      return true;
+            }
+            rewrittenCode.add(ain.clone(labels));
+          }
+          break;
+        case INVOKEDYNAMIC:
+          String desc3 = ((InvokeDynamicInsnNode) ain).desc;
+          if (desc3.endsWith(")V")) {
+            int parameters = Type.getArgumentTypes(desc3).length;
+            while (parameters > 0) {
+              rewrittenCode.add(frame.getStack(stackSize - (parameters--)).combine().cloneInstructions());
+            }
+            rewrittenCode.add(ain.clone(labels));
+          }
+          break;
+        }
+      }
     }
-    return false;
+    m.tryCatchBlocks.clear();
+    // TODO rewrite try catch blocks
+    return rewrittenCode;
   }
 
   public String toString(Frame<CodeReferenceValue> f) {

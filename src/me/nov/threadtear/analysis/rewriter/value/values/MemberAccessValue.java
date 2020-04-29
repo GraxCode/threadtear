@@ -34,7 +34,7 @@ public class MemberAccessValue extends CodeReferenceValue {
   }
 
   @Override
-  public boolean isFixedPosition() {
+  public boolean isRequiredInCode() {
     return true;
   }
 

@@ -12,7 +12,7 @@ import org.objectweb.asm.tree.analysis.Value;
 public abstract class CodeReferenceValue implements Value, Opcodes {
   public abstract boolean isKnownValue();
 
-  public abstract boolean isFixedPosition();
+  public abstract boolean isRequiredInCode();
 
   public abstract CodeReferenceValue combine();
 

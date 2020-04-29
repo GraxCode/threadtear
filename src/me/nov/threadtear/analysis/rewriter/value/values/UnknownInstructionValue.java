@@ -21,7 +21,7 @@ public class UnknownInstructionValue extends CodeReferenceValue {
   }
 
   @Override
-  public boolean isFixedPosition() {
+  public boolean isRequiredInCode() {
     return true;
   }
 

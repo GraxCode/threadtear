@@ -26,9 +26,9 @@ public class BinaryOpValue extends CodeReferenceValue {
   }
 
   @Override
-  public boolean isFixedPosition() {
+  public boolean isRequiredInCode() {
     // TODO check for idiv 0 and similar things
-    return left.isFixedPosition() || right.isFixedPosition();
+    return left.isRequiredInCode() || right.isRequiredInCode();
   }
 
   @Override

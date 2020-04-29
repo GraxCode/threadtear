@@ -25,7 +25,7 @@ public class StringValue extends CodeReferenceValue {
   }
 
   @Override
-  public boolean isFixedPosition() {
+  public boolean isRequiredInCode() {
     return false;
   }
 
