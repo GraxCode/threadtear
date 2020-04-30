@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -98,11 +99,17 @@ public class DecompilerPanel extends JPanel {
     topPanel.add(actionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
     this.textArea = new DecompilerTextArea();
-    textArea.setText(CFR.decompile(cn));
+    this.textArea.setText("Decompiling... This can take a while on huge classes.");
     JScrollPane scp = new RTextScrollPane(textArea);
     scp.getVerticalScrollBar().setUnitIncrement(16);
     scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
     this.add(scp, BorderLayout.CENTER);
+    SwingUtilities.invokeLater(() -> {
+      new Thread(() -> {
+        textArea.setText(CFR.decompile(cn));
+        textArea.repaint();
+      }, "decompile-thread").start();
+    });
   }
 
   private void hightlightText(String searchText) throws BadLocationException {
