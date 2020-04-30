@@ -5,9 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +38,7 @@ public class DecompilerPanel extends JPanel {
 
   private int searchIndex = -1;
   private String lastSearchText = null;
+  private ImageIcon loading = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/spin.gif")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
 
   public DecompilerPanel(ClassNode cn) {
     this.setLayout(new BorderLayout(4, 4));
@@ -98,16 +102,19 @@ public class DecompilerPanel extends JPanel {
     topPanel.add(new JLabel("<html>CFR Decompiler 0.149 (<i>www.benf.org/other/cfr</i>)"), BorderLayout.WEST);
     topPanel.add(actionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
-    this.textArea = new DecompilerTextArea();
-    this.textArea.setText("Decompiling... This can take a while on huge classes.");
-    JScrollPane scp = new RTextScrollPane(textArea);
-    scp.getVerticalScrollBar().setUnitIncrement(16);
-    scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-    this.add(scp, BorderLayout.CENTER);
+    JLabel loadingLabel = new JLabel("Decompiling... ", loading, JLabel.CENTER);
+    this.add(loadingLabel, BorderLayout.CENTER);
     SwingUtilities.invokeLater(() -> {
       new Thread(() -> {
-        textArea.setText(CFR.decompile(cn));
-        textArea.repaint();
+        this.textArea = new DecompilerTextArea();
+        this.textArea.setText(CFR.decompile(cn));
+        JScrollPane scp = new RTextScrollPane(textArea);
+        scp.getVerticalScrollBar().setUnitIncrement(16);
+        scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        this.remove(loadingLabel);
+        this.add(scp, BorderLayout.CENTER);
+        invalidate();
+        validate();
       }, "decompile-thread").start();
     });
   }

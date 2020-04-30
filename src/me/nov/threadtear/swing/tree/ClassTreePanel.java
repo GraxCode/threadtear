@@ -15,7 +15,9 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -169,22 +171,33 @@ public class ClassTreePanel extends JPanel implements ILoader {
 
   @Override
   public void onJarLoad(File input) {
+    tree.isLoading = true;
+    tree.setModel(new DefaultTreeModel((TreeNode) tree.getModel().getRoot()));
+    tree.invalidate();
+    tree.validate();
+    tree.repaint();
     try {
-      this.inputFile = input;
-      try {
-        this.classes = JarIO.loadClasses(input);
-        if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
-          JOptionPane.showMessageDialog(this,
-              "<html>Warning: File is signed and may not load correctly if already modified, remove the signature<br>(<tt>META-INF\\MANIFEST.MF</tt>) and certificates (<tt>META-INF\\*.SF/.RSA</tt>) first!",
-              "Signature warning", JOptionPane.WARNING_MESSAGE);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      loadTree(classes);
-      refreshIgnored();
-      model.reload();
-      analysis.setEnabled(true);
+      SwingUtilities.invokeLater(() -> {
+        Thread loadingThread = new Thread(() -> {
+          this.inputFile = input;
+          try {
+            this.classes = JarIO.loadClasses(input);
+            if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
+              JOptionPane.showMessageDialog(this,
+                  "<html>Warning: File is signed and may not load correctly if already modified, remove the signature<br>(<tt>META-INF\\MANIFEST.MF</tt>) and certificates (<tt>META-INF\\*.SF/.RSA</tt>) first!",
+                  "Signature warning", JOptionPane.WARNING_MESSAGE);
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          loadTree(classes);
+          refreshIgnored();
+          model.reload();
+          analysis.setEnabled(true);
+          tree.isLoading = false;
+        });
+        loadingThread.start();
+      });
     } catch (Exception e) {
       e.printStackTrace();
     }
