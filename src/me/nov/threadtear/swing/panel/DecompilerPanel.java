@@ -27,6 +27,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.decompiler.CFR;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
@@ -49,7 +50,7 @@ public class DecompilerPanel extends JPanel {
       textArea.setText(CFR.decompile(cn));
     });
     JTextField search = new JTextField();
-    // search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search...");
+    search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search...");
     search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
     search.addActionListener(l -> {
       try {

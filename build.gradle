@@ -17,7 +17,7 @@ compileTestJava.options.encoding = 'UTF-8'
 javadoc.options.encoding = 'UTF-8'
  
 ext {
-    darklaf_ver = "2.0.3"
+    darklaf_ver = "2.1.0"
     asm_ver = "8.0.1"
 }
  
