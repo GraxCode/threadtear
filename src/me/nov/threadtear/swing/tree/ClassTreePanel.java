@@ -3,6 +3,8 @@ package me.nov.threadtear.swing.tree;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -11,13 +13,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -169,16 +172,19 @@ public class ClassTreePanel extends JPanel implements ILoader {
     }
   }
 
+  private ImageIcon loading = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/spin.gif")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
+
   @Override
   public void onJarLoad(File input) {
-    tree.isLoading = true;
-    tree.setModel(new DefaultTreeModel((TreeNode) tree.getModel().getRoot()));
-    tree.invalidate();
-    tree.validate();
-    tree.repaint();
+    this.remove(outerPanel);
+    JLabel loadingLabel = new JLabel("Loading class files... ", loading, JLabel.CENTER);
+    this.add(loadingLabel, BorderLayout.CENTER);
+    this.invalidate();
+    this.validate();
+    this.repaint();
     try {
       SwingUtilities.invokeLater(() -> {
-        Thread loadingThread = new Thread(() -> {
+        new Thread(() -> {
           this.inputFile = input;
           try {
             this.classes = JarIO.loadClasses(input);
@@ -194,9 +200,12 @@ public class ClassTreePanel extends JPanel implements ILoader {
           refreshIgnored();
           model.reload();
           analysis.setEnabled(true);
-          tree.isLoading = false;
-        });
-        loadingThread.start();
+          this.remove(loadingLabel);
+          this.add(outerPanel, BorderLayout.CENTER);
+          this.invalidate();
+          this.validate();
+          this.repaint();
+        }).start();
       });
     } catch (Exception e) {
       e.printStackTrace();
