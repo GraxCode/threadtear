@@ -1,7 +1,9 @@
 # Threadtear [![Build Status](https://travis-ci.com/GraxCode/threadtear.svg?branch=master)](https://travis-ci.com/GraxCode/threadtear) [![Release](https://img.shields.io/github/v/release/GraxCode/threadtear)](https://github.com/GraxCode/threadtear/releases) [![Downloads](https://img.shields.io/github/downloads/GraxCode/threadtear/total)](https://github.com/GraxCode/threadtear/releases)
-Threadtear is a multifunctional deobfuscation tool for java. Suitable for easier code analysis without worrying too much about obfuscation.
+Threadtear is a multifunctional deobfuscation tool for java. Android application support is coming soon (Currently working on a dalvik to java converter). 
+Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. For easier debugging there are also other tools included. 
-Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. Reverse compatibility is not a problem anymore, if no version specific methods are used.
+Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. 
+Reverse compatibility is not a problem anymore, if no version specific methods are used.
 ![Screenshot 1](https://i.imgur.com/NH4Nnvy.png)
 ![Screenshot 2](https://i.imgur.com/EylBxBY.png)
 ![Screenshot 3](https://i.imgur.com/ZQFprgH.png)
@@ -16,7 +18,8 @@ If you are ready, click on the "Run" button and they will be executed in order.
 
 ## Warning
 Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file. An attacker could tweak the bytecode so that malicious code could be executed.
-Affected executions use the class `me.nov.threadtear.asm.vm.VM`. These are mostly used for decrypting string or resource / access obfuscation, as it is much easier to execute the decryption methods remotely.
+Affected executions use the class `me.nov.threadtear.asm.vm.VM`. 
+These are mostly used for decrypting string or resource / access obfuscation, as it is much easier to execute the decryption methods remotely.
 
 ## How to compile 
 First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release.
@@ -140,20 +143,25 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 ```
 Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
 ## Tips & Tricks
-There are some tricks that can help you identify and deobfuscate jar files successfully. Before running executions, decompile the code to find out what needs to be used. You can use the implemented decompiler for that.
+There are some tricks that can help you identify and deobfuscate jar files successfully. Before running executions, decompile the code to find out what needs to be used. 
+You can use the implemented decompiler for that.
 ### Deobfuscation order
 The best order for deobfuscation is `generic executions > access deobfuscation > string deobfuscation > cleaning executions`.
 ### Identification
-Obfuscators exhibit patterns which you can use to identify obfuscators. The easiest way to identify an obfuscator is to skim the `META-INF/MANIFEST.MF` file. It's possible that there is an `Obfuscated-By: XXX` or `Protected-By: XXX` attribute.
+Obfuscators exhibit patterns which you can use to identify obfuscators. The easiest way to identify an obfuscator is to skim the `META-INF/MANIFEST.MF` file. 
+It's possible that there is an `Obfuscated-By: XXX` or `Protected-By: XXX` attribute.
 
 ##### ZKM
-Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches, or string decryption methods with a very long switch block (about 250 cases).
+Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches,
+ or string decryption methods with a very long switch block (about 250 cases).
 ZKM is one of the best (and oldest) obfuscators for java, and also very expensive.
 ![ZKM](https://i.imgur.com/Psdagyb.png)
 ##### Stringer
 If your jar file contains some special classes with huge decryption algorithms that are used by string obfuscation and access obfuscation, it's probably Stringer.
-If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten. (Due to custom JAR signature and usage of method names during string decryption)
-The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
+If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten. 
+(Due to custom JAR signature and usage of method names during string decryption)
+The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. 
+It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
 ![Stringer](https://i.imgur.com/LmI9SYz.png)
 ![Stringer 2](https://i.imgur.com/M72plII.png)
 ##### Allatori
@@ -165,7 +173,8 @@ Allatori is very common, because it offers a free demo that accessible within a 
 For other obfuscators you can try generic executions or open an issue and I'll see what i can do.
 
 ### Description and tags
-Before selecting an execution, check out the tool-tip texts while hovering. They contain a small description about what they do, but also tags that help you understand how the behavior of your JAR file is changed.
+Before selecting an execution, check out the tool-tip texts while hovering. 
+They contain a small description about what they do, but also tags that help you understand how the behavior of your JAR file is changed.
 ## License
 Threadtear is licensed under the GNU General Public License 3.0
 
