@@ -1,31 +1,16 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.Objects;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
+import javax.swing.text.*;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
+import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.icons.IconLoader;
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
@@ -39,7 +24,6 @@ public class DecompilerPanel extends JPanel {
 
   private int searchIndex = -1;
   private String lastSearchText = null;
-  private ImageIcon loading = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/spin.gif")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
 
   public DecompilerPanel(ClassNode cn) {
     this.setLayout(new BorderLayout(4, 4));
@@ -103,7 +87,8 @@ public class DecompilerPanel extends JPanel {
     topPanel.add(new JLabel("<html>CFR Decompiler 0.149 (<i>www.benf.org/other/cfr</i>)"), BorderLayout.WEST);
     topPanel.add(actionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
-    JLabel loadingLabel = new JLabel("Decompiling... ", loading, JLabel.CENTER);
+    LoadingIndicator loadingLabel = new LoadingIndicator("Decompiling class file... ", JLabel.CENTER);
+    loadingLabel.setRunning(true);
     this.add(loadingLabel, BorderLayout.CENTER);
     SwingUtilities.invokeLater(() -> {
       new Thread(() -> {

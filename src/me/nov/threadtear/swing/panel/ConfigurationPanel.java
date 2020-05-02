@@ -33,6 +33,8 @@ public class ConfigurationPanel extends JPanel {
   private JCheckBox watermark;
   private JCheckBox disableSecurity;
   private JCheckBox removeSignature;
+  public JButton run;
+  public JButton save;
 
   public ConfigurationPanel(Threadtear main) {
     this.main = main;
@@ -86,8 +88,10 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(saveCfg);
-    JButton save = new JButton("Save as jar file", IconLoader.get().loadSVGIcon("res/save.svg", false));
+    save = new JButton("Save as jar file", IconLoader.get().loadSVGIcon("res/save.svg", false));
+    save.setEnabled(false);
     save.addActionListener(l -> {
+      save.setEnabled(false);
       File inputFile = main.listPanel.classList.inputFile;
       if (inputFile == null) {
         JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
@@ -104,10 +108,13 @@ public class ConfigurationPanel extends JPanel {
         JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(), watermark.isSelected());
         Threadtear.logger.info("Saved to " + output.getAbsolutePath());
       }
+      save.setEnabled(true);
     });
     panel.add(save);
-    JButton run = new JButton("Run", IconLoader.get().loadSVGIcon("res/run.svg", false));
+    run = new JButton("Run", IconLoader.get().loadSVGIcon("res/run.svg", false));
+    run.setEnabled(false);
     run.addActionListener(l -> {
+      run.setEnabled(false);
       main.run(verbose.isSelected(), disableSecurity.isSelected());
     });
     panel.add(run);

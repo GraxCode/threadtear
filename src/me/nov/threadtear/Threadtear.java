@@ -39,6 +39,7 @@ public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;
   public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   public TreePanel listPanel;
+  public ConfigurationPanel configPanel;
   private LogFrame logFrame;
 
   public Threadtear() {
@@ -82,8 +83,8 @@ public class Threadtear extends JFrame {
 
   private void initializeFrame() {
     this.setLayout(new BorderLayout(16, 16));
-    this.add(listPanel = new TreePanel(), BorderLayout.CENTER);
-    this.add(new ConfigurationPanel(this), BorderLayout.SOUTH);
+    this.add(listPanel = new TreePanel(this), BorderLayout.CENTER);
+    this.add(configPanel = new ConfigurationPanel(this), BorderLayout.SOUTH);
   }
 
   private void initBounds() {
@@ -161,6 +162,7 @@ public class Threadtear extends JFrame {
         logger.info("Successful finish!");
         System.setSecurityManager(null);
         listPanel.classList.loadTree(classes);
+        configPanel.run.setEnabled(true);
       }).start();
     });
   }

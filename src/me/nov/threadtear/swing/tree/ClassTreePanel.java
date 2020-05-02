@@ -1,44 +1,28 @@
 package me.nov.threadtear.swing.tree;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.*;
+import javax.swing.tree.*;
 
+import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.icons.IconLoader;
 
-import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.io.JarIO;
+import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;
-import me.nov.threadtear.swing.frame.BytecodeFrame;
-import me.nov.threadtear.swing.frame.DecompilerFrame;
-import me.nov.threadtear.swing.handler.ILoader;
-import me.nov.threadtear.swing.handler.JarDropHandler;
+import me.nov.threadtear.swing.frame.*;
+import me.nov.threadtear.swing.handler.*;
 import me.nov.threadtear.swing.tree.component.SortedTreeClassNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
 
 public class ClassTreePanel extends JPanel implements ILoader {
   private static final long serialVersionUID = 1L;
+  private Threadtear threadtear;
   public File inputFile;
   public ArrayList<Clazz> classes;
   public DefaultTreeModel model;
@@ -50,7 +34,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private JButton bytecode;
   private JButton ignore;
 
-  public ClassTreePanel() {
+  public ClassTreePanel(Threadtear threadtear) {
+    this.threadtear = threadtear;
     this.setLayout(new BorderLayout());
     this.add(outerPanel = Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
     this.add(createButtons(), BorderLayout.SOUTH);
@@ -172,12 +157,11 @@ public class ClassTreePanel extends JPanel implements ILoader {
     }
   }
 
-  private ImageIcon loading = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/spin.gif")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
-
   @Override
   public void onJarLoad(File input) {
     this.remove(outerPanel);
-    JLabel loadingLabel = new JLabel("Loading class files... ", loading, JLabel.CENTER);
+    LoadingIndicator loadingLabel = new LoadingIndicator("Loading class files... ", JLabel.CENTER);
+    loadingLabel.setRunning(true);
     this.add(loadingLabel, BorderLayout.CENTER);
     this.invalidate();
     this.validate();
@@ -200,6 +184,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
           refreshIgnored();
           model.reload();
           analysis.setEnabled(true);
+          threadtear.configPanel.run.setEnabled(true);
+          threadtear.configPanel.save.setEnabled(true);
           this.remove(loadingLabel);
           this.add(outerPanel, BorderLayout.CENTER);
           this.invalidate();
