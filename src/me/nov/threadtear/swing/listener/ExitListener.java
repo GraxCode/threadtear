@@ -1,10 +1,8 @@
 package me.nov.threadtear.swing.listener;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class ExitListener extends WindowAdapter {
   private JFrame frame;

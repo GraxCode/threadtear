@@ -1,14 +1,10 @@
 package me.nov.threadtear.execution.analysis;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.References;
 

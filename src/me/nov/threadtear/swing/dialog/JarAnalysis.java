@@ -1,30 +1,18 @@
 package me.nov.threadtear.swing.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.util.Counting;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.*;
 
 public class JarAnalysis extends JDialog implements Opcodes {
   private static final long serialVersionUID = 1L;

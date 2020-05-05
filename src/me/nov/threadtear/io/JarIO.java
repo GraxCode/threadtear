@@ -1,13 +1,8 @@
 package me.nov.threadtear.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
+import java.util.jar.*;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;

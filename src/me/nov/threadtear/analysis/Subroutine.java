@@ -1,10 +1,8 @@
 package me.nov.threadtear.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.*;
 
 /**
  * A method subroutine (corresponds to a JSR instruction).

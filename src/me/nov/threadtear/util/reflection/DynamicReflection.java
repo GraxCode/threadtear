@@ -1,17 +1,11 @@
 package me.nov.threadtear.util.reflection;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandleInfo;
-import java.lang.invoke.MethodHandles;
+import java.lang.invoke.*;
 import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.*;
 
 public class DynamicReflection implements Opcodes {
 

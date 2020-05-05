@@ -1,25 +1,11 @@
 package me.nov.threadtear.analysis.rewriter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 import org.objectweb.asm.tree.analysis.Frame;
-import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.Subroutine;
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;

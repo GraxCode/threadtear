@@ -1,26 +1,15 @@
 package me.nov.threadtear;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
@@ -32,8 +21,7 @@ import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
-import me.nov.threadtear.swing.panel.ConfigurationPanel;
-import me.nov.threadtear.swing.panel.TreePanel;
+import me.nov.threadtear.swing.panel.*;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;

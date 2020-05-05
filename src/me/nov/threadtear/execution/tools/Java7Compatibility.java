@@ -3,9 +3,7 @@ package me.nov.threadtear.execution.tools;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 
 public class Java7Compatibility extends Execution {

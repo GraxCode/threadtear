@@ -1,7 +1,6 @@
 package me.nov.threadtear.swing.tree.component;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 

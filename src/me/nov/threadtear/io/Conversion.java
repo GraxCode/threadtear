@@ -1,13 +1,9 @@
 package me.nov.threadtear.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 

@@ -1,7 +1,6 @@
 package me.nov.threadtear.analysis.rewriter.value.values;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;

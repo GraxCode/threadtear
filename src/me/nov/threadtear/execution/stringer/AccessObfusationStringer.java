@@ -1,25 +1,16 @@
 package me.nov.threadtear.execution.stringer;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.MethodHandleInfo;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.objectweb.asm.Handle;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InvokeDynamicInsnNode;
+import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.reflection.DynamicReflection;
-import me.nov.threadtear.vm.IVMReferenceHandler;
-import me.nov.threadtear.vm.Sandbox;
-import me.nov.threadtear.vm.VM;
+import me.nov.threadtear.vm.*;
 
 public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
 

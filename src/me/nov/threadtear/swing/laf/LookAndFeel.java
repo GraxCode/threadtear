@@ -7,8 +7,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.ColorUIResource;
 
 import com.github.weisj.darklaf.LafManager;
-import com.github.weisj.darklaf.theme.OneDarkTheme;
-import com.github.weisj.darklaf.theme.Theme;
+import com.github.weisj.darklaf.theme.*;
 
 public class LookAndFeel {
   public static void setLookAndFeel() {

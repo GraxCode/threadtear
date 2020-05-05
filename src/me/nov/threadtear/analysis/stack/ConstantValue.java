@@ -3,8 +3,7 @@ package me.nov.threadtear.analysis.stack;
 import java.util.Objects;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Value;
+import org.objectweb.asm.tree.analysis.*;
 
 public class ConstantValue implements Value {
   private final BasicValue type;

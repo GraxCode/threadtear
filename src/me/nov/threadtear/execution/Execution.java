@@ -1,24 +1,15 @@
 package me.nov.threadtear.execution;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.Frame;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.analysis.stack.ConstantTracker;
-import me.nov.threadtear.analysis.stack.ConstantValue;
-import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
+import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Access;
 

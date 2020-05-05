@@ -1,22 +1,14 @@
 package me.nov.threadtear.execution.cleanup;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.*;
+import java.util.stream.*;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.util.asm.Access;
-import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.*;
 
 public class InlineUnchangedFields extends Execution {
 

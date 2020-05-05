@@ -1,18 +1,10 @@
 package me.nov.threadtear.swing.tree;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ToolTipManager;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 

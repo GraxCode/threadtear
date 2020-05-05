@@ -1,31 +1,19 @@
 package me.nov.threadtear.execution.zkm;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandleInfo;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.InvokeDynamicInsnNode;
-import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.stack.ConstantValue;
-import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.analysis.stack.*;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.DynamicReflection;
-import me.nov.threadtear.vm.IVMReferenceHandler;
-import me.nov.threadtear.vm.VM;
+import me.nov.threadtear.vm.*;
 
 public class AccessObfusationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 

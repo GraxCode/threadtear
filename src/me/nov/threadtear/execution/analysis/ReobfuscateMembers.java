@@ -1,27 +1,16 @@
 package me.nov.threadtear.execution.analysis;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
-import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.execution.*;
+import me.nov.threadtear.io.*;
 import me.nov.threadtear.util.Strings;
-import me.nov.threadtear.util.asm.Access;
-import me.nov.threadtear.util.asm.References;
+import me.nov.threadtear.util.asm.*;
 
 public class ReobfuscateMembers extends Execution {
   private Map<String, Clazz> classes;

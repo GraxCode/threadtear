@@ -1,9 +1,6 @@
 package me.nov.threadtear.swing.tree;
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;

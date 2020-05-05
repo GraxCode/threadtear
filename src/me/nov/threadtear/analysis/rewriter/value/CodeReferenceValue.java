@@ -2,12 +2,9 @@ package me.nov.threadtear.analysis.rewriter.value;
 
 import java.util.Objects;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Value;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 
 public abstract class CodeReferenceValue implements Value, Opcodes {
   public abstract boolean isKnownValue();

@@ -2,17 +2,14 @@ package me.nov.threadtear.vm;
 
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.BiPredicate;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.io.Conversion;
-import me.nov.threadtear.util.asm.Access;
-import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.*;
 
 public class VM extends ClassLoader implements Opcodes {
   public HashMap<String, Class<?>> loaded = new HashMap<>();

@@ -1,23 +1,13 @@
 package me.nov.threadtear.execution.cleanup;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.util.asm.Access;
-import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.*;
 
 public class InlineMethods extends Execution {
 

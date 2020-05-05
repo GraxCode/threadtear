@@ -1,30 +1,16 @@
 package me.nov.threadtear.execution.cleanup.remove;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.InvokeDynamicInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Frame;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 
-import me.nov.threadtear.analysis.rewriter.CodeAnalyzer;
-import me.nov.threadtear.analysis.rewriter.CodeRewriter;
-import me.nov.threadtear.analysis.rewriter.ICRReferenceHandler;
+import me.nov.threadtear.analysis.rewriter.*;
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.util.asm.Access;
-import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.*;
 
 public class RemoveUnnecessary extends Execution implements ICRReferenceHandler {
 

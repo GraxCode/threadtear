@@ -2,8 +2,7 @@ package me.nov.threadtear.util;
 
 import java.util.stream.IntStream;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.*;
 
 public class Counting {
 

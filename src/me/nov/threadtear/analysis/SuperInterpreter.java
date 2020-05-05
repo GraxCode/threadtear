@@ -1,8 +1,7 @@
 package me.nov.threadtear.analysis;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.analysis.BasicInterpreter;
-import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.*;
 
 public class SuperInterpreter extends BasicInterpreter {
   public SuperInterpreter() {

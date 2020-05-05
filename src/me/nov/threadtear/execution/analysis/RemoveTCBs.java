@@ -1,11 +1,8 @@
 package me.nov.threadtear.execution.analysis;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 
 public class RemoveTCBs extends Execution {

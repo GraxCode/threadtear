@@ -1,15 +1,9 @@
 package me.nov.threadtear.swing.tree.renderer;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 import org.objectweb.asm.Opcodes;
 

@@ -1,22 +1,14 @@
 package me.nov.threadtear.execution.allatori;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import me.nov.threadtear.analysis.stack.ConstantValue;
-import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.analysis.stack.*;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 
 public class ExpirationDateRemoverAllatori extends Execution implements IConstantReferenceHandler {

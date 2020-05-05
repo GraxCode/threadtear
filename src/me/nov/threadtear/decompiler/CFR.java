@@ -1,18 +1,9 @@
 package me.nov.threadtear.decompiler;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.benf.cfr.reader.api.CfrDriver;
-import org.benf.cfr.reader.api.ClassFileSource;
-import org.benf.cfr.reader.api.OutputSinkFactory;
-import org.benf.cfr.reader.api.SinkReturns;
+import org.benf.cfr.reader.api.*;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
 import org.objectweb.asm.tree.ClassNode;
 

@@ -1,20 +1,11 @@
 package me.nov.threadtear.analysis.stack;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Interpreter;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.util.reflection.Casts;

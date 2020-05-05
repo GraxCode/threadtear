@@ -1,17 +1,11 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.Timer;
+import javax.swing.*;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.swing.tree.ClassTreePanel;
-import me.nov.threadtear.swing.tree.ExecutionListPanel;
+import me.nov.threadtear.swing.tree.*;
 
 public class TreePanel extends JPanel {
   private static final long serialVersionUID = 1L;

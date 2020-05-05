@@ -1,23 +1,11 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.util.Objects;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
+import javax.swing.text.*;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;

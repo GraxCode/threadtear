@@ -1,32 +1,15 @@
 package me.nov.threadtear.analysis.rewriter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 import org.objectweb.asm.tree.analysis.Frame;
-import org.objectweb.asm.tree.analysis.Interpreter;
 
 import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
-import me.nov.threadtear.analysis.rewriter.value.values.BinaryOpValue;
-import me.nov.threadtear.analysis.rewriter.value.values.MemberAccessValue;
-import me.nov.threadtear.analysis.rewriter.value.values.NumberValue;
-import me.nov.threadtear.analysis.rewriter.value.values.StringValue;
-import me.nov.threadtear.analysis.rewriter.value.values.UnaryOpValue;
-import me.nov.threadtear.analysis.rewriter.value.values.UnknownInstructionValue;
+import me.nov.threadtear.analysis.rewriter.value.values.*;
 
 public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opcodes {
 

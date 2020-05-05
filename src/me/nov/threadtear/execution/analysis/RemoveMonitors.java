@@ -2,12 +2,9 @@ package me.nov.threadtear.execution.analysis;
 
 import java.util.Map;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 
 public class RemoveMonitors extends Execution {

@@ -1,9 +1,7 @@
 package me.nov.threadtear.logging;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.logging.*;
 
 public class CustomOutputStream extends OutputStream {
   Logger logger;

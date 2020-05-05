@@ -3,10 +3,9 @@ package me.nov.threadtear.swing.textarea;
 import java.awt.Font;
 import java.io.IOException;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rsyntaxtextarea.*;
 
-import com.github.weisj.darklaf.*;
+import com.github.weisj.darklaf.LafManager;
 
 public class DecompilerTextArea extends RSyntaxTextArea {
   private static final long serialVersionUID = 1L;

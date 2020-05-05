@@ -1,20 +1,11 @@
 package me.nov.threadtear.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 public class Utils {
   public static JPanel addTitleAndBorder(String title, Component c) {

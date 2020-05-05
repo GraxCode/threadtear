@@ -4,17 +4,10 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 
@@ -23,8 +16,7 @@ import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.io.JarIO;
-import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
-import me.nov.threadtear.swing.tree.component.SortedTreeClassNode;
+import me.nov.threadtear.swing.tree.component.*;
 
 public class ConfigurationPanel extends JPanel {
   private static final long serialVersionUID = 1L;
