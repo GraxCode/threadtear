@@ -21,7 +21,13 @@ import me.nov.threadtear.execution.analysis.ReobfuscateMembers.MappedMember;
 
 public class References {
 
-  public static int remapInstructionDescs(Map<String, String> map, AbstractInsnNode ain) {
+  /**
+   * Remap class references, if ain has one
+   * @param map Map<old class name, new class name>
+   * @param ain instruction
+   * @return 1 if updated, 0 if not
+   */
+  public static int remapClassRefs(Map<String, String> map, AbstractInsnNode ain) {
     if (ain instanceof MethodInsnNode) {
       MethodInsnNode min = (MethodInsnNode) ain;
       min.owner = map.getOrDefault(min.owner, min.owner);
@@ -76,7 +82,7 @@ public class References {
     return 1;
   }
 
-  public static int remapMethodReference(HashMap<String, ArrayList<MappedMember>> methods, AbstractInsnNode ain) {
+  public static int remapMethodRefs(HashMap<String, ArrayList<MappedMember>> methods, AbstractInsnNode ain) {
     if (ain instanceof MethodInsnNode) {
       MethodInsnNode min = (MethodInsnNode) ain;
       if (!methods.containsKey(min.owner))
@@ -115,7 +121,7 @@ public class References {
     return 1;
   }
 
-  public static int remapFieldReference(HashMap<String, ArrayList<MappedMember>> fields, AbstractInsnNode ain) {
+  public static int remapFieldRefs(HashMap<String, ArrayList<MappedMember>> fields, AbstractInsnNode ain) {
     if (ain instanceof FieldInsnNode) {
       FieldInsnNode fin = (FieldInsnNode) ain;
       if (!fields.containsKey(fin.owner))

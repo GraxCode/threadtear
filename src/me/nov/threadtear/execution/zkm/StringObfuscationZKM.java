@@ -96,7 +96,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     });
     cn.fields.stream().filter(m -> m.desc.equals("[Ljava/lang/String;") || m.desc.equals("Ljava/lang/String;")).forEach(f -> proxyClass.fields.add(f));
     Map<String, String> singleMap = Collections.singletonMap(cn.name, proxyClass.name);
-    proxyClass.methods.stream().map(m -> m.instructions.toArray()).flatMap(Arrays::stream).forEach(ain -> References.remapInstructionDescs(singleMap, ain));
+    proxyClass.methods.stream().map(m -> m.instructions.toArray()).flatMap(Arrays::stream).forEach(ain -> References.remapClassRefs(singleMap, ain));
     try {
       invokeVMAndReplace(proxyClass, cn);
     } catch (Throwable e) {

@@ -1,36 +1,19 @@
 package me.nov.threadtear.execution.stringer;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Frame;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 
-import me.nov.threadtear.analysis.stack.ConstantValue;
-import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.execution.ExecutionCategory;
-import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.analysis.stack.*;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.Casts;
-import me.nov.threadtear.vm.IVMReferenceHandler;
-import me.nov.threadtear.vm.Sandbox;
-import me.nov.threadtear.vm.VM;
+import me.nov.threadtear.vm.*;
 
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 

@@ -1,28 +1,11 @@
 package me.nov.threadtear.util.asm;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiPredicate;
 
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.InvokeDynamicInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicInterpreter;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
 import org.objectweb.asm.tree.analysis.Frame;
 
 public class Instructions implements Opcodes {
@@ -45,7 +28,7 @@ public class Instructions implements Opcodes {
     return labelMap;
   }
 
-  public static boolean computable(AbstractInsnNode ain) {
+  public static boolean isComputable(AbstractInsnNode ain) {
     switch (ain.getType()) {
     case AbstractInsnNode.METHOD_INSN:
     case AbstractInsnNode.FIELD_INSN:
@@ -73,17 +56,6 @@ public class Instructions implements Opcodes {
     }
   }
 
-  public static boolean unnecessaryToStack(AbstractInsnNode ain) {
-    switch (ain.getType()) {
-    case AbstractInsnNode.LINE:
-    case AbstractInsnNode.FIELD_INSN:
-    case AbstractInsnNode.LABEL:
-      return false;
-    default:
-      return true;
-    }
-  }
-
   public static boolean removeDeadCode(ClassNode cn, MethodNode mn) {
     Analyzer<?> analyzer = new Analyzer<>(new BasicInterpreter());
     try {
@@ -103,23 +75,27 @@ public class Instructions implements Opcodes {
     return true;
   }
 
+  /**
+   * Get succeeding instruction, but skip labels, frames and line numbers
+   */
   public static AbstractInsnNode getRealNext(AbstractInsnNode ain) {
     do {
-      // skip labels, frames and line numbers
       ain = ain.getNext();
     } while (ain != null && (ain.getOpcode() == -1 || ain.getOpcode() == NOP));
     return ain;
   }
 
+  /**
+   * Get previous instruction, but skip labels, frames and line numbers
+   */
   public static AbstractInsnNode getRealPrevious(AbstractInsnNode ain) {
     do {
-      // skip labels, frames and line numbers
       ain = ain.getPrevious();
     } while (ain != null && (ain.getOpcode() == -1 || ain.getOpcode() == NOP));
     return ain;
   }
 
-  public static boolean isInteger(AbstractInsnNode ain) {
+  public static boolean isIntegerPush(AbstractInsnNode ain) {
     int op = ain.getOpcode();
 
     switch (op) {
@@ -150,9 +126,17 @@ public class Instructions implements Opcodes {
     if (node.getType() == AbstractInsnNode.LDC_INSN) {
       return (Integer) ((LdcInsnNode) node).cst;
     }
-    throw new IllegalArgumentException("not an int: " + node.getClass().getName());
+    throw new IllegalArgumentException("not an int push: " + node.getClass().getName());
   }
 
+  /**
+   * Isolate all calls matching a certain predicate
+   * 
+   * @param mn           method to isolate
+   * @param methodRemove (owner, desc) -> (...), also used for everything else referencing something. desc can be an empty string, if there is no desc. owner is of format
+   *                     java/foo/bar
+   * @param fieldRemove  (owner, desc) -> (...), only for fields
+   */
   public static void isolateCallsThatMatch(MethodNode mn, BiPredicate<String, String> methodRemove, BiPredicate<String, String> fieldRemove) {
     for (int i = 0; i < mn.instructions.size(); i++) {
       AbstractInsnNode ain = mn.instructions.get(i);
@@ -256,6 +240,9 @@ public class Instructions implements Opcodes {
     }
   }
 
+  /**
+   * Make a null or zero push
+   */
   public static AbstractInsnNode makeNullPush(Type type) {
     switch (type.getSort()) {
     case Type.OBJECT:
@@ -274,7 +261,7 @@ public class Instructions implements Opcodes {
     }
   }
 
-  public static boolean matchOpcodes(InsnList list1, InsnList list2) {
+  public static boolean opcodesMatch(InsnList list1, InsnList list2) {
     if (list1.size() != list2.size())
       return false;
     for (int i = 0; i < list1.size(); i++) {
@@ -287,6 +274,9 @@ public class Instructions implements Opcodes {
     return true;
   }
 
+  /**
+   * Gives a method node new instructions
+   */
   public static void updateInstructions(MethodNode m, Map<LabelNode, LabelNode> labels, InsnList rewrittenCode) {
     m.instructions.clear();
     m.instructions = rewrittenCode;

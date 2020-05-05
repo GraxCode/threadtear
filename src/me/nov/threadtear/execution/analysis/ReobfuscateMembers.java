@@ -54,7 +54,7 @@ public class ReobfuscateMembers extends Execution {
 
     logger.info("Updating method references in code");
     int mrefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-        .mapToInt(ain -> References.remapMethodReference(methods, ain)).sum();
+        .mapToInt(ain -> References.remapMethodRefs(methods, ain)).sum();
     logger.info(mrefs + " method references updated successfully!");
 
     logger.info("Making field mappings");
@@ -67,7 +67,7 @@ public class ReobfuscateMembers extends Execution {
 
     logger.info("Updating field references in code");
     int frefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-        .mapToInt(ain -> References.remapFieldReference(fields, ain)).sum();
+        .mapToInt(ain -> References.remapFieldRefs(fields, ain)).sum();
     logger.info(frefs + " field references updated successfully!");
     return frefs > 0 && mrefs > 0;
   }

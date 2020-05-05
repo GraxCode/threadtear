@@ -34,7 +34,12 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
       b.append("<br>");
       b.append(tag.info);
     }
-    b.append("</b></i><br><br><tt>");
+    b.append("</b></i><br><br>");
+    if(member.getAuthor() != null) {
+      b.append(member.getAuthor());
+      b.append("<br>");
+    }
+    b.append("<tt>");
     b.append(member.getClass().getName());
     return b.toString();
   }
