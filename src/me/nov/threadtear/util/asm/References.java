@@ -11,6 +11,7 @@ public class References {
 
   /**
    * Remap class references, if ain has one
+   * 
    * @param map Map<old class name, new class name>
    * @param ain instruction
    * @return 1 if updated, 0 if not

@@ -34,7 +34,7 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
       b.append(tag.info);
     }
     b.append("</b></i><br><br>");
-    if(member.getAuthor() != null) {
+    if (member.getAuthor() != null) {
       b.append(member.getAuthor());
       b.append("<br>");
     }
