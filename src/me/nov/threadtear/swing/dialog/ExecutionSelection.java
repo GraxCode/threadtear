@@ -28,9 +28,10 @@ public class ExecutionSelection extends JDialog {
 
   public ExecutionSelection() {
     setModalityType(ModalityType.APPLICATION_MODAL);
-    setTitle("Select execution");
+    setTitle("Select one or more executions");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 450, 300);
+    setMinimumSize(new Dimension(450, 300));
     getContentPane().setLayout(new BorderLayout());
     JPanel cp = new JPanel();
     cp.setBorder(new EmptyBorder(10, 10, 10, 10));

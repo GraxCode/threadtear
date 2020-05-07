@@ -20,9 +20,10 @@ public class JarAnalysis extends JDialog implements Opcodes {
 
   public JarAnalysis(ArrayList<Clazz> classes) {
     setModalityType(ModalityType.APPLICATION_MODAL);
-    setTitle("Obfuscation Analysis");
+    setTitle("Obfuscation analysis");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 450, 300);
+    setMinimumSize(new Dimension(450, 300));
     getContentPane().setLayout(new BorderLayout());
     JPanel cp = new JPanel();
     cp.setBorder(new EmptyBorder(10, 10, 10, 10));

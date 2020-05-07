@@ -44,6 +44,23 @@ public class SortedTreeClassNode extends DefaultMutableTreeNode implements Compa
     return text;
   }
 
+  @SuppressWarnings("unchecked")
+  public void combinePackage(SortedTreeClassNode pckg) {
+    if (pckg.member != null)
+      throw new IllegalArgumentException("cannot merge package with file");
+    if (pckg == this)
+      throw new IllegalArgumentException("cannot merge itself");
+    if (!children.contains(pckg))
+      throw new IllegalArgumentException("package is not a child");
+    if (this.getChildCount() != 1)
+      throw new IllegalArgumentException("child count over 1");
+    text += "." + pckg.text; // combine package names
+    this.removeAllChildren(); // remove old package
+
+    // to avoid dirty OOB exceptions
+    new ArrayList<>(pckg.children).forEach(m -> this.add((SortedTreeClassNode) m));
+  }
+
   @Override
   public int compare(SortedTreeClassNode node1, SortedTreeClassNode node2) {
     boolean leaf1 = node1.member != null;

@@ -198,6 +198,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void loadTree(ArrayList<Clazz> classes) {
     SortedTreeClassNode root = new SortedTreeClassNode("");
     model = new DefaultTreeModel(root);
@@ -205,13 +206,17 @@ public class ClassTreePanel extends JPanel implements ILoader {
       String[] packages = c.node.name.split("/");
       addToTree((SortedTreeClassNode) model.getRoot(), c, packages, 0);
     });
-    @SuppressWarnings("unchecked")
-    Enumeration<SortedTreeClassNode> e = root.depthFirstEnumeration();
-    while (e.hasMoreElements()) {
-      SortedTreeClassNode node = e.nextElement();
-      if (!node.isLeaf()) {
-        node.sort();
+    for (Object n : Collections.list(root.depthFirstEnumeration())) {
+      SortedTreeClassNode node = (SortedTreeClassNode) n;
+      if (!node.isLeaf() && node != root) {
+        if (node.getChildCount() == 1) {
+          SortedTreeClassNode child = (SortedTreeClassNode) node.getChildAt(0);
+          if (child.member == null) {
+            node.combinePackage(child);
+          }
+        }
       }
+      node.sort();
     }
     tree.setModel(model);
   }
