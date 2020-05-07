@@ -80,6 +80,7 @@ public class Threadtear extends JFrame {
     int width = (int) (screenSize.width * 0.5);
     int height = (int) (screenSize.height * 0.5);
     setBounds(screenSize.width / 2 - width / 2, screenSize.height / 2 - height / 2, width, height);
+    setMinimumSize(new Dimension((int) (width / 1.25), (int) (height / 1.25)));
   }
 
   public static void main(String[] args) throws Exception {

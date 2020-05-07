@@ -39,6 +39,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   private JComboBox<String> conversionMethod;
   private JCheckBox ignoreTCB;
   private JCheckBox ignoreMon;
+  private JCheckBox topsort;
 
   public DecompilerPanel(Clazz cn) {
     this.clazz = cn;
@@ -53,10 +54,15 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     leftActionPanel.add(conversionMethod);
     leftActionPanel.add(ignoreTCB = new JCheckBox("Ingore try catch blocks"));
     leftActionPanel.add(ignoreMon = new JCheckBox("Ignore synchronized"));
+    leftActionPanel.add(topsort = new JCheckBox("Top sort"));
     ignoreTCB.setEnabled(false);
+    ignoreTCB.setFocusable(false);
     ignoreTCB.addActionListener(this);
     ignoreMon.setEnabled(false);
+    ignoreMon.setFocusable(false);
     ignoreMon.addActionListener(this);
+    topsort.addActionListener(this);
+    topsort.setFocusable(false);
     JPanel rightActionPanel = new JPanel();
     rightActionPanel.setLayout(new GridBagLayout());
     JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
@@ -138,7 +144,9 @@ public class DecompilerPanel extends JPanel implements ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    reload();
+    if (scp != null && scp.isShowing()) {
+      reload();
+    }
   }
 
   private void reload() {
@@ -169,7 +177,6 @@ public class DecompilerPanel extends JPanel implements ActionListener {
         ignoreTCB.setEnabled(false);
         ignoreMon.setEnabled(false);
       } else {
-        System.out.println("decompile ASM " + conversionMethod.getSelectedIndex());
         ignoreTCB.setEnabled(true);
         ignoreMon.setEnabled(true);
         ClassNode copy = Conversion.toNode(Conversion.toBytecode0(clazz.node));
@@ -183,6 +190,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
         }
         bytes = Conversion.toBytecode0(copy);
       }
+      CFR.setTopsort(topsort.isSelected());
       String decompiled = CFR.decompile(clazz.node.name, bytes);
       this.textArea.setText(decompiled);
     } catch (IOException e) {

@@ -18,8 +18,11 @@ public class CFR {
     options.put("hidelongstrings", "true");
     options.put("hideutf", "false");
     options.put("innerclasses", "false");
-    options.put("forcetopsort", "true");
-    options.put("forcetopsortaggress", "true");
+  }
+
+  public static void setTopsort(boolean topsort) {
+    options.put("forcetopsort", String.valueOf(topsort));
+    options.put("forcetopsortaggress", String.valueOf(topsort));
   }
 
   private static String decompiled;

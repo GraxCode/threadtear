@@ -11,9 +11,11 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.swing.textarea.BytecodeTextArea;
+import me.nov.threadtear.util.Strings;
 
 public class BytecodePanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -32,7 +34,7 @@ public class BytecodePanel extends JPanel {
       textArea.setText(Conversion.textify(cn));
     });
     JTextField search = new JTextField();
-    // search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search...");
+    search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");
     search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
     search.addActionListener(l -> {
       try {
@@ -52,7 +54,7 @@ public class BytecodePanel extends JPanel {
         Label: {
           for (int i = 0; i < split.length; i++) {
             String line = split[i];
-            if (line.toLowerCase().contains(searchText)) {
+            if (Strings.containsRegex(line, searchText)) {
               if (i > searchIndex) {
                 textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(i).getStartOffset());
                 searchIndex = i;
@@ -63,6 +65,7 @@ public class BytecodePanel extends JPanel {
               }
             }
           }
+          Toolkit.getDefaultToolkit().beep();
           if (first) {
             // go back to first line
             textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(firstIndex).getStartOffset());

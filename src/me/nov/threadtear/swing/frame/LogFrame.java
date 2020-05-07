@@ -28,6 +28,7 @@ public class LogFrame extends JFrame {
     setTitle("Execution log");
     setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 1000, 800);
+    setMinimumSize(new Dimension(500, 400));
     setLayout(new BorderLayout());
     setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/run.svg", 64, 64, false)));
     this.setAlwaysOnTop(true);
@@ -62,7 +63,7 @@ public class LogFrame extends JFrame {
       }
     });
     buttons.add(save);
-    JButton copy = new JButton("Copy log");
+    JButton copy = new JButton("Copy to clipboard");
     copy.addActionListener(e -> {
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(area.getText()), null);
     });

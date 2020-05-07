@@ -17,6 +17,7 @@ public class DecompilerFrame extends JFrame {
     setTitle("Decompiler: " + clazz.node.name);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
+    setMinimumSize(new Dimension(500, 300));
     setLayout(new BorderLayout());
     setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/decompile.svg", 64, 64, false)));
     setAlwaysOnTop(true);
