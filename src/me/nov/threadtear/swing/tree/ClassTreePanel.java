@@ -62,7 +62,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     decompile.addActionListener(l -> {
       SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
-        new DecompilerFrame(tn.member.node).setVisible(true);
+        new DecompilerFrame(tn.member).setVisible(true);
       }
     });
     panel.add(decompile);
@@ -142,7 +142,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
           if (e.getClickCount() == 2) {
             SortedTreeClassNode tn = (SortedTreeClassNode) getLastSelectedPathComponent();
             if (tn != null && tn.member != null) {
-              new DecompilerFrame(tn.member.node).setVisible(true);
+              new DecompilerFrame(tn.member).setVisible(true);
             }
           }
         }

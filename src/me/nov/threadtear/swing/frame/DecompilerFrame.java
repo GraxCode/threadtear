@@ -4,18 +4,17 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import org.objectweb.asm.tree.ClassNode;
-
 import com.github.weisj.darklaf.icons.IconLoader;
 
+import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.panel.DecompilerPanel;
 
 public class DecompilerFrame extends JFrame {
   private static final long serialVersionUID = 1L;
 
-  public DecompilerFrame(ClassNode cn) {
-    setTitle("Decompiler: " + cn.name);
+  public DecompilerFrame(Clazz clazz) {
+    setTitle("Decompiler: " + clazz.node.name);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
     setLayout(new BorderLayout());
@@ -23,7 +22,7 @@ public class DecompilerFrame extends JFrame {
     setAlwaysOnTop(true);
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-    cp.add(new DecompilerPanel(cn), BorderLayout.CENTER);
+    cp.add(new DecompilerPanel(clazz), BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));

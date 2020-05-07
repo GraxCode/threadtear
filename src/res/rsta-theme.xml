@@ -9,10 +9,10 @@
     <background color="21252B"/>
     <caret color="D2D2D2"/>
     <selection useFG="false" bg="373e48" roundedEdges="true"/>
-    <currentLineHighlight color="2a2f37" fade="true"/>
+    <currentLineHighlight color="5D626A" fade="true"/>
     <marginLine fg="373e48"/>
     <markAllHighlight color="2a2f37"/>
-    <markOccurrencesHighlight color="2a2f37" border="false"/>
+    <markOccurrencesHighlight color="5D626A" border="false"/>
     <matchedBracket fg="F0F0F0" bg="2E2E2E" highlightBoth="true" animate="true"/>
     <hyperlinks fg="A082BD"/>
     <secondaryLanguages>

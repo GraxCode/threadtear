@@ -2,6 +2,7 @@ package me.nov.threadtear.util;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import javax.lang.model.SourceVersion;
 
@@ -20,6 +21,14 @@ public class Strings {
 
   public static boolean isHighSDev(String cst) {
     return cst.length() >= 2 ? (calcSdev(cst) > 30) : false;
+  }
+
+  public static boolean containsRegex(String input, String search) {
+    try {
+      return Pattern.compile(search).matcher(input).find();
+    } catch (PatternSyntaxException e) {
+      return input.toLowerCase().contains(search.toLowerCase());
+    }
   }
 
   public static double calcSdev(String cst) {

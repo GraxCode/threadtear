@@ -29,7 +29,7 @@ public class JarIO {
         try {
           final ClassNode cn = Conversion.toNode(bytes);
           if (cn != null && (cn.superName != null || (cn.name != null && cn.name.equals("java/lang/Object")))) {
-            classes.add(new Clazz(cn, en));
+            classes.add(new Clazz(cn, en, jar));
           }
         } catch (Exception e) {
           e.printStackTrace();
