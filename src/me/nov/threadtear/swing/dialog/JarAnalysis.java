@@ -18,7 +18,7 @@ public class JarAnalysis extends JDialog implements Opcodes {
   private static final long serialVersionUID = 1L;
   private JTextArea area;
 
-  public JarAnalysis(ArrayList<Clazz> classes) {
+  public JarAnalysis(List<Clazz> classes) {
     setModalityType(ModalityType.APPLICATION_MODAL);
     setTitle("Obfuscation analysis");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -51,7 +51,7 @@ public class JarAnalysis extends JDialog implements Opcodes {
     });
   }
 
-  private void analyze(ArrayList<Clazz> classes) {
+  private void analyze(List<Clazz> classes) {
     if (classes == null) {
       print("Open a jar file first.");
       return;

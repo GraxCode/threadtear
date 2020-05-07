@@ -33,8 +33,8 @@ public class JarDropHandler extends TransferHandler {
       return false;
     }
     for (File jar : data) {
-      if (jar.getName().toLowerCase().endsWith(".jar")) {
-        loader.onJarLoad(jar);
+      if (jar.getName().toLowerCase().matches(".*(\\.jar|\\.class)")) {
+        loader.onFileDrop(jar);
         return true;
       }
     }

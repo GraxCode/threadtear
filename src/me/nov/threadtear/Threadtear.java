@@ -98,7 +98,7 @@ public class Threadtear extends JFrame {
   }
 
   public void run(boolean verbose, boolean disableSecurity) {
-    ArrayList<Clazz> classes = listPanel.classList.classes;
+    List<Clazz> classes = listPanel.classList.classes;
     ArrayList<Execution> executions = listPanel.executionList.getExecutions();
     if (classes == null || classes.isEmpty()) {
       JOptionPane.showMessageDialog(this, "You have to load a jar file first.");

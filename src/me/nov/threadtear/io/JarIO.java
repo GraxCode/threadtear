@@ -1,9 +1,10 @@
 package me.nov.threadtear.io;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.jar.*;
 import java.util.stream.Stream;
+import java.util.zip.*;
 
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
@@ -44,43 +45,52 @@ public class JarIO {
 
   public static final String CERT_REGEX = "META-INF\\/.+(\\.SF|\\.RSA|\\.DSA)";
 
-  public static void saveAsJar(File original, File output, ArrayList<Clazz> classes, boolean noSignature, boolean watermark) {
+  public static void saveAsJar(File original, File output, List<Clazz> classes, boolean noSignature, boolean watermark) {
     try {
       JarOutputStream out = new JarOutputStream(new FileOutputStream(output));
-      JarFile jar = new JarFile(original);
-      Stream<JarEntry> str = jar.stream();
-      str.forEach(z -> {
+      Rewriting: {
+        JarFile jar;
         try {
-          if (classes.stream().anyMatch(c -> c.oldEntry.getName().equals(z.getName()))) {
-            // ignore old class files
-            return;
-          }
-          String name = z.getName();
-          if (noSignature && name.matches(CERT_REGEX)) {
-            // export no certificates
-            return;
-          }
-          if (name.equals("META-INF/MANIFEST.MF")) {
-            byte[] manifest = IOUtils.toByteArray(jar.getInputStream(z));
-            if (noSignature) {
-              manifest = Manifest.patchManifest(manifest);
-            }
-            if (watermark) {
-              manifest = Manifest.watermark(manifest);
-            }
-            out.putNextEntry(cloneOldEntry(z, z.getName()));
-            out.write(manifest);
-            out.closeEntry();
-            return;
-          }
-          // export resources
-          out.putNextEntry(cloneOldEntry(z, z.getName()));
-          out.write(IOUtils.toByteArray(jar.getInputStream(z)));
-          out.closeEntry();
-        } catch (Exception e) {
-          Threadtear.logger.severe("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
+          jar = new JarFile(original);
+        } catch (ZipException e) {
+          // not a zip file, has to be a class
+          break Rewriting;
         }
-      });
+        Stream<JarEntry> str = jar.stream();
+        str.forEach(z -> {
+          try {
+            if (classes.stream().anyMatch(c -> c.oldEntry.getName().equals(z.getName()))) {
+              // ignore old class files
+              return;
+            }
+            String name = z.getName();
+            if (noSignature && name.matches(CERT_REGEX)) {
+              // export no certificates
+              return;
+            }
+            if (name.equals("META-INF/MANIFEST.MF")) {
+              byte[] manifest = IOUtils.toByteArray(jar.getInputStream(z));
+              if (noSignature) {
+                manifest = Manifest.patchManifest(manifest);
+              }
+              if (watermark) {
+                manifest = Manifest.watermark(manifest);
+              }
+              out.putNextEntry(cloneOldEntry(z, z.getName()));
+              out.write(manifest);
+              out.closeEntry();
+              return;
+            }
+            // export resources
+            out.putNextEntry(cloneOldEntry(z, z.getName()));
+            out.write(IOUtils.toByteArray(jar.getInputStream(z)));
+            out.closeEntry();
+          } catch (Exception e) {
+            Threadtear.logger.severe("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
+          }
+        });
+        jar.close();
+      }
       for (Clazz c : classes) {
         try {
           // add updated classes
@@ -91,7 +101,6 @@ public class JarIO {
           Threadtear.logger.severe("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
         }
       }
-      jar.close();
       out.close();
     } catch (IOException e) {
       e.printStackTrace();

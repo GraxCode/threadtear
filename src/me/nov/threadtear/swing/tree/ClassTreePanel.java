@@ -3,10 +3,16 @@ package me.nov.threadtear.swing.tree;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.List;
+import java.util.jar.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;
+
+import org.apache.commons.io.FilenameUtils;
+import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.icons.IconLoader;
@@ -24,7 +30,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private static final long serialVersionUID = 1L;
   private Threadtear threadtear;
   public File inputFile;
-  public ArrayList<Clazz> classes;
+  public List<Clazz> classes;
   public DefaultTreeModel model;
   private ClassTree tree;
   private JPanel outerPanel;
@@ -128,7 +134,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     private static final long serialVersionUID = 1L;
 
     public ClassTree() {
-      super("Drag a java archive file here");
+      super("Drag a jar or class file here");
       this.setRootVisible(false);
       this.setShowsRootHandles(true);
       this.setFocusable(true);
@@ -158,9 +164,10 @@ public class ClassTreePanel extends JPanel implements ILoader {
   }
 
   @Override
-  public void onJarLoad(File input) {
+  public void onFileDrop(File input) {
     this.remove(outerPanel);
-    LoadingIndicator loadingLabel = new LoadingIndicator("Loading class files... ", JLabel.CENTER);
+    String type = FilenameUtils.getExtension(input.getAbsolutePath());
+    LoadingIndicator loadingLabel = new LoadingIndicator("Loading class file(s)... ", JLabel.CENTER);
     loadingLabel.setRunning(true);
     this.add(loadingLabel, BorderLayout.CENTER);
     this.invalidate();
@@ -170,16 +177,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
       SwingUtilities.invokeLater(() -> {
         new Thread(() -> {
           this.inputFile = input;
-          try {
-            this.classes = JarIO.loadClasses(input);
-            if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
-              JOptionPane.showMessageDialog(this,
-                  "<html>Warning: File is signed and may not load correctly if already modified, remove the signature<br>(<tt>META-INF\\MANIFEST.MF</tt>) and certificates (<tt>META-INF\\*.SF/.RSA</tt>) first!",
-                  "Signature warning", JOptionPane.WARNING_MESSAGE);
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+          this.loadFile(type);
           loadTree(classes);
           refreshIgnored();
           model.reload();
@@ -198,8 +196,29 @@ public class ClassTreePanel extends JPanel implements ILoader {
     }
   }
 
+  private void loadFile(String type) {
+    try {
+      switch (type) {
+      case "jar":
+        this.classes = JarIO.loadClasses(inputFile);
+        if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
+          JOptionPane.showMessageDialog(this,
+              "<html>Warning: File is signed and may not load correctly if already modified, remove the signature<br>(<tt>META-INF\\MANIFEST.MF</tt>) and certificates (<tt>META-INF\\*.SF/.RSA</tt>) first!",
+              "Signature warning", JOptionPane.WARNING_MESSAGE);
+        }
+        break;
+      case "class":
+        ClassNode node = Conversion.toNode(Files.readAllBytes(inputFile.toPath()));
+        this.classes = Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile));
+        break;
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   @SuppressWarnings("unchecked")
-  public void loadTree(ArrayList<Clazz> classes) {
+  public void loadTree(List<Clazz> classes) {
     SortedTreeClassNode root = new SortedTreeClassNode("");
     model = new DefaultTreeModel(root);
     classes.forEach(c -> {

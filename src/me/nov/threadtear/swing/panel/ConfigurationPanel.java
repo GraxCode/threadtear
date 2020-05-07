@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.io.FilenameUtils;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 
@@ -91,7 +92,7 @@ public class ConfigurationPanel extends JPanel {
       }
       JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
       jfc.setAcceptAllFileFilterUsed(false);
-      jfc.setSelectedFile(inputFile);
+      jfc.setSelectedFile(new File(FilenameUtils.removeExtension(inputFile.getAbsolutePath()) + ".jar"));
       jfc.setDialogTitle("Save transformed jar archive");
       jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar)", "jar"));
       int result = jfc.showSaveDialog(this);
@@ -150,7 +151,7 @@ public class ConfigurationPanel extends JPanel {
       if (config.containsKey("file")) {
         File file = new File(config.getString("file"));
         if (file.exists()) {
-          main.listPanel.classList.onJarLoad(file);
+          main.listPanel.classList.onFileDrop(file);
           if (config.containsKey("ignored")) {
             String[] ignored = config.getStringArray("ignored");
             for (String ignore : ignored) {
