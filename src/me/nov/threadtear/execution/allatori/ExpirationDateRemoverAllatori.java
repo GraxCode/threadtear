@@ -20,15 +20,20 @@ public class ExpirationDateRemoverAllatori extends Execution implements IConstan
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-    logger.info("Finding most common long ldc cst");
-    long mostCommon = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-        .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof Long).map(ain -> (LdcInsnNode) ain)
-        .filter(ldc -> Math.abs((long) ldc.cst - System.currentTimeMillis()) < 157784760000L).collect(Collectors.groupingBy(ldc -> (long) ldc.cst, Collectors.counting())).entrySet().stream()
-        .max(Comparator.comparing(Entry::getValue)).map(Entry::getKey).orElseThrow(RuntimeException::new);
-    logger.info("Expiration date is " + new Date(mostCommon).toString() + ", replacing");
-    classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-        .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst.equals(mostCommon)).map(ain -> (LdcInsnNode) ain).forEach(ldc -> ldc.cst = 1337133713371337L);
-    return true;
+    try {
+      logger.info("Finding most common long ldc cst");
+      long mostCommon = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
+          .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof Long).map(ain -> (LdcInsnNode) ain)
+          .filter(ldc -> Math.abs((long) ldc.cst - System.currentTimeMillis()) < 157784760000L).collect(Collectors.groupingBy(ldc -> (long) ldc.cst, Collectors.counting())).entrySet().stream()
+          .max(Comparator.comparing(Entry::getValue)).map(Entry::getKey).orElseThrow(RuntimeException::new);
+      logger.info("Expiration date is " + new Date(mostCommon).toString() + ", replacing");
+      classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
+          .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst.equals(mostCommon)).map(ain -> (LdcInsnNode) ain).forEach(ldc -> ldc.cst = 1337133713371337L);
+      return true;
+    } catch (Exception e) {
+      logger.error("Failure", e);
+      return false;
+    }
   }
 
   public static <T> Collector<T, ?, Long> counting() {

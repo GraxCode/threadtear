@@ -33,6 +33,13 @@ public class LogWrapper {
     form.error(msg);
   }
 
+  public void error(String format, Throwable t, Object... args) {
+    String msg = compile(format, args);
+    console.error(msg, t);
+    logfile.error(msg, t);
+    form.error(msg, t);
+  }
+
   public void severe(String format, Object... args) {
     error(format, args);
   }

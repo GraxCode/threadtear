@@ -125,7 +125,7 @@ public class Threadtear extends JFrame {
           logger.info("Starting without security manager!");
         }
         List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
-        logger.info(ignoredClasses.size() + " classes will be ignored");
+        logger.warning("{} classes will be ignored", ignoredClasses.size());
         classes.removeIf(c -> !c.transform);
         Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> c));
         logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
@@ -133,7 +133,12 @@ public class Threadtear extends JFrame {
           long ms = System.currentTimeMillis();
           logger.info("Executing " + e.getClass().getName());
           boolean success = e.execute(map, verbose);
-          logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms) + " ms");
+          String finish = "Finish with {}. Took {} ms.";
+          if (success) {
+            logger.info(finish, "success", (System.currentTimeMillis() - ms));
+          } else {
+            logger.warning(finish, "failure", (System.currentTimeMillis() - ms));
+          }
           logFrame.append("-----------------------------------------------------------\n");
         });
         classes.addAll(ignoredClasses); // re-add ignored classes to export them
@@ -141,7 +146,7 @@ public class Threadtear extends JFrame {
           Thread.sleep(500);
         } catch (InterruptedException e1) {
         }
-        logger.info("Successful finish!");
+        logger.info("Successful completion!");
         System.setSecurityManager(null);
         listPanel.classList.loadTree(classes);
         configPanel.run.setEnabled(true);
