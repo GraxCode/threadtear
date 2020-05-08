@@ -4,11 +4,11 @@ Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. For easier debugging there are also other tools included. 
 Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. 
 Reverse compatibility is not a problem anymore, if no version specific methods are used.
-![Screenshot 1](https://i.imgur.com/NH4Nnvy.png)
-![Screenshot 2](https://i.imgur.com/EylBxBY.png)
-![Screenshot 3](https://i.imgur.com/ZQFprgH.png)
-![Screenshot 4](https://i.imgur.com/gXB4w8K.png)
-![Screenshot 5](https://i.imgur.com/cdtJqQI.png)
+![Screenshot 1](https://i.imgur.com/GJvUtEX.png)
+![Screenshot 2](https://i.imgur.com/QQ4NA0T.png)
+![Screenshot 3](https://i.imgur.com/Emjrrw1.png)
+![Screenshot 4](https://i.imgur.com/D0MWzMr.png)
+![Screenshot 5](https://i.imgur.com/0IcHdM4.png)
 
 ## Executions 
 An "execution" is a task that is executed and modifies all loaded class files. 
