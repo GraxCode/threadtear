@@ -7,21 +7,22 @@ import java.io.*;
 import java.nio.file.Files;
 import java.text.*;
 import java.util.Date;
-import java.util.logging.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 
 import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.logging.Appender;
 import me.nov.threadtear.swing.Utils;
 
 public class LogFrame extends JFrame {
   private static final long serialVersionUID = 1L;
 
-  public JTextArea area;
+  public static JTextPane area;
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
 
   public LogFrame() {
@@ -32,7 +33,7 @@ public class LogFrame extends JFrame {
     setLayout(new BorderLayout());
     setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/run.svg", 64, 64, false)));
     this.setAlwaysOnTop(true);
-    area = new JTextArea();
+    area = new JTextPane();
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
     area.setFont(new Font("Consolas", Font.PLAIN, 11));
@@ -76,32 +77,11 @@ public class LogFrame extends JFrame {
     getContentPane().add(buttons, BorderLayout.SOUTH);
   }
 
-  public static class LogHandler extends Handler {
-
-    private JTextArea textArea;
-
-    public LogHandler(JTextArea textArea) {
-      this.textArea = textArea;
-    }
-
-    @Override
-    public void publish(LogRecord record) {
-      textArea.append(format(record));
-      textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
-
-    private String format(LogRecord record) {
-      return String.format("[%1$tF %1$tT] [%4$-7s] %5$s %n", new Date(record.getMillis()), record.getSourceClassName(), record.getLoggerName(), record.getLevel().getLocalizedName(),
-          record.getMessage(), record.getThrown());
-    }
-
-    @Override
-    public void flush() {
-      textArea.repaint();
-    }
-
-    @Override
-    public void close() throws SecurityException {
+  public void append(String string) {
+    try {
+      area.getDocument().insertString(area.getDocument().getLength(), string, Appender.RESTO_ATT);
+    } catch (BadLocationException e) {
+      e.printStackTrace();
     }
   }
 }

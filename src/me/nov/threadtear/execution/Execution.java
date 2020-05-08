@@ -2,7 +2,6 @@ package me.nov.threadtear.execution;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.logging.Logger;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -11,6 +10,7 @@ import org.objectweb.asm.tree.analysis.*;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.util.asm.Access;
 
 public abstract class Execution implements Opcodes {
@@ -19,7 +19,7 @@ public abstract class Execution implements Opcodes {
   public final String description;
   public final ExecutionTag[] tags;
 
-  protected static final Logger logger = Threadtear.logger;
+  protected static final LogWrapper logger = Threadtear.logger;
   protected static final Random random = new Random();
 
   public Execution(ExecutionCategory type, String name, String description, ExecutionTag... tags) {

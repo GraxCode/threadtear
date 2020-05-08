@@ -1,12 +1,10 @@
 package me.nov.threadtear;
 
 import java.awt.*;
-import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.List;
-import java.util.logging.*;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
@@ -15,7 +13,7 @@ import com.github.weisj.darklaf.settings.ThemeSettings;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.logging.CustomOutputStream;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.frame.LogFrame;
@@ -25,7 +23,7 @@ import me.nov.threadtear.swing.panel.*;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;
-  public static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+  public static final LogWrapper logger = new LogWrapper();
   public TreePanel listPanel;
   public ConfigurationPanel configPanel;
   private LogFrame logFrame;
@@ -84,7 +82,6 @@ public class Threadtear extends JFrame {
   }
 
   public static void main(String[] args) throws Exception {
-    logger.setLevel(Level.ALL);
     LookAndFeel.setLookAndFeel();
     configureEnvironment();
     new Threadtear().setVisible(true);
@@ -116,10 +113,6 @@ public class Threadtear extends JFrame {
     }
     if (logFrame == null) {
       logFrame = new LogFrame();
-      logger.setUseParentHandlers(true);
-      logger.addHandler(new LogFrame.LogHandler(logFrame.area));
-      // System.setErr(new PrintStream(new CustomOutputStream(logger, Level.SEVERE))); //this causes a loop somehow. probably the logger prints it to System.err too.
-      System.setOut(new PrintStream(new CustomOutputStream(logger, Level.FINE)));
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> {
@@ -141,7 +134,7 @@ public class Threadtear extends JFrame {
           logger.info("Executing " + e.getClass().getName());
           boolean success = e.execute(map, verbose);
           logger.info("Finish with " + (success ? "success" : "failure") + ". Took " + (System.currentTimeMillis() - ms) + " ms");
-          logFrame.area.append("-----------------------------------------------------------\n");
+          logFrame.append("-----------------------------------------------------------\n");
         });
         classes.addAll(ignoredClasses); // re-add ignored classes to export them
         try {
@@ -152,7 +145,7 @@ public class Threadtear extends JFrame {
         System.setSecurityManager(null);
         listPanel.classList.loadTree(classes);
         configPanel.run.setEnabled(true);
-      }).start();
+      }, "Execution-Thread").start();
     });
   }
 }

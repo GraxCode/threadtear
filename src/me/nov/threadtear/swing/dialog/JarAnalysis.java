@@ -1,7 +1,6 @@
 package me.nov.threadtear.swing.dialog;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
