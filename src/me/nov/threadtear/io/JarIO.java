@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 import java.util.stream.Stream;
-import java.util.zip.*;
+import java.util.zip.ZipException;
 
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;

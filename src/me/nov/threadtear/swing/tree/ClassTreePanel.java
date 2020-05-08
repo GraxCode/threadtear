@@ -6,7 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
-import java.util.jar.*;
+import java.util.jar.JarEntry;
 
 import javax.swing.*;
 import javax.swing.tree.*;
