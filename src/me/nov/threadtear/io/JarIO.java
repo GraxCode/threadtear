@@ -34,7 +34,7 @@ public class JarIO {
           }
         } catch (Exception e) {
           e.printStackTrace();
-          System.err.println("Failed to load file " + name);
+          Threadtear.logger.severe("Failed to load file " + name);
         }
       }
     } catch (Exception e) {

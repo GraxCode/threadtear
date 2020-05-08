@@ -85,7 +85,9 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
             logger.warning("Unknown top stack value in " + cn.name + "." + m.name + m.desc + ", skipping");
           }
         } catch (Throwable e) {
-          e.printStackTrace();
+          if (verbose) {
+            e.printStackTrace();
+          }
           logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }
       }

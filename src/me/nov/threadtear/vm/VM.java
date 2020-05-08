@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.asm.*;
 
 public class VM extends ClassLoader implements Opcodes {
@@ -28,6 +29,8 @@ public class VM extends ClassLoader implements Opcodes {
   public Class<?> bytesToClass(String name, byte[] bytes) {
     if (loaded.containsKey(name))
       throw new RuntimeException("class " + name + " is already defined");
+    if (isForbiddenName(name))
+      throw new RuntimeException(name + " is not an allowed class name");
     try {
       Method define = ClassLoader.class.getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
       define.setAccessible(true);
@@ -45,6 +48,10 @@ public class VM extends ClassLoader implements Opcodes {
       t.printStackTrace();
       return null;
     }
+  }
+
+  private boolean isForbiddenName(String name) {
+    return VMSecurityManager.isLocal(name) || name.startsWith("sun.");
   }
 
   @Override

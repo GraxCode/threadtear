@@ -87,7 +87,9 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
             logger.warning("Unknown top stack value in " + cn.name + "." + m.name + m.desc + ", skipping");
           }
         } catch (Throwable e) {
-          e.printStackTrace();
+          if (verbose) {
+            e.printStackTrace();
+          }
           logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }
       }

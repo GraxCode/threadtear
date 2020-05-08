@@ -118,7 +118,7 @@ public class Threadtear extends JFrame {
       logFrame = new LogFrame();
       logger.setUseParentHandlers(true);
       logger.addHandler(new LogFrame.LogHandler(logFrame.area));
-      System.setErr(new PrintStream(new CustomOutputStream(logger, Level.SEVERE)));
+      // System.setErr(new PrintStream(new CustomOutputStream(logger, Level.SEVERE))); //this causes a loop somehow. probably the logger prints it to System.err too.
       System.setOut(new PrintStream(new CustomOutputStream(logger, Level.FINE)));
     }
     logFrame.setVisible(true);
