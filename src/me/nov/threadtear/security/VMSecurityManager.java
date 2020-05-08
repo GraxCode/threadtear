@@ -1,105 +1,104 @@
 package me.nov.threadtear.security;
 
 import java.io.FileDescriptor;
+import java.net.InetAddress;
 import java.security.Permission;
 
 import me.nov.threadtear.Threadtear;
 
 public class VMSecurityManager extends SecurityManager {
-  private static final String MSG = "An execution ran code that it's not supposed to. If you think this is a false call, open an issue on GitHub.";
   private static boolean grantAll;
 
   @Override
   public void checkPermission(Permission perm) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkPermission(Permission perm, Object context) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkExec(String cmd) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkLink(String lib) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkWrite(FileDescriptor fd) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkWrite(String file) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkDelete(String file) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkConnect(String host, int port) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkConnect(String host, int port, Object context) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkPropertiesAccess() {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkCreateClassLoader() {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
   }
 
   @Override
   public void checkSecurityAccess(String target) {
-    if (grantAccess())
-      return;
-    throw new SecurityException(MSG);
+    throwIfNotGranted();
+  }
+
+  @Override
+  public void checkAccept(String host, int port) {
+    throwIfNotGranted();
+  }
+
+  @Override
+  public void checkExit(int status) {
+    throwIfNotGranted();
+  }
+
+  @Override
+  public void checkListen(int port) {
+    throwIfNotGranted();
+  }
+
+  @Override
+  public void checkMulticast(InetAddress maddr) {
+    throwIfNotGranted();
   }
 
   @Override
   public void checkPackageAccess(String pkg) {
-    if (pkg.equals("java.lang.reflect") || pkg.startsWith("sun.") || pkg.startsWith(Threadtear.class.getPackage().getName())) {
-      if (grantAccess())
-        return;
-      throw new SecurityException(MSG);
+    if (pkg.startsWith("sun.misc") && pkg.startsWith(Threadtear.class.getPackage().getName())) {
+      throwIfNotGranted();
     }
+  }
+
+  private final void throwIfNotGranted() {
+    if (!grantAccess())
+      throw new SecurityException("An execution ran code that it's not supposed to. If you think this is a false call, open an issue on GitHub.");
   }
 
   private static final String granted = "sun\\..*";
@@ -122,7 +121,7 @@ public class VMSecurityManager extends SecurityManager {
 
   public static final boolean isLocal(String name) {
     try {
-      grantAll = true; // we have to grant everything for a millisecond, otherwise we would end up in a loop
+      grantAll = true; // we have to grant everything for the next check, otherwise we would end up in a loop
 
       /*
        * This way you could check if they are really in the jar file itself
@@ -132,7 +131,7 @@ public class VMSecurityManager extends SecurityManager {
        */
 
       Class.forName(name, false, ClassLoader.getSystemClassLoader());
-      // no exception, class is local
+      // no exception thrown, class is local
       return true;
     } catch (Throwable e) {
       // class not found or whatever, class is not local
