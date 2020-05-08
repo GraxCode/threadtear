@@ -11,7 +11,7 @@ import org.objectweb.asm.tree.ClassNode;
 import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.swing.tree.component.SortedClassTreeNode;
+import me.nov.threadtear.swing.tree.component.ClassTreeNode;
 import me.nov.threadtear.util.asm.Access;
 
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
@@ -30,8 +30,8 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
   public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean sel, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
     super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-    if (node instanceof SortedClassTreeNode) {
-      Clazz clazz = ((SortedClassTreeNode) node).member;
+    if (node instanceof ClassTreeNode) {
+      Clazz clazz = ((ClassTreeNode) node).member;
       if (clazz != null) {
         ClassNode cn = clazz.node;
         if (Access.isInterface(cn.access)) {

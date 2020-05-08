@@ -159,7 +159,7 @@ public class ConfigurationPanel extends JPanel {
             }
             main.listPanel.classList.refreshIgnored();
             main.listPanel.classList.model.reload();
-            main.listPanel.classList.updateAllNames((SortedClassTreeNode) main.listPanel.classList.model.getRoot());
+            main.listPanel.classList.updateAllNames((ClassTreeNode) main.listPanel.classList.model.getRoot());
             main.listPanel.classList.repaint();
           }
         } else {

@@ -7,18 +7,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 
-public class SortedClassTreeNode extends DefaultMutableTreeNode implements Comparator<SortedClassTreeNode> {
+public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<ClassTreeNode> {
   private static final long serialVersionUID = 1L;
 
   public Clazz member;
   private String text;
 
-  public SortedClassTreeNode(Clazz clazz) {
+  public ClassTreeNode(Clazz clazz) {
     this.member = clazz;
     updateClassName();
   }
 
-  public SortedClassTreeNode(String pckg) {
+  public ClassTreeNode(String pckg) {
     this.member = null;
     this.text = pckg;
   }
@@ -46,7 +46,7 @@ public class SortedClassTreeNode extends DefaultMutableTreeNode implements Compa
   }
 
   @SuppressWarnings("unchecked")
-  public void combinePackage(SortedClassTreeNode pckg) {
+  public void combinePackage(ClassTreeNode pckg) {
     if (pckg.member != null)
       throw new IllegalArgumentException("cannot merge package with file");
     if (pckg == this)
@@ -59,11 +59,11 @@ public class SortedClassTreeNode extends DefaultMutableTreeNode implements Compa
     this.removeAllChildren(); // remove old package
 
     // to avoid dirty OOB exceptions
-    new ArrayList<>(pckg.children).forEach(m -> this.add((SortedClassTreeNode) m));
+    new ArrayList<>(pckg.children).forEach(m -> this.add((ClassTreeNode) m));
   }
 
   @Override
-  public int compare(SortedClassTreeNode node1, SortedClassTreeNode node2) {
+  public int compare(ClassTreeNode node1, ClassTreeNode node2) {
     boolean leaf1 = node1.member != null;
     boolean leaf2 = node2.member != null;
 
