@@ -132,11 +132,12 @@ public class Threadtear extends JFrame {
         logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
-        if (!arguments.contains("-Xverify:none"))
+        if (!arguments.contains("-Xverify:none")) {
           logger.warning("You started threadtear without -noverify, this result in less decryption! Your VM args: {}", arguments);
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e1) {
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e1) {
+          }
         }
         executions.forEach(e -> {
           long ms = System.currentTimeMillis();
@@ -146,7 +147,7 @@ public class Threadtear extends JFrame {
           if (success) {
             logger.info(finish, "success", (System.currentTimeMillis() - ms));
           } else {
-            logger.warning(finish, "failure", (System.currentTimeMillis() - ms));
+            logger.error(finish, "failure", (System.currentTimeMillis() - ms));
           }
           logFrame.append("-----------------------------------------------------------\n");
         });
