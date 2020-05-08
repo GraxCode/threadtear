@@ -3,7 +3,7 @@ package me.nov.threadtear.security;
 import java.io.FileDescriptor;
 import java.lang.reflect.ReflectPermission;
 import java.net.InetAddress;
-import java.security.*;
+import java.security.Permission;
 
 import me.nov.threadtear.Threadtear;
 
@@ -135,14 +135,12 @@ public class VMSecurityManager extends SecurityManager {
   public static final boolean isLocal(String name) {
     try {
       grantAll = true; // we have to grant everything for the next check, otherwise we would end up in a loop
-
       /*
        * This way you could check if they are really in the jar file itself
        * 
        * return Class.forName(name, false, ClassLoader.getSystemClassLoader()).getProtectionDomain().getCodeSource().getLocation().getPath()
        * .equals(Threadtear.class.getProtectionDomain().getCodeSource().getLocation().getPath());
        */
-
       Class.forName(name, false, ClassLoader.getSystemClassLoader());
       // no exception thrown, class is local
       return true;

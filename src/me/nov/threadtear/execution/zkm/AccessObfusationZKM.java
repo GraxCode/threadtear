@@ -71,7 +71,6 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                   VMSecurityManager.allowReflection(true);
                   MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
                       (long) top.getValue());
-                  VMSecurityManager.allowReflection(false);
                   if (handle != null) {
                     MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
                     rewrittenCode.add(new InsnNode(POP2)); // pop the long
@@ -79,6 +78,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                     decrypted++;
                     return;
                   }
+                  VMSecurityManager.allowReflection(false);
                 }
               } catch (Throwable t) {
                 if (verbose) {
