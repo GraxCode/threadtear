@@ -209,7 +209,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
         break;
       case "class":
         ClassNode node = Conversion.toNode(Files.readAllBytes(inputFile.toPath()));
-        this.classes = Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile));
+        this.classes = new ArrayList<>(Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile)));
         break;
       }
     } catch (IOException e) {
