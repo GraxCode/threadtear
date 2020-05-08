@@ -1,6 +1,7 @@
 package me.nov.threadtear.security;
 
 import java.io.FileDescriptor;
+import java.lang.reflect.ReflectPermission;
 import java.net.InetAddress;
 import java.security.*;
 
@@ -12,6 +13,8 @@ public class VMSecurityManager extends SecurityManager {
 
   @Override
   public void checkPermission(Permission perm) {
+    if (perm instanceof ReflectPermission || perm instanceof RuntimePermission)
+      return;
     throwIfNotGranted();
   }
 
@@ -122,7 +125,7 @@ public class VMSecurityManager extends SecurityManager {
       if (ste.getClassName().matches(granted))
         continue;
       if (!isLocal(ste.getClassName())) {
-        Threadtear.logger.warning("Dynamic class was blocked trying to execute forbidden code: " + ste.getClassName());
+        Threadtear.logger.warning("Dynamic class was blocked trying to execute forbidden code: {}, {}", ste.getClassName(), Thread.currentThread().getStackTrace()[3]);
         return false;
       }
     }
