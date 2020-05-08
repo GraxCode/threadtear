@@ -8,8 +8,8 @@ import java.util.function.BiPredicate;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.io.Conversion;
-import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.asm.*;
 
 public class VM extends ClassLoader implements Opcodes {
@@ -51,7 +51,7 @@ public class VM extends ClassLoader implements Opcodes {
   }
 
   private boolean isForbiddenName(String name) {
-    return VMSecurityManager.isLocal(name) || name.startsWith("sun.");
+    return name.startsWith(Threadtear.class.getPackage().getName()) || name.matches(RT);
   }
 
   @Override

@@ -95,7 +95,7 @@ public class VMSecurityManager extends SecurityManager {
 
   @Override
   public void checkPackageAccess(String pkg) {
-    if (pkg.equals("java.lang.reflect") || pkg.startsWith("sun.")) {
+    if (pkg.equals("java.lang.reflect") || pkg.startsWith("sun.") || pkg.startsWith(Threadtear.class.getPackage().getName())) {
       if (grantAccess())
         return;
       throw new SecurityException(MSG);
