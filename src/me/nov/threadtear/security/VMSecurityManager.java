@@ -8,6 +8,7 @@ import me.nov.threadtear.Threadtear;
 
 public class VMSecurityManager extends SecurityManager {
   private static boolean grantAll;
+  private static boolean checkReflection;
 
   @Override
   public void checkPermission(Permission perm) {
@@ -91,9 +92,18 @@ public class VMSecurityManager extends SecurityManager {
 
   @Override
   public void checkPackageAccess(String pkg) {
-    if (pkg.startsWith("sun.misc") && pkg.startsWith(Threadtear.class.getPackage().getName())) {
+    if (pkg.startsWith("sun.misc") || pkg.startsWith(Threadtear.class.getPackage().getName()) || checkReflection(pkg)) {
       throwIfNotGranted();
     }
+  }
+
+  private boolean checkReflection(String pkg) {
+    return checkReflection && pkg.startsWith("java.lang.reflect");
+  }
+
+  public static void allowReflection(boolean allow) {
+    if (grantAccess())
+      checkReflection = allow;
   }
 
   private final void throwIfNotGranted() {

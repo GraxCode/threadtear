@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.*;
@@ -67,8 +68,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
               try {
                 ConstantValue top = frame.getStack(frame.getStackSize() - 1);
                 if (top.isKnown()) {
+                  VMSecurityManager.allowReflection(true);
                   MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
                       (long) top.getValue());
+                  VMSecurityManager.allowReflection(false);
                   if (handle != null) {
                     MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
                     rewrittenCode.add(new InsnNode(POP2)); // pop the long
