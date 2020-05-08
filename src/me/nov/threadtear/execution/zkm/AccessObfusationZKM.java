@@ -80,7 +80,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                 }
               } catch (Throwable t) {
                 if (verbose) {
-                  t.printStackTrace();
+                  logger.error("Throwable", t);
                 }
                 logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
               }

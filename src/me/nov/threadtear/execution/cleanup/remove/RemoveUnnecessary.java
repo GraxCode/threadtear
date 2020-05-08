@@ -51,7 +51,6 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
     try {
       a.analyze(cn.name, m);
     } catch (AnalyzerException e) {
-      e.printStackTrace();
       logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
       return m.instructions;
     }

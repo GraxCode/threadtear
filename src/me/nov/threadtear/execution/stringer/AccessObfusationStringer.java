@@ -69,7 +69,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                   decrypted++;
                 } catch (Throwable t) {
                   if (verbose) {
-                    t.printStackTrace();
+                    logger.error("Throwable", t);
                   }
                   logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
                 }
@@ -82,7 +82,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       });
     } catch (Throwable t) {
       if (verbose) {
-        t.printStackTrace();
+        logger.error("Throwable", t);
       }
       logger.severe("Failed load proxy for " + cn.name + t.getClass().getName() + ", " + t.getMessage());
     }

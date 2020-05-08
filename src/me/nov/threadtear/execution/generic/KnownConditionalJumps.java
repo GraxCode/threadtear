@@ -158,7 +158,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
         Method method = String.class.getDeclaredMethod(name);
         return method.invoke(values.get(0).getValue());
       } catch (Throwable t) {
-        t.printStackTrace();
+        logger.error("Throwable", t);
       }
     }
     return null;

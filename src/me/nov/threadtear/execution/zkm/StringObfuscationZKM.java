@@ -82,7 +82,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       invokeVMAndReplace(proxyClass, cn);
     } catch (Throwable e) {
       if (verbose)
-        e.printStackTrace();
+        logger.error("Throwable", e);
       logger.severe("Failed to run proxy in " + cn.name + ": " + e.getMessage());
     }
   }
@@ -225,7 +225,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       }
     } catch (Throwable t) {
       if (verbose) {
-        t.printStackTrace();
+        logger.error("Throwable", t);
       }
       logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
     }

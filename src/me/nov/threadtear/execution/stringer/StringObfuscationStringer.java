@@ -98,7 +98,9 @@ public class StringObfuscationStringer extends Execution implements IVMReference
             logger.severe("Failed to decrypt string or false call in " + cn.name + "." + m.name + m.desc);
           }
         } catch (Throwable e) {
-          e.printStackTrace();
+          if (verbose) {
+            logger.error("Throwable", e);
+          }
           logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }
       }

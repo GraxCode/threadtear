@@ -86,7 +86,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
           }
         } catch (Throwable e) {
           if (verbose) {
-            e.printStackTrace();
+            logger.error("Throwable", e);
           }
           logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }

@@ -88,7 +88,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
           }
         } catch (Throwable e) {
           if (verbose) {
-            e.printStackTrace();
+            logger.error("Throwable", e);
           }
           logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }
