@@ -145,7 +145,7 @@ public class ReobfuscateMembers extends Execution {
       return loadedNode;
     } catch (Exception e) {
       if (verbose)
-        Threadtear.logger.warning("Couldn't find or resolve " + name + ": " + e.getClass().getName() + ", " + e.getMessage());
+        Threadtear.logger.warning("Couldn't find or resolve {}, {}", name, shortStacktrace(e));
       return null;
     }
   }

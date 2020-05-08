@@ -58,7 +58,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were successfully decrypted");
+    logger.info("Of a total {} encrypted strings, {}% were successfully decrypted", encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -90,18 +90,18 @@ public class StringObfuscationStringer extends Execution implements IVMReference
           String realString = invokeProxy(cn, m, min, frame);
           if (realString != null) {
             if (Strings.isHighUTF(realString)) {
-              logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
+              logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
             }
             this.decrypted++;
             return new AbstractInsnNode[] { min, new InsnNode(POP), new LdcInsnNode(realString) };
           } else {
-            logger.severe("Failed to decrypt string or false call in " + cn.name + "." + m.name + m.desc);
+            logger.severe("Failed to decrypt string or false call in {}", referenceString(cn, m));
           }
         } catch (Throwable e) {
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
+          logger.severe("Failed to decrypt string in {}, {}", referenceString(cn, m), shortStacktrace(e));
         }
       }
     }
@@ -111,7 +111,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
   private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame) throws Exception {
     if (frame == null) {
       if (verbose) {
-        logger.severe("Unvisited frame in " + cn.name + "." + m.name + ": " + frame);
+        logger.severe("Unvisited frame in {}: {}", referenceString(cn, m), frame);
       }
       return null;
     }
@@ -124,7 +124,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     int arguments = Type.getArgumentTypes(min.desc).length;
     if (arguments > frame.getStackSize()) {
       if (verbose) {
-        logger.severe("Stack has not enough values in " + cn.name + "." + m.name + ": " + frame);
+        logger.severe("Stack has not enough values in {}", referenceString(cn, m), frame);
       }
       return null;
     }

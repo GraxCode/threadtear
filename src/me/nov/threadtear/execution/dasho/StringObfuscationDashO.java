@@ -76,21 +76,21 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
             String realString = invokeProxy(cn, m, min, top, second);
             if (realString != null) {
               if (Strings.isHighUTF(realString)) {
-                logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
+                logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
               }
               this.decrypted++;
               return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(realString) };
             } else {
-              logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
+              logger.severe("Failed to decrypt string in {}", referenceString(cn, m));
             }
           } else if (verbose) {
-            logger.warning("Unknown top stack value in " + cn.name + "." + m.name + m.desc + ", skipping");
+            logger.warning("Unknown top stack value in {}, skipping", referenceString(cn, m));
           }
         } catch (Throwable e) {
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
+          logger.severe("Failed to decrypt string in {}: {}", referenceString(cn, m), shortStacktrace(e));
         }
       }
     }

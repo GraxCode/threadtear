@@ -24,7 +24,7 @@ public class RestoreSourceFiles extends Execution {
         .collect(Collectors.toMap(c -> c.node.name, c -> c.node.sourceFile.substring(0, c.node.sourceFile.length() - 5)));
     boolean duplicateFound = false;
     if (map.size() < classes.size()) {
-      logger.warning(map.size() + " classes of " + classes.size() + " have a valid source file attribute.");
+      logger.warning("{} classes of {} have a valid source file attribute.", map.size(), classes.size());
       if (map.isEmpty()) {
         logger.severe("No source file attribute found, nothing to do, returning!");
         return false;
@@ -39,7 +39,7 @@ public class RestoreSourceFiles extends Execution {
           duplicateFound = true;
         }
         if (verbose) {
-          logger.warning(entry.getValue() + " exists " + count + " times! Renaming...");
+          logger.warning("{} exists {} times! Renaming...", entry.getValue(), count);
         }
         // rename duplicate
         entry.setValue(entry.getValue() + count);
@@ -50,7 +50,7 @@ public class RestoreSourceFiles extends Execution {
     logger.info("Updating code references");
     int refs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream).mapToInt(ain -> References.remapClassRefs(map, ain))
         .sum();
-    logger.info(refs + " code references updated successfully!");
+    logger.info("{} code references updated successfully!", refs);
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> References.remapMethodType(map, m));
     classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).forEach(f -> References.remapFieldType(map, f));
     classes.values().stream().map(c -> c.node).forEach(c -> References.remapClassType(map, c));

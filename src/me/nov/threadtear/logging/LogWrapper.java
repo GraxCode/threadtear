@@ -53,11 +53,14 @@ public class LogWrapper {
    */
   private static String compile(String msg, Object[] args) {
     int c = 0;
-    while (msg.contains("{}")) {
-      Object arg = args[c];
-      String argStr = arg == null ? "null" : arg.toString();
-      msg = msg.replaceFirst("\\{}", Matcher.quoteReplacement(argStr));
-      c++;
+    try {
+      while (msg.contains("{}")) {
+        Object arg = args[c];
+        String argStr = arg == null ? "null" : arg.toString();
+        msg = msg.replaceFirst("\\{}", Matcher.quoteReplacement(argStr));
+        c++;
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
     }
     return msg;
   }

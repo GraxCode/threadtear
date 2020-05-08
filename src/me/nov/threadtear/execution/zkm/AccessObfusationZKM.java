@@ -49,8 +49,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total " + encrypted + " encrypted references, " + (decryptionRatio) + "% were successfully decrypted");
-    logger.info("For better results use \"-noverify\" as JVM argument!");
+    logger.info("Of a total {} encrypted references, {}% were successfully decrypted", encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -82,10 +81,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                 if (verbose) {
                   logger.error("Throwable", t);
                 }
-                logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
+                logger.severe("Failed to get callsite using classloader in ", referenceString(cn, m), shortStacktrace(t));
               }
             } else if (verbose) {
-              logger.warning("Other bootstrap type in " + cn.name + ": " + bsm);
+              logger.warning("Other bootstrap type in {}: {}", referenceString(cn, m), bsm);
             }
           }
         }
@@ -113,7 +112,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       }
     }
     if (bootstrap == null) {
-      logger.warning("Failed to find real bootstrap method in " + cn.name + ": " + bsm);
+      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), bsm);
       return null;
     }
     return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm),

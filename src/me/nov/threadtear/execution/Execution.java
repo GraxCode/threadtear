@@ -79,7 +79,7 @@ public abstract class Execution implements Opcodes {
     try {
       a.analyze(c.name, m);
     } catch (AnalyzerException e) {
-      logger.severe("Failed stack analysis in " + c.name + "." + m.name + ":" + e.getMessage());
+      logger.severe("Failed stack analysis in {}, {}", referenceString(c, m), shortStacktrace(e));
       return null;
     }
     return a.getFrames();
@@ -110,5 +110,37 @@ public abstract class Execution implements Opcodes {
       }
     });
     return map;
+  }
+
+  /**
+   * For logging
+   */
+  protected String shortStacktrace(Throwable e) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(e.getClass().getName());
+    if (e.getMessage() != null) {
+      sb.append(": ");
+      sb.append(e.getMessage());
+    }
+    if (e.getCause() != null) {
+      sb.append(", Cause: [");
+      sb.append(shortStacktrace(e.getCause()));
+      sb.append("]");
+    }
+    return sb.toString();
+  }
+
+  /**
+   * For logging
+   */
+  protected String referenceString(ClassNode cn, MethodNode m) {
+    StringBuilder sb = new StringBuilder();
+    if (cn != null)
+      sb.append(cn.name.replace('/', '.'));
+    if (m != null) {
+      sb.append(m.name);
+      sb.append(m.desc);
+    }
+    return sb.toString();
   }
 }

@@ -38,7 +38,6 @@ public class VM extends ClassLoader implements Opcodes {
       resolveClass(c);
       return c;
     } catch (Exception e) {
-      Threadtear.logger.error("Failed to resolve class using defineClass0", e);
     }
     try {
       Class<?> c = defineClass(name, bytes, 0, bytes.length);

@@ -21,7 +21,7 @@ public class ReobfuscateClassNames extends Execution {
     Queue<String> words = Strings.generateWordQueue(classes.size(), ReobfuscateClassNames.class.getResourceAsStream("/res/names.txt"));
     Map<String, String> map = classes.values().stream().collect(Collectors.toMap(c -> c.node.name, c -> words.poll()));
     if (verbose) {
-      logger.info("Generated " + map.size() + " unique easy-to-remember strings");
+      logger.info("Generated {} unique easy-to-remember strings", map.size());
       logger.info("Renaming classes and source files to original names");
     }
     classes.values().stream().forEach(c -> {

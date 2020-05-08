@@ -30,7 +30,7 @@ public class TryCatchObfuscationRemover extends Execution {
     long tcbs = getAmountBlocks();
     classes.values().stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
     long amount = (tcbs - getAmountBlocks());
-    logger.info("Finished, removed " + amount + " blocks of " + tcbs + " total blocks!");
+    logger.info("Finished, removed {} blocks of {} total blocks!", amount, tcbs);
     return amount > 0;
   }
 
@@ -58,13 +58,13 @@ public class TryCatchObfuscationRemover extends Execution {
       Clazz clazz = classes.get(min.owner);
       if (clazz == null) {
         if (verbose)
-          logger.warning("Class " + min.owner + " not found, possibly library");
+          logger.warning("Class {} not found, possibly library", min.owner);
         return false;
       }
       MethodNode getter = getMethod(clazz.node, min.name, min.desc);
       if (getter == null) {
         if (verbose)
-          logger.warning("Getter " + min.owner + "." + min.name + min.desc + " not found, possibly library");
+          logger.warning("Getter {} not found, possibly library", min.owner + "." + min.name + min.desc);
         return false;
       }
       AbstractInsnNode getterFirst = getter.instructions.getFirst();

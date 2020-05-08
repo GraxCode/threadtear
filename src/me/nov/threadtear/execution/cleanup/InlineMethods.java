@@ -24,7 +24,7 @@ public class InlineMethods extends Execution {
     classes.values().stream().map(c -> c.node).forEach(c -> {
       c.methods.stream().filter(this::isUnnecessary).forEach(m -> map.put(c.name + "." + m.name + m.desc, m));
     });
-    logger.info(map.size() + " unnecessary methods found that could be inlined");
+    logger.info("{} unnecessary methods found that could be inlined", map.size());
     inlines = 0;
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
       m.instructions.forEach(ain -> {
@@ -43,7 +43,7 @@ public class InlineMethods extends Execution {
 
     // map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.removeIf(m -> m.equals(method) && !Access.isPublic(method.access)));
     map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.remove(method));
-    logger.info("Inlined " + inlines + " method references!");
+    logger.info("Inlined {} method references!", inlines);
     return true;
   }
 

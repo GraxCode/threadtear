@@ -71,7 +71,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.severe("Failed to get callsite using classloader in " + cn.name + "." + m.name + m.desc + ": " + t.getClass().getName() + ", " + t.getMessage());
+                  logger.severe("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
                 }
               } else if (verbose) {
                 logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " + bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
@@ -84,7 +84,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       if (verbose) {
         logger.error("Throwable", t);
       }
-      logger.severe("Failed load proxy for " + cn.name + t.getClass().getName() + ", " + t.getMessage());
+      logger.severe("Failed load proxy for {}, {}", referenceString(cn, null), shortStacktrace(t));
     }
   }
 
@@ -121,7 +121,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       return clazz;
     }
     if (verbose)
-      logger.warning("Unresolved: " + name + ", decryption might fail");
+      logger.warning("Unresolved: {}, decryption might fail", name);
     return null;
   }
 

@@ -33,7 +33,7 @@ public class InlineUnchangedFields extends Execution {
     classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access)).forEach(c -> {
       c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f));
     });
-    logger.info("Inlined " + inlines + " field references!");
+    logger.info("Inlined {} method references!", inlines);
     return inlines > 0;
   }
 

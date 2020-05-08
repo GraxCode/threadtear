@@ -36,7 +36,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.verbose = verbose;
     classes.values().stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
-    logger.info("Decrypted " + decrypted + " strings successfully.");
+    logger.info("Decrypted {} strings successfully.", decrypted);
     return decrypted > 0;
   }
 
@@ -57,7 +57,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     if (clinit == null)
       return;
     if (clinit.instructions.size() > 2000) {
-      logger.severe("Static initializer too huge to decrypt in " + cn.name);
+      logger.severe("Static initializer too huge to decrypt in {}", referenceString(cn, null));
       return;
     }
     ClassNode proxyClass = Sandbox.createClassProxy("ProxyClass");
@@ -83,7 +83,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     } catch (Throwable e) {
       if (verbose)
         logger.error("Throwable", e);
-      logger.severe("Failed to run proxy in " + cn.name + ": " + e.getMessage());
+      logger.severe("Failed to run proxy in {}, {} ", referenceString(cn, null), shortStacktrace(e));
     }
   }
 
@@ -173,13 +173,16 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           decrypted++;
           return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedLDC) };
         } else if (verbose) {
-          logger.severe("Failed string array decryption in " + cn.name);
+          logger.severe("Failed string array decryption in {}", referenceString(cn, m));
         }
       } else if (verbose) {
-        logger.warning("Unexpected case, method is not feeded two ints " + cn.name + "." + m.name);
+        logger.warning("Unexpected case, method is not feeded two ints: {}", referenceString(cn, m));
       }
     } catch (Throwable t) {
-      logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
+      if (verbose) {
+        t.printStackTrace();
+      }
+      logger.severe("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { min };
   }
@@ -196,7 +199,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
         if (isLocalField(cn, fin) && fin.desc.equals("Ljava/lang/String;")) {
           String decrypedString = (String) callProxy.getDeclaredField(fin.name).get(null);
           if (decrypedString == null) {
-            logger.warning("Possible false call in " + cn.name + " or failed decryption, single field is null (" + fin.name + ")");
+            logger.warning("Possible false call in {} or failed decryption, single field is null: {}", referenceString(cn, m), fin.name);
             // could be false call, not the decrypted string
             return new AbstractInsnNode[] { ain };
           } else {
@@ -216,7 +219,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
             String[] ref = (String[]) reference;
             String decryptedString = ref[arrayIndex];
             if (Strings.isHighUTF(decryptedString)) {
-              logger.warning("String decryption in " + cn.name + "." + m.name + " may have failed");
+              logger.warning("String decryption in {} may have failed", referenceString(cn, m));
             }
             decrypted++;
             return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedString) };
@@ -227,7 +230,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       if (verbose) {
         logger.error("Throwable", t);
       }
-      logger.severe("Failure in " + cn.name + ": " + t.getClass().getName() + "-" + t.getMessage());
+      logger.severe("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { ain };
   }

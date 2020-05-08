@@ -1,6 +1,7 @@
 package me.nov.threadtear;
 
 import java.awt.*;
+import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -122,13 +123,21 @@ public class Threadtear extends JFrame {
           logger.info("Initializing security manager if something goes horribly wrong");
           System.setSecurityManager(new VMSecurityManager());
         } else {
-          logger.info("Starting without security manager!");
+          logger.warning("Starting without security manager!");
         }
         List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
         logger.warning("{} classes will be ignored", ignoredClasses.size());
         classes.removeIf(c -> !c.transform);
         Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> c));
         logger.info("If an execution doesn't work properly on your file, please open an issue: https://github.com/GraxCode/threadtear/issues");
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        if (!arguments.contains("-Xverify:none"))
+          logger.warning("You started threadtear without -noverify, this result in less decryption! Your VM args: {}", arguments);
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e1) {
+        }
         executions.forEach(e -> {
           long ms = System.currentTimeMillis();
           logger.info("Executing " + e.getClass().getName());
