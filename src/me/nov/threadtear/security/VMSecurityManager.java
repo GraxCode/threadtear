@@ -2,7 +2,7 @@ package me.nov.threadtear.security;
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
-import java.security.Permission;
+import java.security.*;
 
 import me.nov.threadtear.Threadtear;
 
