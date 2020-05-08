@@ -5,19 +5,20 @@ import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.util.Strings;
 
-public class SortedTreeClassNode extends DefaultMutableTreeNode implements Comparator<SortedTreeClassNode> {
+public class SortedClassTreeNode extends DefaultMutableTreeNode implements Comparator<SortedClassTreeNode> {
   private static final long serialVersionUID = 1L;
 
   public Clazz member;
   private String text;
 
-  public SortedTreeClassNode(Clazz clazz) {
+  public SortedClassTreeNode(Clazz clazz) {
     this.member = clazz;
     updateClassName();
   }
 
-  public SortedTreeClassNode(String pckg) {
+  public SortedClassTreeNode(String pckg) {
     this.member = null;
     this.text = pckg;
   }
@@ -26,9 +27,9 @@ public class SortedTreeClassNode extends DefaultMutableTreeNode implements Compa
     if (member != null) {
       String[] split = member.node.name.split("/");
       if (member.transform) {
-        this.text = split[split.length - 1];
+        this.text = Strings.min(split[split.length - 1], 50);
       } else {
-        this.text = "<html><strike>" + split[split.length - 1];
+        this.text = "<html><strike>" + Strings.min(split[split.length - 1], 50);
       }
     }
   }
@@ -45,7 +46,7 @@ public class SortedTreeClassNode extends DefaultMutableTreeNode implements Compa
   }
 
   @SuppressWarnings("unchecked")
-  public void combinePackage(SortedTreeClassNode pckg) {
+  public void combinePackage(SortedClassTreeNode pckg) {
     if (pckg.member != null)
       throw new IllegalArgumentException("cannot merge package with file");
     if (pckg == this)
@@ -58,11 +59,11 @@ public class SortedTreeClassNode extends DefaultMutableTreeNode implements Compa
     this.removeAllChildren(); // remove old package
 
     // to avoid dirty OOB exceptions
-    new ArrayList<>(pckg.children).forEach(m -> this.add((SortedTreeClassNode) m));
+    new ArrayList<>(pckg.children).forEach(m -> this.add((SortedClassTreeNode) m));
   }
 
   @Override
-  public int compare(SortedTreeClassNode node1, SortedTreeClassNode node2) {
+  public int compare(SortedClassTreeNode node1, SortedClassTreeNode node2) {
     boolean leaf1 = node1.member != null;
     boolean leaf2 = node2.member != null;
 

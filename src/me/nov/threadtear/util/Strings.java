@@ -43,6 +43,12 @@ public class Strings {
     return Math.sqrt(sdev / (ccst.length - 1.0));
   }
 
+  public static String min(String str, int maxLength) {
+    if (str.length() > maxLength)
+      return str.substring(0, maxLength) + "...";
+    return str;
+  }
+
   public static Queue<String> generateWordQueue(int amount, InputStream wordList) {
     Queue<String> queue = new LinkedList<>();
     try {

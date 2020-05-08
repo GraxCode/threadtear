@@ -23,8 +23,9 @@ import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.dialog.JarAnalysis;
 import me.nov.threadtear.swing.frame.*;
 import me.nov.threadtear.swing.handler.*;
-import me.nov.threadtear.swing.tree.component.SortedTreeClassNode;
+import me.nov.threadtear.swing.tree.component.SortedClassTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
+import me.nov.threadtear.util.Strings;
 
 public class ClassTreePanel extends JPanel implements ILoader {
   private static final long serialVersionUID = 1L;
@@ -66,7 +67,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     panel.add(analysis);
     decompile = new JButton("Decompile", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
     decompile.addActionListener(l -> {
-      SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
+      SortedClassTreeNode tn = (SortedClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
         new DecompilerFrame(tn.member).setVisible(true);
       }
@@ -75,7 +76,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     decompile.setEnabled(false);
     bytecode = new JButton("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
     bytecode.addActionListener(l -> {
-      SortedTreeClassNode tn = (SortedTreeClassNode) tree.getLastSelectedPathComponent();
+      SortedClassTreeNode tn = (SortedClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
         new BytecodeFrame(tn.member.node).setVisible(true);
       }
@@ -87,7 +88,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
       for (int i = 0; i < paths.length; i++) {
-        SortedTreeClassNode tn = (SortedTreeClassNode) paths[i].getLastPathComponent();
+        SortedClassTreeNode tn = (SortedClassTreeNode) paths[i].getLastPathComponent();
         ignoreChilds(tn);
       }
       refreshIgnored();
@@ -101,7 +102,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
   public void refreshIgnored() {
     if (classes != null) {
       long disabled = classes.stream().filter(c -> !c.transform).count();
-      outerPanel.setBorder(BorderFactory.createTitledBorder("Class list - " + classes.size() + " classes (" + disabled + " ignored)"));
+      outerPanel.setBorder(BorderFactory.createTitledBorder(Strings.min(inputFile.getName(), 40) + " - " + classes.size() + " classes (" + disabled + " ignored)"));
     }
     repaint();
   }
@@ -110,21 +111,21 @@ public class ClassTreePanel extends JPanel implements ILoader {
     classes.stream().filter(c -> c.node.name.equals(className)).forEach(c -> c.transform = false);
   }
 
-  public void updateAllNames(SortedTreeClassNode root) {
+  public void updateAllNames(SortedClassTreeNode root) {
     root.updateClassName();
     for (int i = 0; i < root.getChildCount(); i++) {
-      SortedTreeClassNode child = (SortedTreeClassNode) root.getChildAt(i);
+      SortedClassTreeNode child = (SortedClassTreeNode) root.getChildAt(i);
       updateAllNames(child);
     }
   }
 
-  private void ignoreChilds(SortedTreeClassNode node) {
+  private void ignoreChilds(SortedClassTreeNode node) {
     if (node.member != null) {
       node.member.transform = !node.member.transform;
       node.updateClassName();
     } else {
       for (int i = 0; i < node.getChildCount(); i++) {
-        SortedTreeClassNode child = (SortedTreeClassNode) node.getChildAt(i);
+        SortedClassTreeNode child = (SortedClassTreeNode) node.getChildAt(i);
         ignoreChilds(child);
       }
     }
@@ -139,14 +140,14 @@ public class ClassTreePanel extends JPanel implements ILoader {
       this.setShowsRootHandles(true);
       this.setFocusable(true);
       this.setCellRenderer(new ClassTreeCellRenderer());
-      model = new DefaultTreeModel(new SortedTreeClassNode(""));
+      model = new DefaultTreeModel(new SortedClassTreeNode(""));
       this.setModel(model);
       this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
       this.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
           if (e.getClickCount() == 2) {
-            SortedTreeClassNode tn = (SortedTreeClassNode) getLastSelectedPathComponent();
+            SortedClassTreeNode tn = (SortedClassTreeNode) getLastSelectedPathComponent();
             if (tn != null && tn.member != null) {
               new DecompilerFrame(tn.member).setVisible(true);
             }
@@ -154,7 +155,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
         }
       });
       this.addTreeSelectionListener(l -> {
-        SortedTreeClassNode tn = (SortedTreeClassNode) getLastSelectedPathComponent();
+        SortedClassTreeNode tn = (SortedClassTreeNode) getLastSelectedPathComponent();
         boolean selected = tn != null;
         decompile.setEnabled(selected && tn.member != null);
         bytecode.setEnabled(selected && tn.member != null);
@@ -219,17 +220,17 @@ public class ClassTreePanel extends JPanel implements ILoader {
 
   @SuppressWarnings("unchecked")
   public void loadTree(List<Clazz> classes) {
-    SortedTreeClassNode root = new SortedTreeClassNode("");
+    SortedClassTreeNode root = new SortedClassTreeNode("");
     model = new DefaultTreeModel(root);
     classes.forEach(c -> {
       String[] packages = c.node.name.split("/");
-      addToTree((SortedTreeClassNode) model.getRoot(), c, packages, 0);
+      addToTree((SortedClassTreeNode) model.getRoot(), c, packages, 0);
     });
     for (Object n : Collections.list(root.depthFirstEnumeration())) {
-      SortedTreeClassNode node = (SortedTreeClassNode) n;
+      SortedClassTreeNode node = (SortedClassTreeNode) n;
       if (!node.isLeaf() && node != root) {
         if (node.getChildCount() == 1) {
-          SortedTreeClassNode child = (SortedTreeClassNode) node.getChildAt(0);
+          SortedClassTreeNode child = (SortedClassTreeNode) node.getChildAt(0);
           if (child.member == null) {
             node.combinePackage(child);
           }
@@ -240,21 +241,21 @@ public class ClassTreePanel extends JPanel implements ILoader {
     tree.setModel(model);
   }
 
-  public void addToTree(SortedTreeClassNode current, Clazz c, String[] packages, int pckg) {
+  public void addToTree(SortedClassTreeNode current, Clazz c, String[] packages, int pckg) {
     String node = packages[pckg];
     if (packages.length - pckg <= 1) {
-      current.add(new SortedTreeClassNode(c));
+      current.add(new SortedClassTreeNode(c));
       return;
     }
     for (int i = 0; i < current.getChildCount(); i++) {
 
-      SortedTreeClassNode child = (SortedTreeClassNode) current.getChildAt(i);
+      SortedClassTreeNode child = (SortedClassTreeNode) current.getChildAt(i);
       if (child.toString().equals(node)) {
         addToTree(child, c, packages, ++pckg);
         return;
       }
     }
-    SortedTreeClassNode newChild = new SortedTreeClassNode(node);
+    SortedClassTreeNode newChild = new SortedClassTreeNode(node);
     current.add(newChild);
     addToTree(newChild, c, packages, ++pckg);
   }
