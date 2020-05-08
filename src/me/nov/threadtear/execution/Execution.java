@@ -120,7 +120,7 @@ public abstract class Execution implements Opcodes {
     sb.append(e.getClass().getName());
     if (e.getMessage() != null) {
       sb.append(": ");
-      sb.append(e.getMessage());
+      sb.append(e.getMessage().replace("{}", "{ }"));
     }
     if (e.getCause() != null) {
       sb.append(", Cause: [");
