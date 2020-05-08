@@ -167,6 +167,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
   @Override
   public void onFileDrop(File input) {
     this.remove(outerPanel);
+    Threadtear.logger.info("Loading class files from {}", input.getAbsolutePath());
     String type = FilenameUtils.getExtension(input.getAbsolutePath());
     LoadingIndicator loadingLabel = new LoadingIndicator("Loading class file(s)... ", JLabel.CENTER);
     loadingLabel.setRunning(true);
@@ -179,6 +180,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
         new Thread(() -> {
           this.inputFile = input;
           this.loadFile(type);
+          Threadtear.logger.info("Loaded {} class file(s)", classes.size());
           loadTree(classes);
           refreshIgnored();
           model.reload();

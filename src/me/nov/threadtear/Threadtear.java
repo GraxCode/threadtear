@@ -37,6 +37,7 @@ public class Threadtear extends JFrame {
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
     this.initializeMenu();
+    logFrame = new LogFrame();
   }
 
   private void initializeMenu() {
@@ -111,9 +112,6 @@ public class Threadtear extends JFrame {
           JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
         return;
       }
-    }
-    if (logFrame == null) {
-      logFrame = new LogFrame();
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> {

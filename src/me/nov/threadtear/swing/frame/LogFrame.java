@@ -26,7 +26,7 @@ public class LogFrame extends JFrame {
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
 
   public LogFrame() {
-    setTitle("Execution log");
+    setTitle("Logger");
     setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 1000, 800);
     setMinimumSize(new Dimension(500, 400));
