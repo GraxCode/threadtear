@@ -20,7 +20,7 @@ import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
-import me.nov.threadtear.swing.dialog.JarAnalysis;
+import me.nov.threadtear.swing.analysis.JarAnalysis;
 import me.nov.threadtear.swing.frame.*;
 import me.nov.threadtear.swing.handler.*;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
@@ -61,7 +61,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
     analysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
     analysis.addActionListener(l -> {
-      new JarAnalysis(classes).setVisible(true);
+      threadtear.logFrame.setVisible(true);
+      new Thread(() -> JarAnalysis.analyze(classes)).start();
     });
     analysis.setEnabled(false);
     panel.add(analysis);

@@ -40,6 +40,20 @@ public class LogWrapper {
     form.error(msg, t);
   }
 
+  public void debug(String format, Object... args) {
+    String msg = compile(format, args);
+    console.debug(msg);
+    logfile.debug(msg);
+    form.debug(msg);
+  }
+
+  public void trace(String format, Object... args) {
+    String msg = compile(format, args);
+    console.trace(msg);
+    logfile.trace(msg);
+    form.trace(msg);
+  }
+
   /**
    * Compiles message with "{}" arg patterns.
    *

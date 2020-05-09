@@ -30,7 +30,7 @@ public class Threadtear extends JFrame {
   public static final LogWrapper logger = new LogWrapper();
   public TreePanel listPanel;
   public ConfigurationPanel configPanel;
-  private LogFrame logFrame;
+  public LogFrame logFrame;
 
   public Threadtear() {
     this.initBounds();
