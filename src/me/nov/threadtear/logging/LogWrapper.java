@@ -8,9 +8,9 @@ import org.slf4j.*;
  * @author Col-E
  */
 public class LogWrapper {
-  private static final Logger logfile = LoggerFactory.getLogger("logfile");
-  private static final Logger console = LoggerFactory.getLogger("console");
-  private static final Logger form = LoggerFactory.getLogger("form");
+  private final Logger logfile = LoggerFactory.getLogger("logfile");
+  private final Logger console = LoggerFactory.getLogger("console");
+  private final Logger form = LoggerFactory.getLogger("form");
 
   public void info(String format, Object... args) {
     String msg = compile(format, args);

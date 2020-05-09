@@ -1,6 +1,8 @@
 package me.nov.threadtear;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
@@ -42,7 +45,44 @@ public class Threadtear extends JFrame {
 
   private void initializeMenu() {
     JMenuBar bar = new JMenuBar();
+    JMenu file = new JMenu("File");
+    JMenuItem ws = new JMenuItem("Reset Workspace");
+    ws.addActionListener(l -> {
+      if (JOptionPane.showConfirmDialog(this.getParent(), "Do you really want to reset your workspace?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        this.dispose();
+        System.gc();
+        new Threadtear().setVisible(true);
+      }
+    });
+    file.add(ws);
+    JMenuItem load = new JMenuItem("Load file");
+    load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+    load.addActionListener(l -> {
+      JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
+      jfc.setAcceptAllFileFilterUsed(false);
+      jfc.setDialogTitle("Load file");
+      jfc.setFileFilter(new FileNameExtensionFilter("Java class or class archive", "jar", "class"));
+      int result = jfc.showOpenDialog(this);
+      if (result == JFileChooser.APPROVE_OPTION) {
+        File input = jfc.getSelectedFile();
+        listPanel.classList.onFileDrop(input);
+      }
+    });
+    file.add(load);
+    bar.add(file);
     JMenu help = new JMenu("Help");
+    JMenuItem log = new JMenuItem("Open logging frame");
+    log.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK));
+    log.addActionListener(l -> {
+      if (logFrame != null) {
+        logFrame.setVisible(true);
+      }
+    });
+    help.add(log);
+    JMenuItem laf = new JMenuItem("Look and feel settings");
+    laf.addActionListener(l -> {
+      ThemeSettings.showSettingsDialog(this);
+    });
     JMenuItem about = new JMenuItem("About threadtear " + Utils.getVersion());
     about.addActionListener(l -> {
       JOptionPane.showMessageDialog(this,
@@ -52,17 +92,6 @@ public class Threadtear extends JFrame {
           "About", JOptionPane.INFORMATION_MESSAGE);
     });
     help.add(about);
-    JMenuItem log = new JMenuItem("Open log frame");
-    log.addActionListener(l -> {
-      if (logFrame != null) {
-        logFrame.setVisible(true);
-      }
-    });
-    help.add(log);
-    JMenuItem laf = new JMenuItem("Look and feel");
-    laf.addActionListener(l -> {
-      ThemeSettings.showSettingsDialog(this);
-    });
     help.add(laf);
     bar.add(help);
     this.setJMenuBar(bar);

@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.*;
 
@@ -64,11 +63,11 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
               if (bsm.getOwner().equals(cn.name) && bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC)) {
                 encrypted++;
                 try {
-                  VMSecurityManager.allowReflection(true);
+                  allowReflection(true);
                   CallSite callsite = loadCallSiteFromVM(proxyClass, cn, idin, bsm);
                   MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite.getTarget());
                   m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
-                  VMSecurityManager.allowReflection(false);
+                  allowReflection(false);
                   decrypted++;
                 } catch (Throwable t) {
                   if (verbose) {

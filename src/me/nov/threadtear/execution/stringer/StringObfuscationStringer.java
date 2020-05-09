@@ -10,7 +10,6 @@ import org.objectweb.asm.tree.analysis.*;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
-import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.Casts;
@@ -88,9 +87,9 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       if (min.desc.matches(STRINGER_DECRPYTION_METHOD_DESC_REGEX)) {
         try {
           encrypted++;
-          VMSecurityManager.allowReflection(true);
+          allowReflection(true);
           String realString = invokeProxy(cn, m, min, frame);
-          VMSecurityManager.allowReflection(false);
+          allowReflection(false);
           if (realString != null) {
             if (Strings.isHighUTF(realString)) {
               logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));

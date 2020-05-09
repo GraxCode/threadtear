@@ -11,6 +11,7 @@ import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.logging.LogWrapper;
+import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.asm.Access;
 
 public abstract class Execution implements Opcodes {
@@ -142,5 +143,12 @@ public abstract class Execution implements Opcodes {
       sb.append(m.desc);
     }
     return sb.toString();
+  }
+
+  protected void allowReflection(boolean allow) {
+    SecurityManager sm = System.getSecurityManager();
+    if (sm != null) {
+      ((VMSecurityManager) sm).allowReflection(allow);
+    }
   }
 }

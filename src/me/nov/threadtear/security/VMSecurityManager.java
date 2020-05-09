@@ -8,8 +8,8 @@ import java.security.Permission;
 import me.nov.threadtear.Threadtear;
 
 public class VMSecurityManager extends SecurityManager {
-  private static boolean grantAll;
-  private static boolean checkReflection = true;
+  private boolean grantAll;
+  private boolean checkReflection = true;
 
   @Override
   public void checkPermission(Permission perm) {
@@ -104,7 +104,7 @@ public class VMSecurityManager extends SecurityManager {
     return checkReflection && pkg.startsWith("java.lang.reflect");
   }
 
-  public static void allowReflection(boolean allow) {
+  public void allowReflection(boolean allow) {
     if (grantAccess())
       checkReflection = !allow;
   }
@@ -116,7 +116,7 @@ public class VMSecurityManager extends SecurityManager {
 
   private static final String granted = "sun\\..*";
 
-  private static final boolean grantAccess() {
+  private final boolean grantAccess() {
     if (grantAll) {
       return true;
     }
@@ -132,7 +132,7 @@ public class VMSecurityManager extends SecurityManager {
     return true;
   }
 
-  public static final boolean isLocal(String name) {
+  public final boolean isLocal(String name) {
     try {
       grantAll = true; // we have to grant everything for the next check, otherwise we would end up in a loop
       /*
