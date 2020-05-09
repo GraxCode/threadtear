@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
@@ -43,6 +44,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references, this could take some time!");
+    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
     this.vm = VM.constructNonInitializingVM(this);
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
@@ -123,8 +125,13 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         logger.warning("Decryption long unknown in {}: {}", referenceString(cn, null), idin.desc);
         return null;
       }
-      return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm),
-          (long) top.getValue());
+      try {
+        return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name,
+            MethodType.fromMethodDescriptorString(idin.desc, vm), (long) top.getValue());
+      } catch (IllegalArgumentException e) {
+        Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+      }
+      return null;
     } else {
       logger.warning("Unimplemented or other dynamic desc variant in {}: {}", referenceString(cn, null), idin.desc);
       return null;

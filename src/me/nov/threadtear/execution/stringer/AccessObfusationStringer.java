@@ -7,6 +7,7 @@ import java.util.Map;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.tree.*;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.reflection.DynamicReflection;
@@ -33,6 +34,8 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references");
+    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
+
     this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
@@ -65,10 +68,12 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                 try {
                   allowReflection(true);
                   CallSite callsite = loadCallSiteFromVM(proxyClass, cn, idin, bsm);
-                  MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite.getTarget());
-                  m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
+                  if (callsite != null) {
+                    MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite.getTarget());
+                    m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
+                    decrypted++;
+                  }
                   allowReflection(false);
-                  decrypted++;
                 } catch (Throwable t) {
                   if (verbose) {
                     logger.error("Throwable", t);
@@ -92,8 +97,16 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
   private CallSite loadCallSiteFromVM(Class<?> proxyClass, ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
     Method bootstrap = proxyClass.getDeclaredMethod(bsm.getName(), Object.class, Object.class, Object.class);
-    CallSite callsite = (CallSite) bootstrap.invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
-    return callsite;
+    try {
+      CallSite callsite = (CallSite) bootstrap.invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
+      return callsite;
+    } catch (IllegalArgumentException e) {
+      Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+    } catch (Exception e) {
+      if (verbose)
+        Threadtear.logger.error("CallSite exception", e);
+    }
+    return null;
   }
 
   private boolean keepInitializer(ClassNode node) {

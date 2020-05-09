@@ -55,4 +55,29 @@ public class Descriptor {
     }
     return false;
   }
+
+  public static String generalize(Type methodType) {
+    StringBuilder sb = new StringBuilder("(");
+    for (Type arg : methodType.getArgumentTypes())
+      generalize(sb, arg);
+    sb.append(")");
+    generalize(sb, methodType.getReturnType());
+    return sb.toString();
+  }
+
+  private static void generalize(StringBuilder sb, Type type) {
+    if (type.getSort() == Type.OBJECT) {
+      sb.append(type.getInternalName().startsWith("java.") ? type.getDescriptor() : "Ljava/lang/Object;");
+    } else if (type.getSort() == Type.ARRAY) {
+      if (type.getElementType().getInternalName().startsWith("java.")) {
+        sb.append(type.getDescriptor());
+      } else {
+        for (int i = 0; i < type.getDimensions(); i++)
+          sb.append("[");
+        sb.append("Ljava/lang/Object;");
+      }
+    } else {
+      sb.append(type.getDescriptor());
+    }
+  }
 }
