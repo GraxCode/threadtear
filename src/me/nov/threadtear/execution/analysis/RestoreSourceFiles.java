@@ -26,7 +26,7 @@ public class RestoreSourceFiles extends Execution {
     if (map.size() < classes.size()) {
       logger.warning("{} classes of {} have a valid source file attribute.", map.size(), classes.size());
       if (map.isEmpty()) {
-        logger.severe("No source file attribute found, nothing to do, returning!");
+        logger.error("No source file attribute found, nothing to do, returning!");
         return false;
       }
     }

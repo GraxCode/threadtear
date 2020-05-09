@@ -40,10 +40,6 @@ public class LogWrapper {
     form.error(msg, t);
   }
 
-  public void severe(String format, Object... args) {
-    error(format, args);
-  }
-
   /**
    * Compiles message with "{}" arg patterns.
    *

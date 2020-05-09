@@ -51,7 +51,7 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
     try {
       a.analyze(cn.name, m);
     } catch (AnalyzerException e) {
-      logger.severe("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
+      logger.error("Failed stack analysis in " + cn.name + "." + m.name + ":" + e.getMessage());
       return m.instructions;
     }
     // TODO rewrite this whole thing without analyzer
@@ -60,7 +60,7 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
     Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
     for (int i = 0; i < m.instructions.size(); i++) {
       if (rewrittenCode.size() > Math.max(25, m.instructions.size() * 4)) {
-        logger.severe("Code got too huge in " + cn.name + "." + m.name + " -> returning old code");
+        logger.error("Code got too huge in " + cn.name + "." + m.name + " -> returning old code");
         return m.instructions;
       }
       AbstractInsnNode ain = m.instructions.get(i);

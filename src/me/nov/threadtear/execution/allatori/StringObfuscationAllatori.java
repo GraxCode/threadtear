@@ -34,7 +34,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.severe("No strings matching Allatori 7.3 string obfuscation have been found!");
+      logger.error("No strings matching Allatori 7.3 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
@@ -79,7 +79,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
               this.decrypted++;
               return new AbstractInsnNode[] { new InsnNode(POP), new LdcInsnNode(realString) };
             } else {
-              logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
+              logger.error("Failed to decrypt string in " + cn.name + "." + m.name + m.desc);
             }
           } else if (verbose) {
             logger.warning("Unknown top stack value in " + cn.name + "." + m.name + m.desc + ", skipping");
@@ -88,7 +88,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.severe("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
+          logger.error("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() + ", " + e.getMessage());
         }
       }
     }

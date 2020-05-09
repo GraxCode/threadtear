@@ -36,7 +36,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
 
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.severe("No strings matching DashO 7.3 string obfuscation have been found!");
+      logger.error("No strings matching DashO 7.3 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
@@ -81,7 +81,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
               this.decrypted++;
               return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(realString) };
             } else {
-              logger.severe("Failed to decrypt string in {}", referenceString(cn, m));
+              logger.error("Failed to decrypt string in {}", referenceString(cn, m));
             }
           } else if (verbose) {
             logger.warning("Unknown top stack value in {}, skipping", referenceString(cn, m));
@@ -90,7 +90,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.severe("Failed to decrypt string in {}: {}", referenceString(cn, m), shortStacktrace(e));
+          logger.error("Failed to decrypt string in {}: {}", referenceString(cn, m), shortStacktrace(e));
         }
       }
     }

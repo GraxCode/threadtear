@@ -37,7 +37,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.severe("No access obfuscation matching stringer 3 - 9 has been found!");
+      logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
@@ -74,7 +74,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.severe("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
+                  logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
                 }
               } else if (verbose) {
                 logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " + bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
@@ -87,7 +87,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       if (verbose) {
         logger.error("Throwable", t);
       }
-      logger.severe("Failed load proxy for {}, {}", referenceString(cn, null), shortStacktrace(t));
+      logger.error("Failed load proxy for {}, {}", referenceString(cn, null), shortStacktrace(t));
     }
   }
 

@@ -57,7 +57,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     if (clinit == null)
       return;
     if (clinit.instructions.size() > 2000) {
-      logger.severe("Static initializer too huge to decrypt in {}", referenceString(cn, null));
+      logger.error("Static initializer too huge to decrypt in {}", referenceString(cn, null));
       return;
     }
     ClassNode proxyClass = Sandbox.createClassProxy("ProxyClass");
@@ -83,7 +83,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     } catch (Throwable e) {
       if (verbose)
         logger.error("Throwable", e);
-      logger.severe("Failed to run proxy in {}, {} ", referenceString(cn, null), shortStacktrace(e));
+      logger.error("Failed to run proxy in {}, {} ", referenceString(cn, null), shortStacktrace(e));
     }
   }
 
@@ -173,7 +173,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           decrypted++;
           return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedLDC) };
         } else if (verbose) {
-          logger.severe("Failed string array decryption in {}", referenceString(cn, m));
+          logger.error("Failed string array decryption in {}", referenceString(cn, m));
         }
       } else if (verbose) {
         logger.warning("Unexpected case, method is not feeded two ints: {}", referenceString(cn, m));
@@ -182,7 +182,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       if (verbose) {
         t.printStackTrace();
       }
-      logger.severe("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
+      logger.error("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { min };
   }
@@ -230,7 +230,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       if (verbose) {
         logger.error("Throwable", t);
       }
-      logger.severe("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
+      logger.error("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { ain };
   }

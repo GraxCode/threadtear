@@ -34,7 +34,7 @@ public class JarIO {
           }
         } catch (Exception e) {
           e.printStackTrace();
-          Threadtear.logger.severe("Failed to load file " + name);
+          Threadtear.logger.error("Failed to load file " + name);
         }
       }
     } catch (Exception e) {
@@ -86,7 +86,7 @@ public class JarIO {
             out.write(IOUtils.toByteArray(jar.getInputStream(z)));
             out.closeEntry();
           } catch (Exception e) {
-            Threadtear.logger.severe("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
+            Threadtear.logger.error("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
           }
         });
         jar.close();
@@ -98,7 +98,7 @@ public class JarIO {
           out.write(Conversion.toBytecode0(c.node));
           out.closeEntry();
         } catch (Exception e) {
-          Threadtear.logger.severe("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
+          Threadtear.logger.error("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
         }
       }
       out.close();
