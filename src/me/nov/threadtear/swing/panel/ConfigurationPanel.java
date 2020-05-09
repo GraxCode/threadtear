@@ -46,7 +46,15 @@ public class ConfigurationPanel extends JPanel {
     watermark.setToolTipText("<html>Adds a \"<tt>Deobfuscated-By\" attribute to the manifest file.");
     watermark.setSelected(true);
     panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"));
-    disableSecurity.setToolTipText("Remove the protection agains unwanted executions. Could improve deobfuscation.");
+    disableSecurity.setToolTipText("Remove the protection agains unwanted calls. Could improve deobfuscation.");
+    disableSecurity.addActionListener(l -> {
+      if (disableSecurity.isSelected()) {
+        if (JOptionPane.showConfirmDialog(this.getParent(), "<html>You are disabling the <tt>SecurityManager</tt> that protects you<br>from arbitrary code execution. Are you sure?", "Warning",
+            JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+          disableSecurity.setSelected(false);
+        }
+      }
+    });
     panel.add(removeSignature = new JCheckBox("Remove manifest signature"));
     removeSignature.setToolTipText("Remove the signature from the manifest file, if available.");
     return panel;

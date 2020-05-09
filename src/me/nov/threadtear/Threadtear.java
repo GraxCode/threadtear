@@ -100,18 +100,11 @@ public class Threadtear extends JFrame {
     List<Clazz> classes = listPanel.classList.classes;
     ArrayList<Execution> executions = listPanel.executionList.getExecutions();
     if (classes == null || classes.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
       return;
     }
     if (executions.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "No executions are selected.");
+      JOptionPane.showMessageDialog(this, "No executions to run.");
       return;
-    }
-    if (disableSecurity) {
-      if (JOptionPane.showConfirmDialog(this, "Are you sure you wan't to start without a security manager?\nMalicious code could be executed!", "Warning",
-          JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-        return;
-      }
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> {
