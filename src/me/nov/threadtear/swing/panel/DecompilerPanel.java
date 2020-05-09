@@ -48,17 +48,14 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
     leftActionPanel.add(new JLabel("<html><tt>CFR 0.149 "));
-    conversionMethod = new JComboBox<>(new String[] { "Use source", "Pass through ASM" });
+    conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
     conversionMethod.addActionListener(this);
-    conversionMethod.setEnabled(false);
     leftActionPanel.add(conversionMethod);
     leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try catch blocks"));
     leftActionPanel.add(ignoreMon = new JCheckBox("Ignore synchronized"));
     leftActionPanel.add(topsort = new JCheckBox("Top sort"));
-    ignoreTCB.setEnabled(false);
     ignoreTCB.setFocusable(false);
     ignoreTCB.addActionListener(this);
-    ignoreMon.setEnabled(false);
     ignoreMon.setFocusable(false);
     ignoreMon.addActionListener(this);
     topsort.addActionListener(this);
@@ -174,22 +171,20 @@ public class DecompilerPanel extends JPanel implements ActionListener {
       if (conversionMethod.getSelectedIndex() == 0) {
         // use the original jar file to retrieve bytes
         bytes = IOUtils.toByteArray(clazz.streamOriginal());
-        ignoreTCB.setEnabled(false);
-        ignoreMon.setEnabled(false);
       } else {
-        ignoreTCB.setEnabled(true);
-        ignoreMon.setEnabled(true);
-        ClassNode copy = Conversion.toNode(Conversion.toBytecode0(clazz.node));
-        // do some asm action here
-        if (ignoreTCB.isSelected()) {
-          copy.methods.forEach(m -> m.tryCatchBlocks = null);
-        }
-        if (ignoreMon.isSelected()) {
-          copy.methods.forEach(m -> StreamSupport.stream(m.instructions.spliterator(), false).filter(i -> i.getOpcode() == MONITORENTER || i.getOpcode() == MONITOREXIT)
-              .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
-        }
-        bytes = Conversion.toBytecode0(copy);
+        // use the local code
+        bytes = Conversion.toBytecode0(clazz.node);
       }
+      ClassNode copy = Conversion.toNode(bytes);
+      // do some asm action here
+      if (ignoreTCB.isSelected()) {
+        copy.methods.forEach(m -> m.tryCatchBlocks = null);
+      }
+      if (ignoreMon.isSelected()) {
+        copy.methods.forEach(m -> StreamSupport.stream(m.instructions.spliterator(), false).filter(i -> i.getOpcode() == MONITORENTER || i.getOpcode() == MONITOREXIT)
+            .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
+      }
+      bytes = Conversion.toBytecode0(copy);
       CFR.setTopsort(topsort.isSelected());
       String decompiled = CFR.decompile(clazz.node.name, bytes);
       this.textArea.setText(decompiled);
