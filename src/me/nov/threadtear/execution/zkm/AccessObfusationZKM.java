@@ -96,7 +96,6 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         Instructions.updateInstructions(m, labels, rewrittenCode);
       }
     });
-    System.out.println();
   }
 
   private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, Frame<ConstantValue> frame) throws Throwable {
