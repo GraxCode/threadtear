@@ -19,6 +19,14 @@ public class LogWrapper {
     form.info(msg);
   }
 
+  public void errorIf(String format, boolean error, Object... args) {
+    if (error) {
+      error(format, args);
+    } else {
+      info(format, args);
+    }
+  }
+
   public void warning(String format, Object... args) {
     String msg = compile(format, args);
     console.warn(msg);

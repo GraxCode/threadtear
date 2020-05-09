@@ -40,7 +40,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total " + encrypted + " encrypted references, " + (decryptionRatio) + "% were successfully decrypted");
+    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25, encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 

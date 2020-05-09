@@ -50,7 +50,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total {} encrypted references, {}% were successfully decrypted", encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25, encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
