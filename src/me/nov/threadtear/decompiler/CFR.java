@@ -88,6 +88,9 @@ public class CFR {
       e.printStackTrace(pw);
       return sw.toString();
     }
+    if (decompiled == null || decompiled.trim().isEmpty()) {
+      decompiled = "No CFR output received";
+    }
     return decompiled;
   }
 }
