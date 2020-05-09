@@ -9,7 +9,7 @@ import me.nov.threadtear.Threadtear;
 
 public class VMSecurityManager extends SecurityManager {
   private static boolean grantAll;
-  private static boolean checkReflection;
+  private static boolean checkReflection = true;
 
   @Override
   public void checkPermission(Permission perm) {
@@ -106,7 +106,7 @@ public class VMSecurityManager extends SecurityManager {
 
   public static void allowReflection(boolean allow) {
     if (grantAccess())
-      checkReflection = allow;
+      checkReflection = !allow;
   }
 
   private final void throwIfNotGranted() {
