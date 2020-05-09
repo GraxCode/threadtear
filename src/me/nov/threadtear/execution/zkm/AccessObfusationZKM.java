@@ -7,6 +7,7 @@ import java.util.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
@@ -65,25 +66,24 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
             if (bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC) && classes.values().stream().map(c -> c.node).anyMatch(node -> node.name.equals(bsm.getOwner()))) {
               encrypted++;
               try {
-                ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-                if (top.isKnown()) {
-                  allowReflection(true);
-                  MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm,
-                      (long) top.getValue());
-                  if (handle != null) {
-                    MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
-                    rewrittenCode.add(new InsnNode(POP2)); // pop the long
-                    rewrittenCode.add(DynamicReflection.getInstructionFromHandleInfo(methodInfo));
-                    decrypted++;
-                    return;
+                allowReflection(true);
+                MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm, frame);
+                if (handle != null) {
+                  MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
+                  rewrittenCode.add(new InsnNode(POP2)); // pop the long
+                  if (idin.desc.startsWith("(IJ)")) {
+                    rewrittenCode.add(new InsnNode(POP)); // pop the int, if the desc contains one
                   }
-                  allowReflection(false);
+                  rewrittenCode.add(DynamicReflection.getInstructionFromHandleInfo(methodInfo));
+                  decrypted++;
+                  return;
                 }
+                allowReflection(false);
               } catch (Throwable t) {
                 if (verbose) {
                   logger.error("Throwable", t);
                 }
-                logger.error("Failed to get callsite using classloader in ", referenceString(cn, m), shortStacktrace(t));
+                logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
               }
             } else if (verbose) {
               logger.warning("Other bootstrap type in {}: {}", referenceString(cn, m), bsm);
@@ -99,7 +99,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     System.out.println();
   }
 
-  private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, long decryptionLong) throws Throwable {
+  private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, Frame<ConstantValue> frame) throws Throwable {
     if (!vm.isLoaded(cn.name.replace('/', '.'))) {
       cn.methods.forEach(
           mn -> Instructions.isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"), (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
@@ -117,8 +117,19 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), bsm);
       return null;
     }
-    return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm),
-        decryptionLong);
+    if (idin.desc.startsWith("(J)") || idin.desc.startsWith("(IJ)")) {
+      // they use the same decryption method with only an extra long as argument
+      ConstantValue top = frame.getStack(frame.getStackSize() - 1);
+      if (top.isKnown()) {
+        logger.warning("Decryption long unknown in {}: {}", referenceString(cn, null), idin.desc);
+        return null;
+      }
+      return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm),
+          (long) top.getValue());
+    } else {
+      logger.warning("Unimplemented or other dynamic desc variant in {}: {}", referenceString(cn, null), idin.desc);
+      return null;
+    }
   }
 
   @Override
