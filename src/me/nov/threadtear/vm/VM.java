@@ -10,7 +10,6 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.io.Conversion;
-import me.nov.threadtear.security.VMExtraSecurity;
 import me.nov.threadtear.util.asm.*;
 
 public class VM extends ClassLoader implements Opcodes {
@@ -59,15 +58,6 @@ public class VM extends ClassLoader implements Opcodes {
     if (name.contains("/"))
       throw new IllegalArgumentException();
     if (name.matches(RT)) {
-      if (name.equals("java.lang.reflect.AccessibleObject")) {
-        if (loaded.containsKey(name)) {
-          return loaded.get(name);
-        }
-        Class<?> acc = bytesToClass(name, Conversion.toBytecode0(VMExtraSecurity.rewriteAccessibleObject()));
-        Threadtear.logger.warning("Redefined java.lang.reflect.AccessibleObject for more security, a class called setAccessible(true).");
-        loaded.put(name, acc);
-        return acc;
-      }
       return super.loadClass(name, resolve);
     }
     if (loaded.containsKey(name)) {
