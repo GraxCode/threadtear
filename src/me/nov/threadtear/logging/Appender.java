@@ -70,7 +70,7 @@ public class Appender extends AppenderBase<ILoggingEvent> {
         return;
       }
       try {
-        int limite = 1000;
+        int limite = 800;
         int apaga = 200;
         if (textPane.getDocument().getDefaultRootElement().getElementCount() > limite) {
           int end = getLineEndOffset(textPane, apaga);

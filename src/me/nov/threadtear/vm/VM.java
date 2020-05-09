@@ -26,7 +26,7 @@ public class VM extends ClassLoader implements Opcodes {
     this.noInitialization = clinit;
   }
 
-  public Class<?> bytesToClass(String name, byte[] bytes) {
+  private Class<?> bytesToClass(String name, byte[] bytes) {
     if (loaded.containsKey(name))
       throw new RuntimeException("class " + name + " is already defined");
     if (isForbiddenName(name))
