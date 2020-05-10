@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.vm.*;
@@ -34,7 +33,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     this.encrypted = 0;
     this.decrypted = 0;
 
-    classes.values().stream().map(c -> c.node).forEach(this::decrypt);
+    classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching DashO 7.3 string obfuscation have been found!");
       return false;
@@ -44,8 +43,9 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     return decryptionRatio > 0.25;
   }
 
-  private void decrypt(ClassNode cn) {
-
+  private void decrypt(Clazz c) {
+    ClassNode cn = c.node;
+    logger.collectErrors(c);
     cn.methods.forEach(m -> {
       InsnList rewrittenCode = new InsnList();
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);

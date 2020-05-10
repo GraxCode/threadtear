@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.References;
 

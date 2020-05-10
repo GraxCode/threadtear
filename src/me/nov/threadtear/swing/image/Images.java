@@ -21,6 +21,21 @@ public class Images {
     return new ImageIcon(image);
   }
 
+  public static ImageIcon combineSmall(ImageIcon icon1, ImageIcon icon2, boolean right) {
+    Image img1 = icon1.getImage();
+    Image img2 = icon2.getImage();
+
+    int w = icon1.getIconWidth();
+    int h = icon1.getIconHeight();
+    BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2 = image.createGraphics();
+    g2.drawImage(img1, 0, 0, null);
+    g2.drawImage(img2.getScaledInstance(w / 2, h / 2, Image.SCALE_SMOOTH), w - w / 2, h - h / 2, null);
+    g2.dispose();
+
+    return new ImageIcon(image);
+  }
+
   public static BufferedImage scaleImage(Image img, int w, int h) {
     BufferedImage resized = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
     Graphics2D g2 = resized.createGraphics();

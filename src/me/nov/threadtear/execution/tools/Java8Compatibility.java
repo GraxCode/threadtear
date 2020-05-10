@@ -3,7 +3,6 @@ package me.nov.threadtear.execution.tools;
 import java.util.Map;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class Java8Compatibility extends Execution {
 

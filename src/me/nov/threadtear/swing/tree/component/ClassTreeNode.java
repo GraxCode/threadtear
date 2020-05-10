@@ -4,7 +4,7 @@ import java.util.*;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.Strings;
 
 public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<ClassTreeNode> {

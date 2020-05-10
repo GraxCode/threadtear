@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.*;
 
@@ -38,7 +37,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
     this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
     vm.setDummyLoading(true);
-    classes.values().stream().map(c -> c.node).forEach(this::decrypt);
+    classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
       return false;
@@ -48,7 +47,9 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     return decryptionRatio > 0.25;
   }
 
-  private void decrypt(ClassNode cn) {
+  private void decrypt(Clazz c) {
+    logger.collectErrors(c);
+    ClassNode cn = c.node;
     try {
       ClassNode proxy = Sandbox.createClassProxy(String.valueOf(cn.name.hashCode())); // can't use real class name here
       proxy.sourceFile = cn.name + ".java";

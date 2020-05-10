@@ -3,7 +3,6 @@ package me.nov.threadtear.execution.tools;
 import java.util.*;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class RemoveMaxs extends Execution {
 

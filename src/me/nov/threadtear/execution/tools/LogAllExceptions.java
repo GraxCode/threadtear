@@ -5,7 +5,6 @@ import java.util.*;
 import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Instructions;
 
 public class LogAllExceptions extends Execution {

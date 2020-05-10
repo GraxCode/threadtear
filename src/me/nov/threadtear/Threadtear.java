@@ -15,8 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.execution.*;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.Utils;
@@ -163,6 +162,7 @@ public class Threadtear extends JFrame {
           long ms = System.currentTimeMillis();
           logger.info("Executing " + e.getClass().getName());
           boolean success = e.execute(map, verbose);
+          logger.collectErrors(null);
           logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure", (System.currentTimeMillis() - ms));
           logFrame.append("-----------------------------------------------------------\n");
         });

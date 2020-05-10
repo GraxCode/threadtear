@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 
 import org.slf4j.*;
 
+import me.nov.threadtear.execution.Clazz;
+
 /**
  * @author Col-E
  */
@@ -11,6 +13,12 @@ public class LogWrapper {
   private final Logger logfile = LoggerFactory.getLogger("logfile");
   private final Logger console = LoggerFactory.getLogger("console");
   private final Logger form = LoggerFactory.getLogger("form");
+
+  private Clazz currentErrorCollector;
+
+  public void collectErrors(Clazz c) {
+    currentErrorCollector = c;
+  }
 
   public void info(String format, Object... args) {
     String msg = compile(format, args);
@@ -36,6 +44,9 @@ public class LogWrapper {
 
   public void error(String format, Object... args) {
     String msg = compile(format, args);
+    if (currentErrorCollector != null) {
+      currentErrorCollector.addFail(msg);
+    }
     console.error(msg);
     logfile.error(msg);
     form.error(msg);
@@ -43,6 +54,9 @@ public class LogWrapper {
 
   public void error(String format, Throwable t, Object... args) {
     String msg = compile(format, args);
+    if (currentErrorCollector != null) {
+      currentErrorCollector.addFail(t);
+    }
     console.error(msg, t);
     logfile.error(msg, t);
     form.error(msg, t);
@@ -82,4 +96,5 @@ public class LogWrapper {
     }
     return msg;
   }
+
 }

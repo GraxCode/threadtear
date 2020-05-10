@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.*;
 import me.nov.threadtear.vm.*;
@@ -35,12 +34,13 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.verbose = verbose;
-    classes.values().stream().map(c -> c.node).filter(this::hasZKMBlock).forEach(this::decrypt);
+    classes.values().stream().filter(this::hasZKMBlock).forEach(this::decrypt);
     logger.info("Decrypted {} strings successfully.", decrypted);
     return decrypted > 0;
   }
 
-  private boolean hasZKMBlock(ClassNode cn) {
+  private boolean hasZKMBlock(Clazz c) {
+    ClassNode cn = c.node;
     if (Access.isInterface(cn.access)) // TODO maybe interfaces get string encrypted too, but proxy would not be
                                        // working because static methods in interfaces are not allowed
       return false;
@@ -52,7 +52,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
   private static final String ALLOWED_CALLS = "(java/lang/String).*";
 
-  private void decrypt(ClassNode cn) {
+  private void decrypt(Clazz c) {
+    ClassNode cn = c.node;
+    logger.collectErrors(c);
     MethodNode clinit = getStaticInitializer(cn);
     if (clinit == null)
       return;

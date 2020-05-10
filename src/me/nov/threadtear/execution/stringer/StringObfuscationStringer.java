@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.Casts;
@@ -58,7 +57,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       } catch (InterruptedException e) {
       }
     }
-    classes.values().stream().map(c -> c.node).forEach(this::decrypt);
+    classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching stringer 9 string obfuscation have been found!");
       return false;
@@ -68,8 +67,9 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     return decryptionRatio > 0.25;
   }
 
-  private void decrypt(ClassNode cn) {
-
+  private void decrypt(Clazz c) {
+    logger.collectErrors(c);
+    ClassNode cn = c.node;
     cn.methods.forEach(m -> {
       InsnList rewrittenCode = new InsnList();
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);

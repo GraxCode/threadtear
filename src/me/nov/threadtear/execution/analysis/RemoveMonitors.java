@@ -5,7 +5,6 @@ import java.util.Map;
 import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class RemoveMonitors extends Execution {
 

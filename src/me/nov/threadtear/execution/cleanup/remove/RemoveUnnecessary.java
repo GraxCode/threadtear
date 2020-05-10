@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.analysis.*;
 import me.nov.threadtear.analysis.rewriter.*;
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.*;
 
 public class RemoveUnnecessary extends Execution implements ICRReferenceHandler {

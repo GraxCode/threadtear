@@ -18,6 +18,7 @@ import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.analysis.JarAnalysis;
@@ -143,6 +144,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
       this.setCellRenderer(new ClassTreeCellRenderer());
       model = new DefaultTreeModel(new ClassTreeNode(""));
       this.setModel(model);
+      ToolTipManager.sharedInstance().registerComponent(this);
       this.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
       this.addMouseListener(new MouseAdapter() {
         @Override

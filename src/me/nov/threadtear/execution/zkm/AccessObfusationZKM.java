@@ -12,7 +12,6 @@ import org.objectweb.asm.tree.analysis.Frame;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.*;
@@ -47,7 +46,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
     this.vm = VM.constructNonInitializingVM(this);
     this.vm.setDummyLoading(true);
-    classes.values().stream().map(c -> c.node).forEach(this::decrypt);
+    classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching ZKM has been found!");
       return false;
@@ -57,7 +56,9 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     return decryptionRatio > 0.25;
   }
 
-  private void decrypt(ClassNode cn) {
+  private void decrypt(Clazz cz) {
+    ClassNode cn = cz.node;
+    logger.collectErrors(cz);
     cn.methods.forEach(m -> {
       InsnList rewrittenCode = new InsnList();
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);

@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.References;
 
 public class RestoreSourceFiles extends Execution {

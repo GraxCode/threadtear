@@ -3,7 +3,6 @@ package me.nov.threadtear.execution.cleanup;
 import java.util.*;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class RemoveAttributes extends Execution {
 

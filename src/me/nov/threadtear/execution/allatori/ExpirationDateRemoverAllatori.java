@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class ExpirationDateRemoverAllatori extends Execution implements IConstantReferenceHandler {
 

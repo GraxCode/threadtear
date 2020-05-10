@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 
 public class Java7Compatibility extends Execution {
 

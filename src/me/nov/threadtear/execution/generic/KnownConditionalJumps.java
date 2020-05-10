@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.Casts;
 
@@ -24,12 +23,14 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-    classes.values().stream().map(c -> c.node).forEach(this::decrypt);
+    classes.values().stream().forEach(this::decrypt);
     logger.info("Removed " + predictedJumps + " unnecessary conditional jumps and " + predictedSwitches + " unnecessary switches.");
     return true;
   }
 
-  public void decrypt(ClassNode cn) {
+  public void decrypt(Clazz c) {
+    ClassNode cn = c.node;
+    logger.collectErrors(c);
     cn.methods.forEach(m -> {
       InsnList rewrittenCode = new InsnList();
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);

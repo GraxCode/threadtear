@@ -7,7 +7,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.io.Clazz;
+import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.*;
 
 public class JarAnalysis implements Opcodes {

@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
-import me.nov.threadtear.io.Clazz;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.util.asm.Access;
