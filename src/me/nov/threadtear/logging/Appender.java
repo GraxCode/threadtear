@@ -54,7 +54,7 @@ public class Appender extends AppenderBase<ILoggingEvent> {
   public void start() {
     patternLayout = new PatternLayout();
     patternLayout.setContext(getContext());
-    patternLayout.setPattern("%d{HH:mm:ss.SSS} %-5level: %msg%n");
+    patternLayout.setPattern("%d{HH:mm:ss.SSS} %-5level: %msg %ex{2}%nopex%n");
     patternLayout.start();
 
     super.start();
