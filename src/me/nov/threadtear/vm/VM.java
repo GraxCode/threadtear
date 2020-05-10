@@ -53,12 +53,18 @@ public class VM extends ClassLoader implements Opcodes {
     return name.startsWith(Threadtear.class.getPackage().getName()) || name.matches(RT);
   }
 
+  public static final String threadtearPkg = Threadtear.class.getPackage().getName();
+
   @Override
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     if (name.contains("/"))
       throw new IllegalArgumentException();
     if (name.matches(RT)) {
       return super.loadClass(name, resolve);
+    }
+    if (name.startsWith(threadtearPkg)) {
+      Threadtear.logger.warning("Dynamic class tried to access a threadtear package!");
+      return null;
     }
     if (loaded.containsKey(name)) {
       return loaded.get(name);
