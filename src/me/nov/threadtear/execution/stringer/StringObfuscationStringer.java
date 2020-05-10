@@ -51,7 +51,13 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     this.classes = classes;
     this.encrypted = 0;
     this.decrypted = 0;
-
+    if (classes.values().stream().anyMatch(c -> c.oldEntry.getExtra() != null && c.oldEntry.getExtra().length > 0)) {
+      logger.warning("The file has a stringer signature, please patch first!");
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+      }
+    }
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching stringer 9 string obfuscation have been found!");

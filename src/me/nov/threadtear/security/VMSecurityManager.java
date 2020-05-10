@@ -65,7 +65,8 @@ public class VMSecurityManager extends SecurityManager {
 
   @Override
   public void checkCreateClassLoader() {
-    throwIfNotGranted();
+    if (checkReflection)
+      throwIfNotGranted();
   }
 
   @Override
