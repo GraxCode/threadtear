@@ -46,6 +46,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     logger.info("Decrypting all invokedynamic references, this could take some time!");
     logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
     this.vm = VM.constructNonInitializingVM(this);
+    this.vm.setDummyLoading(true);
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching ZKM has been found!");

@@ -37,6 +37,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
 
     this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
+    vm.setDummyLoading(true);
     classes.values().stream().map(c -> c.node).forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
