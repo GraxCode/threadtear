@@ -49,6 +49,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     leftActionPanel.setLayout(new GridBagLayout());
     leftActionPanel.add(new JLabel("<html><tt>CFR 0.149 "));
     conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
+    conversionMethod.setSelectedIndex(1);
     conversionMethod.addActionListener(this);
     leftActionPanel.add(conversionMethod);
     leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try catch blocks"));
