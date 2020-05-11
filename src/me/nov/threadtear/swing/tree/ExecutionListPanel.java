@@ -41,7 +41,7 @@ public class ExecutionListPanel extends JPanel {
     panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
     JButton add = new JButton("Add", IconLoader.get().loadSVGIcon("res/add.svg", false));
     add.addActionListener(e -> {
-      ExecutionSelection es = new ExecutionSelection();
+      ExecutionSelection es = new ExecutionSelection(ExecutionListPanel.this);
       es.setVisible(true);
       ExecutionTreeNode root = ((ExecutionTreeNode) model.getRoot());
       if (es.tree.getSelectionPath() == null) {

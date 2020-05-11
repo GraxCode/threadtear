@@ -10,11 +10,11 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.panel.*;
 
-public class DecompilerFrame extends JFrame {
+public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
 
-  public DecompilerFrame(Clazz clazz) {
-    setTitle("Decompiler: " + clazz.node.name);
+  public AnalysisFrame(Clazz clazz) {
+    setTitle(clazz.node.name);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
     setMinimumSize(new Dimension(900, 540));

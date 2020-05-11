@@ -26,11 +26,12 @@ public class ExecutionSelection extends JDialog {
   public JTree tree = null;
   private JButton ok;
 
-  public ExecutionSelection() {
+  public ExecutionSelection(Component parent) {
+    setLocationRelativeTo(parent);
     setModalityType(ModalityType.APPLICATION_MODAL);
     setTitle("Select one or more executions");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 450, 300);
+    setSize(450, 300);
     setMinimumSize(new Dimension(450, 300));
     getContentPane().setLayout(new BorderLayout());
     JPanel cp = new JPanel();

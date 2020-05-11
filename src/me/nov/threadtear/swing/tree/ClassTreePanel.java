@@ -23,7 +23,7 @@ import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.analysis.JarAnalysis;
 import me.nov.threadtear.swing.dialog.FileInfo;
-import me.nov.threadtear.swing.frame.DecompilerFrame;
+import me.nov.threadtear.swing.frame.AnalysisFrame;
 import me.nov.threadtear.swing.handler.*;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
@@ -38,9 +38,9 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private ClassTree tree;
   private JPanel outerPanel;
 
-  private JButton analysis;
-  private JButton decompile;
-  private JButton bytecode;
+  private JButton obfAnalysis;
+  private JButton analyze;
+  private JButton fileInfo;
   private JButton ignore;
 
   public ClassTreePanel(Threadtear threadtear) {
@@ -61,32 +61,32 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private JPanel createButtons() {
     JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
     panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-    analysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
-    analysis.addActionListener(l -> {
+    obfAnalysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
+    obfAnalysis.addActionListener(l -> {
       threadtear.logFrame.setVisible(true);
       new Thread(() -> JarAnalysis.analyze(classes)).start();
     });
-    analysis.setEnabled(false);
-    panel.add(analysis);
-    decompile = new JButton("Decompile", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
-    decompile.addActionListener(l -> {
+    obfAnalysis.setEnabled(false);
+    panel.add(obfAnalysis);
+    analyze = new JButton("Analyze code", IconLoader.get().loadSVGIcon("res/decompile.svg", false));
+    analyze.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
-        new DecompilerFrame(tn.member).setVisible(true);
+        new AnalysisFrame(tn.member).setVisible(true);
       }
     });
-    panel.add(decompile);
-    decompile.setEnabled(false);
-    bytecode = new JButton("File info", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
-    bytecode.addActionListener(l -> {
+    panel.add(analyze);
+    analyze.setEnabled(false);
+    fileInfo = new JButton("Information", IconLoader.get().loadSVGIcon("res/file.svg", false));
+    fileInfo.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
-        new FileInfo(tn.member).setVisible(true);
+        new FileInfo(ClassTreePanel.this, tn.member).setVisible(true);
       }
     });
 
-    panel.add(bytecode);
-    bytecode.setEnabled(false);
+    panel.add(fileInfo);
+    fileInfo.setEnabled(false);
     ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
@@ -153,7 +153,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
           if (e.getClickCount() == 2) {
             ClassTreeNode tn = (ClassTreeNode) getLastSelectedPathComponent();
             if (tn != null && tn.member != null) {
-              new DecompilerFrame(tn.member).setVisible(true);
+              new AnalysisFrame(tn.member).setVisible(true);
             }
           }
         }
@@ -161,8 +161,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
       this.addTreeSelectionListener(l -> {
         ClassTreeNode tn = (ClassTreeNode) getLastSelectedPathComponent();
         boolean selected = tn != null;
-        decompile.setEnabled(selected && tn.member != null);
-        bytecode.setEnabled(selected && tn.member != null);
+        analyze.setEnabled(selected && tn.member != null);
+        fileInfo.setEnabled(selected && tn.member != null);
         ignore.setEnabled(selected);
       });
     }
@@ -188,7 +188,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
           loadTree(classes);
           refreshIgnored();
           model.reload();
-          analysis.setEnabled(true);
+          obfAnalysis.setEnabled(true);
           threadtear.configPanel.run.setEnabled(true);
           threadtear.configPanel.save.setEnabled(true);
           this.remove(loadingLabel);

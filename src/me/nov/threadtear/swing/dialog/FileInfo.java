@@ -1,47 +1,82 @@
 package me.nov.threadtear.swing.dialog;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.util.Strings;
 
 public class FileInfo extends JDialog {
   private static final long serialVersionUID = 1L;
-  private JButton ok;
 
-  public FileInfo(Clazz member) {
+  private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+  public FileInfo(Component parent, Clazz member) {
     setModalityType(ModalityType.APPLICATION_MODAL);
-    setTitle("Select one or more executions");
+    setLocationRelativeTo(parent);
+    setTitle("File information");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 450, 300);
     setMinimumSize(new Dimension(450, 300));
+    setResizable(false);
     getContentPane().setLayout(new BorderLayout());
-    JPanel cp = new JPanel();
+    JPanel cp = new JPanel(new BorderLayout(8, 8));
     cp.setBorder(new EmptyBorder(10, 10, 10, 10));
     getContentPane().add(cp, BorderLayout.CENTER);
-    JPanel treePanel = new JPanel(new BorderLayout());
-    treePanel.setBorder(BorderFactory.createLoweredBevelBorder());
-    treePanel.add(new JScrollPane(new JTextArea()), BorderLayout.CENTER);
-    cp.add(treePanel);
+    JPanel descriptions = new JPanel(new GridLayout(9, 1, 4, 4));
+    JPanel values = new JPanel(new GridLayout(9, 1, 4, 4));
+    descriptions.add(new CustomLabel("File name: "));
+    values.add(new CustomLabel(member.oldEntry.getName()));
+    descriptions.add(new CustomLabel("Size: "));
+    values.add(new CustomLabel(Strings.formatBytes(member.oldEntry.getSize()) + ", compressed: " + Strings.formatBytes(member.oldEntry.getCompressedSize())));
+    if (member.oldEntry.getCreationTime() != null) {
+      descriptions.add(new CustomLabel("Creation time: "));
+      values.add(new CustomLabel(format.format(new Date(member.oldEntry.getCreationTime().toMillis()))));
+    }
+    if (member.oldEntry.getLastAccessTime() != null) {
+      descriptions.add(new CustomLabel("Last access: "));
+      values.add(new CustomLabel(format.format(new Date(member.oldEntry.getLastAccessTime().toMillis()))));
+    }
+    descriptions.add(new CustomLabel("Last modified: "));
+    values.add(new CustomLabel(format.format(new Date(member.oldEntry.getTime()))));
+    if (member.oldEntry.getComment() != null) {
+      descriptions.add(new CustomLabel("Comment: "));
+      values.add(new CustomLabel(Strings.min(member.oldEntry.getComment(), 100)));
+    }
+    if (member.oldEntry.getExtra() != null) {
+      descriptions.add(new CustomLabel("Extra bytes: "));
+      values.add(new CustomLabel(Arrays.toString(member.oldEntry.getExtra())));
+    }
+    descriptions.add(new CustomLabel("Signature: "));
+    values.add(new CustomLabel(member.oldEntry.getCertificates() != null ? "<font color=\"red\">signed, please remove certs</font>" : "<font color=\"green\">not signed</font>"));
+
+    descriptions.add(new CustomLabel("CRC-32 hash: "));
+    values.add(new CustomLabel(Long.toHexString(member.oldEntry.getCrc())));
+    cp.add(descriptions, BorderLayout.WEST);
+
+    cp.add(values, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
-    JButton cancel = new JButton("Cancel");
-    cancel.addActionListener(e -> {
-      dispose();
-    });
-    buttons.add(cancel);
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
     getContentPane().add(buttons, BorderLayout.SOUTH);
-    ok = new JButton("OK");
-    ok.setEnabled(false);
+    JButton ok = new JButton("OK");
     ok.addActionListener(e -> {
       dispose();
     });
     ok.setActionCommand("OK");
     buttons.add(ok);
     getRootPane().setDefaultButton(ok);
-    cancel.setActionCommand("Cancel");
+    pack();
+  }
 
+  public static class CustomLabel extends JLabel {
+    private static final long serialVersionUID = 1L;
+
+    public CustomLabel(String s) {
+      super("<html>" + s);
+      this.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+    }
   }
 }
