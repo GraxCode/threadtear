@@ -15,14 +15,15 @@ import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
 public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
   private static final long serialVersionUID = 1L;
 
-  private Icon executionRed, executionGreen, executionBlue, directory;
+  private Icon executionRed, executionGreen, executionBlue, executionPurple, directory;
 
   public ExecutionTreeCellRenderer() {
     this.directory = IconLoader.get().loadSVGIcon("res/folder.svg", false);
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    this.executionRed = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_red.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    this.executionGreen = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_green.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-    this.executionBlue = new ImageIcon(tk.getImage(this.getClass().getResource("/res/execution_blue.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+    this.executionRed = IconLoader.get().loadSVGIcon("res/execution_red.svg", false);
+    this.executionGreen = IconLoader.get().loadSVGIcon("res/execution_green.svg", false);
+    this.executionBlue = IconLoader.get().loadSVGIcon("res/execution_blue.svg", false);
+    this.executionPurple = IconLoader.get().loadSVGIcon("res/execution_purple.svg", false);
+
   }
 
   @Override
@@ -34,17 +35,21 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
       Execution exec = tn.member;
       setToolTipText(tn.getTooltip());
       if (exec != null) {
-        switch (exec.type) {
-        case ANALYSIS:
-          this.setIcon(this.executionGreen);
-          break;
-        case CLEANING:
-        case TOOLS:
-          this.setIcon(this.executionBlue);
-          break;
-        default:
-          this.setIcon(this.executionRed);
-          break;
+        if (exec.type.name.startsWith("Obfuscators.")) {
+          this.setIcon(this.executionPurple);
+        } else {
+          switch (exec.type) {
+          case ANALYSIS:
+            this.setIcon(this.executionGreen);
+            break;
+          case CLEANING:
+          case TOOLS:
+            this.setIcon(this.executionBlue);
+            break;
+          default:
+            this.setIcon(this.executionRed);
+            break;
+          }
         }
       } else {
         this.setIcon(this.directory);
