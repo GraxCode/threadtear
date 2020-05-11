@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.github.weisj.darklaf.icons.IconLoader;
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
 import me.nov.threadtear.execution.*;
@@ -34,7 +35,7 @@ public class Threadtear extends JFrame {
   public Threadtear() {
     this.initBounds();
     this.setTitle("Threadtear " + Utils.getVersion());
-    this.setIconImage(new ImageIcon(getClass().getResource("/res/threadtear.png")).getImage());
+    this.setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/threadtear.svg", 64, 64, false)));
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
