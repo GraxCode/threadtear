@@ -138,6 +138,7 @@ public abstract class Execution implements Opcodes {
     if (cn != null)
       sb.append(cn.name.replace('/', '.'));
     if (m != null) {
+      sb.append(" ");
       sb.append(m.name);
       sb.append(m.desc);
     }
