@@ -117,10 +117,17 @@ public class VM extends ClassLoader implements Opcodes {
   }
 
   private int fixAccess(int access) {
+    int newAccess = ACC_PUBLIC;
     if (Access.isStatic(access)) {
-      return ACC_PUBLIC | ACC_STATIC;
+      newAccess |= ACC_STATIC;
     }
-    return ACC_PUBLIC;
+    if (Access.isInterface(access)) {
+      newAccess |= ACC_INTERFACE;
+    }
+    if (Access.isAbstract(access)) {
+      newAccess |= ACC_ABSTRACT;
+    }
+    return newAccess;
   }
 
   public void explicitlyPreloadWithClinit(ClassNode node) {
