@@ -21,7 +21,7 @@ import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
-import me.nov.threadtear.swing.analysis.JarAnalysis;
+import me.nov.threadtear.swing.analysis.InstructionAnalysis;
 import me.nov.threadtear.swing.dialog.FileInfo;
 import me.nov.threadtear.swing.frame.AnalysisFrame;
 import me.nov.threadtear.swing.handler.*;
@@ -64,7 +64,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     obfAnalysis = new JButton("Full analysis", IconLoader.get().loadSVGIcon("res/analysis.svg", false));
     obfAnalysis.addActionListener(l -> {
       threadtear.logFrame.setVisible(true);
-      new Thread(() -> JarAnalysis.analyze(classes)).start();
+      new Thread(() -> InstructionAnalysis.analyze(classes)).start();
     });
     obfAnalysis.setEnabled(false);
     panel.add(obfAnalysis);

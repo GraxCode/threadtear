@@ -10,7 +10,7 @@ import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.*;
 
-public class JarAnalysis implements Opcodes {
+public class InstructionAnalysis implements Opcodes {
   public static void analyze(List<Clazz> classes) {
     Threadtear.logger.debug("Analyzing all instructions...");
     Threadtear.logger.debug("Jumps in proportion to references -> ");

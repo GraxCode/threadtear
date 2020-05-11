@@ -23,11 +23,13 @@ public class FileInfo extends JDialog {
     setMinimumSize(new Dimension(450, 300));
     setResizable(false);
     getContentPane().setLayout(new BorderLayout());
-    JPanel cp = new JPanel(new BorderLayout(8, 8));
+    JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(new EmptyBorder(10, 10, 10, 10));
     getContentPane().add(cp, BorderLayout.CENTER);
-    JPanel descriptions = new JPanel(new GridLayout(9, 1, 4, 4));
-    JPanel values = new JPanel(new GridLayout(9, 1, 4, 4));
+    JPanel descriptions = new JPanel(new GridLayout(9, 1));
+    descriptions.setBorder(new EmptyBorder(8, 8, 8, 8));
+    JPanel values = new JPanel(new GridLayout(9, 1));
+    values.setBorder(new EmptyBorder(8, 8, 8, 8));
     descriptions.add(new CustomLabel("File name: "));
     values.add(new CustomLabel(member.oldEntry.getName()));
     descriptions.add(new CustomLabel("Size: "));
@@ -55,9 +57,12 @@ public class FileInfo extends JDialog {
 
     descriptions.add(new CustomLabel("CRC-32 hash: "));
     values.add(new CustomLabel(Long.toHexString(member.oldEntry.getCrc())));
-    cp.add(descriptions, BorderLayout.WEST);
+    JPanel inner = new JPanel(new BorderLayout());
+    inner.setBorder(BorderFactory.createLoweredBevelBorder());
+    inner.add(descriptions, BorderLayout.WEST);
 
-    cp.add(values, BorderLayout.CENTER);
+    inner.add(values, BorderLayout.CENTER);
+    cp.add(inner, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
     getContentPane().add(buttons, BorderLayout.SOUTH);
