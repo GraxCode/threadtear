@@ -61,6 +61,12 @@ public class VM extends ClassLoader implements Opcodes {
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     if (name.contains("/"))
       throw new IllegalArgumentException();
+    if (name.equals("java.lang.reflect.Method")) {
+
+    }
+    if (name.equals("java.lang.reflect.Field")) {
+
+    }
     if (name.matches(RT)) {
       return super.loadClass(name, resolve);
     }

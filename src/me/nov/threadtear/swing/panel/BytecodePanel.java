@@ -26,6 +26,7 @@ public class BytecodePanel extends JPanel {
   private String lastSearchText = null;
 
   public BytecodePanel(ClassNode cn) {
+    this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     this.setLayout(new BorderLayout(4, 4));
     JPanel actionPanel = new JPanel();
     actionPanel.setLayout(new GridBagLayout());

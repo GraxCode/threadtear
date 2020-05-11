@@ -8,7 +8,7 @@ import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.Utils;
-import me.nov.threadtear.swing.panel.DecompilerPanel;
+import me.nov.threadtear.swing.panel.*;
 
 public class DecompilerFrame extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -23,7 +23,11 @@ public class DecompilerFrame extends JFrame {
     setAlwaysOnTop(true);
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-    cp.add(new DecompilerPanel(clazz), BorderLayout.CENTER);
+    JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(clazz));
+    tabbedPane.addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
+
+    cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));

@@ -22,7 +22,8 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.analysis.JarAnalysis;
-import me.nov.threadtear.swing.frame.*;
+import me.nov.threadtear.swing.dialog.FileInfo;
+import me.nov.threadtear.swing.frame.DecompilerFrame;
 import me.nov.threadtear.swing.handler.*;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
@@ -76,11 +77,11 @@ public class ClassTreePanel extends JPanel implements ILoader {
     });
     panel.add(decompile);
     decompile.setEnabled(false);
-    bytecode = new JButton("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
+    bytecode = new JButton("File info", IconLoader.get().loadSVGIcon("res/bytecode.svg", false));
     bytecode.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
-        new BytecodeFrame(tn.member.node).setVisible(true);
+        new FileInfo(tn.member).setVisible(true);
       }
     });
 

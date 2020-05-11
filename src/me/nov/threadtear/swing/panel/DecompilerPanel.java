@@ -44,8 +44,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
 
   public DecompilerPanel(Clazz cn) {
     this.clazz = cn;
+    this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     this.setLayout(new BorderLayout(4, 4));
-
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
     leftActionPanel.add(new JLabel("<html><tt>CFR 0.149 "));
