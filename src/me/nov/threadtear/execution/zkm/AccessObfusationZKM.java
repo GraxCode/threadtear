@@ -3,7 +3,7 @@ package me.nov.threadtear.execution.zkm;
 import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -59,6 +59,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   }
 
   private void decrypt(Clazz cz) {
+    // TODO if invokedynamic points to ordinal() of enum, the invokedynamic cannot be decrypted, as ordinal() does not exist at bytecode level, only runtime.
     ClassNode cn = cz.node;
     logger.collectErrors(cz);
     cn.methods.forEach(m -> {
@@ -76,9 +77,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                 MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm, frame);
                 if (handle != null) {
                   MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
-                  rewrittenCode.add(new InsnNode(POP2)); // pop the long
-                  if (idin.desc.startsWith("(IJ)")) {
-                    rewrittenCode.add(new InsnNode(POP)); // pop the int, if the desc contains one
+                  for (Type t : Type.getArgumentTypes("(" + new StringBuilder(matchZKMIdynParams(idin.desc)).reverse().toString() + ")V")) { // create a fake desc if you are too lazy
+                    rewrittenCode.add(new InsnNode(t.getSize() > 1 ? POP2 : POP));
                   }
                   rewrittenCode.add(DynamicReflection.getInstructionFromHandleInfo(methodInfo));
                   decrypted++;
@@ -122,29 +122,40 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), bsm);
       return null;
     }
-    if (idin.desc.matches("\\([JI]+\\).*")) {
+    if (idin.desc.matches("\\(.*[JI]+\\).*")) {
       try {
-        int invokedynamicParams = Type.getArgumentTypes(idin.desc).length;
+        int invokedynamicParams = matchZKMIdynParams(idin.desc).length();
         List<Object> args = new ArrayList<>(
             Arrays.asList(DynamicReflection.getTrustedLookup(), null /* MutableCallSite, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
         for (int i = 0; i < invokedynamicParams; i++) {
           ConstantValue stack = frame.getStack(frame.getStackSize() - invokedynamicParams + i);
           if (!stack.isKnown()) {
-            Threadtear.logger.error("Stack value depth {} is unknown in {}", i, referenceString(cn, null));
+            Threadtear.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i, referenceString(cn, null));
             return null;
           }
-         Threadtear.logger.info(""+stack.getValue());
           args.add(stack.getValue());
         }
         return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {
-        Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+        Threadtear.logger.error("IllegalArgumentException: One or more classes not in jar file or stack not matching desc: {}, cannot decrypt!", idin.desc);
       }
       return null;
     } else {
       logger.warning("Unimplemented or other dynamic desc variant in {}: {}", referenceString(cn, null), idin.desc);
       return null;
     }
+  }
+
+  private String matchZKMIdynParams(String desc) {
+
+    Pattern p = Pattern.compile("[JI]+\\)");
+    Matcher m = p.matcher(desc);
+    if (!m.find()) {
+      Threadtear.logger.error("Pattern matching failed for {}", desc);
+      return "";
+    }
+    String group = m.group();
+    return group.substring(0, group.length() - 1); // remove ")"
   }
 
   @Override
