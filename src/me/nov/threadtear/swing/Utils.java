@@ -2,6 +2,8 @@ package me.nov.threadtear.swing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.management.*;
+import java.util.List;
 import java.util.Objects;
 
 import javax.swing.*;
@@ -55,5 +57,11 @@ public class Utils {
       icon.paintIcon(null, image.getGraphics(), 0, 0);
       return image;
     }
+  }
+
+  public static boolean isNoverify() {
+    RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+    List<String> arguments = runtimeMxBean.getInputArguments();
+    return arguments.contains("-Xverify:none");
   }
 }

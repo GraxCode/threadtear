@@ -56,7 +56,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       cn.methods.stream().filter(m -> m.desc.equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC)).forEach(m -> {
         proxy.methods.add(m);
       });
-      vm.explicitlyPreloadNoClinit(proxy);
+      vm.explicitlyPreload(proxy, true);
       Class<?> proxyClass = vm.loadClass(proxy.name, true);
       cn.methods.forEach(m -> {
         for (int i = 0; i < m.instructions.size(); i++) {

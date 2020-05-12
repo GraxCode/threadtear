@@ -94,8 +94,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
    */
   private void invokeVMAndReplace(ClassNode proxy, ClassNode realClass) throws Throwable {
     VM vm = VM.constructNonInitializingVM(this);
-    vm.explicitlyPreloadNoClinit(proxy);
-    vm.explicitlyPreloadNoClinit(realClass);
+    vm.explicitlyPreload(proxy, true);
+    vm.explicitlyPreload(realClass, true);
     Class<?> callProxy = vm.loadClass("ProxyClass");
     try {
       callProxy.getMethod("clinitProxy").invoke(null); // invoke cut clinit, fields in original class in vm get set

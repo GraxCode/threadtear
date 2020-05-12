@@ -15,7 +15,7 @@ import me.nov.threadtear.util.asm.*;
 public class VM extends ClassLoader implements Opcodes {
   public HashMap<String, Class<?>> loaded = new HashMap<>();
 
-  public static final String RT = "(com\\.oracle\\.|com\\.sun\\.|java\\.|javax\\.|jdk\\.|sun\\.).*";
+  public static final String RT_REGEX = "((?:com\\.(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
   private IVMReferenceHandler handler;
 
   public boolean noInitialization;
@@ -52,7 +52,7 @@ public class VM extends ClassLoader implements Opcodes {
   }
 
   private boolean isForbiddenName(String name) {
-    return name.startsWith(Threadtear.class.getPackage().getName()) || name.matches(RT);
+    return name.startsWith(Threadtear.class.getPackage().getName()) || name.matches(RT_REGEX);
   }
 
   public static final String threadtearPkg = Threadtear.class.getPackage().getName();
@@ -61,22 +61,21 @@ public class VM extends ClassLoader implements Opcodes {
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     if (name.contains("/"))
       throw new IllegalArgumentException();
-    if (name.equals("java.lang.reflect.Method")) {
-
-    }
-    if (name.equals("java.lang.reflect.Field")) {
-
-    }
-    if (name.matches(RT)) {
-      return super.loadClass(name, resolve);
-    }
     if (name.startsWith(threadtearPkg)) {
       Threadtear.logger.warning("Dynamic class tried to access a threadtear package!");
       return null;
     }
+    /**
+     * if (name.equals("java.lang.reflect.Method")) { // TODO: return modified class to prevent SecurityManager removal } else if (name.equals("java.lang.reflect.Field")) { // TODO:
+     * return modified class to prevent SecurityManager removal }
+     **/
     if (loaded.containsKey(name)) {
       return loaded.get(name);
     }
+    if (name.matches(RT_REGEX)) {
+      return super.loadClass(name, resolve);
+    }
+    // unloaded class, convert ClassNode to bytes
     byte[] clazz = convert(name, handler.tryClassLoad(name.replace('.', '/')), noInitialization, null);
     if (clazz == null) {
       return null;
@@ -130,23 +129,17 @@ public class VM extends ClassLoader implements Opcodes {
     return newAccess;
   }
 
-  public void explicitlyPreloadWithClinit(ClassNode node) {
-    String name = node.name.replace('/', '.');
-    byte[] clazz = convert(name, node, false, null);
-    Class<?> loadedClass = bytesToClass(name, clazz);
-    loaded.put(name, loadedClass);
+  public void explicitlyPreload(ClassNode node) {
+    this.explicitlyPreload(node, false);
   }
 
-  public void explicitlyPreloadNoClinit(ClassNode node) {
-    String name = node.name.replace('/', '.');
-    byte[] clazz = convert(name, node, true, null);
-    Class<?> loadedClass = bytesToClass(name, clazz);
-    loaded.put(name, loadedClass);
+  public void explicitlyPreload(ClassNode node, boolean removeClinit) {
+    this.explicitlyPreload(node, removeClinit, null);
   }
 
-  public void explicitlyPreloadNoClinitAndIsolate(ClassNode node, BiPredicate<String, String> p) {
+  public void explicitlyPreload(ClassNode node, boolean removeClinit, BiPredicate<String, String> p) {
     String name = node.name.replace('/', '.');
-    byte[] clazz = convert(name, node, true, p);
+    byte[] clazz = convert(name, node, removeClinit, p);
     Class<?> loadedClass = bytesToClass(name, clazz);
     loaded.put(name, loadedClass);
   }

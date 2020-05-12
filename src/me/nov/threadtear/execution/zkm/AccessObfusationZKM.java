@@ -108,7 +108,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     if (!vm.isLoaded(cn.name.replace('/', '.'))) {
       cn.methods.forEach(
           mn -> Instructions.isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"), (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
-      vm.explicitlyPreloadWithClinit(cn); // make sure bootstrap class class has <clinit>
+      vm.explicitlyPreload(cn); // make sure bootstrap class class has <clinit>
     }
     Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
     Method bootstrap = null;

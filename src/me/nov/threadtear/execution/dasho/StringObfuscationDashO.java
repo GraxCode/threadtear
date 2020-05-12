@@ -105,9 +105,9 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     ClassNode decryptionMethodOwner = classes.get(min.owner).node;
     if (decryptionMethodOwner == null)
       return null;
-    vm.explicitlyPreloadWithClinit(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
+    vm.explicitlyPreload(fakeInvocationClone); // proxy class can't contain code in clinit other than the one we want to run
     if (!vm.isLoaded(decryptionMethodOwner.name.replace('/', '.'))) // decryption class could be the same class
-      vm.explicitlyPreloadNoClinitAndIsolate(decryptionMethodOwner, (name, desc) -> !name.matches("java/lang/.*"));
+      vm.explicitlyPreload(decryptionMethodOwner, true, (name, desc) -> !name.matches("java/lang/.*"));
     Class<?> loadedClone = vm.loadClass(fakeInvocationClone.name.replace('/', '.'), true); // load dupe class
 
     if (m.name.equals("<init>")) {

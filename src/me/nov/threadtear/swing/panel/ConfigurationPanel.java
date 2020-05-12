@@ -17,6 +17,7 @@ import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.io.JarIO;
+import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.tree.component.*;
 
 public class ConfigurationPanel extends JPanel {
@@ -116,6 +117,10 @@ public class ConfigurationPanel extends JPanel {
     run.setEnabled(false);
     run.addActionListener(l -> {
       run.setEnabled(false);
+      if (!Utils.isNoverify()) {
+        JOptionPane.showMessageDialog(main, "<html>You started without \"-noverify\". Some deobfuscators could fail.<br>Use \"<tt>java -noverify -jar ...</tt>\" to start the application.", "Warning",
+            JOptionPane.WARNING_MESSAGE);
+      }
       main.run(verbose.isSelected(), disableSecurity.isSelected());
     });
     panel.add(run);
