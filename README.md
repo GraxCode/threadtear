@@ -20,6 +20,10 @@ If you are ready, click on the "Run" button and they will be executed in order.
 Use this tool at your own risk. Some executions use implemented ClassLoaders to run code from the jar file. An attacker could tweak the bytecode so that malicious code could be executed.
 Affected executions use the class `me.nov.threadtear.asm.vm.VM`. 
 These are mostly used for decrypting string or resource / access obfuscation, as it is much easier to execute the decryption methods remotely.
+### Security
+Threadtear tries its best to protect you from malicious calls (arbitrary code executions) using its own `SecurityManager`, but there is no guarantee. 
+Especially with deobfuscators like for ZKM or Stringer you have to be very careful, as reflection has to be allowed, otherwise they would not function.
+If you discover an ACE, please open an issue. I will try to fix them as soon as possible.
 
 ## How to compile 
 First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release.
@@ -175,11 +179,6 @@ For other obfuscators you can try generic executions or open an issue and I'll s
 ### Description and tags
 Before selecting an execution, check out the tool-tip texts while hovering. 
 They contain a small description about what they do, but also tags that help you understand how the behavior of your JAR file is changed.
-## Security
-Threadtear uses its own `SecurityManager` to protect you from malicious calls (arbitrary code executions). 
-Of course I cannot guarantee that it protects you fully from such malicious calls. 
-Especially for deobfuscators like for ZKM or Stringer you have to be very careful, as reflection has to be allowed, otherwise they would not function.
-If you find an ACE, please open an issue. I will try to fix them as soon as possible.
 
 ## License
 Threadtear is licensed under the GNU General Public License 3.0
