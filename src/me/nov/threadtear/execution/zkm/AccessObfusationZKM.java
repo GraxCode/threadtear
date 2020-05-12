@@ -24,8 +24,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   /**
    * The method that returns the real MethodHandle
    */
-  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = Pattern
-      .quote("(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;") + "[JI]+" + Pattern.quote(")Ljava/lang/invoke/MethodHandle;");
+  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;#)Ljava/lang/invoke/MethodHandle;";
 
   private Map<String, Clazz> classes;
   private int encrypted;
@@ -113,13 +112,23 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
     Method bootstrap = null;
     for (Method m : proxyClass.getDeclaredMethods()) {
-      if (Type.getMethodDescriptor(m).matches(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX)) {
+      if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", matchZKMIdynParams(idin.desc)))) {
         bootstrap = m;
         break;
       }
     }
     if (bootstrap == null) {
-      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), bsm);
+      // recovery pass, if no method matching desc is found
+      for (Method m : proxyClass.getDeclaredMethods()) {
+        if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", "J"))) {
+          bootstrap = m;
+          idin.desc = "(J)V";
+          break;
+        }
+      }
+    }
+    if (bootstrap == null) {
+      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", matchZKMIdynParams(idin.desc)));
       return null;
     }
     if (idin.desc.matches("\\(.*[JI]+\\).*")) {
@@ -133,11 +142,21 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
             Threadtear.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i, referenceString(cn, null));
             return null;
           }
-          args.add(stack.getValue());
+          Object value = stack.getValue();
+
+          if (value instanceof Long) {
+            args.add((long) value);
+          } else {
+            args.add((int) value);
+          }
         }
         return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {
-        Threadtear.logger.error("IllegalArgumentException: One or more classes not in jar file or stack not matching desc: {}, cannot decrypt!", idin.desc);
+        if (e.getMessage().contains("arguments")) {
+          Threadtear.logger.error("IllegalArgumentException: Wrong arguments for {}, cannot decrypt!", Arrays.toString(bootstrap.getParameterTypes()));
+        } else {
+          Threadtear.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+        }
       }
       return null;
     } else {
