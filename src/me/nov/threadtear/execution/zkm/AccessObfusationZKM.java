@@ -3,6 +3,7 @@ package me.nov.threadtear.execution.zkm;
 import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -23,7 +24,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   /**
    * The method that returns the real MethodHandle
    */
-  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;J)Ljava/lang/invoke/MethodHandle;";
+  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = Pattern
+      .quote("(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;") + "[JI]+" + Pattern.quote(")Ljava/lang/invoke/MethodHandle;");
 
   private Map<String, Clazz> classes;
   private int encrypted;
@@ -111,7 +113,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
     Method bootstrap = null;
     for (Method m : proxyClass.getDeclaredMethods()) {
-      if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC)) {
+      if (Type.getMethodDescriptor(m).matches(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX)) {
         bootstrap = m;
         break;
       }
@@ -120,16 +122,21 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), bsm);
       return null;
     }
-    if (idin.desc.startsWith("(J)") || idin.desc.startsWith("(IJ)")) {
-      // they use the same decryption method with only an extra long as argument
-      ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-      if (top.isKnown()) {
-        logger.warning("Decryption long unknown in {}: {}", referenceString(cn, null), idin.desc);
-        return null;
-      }
+    if (idin.desc.matches("\\([JI]+\\).*")) {
       try {
-        return (MethodHandle) bootstrap.invoke(null, DynamicReflection.getTrustedLookup(), null /* MutableCallSide, unused in method */, idin.name,
-            MethodType.fromMethodDescriptorString(idin.desc, vm), (long) top.getValue());
+        int invokedynamicParams = Type.getArgumentTypes(idin.desc).length;
+        List<Object> args = new ArrayList<>(
+            Arrays.asList(DynamicReflection.getTrustedLookup(), null /* MutableCallSite, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
+        for (int i = 0; i < invokedynamicParams; i++) {
+          ConstantValue stack = frame.getStack(frame.getStackSize() - invokedynamicParams + i);
+          if (!stack.isKnown()) {
+            Threadtear.logger.error("Stack value depth {} is unknown in {}", i, referenceString(cn, null));
+            return null;
+          }
+         Threadtear.logger.info(""+stack.getValue());
+          args.add(stack.getValue());
+        }
+        return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {
         Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
       }
