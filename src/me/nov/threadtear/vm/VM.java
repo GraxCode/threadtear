@@ -65,10 +65,6 @@ public class VM extends ClassLoader implements Opcodes {
       Threadtear.logger.warning("Dynamic class tried to access a threadtear package!");
       return null;
     }
-    /**
-     * if (name.equals("java.lang.reflect.Method")) { // TODO: return modified class to prevent SecurityManager removal } else if (name.equals("java.lang.reflect.Field")) { // TODO:
-     * return modified class to prevent SecurityManager removal }
-     **/
     if (loaded.containsKey(name)) {
       return loaded.get(name);
     }

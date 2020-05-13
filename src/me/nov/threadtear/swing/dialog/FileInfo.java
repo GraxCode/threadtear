@@ -33,7 +33,7 @@ public class FileInfo extends JDialog {
     descriptions.add(new CustomLabel("File name: "));
     values.add(new CustomLabel(member.oldEntry.getName()));
     descriptions.add(new CustomLabel("Size: "));
-    values.add(new CustomLabel(Strings.formatBytes(member.oldEntry.getSize()) + ", compressed: " + Strings.formatBytes(member.oldEntry.getCompressedSize())));
+    values.add(new CustomLabel(Strings.formatBytes(member.oldEntry.getSize()) + "; compressed: " + Strings.formatBytes(member.oldEntry.getCompressedSize())));
     if (member.oldEntry.getCreationTime() != null) {
       descriptions.add(new CustomLabel("Creation time: "));
       values.add(new CustomLabel(format.format(new Date(member.oldEntry.getCreationTime().toMillis()))));
@@ -49,8 +49,10 @@ public class FileInfo extends JDialog {
       values.add(new CustomLabel(Strings.min(member.oldEntry.getComment(), 100)));
     }
     if (member.oldEntry.getExtra() != null) {
-      descriptions.add(new CustomLabel("Extra bytes: "));
-      values.add(new CustomLabel(Arrays.toString(member.oldEntry.getExtra())));
+      descriptions.add(new CustomLabel("First 8 extra bytes: "));
+      byte[] arr = new byte[8];
+      System.arraycopy(member.oldEntry.getExtra(), 0, arr, 0, 8);
+      values.add(new CustomLabel(Arrays.toString(arr)));
     }
     descriptions.add(new CustomLabel("Signature: "));
     values.add(new CustomLabel(member.oldEntry.getCertificates() != null ? "<font color=\"red\">signed, please remove certs</font>" : "<font color=\"green\">not signed</font>"));
