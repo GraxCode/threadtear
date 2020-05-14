@@ -183,6 +183,10 @@ They contain a small description about what they do, but also tags that help you
 ## License
 Threadtear is licensed under the GNU General Public License 3.0
 
+## Donate
+This tool was a ton of work. 
+If I saved your time and you want to buy me a coffee you can do so here: [![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/37f6MxNoyyksgh3hWtbh9UKkkGDSAoHCtT)](https://en.cryptobadges.io/donate/37f6MxNoyyksgh3hWtbh9UKkkGDSAoHCtT)
+
 ## Notice
 Do NOT deobfuscate files that don't belong to you.  
 Please open an issue or send me an email if a transformer doesn't work properly and attach the log.   
