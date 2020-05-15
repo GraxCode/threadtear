@@ -19,13 +19,9 @@ public class TreePanel extends JPanel {
     inner.setLayout(new GridLayout(1, 2, 16, 16));
     JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, executionList = new ExecutionListPanel(), classList = new ClassTreePanel(threadtear));
     split.putClientProperty("JSplitPane.style", "invisible");
+    split.setResizeWeight(0.5);
     inner.add(split);
     this.add(inner, BorderLayout.CENTER);
     this.add(new JSeparator(), BorderLayout.PAGE_END);
-    Timer t = new Timer(200, (k) -> {
-      split.setDividerLocation(0.5);
-    });
-    t.setRepeats(false);
-    t.start();
   }
 }

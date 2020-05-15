@@ -48,7 +48,7 @@ public class Threadtear extends JFrame {
     JMenu file = new JMenu("File");
     JMenuItem ws = new JMenuItem("Reset Workspace");
     ws.addActionListener(l -> {
-      if (JOptionPane.showConfirmDialog(this.getParent(), "Do you really want to reset your workspace?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      if (JOptionPane.showConfirmDialog(Threadtear.this, "Do you really want to reset your workspace?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         this.dispose();
         System.gc();
         new Threadtear().setVisible(true);
@@ -95,7 +95,6 @@ public class Threadtear extends JFrame {
     help.add(laf);
     bar.add(help);
     this.setJMenuBar(bar);
-
   }
 
   private void initializeFrame() {
