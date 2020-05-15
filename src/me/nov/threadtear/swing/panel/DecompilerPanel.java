@@ -22,7 +22,7 @@ import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.decompiler.*;
 import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.io.*;
+import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
 import me.nov.threadtear.util.Strings;
 
