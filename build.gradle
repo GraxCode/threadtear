@@ -23,6 +23,9 @@ ext {
  
 repositories {
     mavenCentral()
+    flatDir {
+       dirs 'libs'
+    }
 }
 
 dependencies {
@@ -41,6 +44,7 @@ dependencies {
 	compile "org.ow2.asm:asm-util:${asm_ver}"
 	
 	compile 'org.benf:cfr:0.149'
+	implementation name: 'fernflower-15-05-20'
 	
 	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'
 	

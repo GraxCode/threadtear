@@ -20,7 +20,7 @@ import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.icons.IconLoader;
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
-import me.nov.threadtear.decompiler.CFR;
+import me.nov.threadtear.decompiler.*;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.*;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
@@ -37,10 +37,12 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   private Clazz clazz;
 
   private RTextScrollPane scp;
+  private JComboBox<String> decompilerSelection;
   private JComboBox<String> conversionMethod;
   private JCheckBox ignoreTCB;
   private JCheckBox ignoreMon;
-  private JCheckBox topsort;
+  private JCheckBox aggressive;
+  private IDecompilerBridge decompilerBridge;
 
   public DecompilerPanel(Clazz cn) {
     this.clazz = cn;
@@ -48,20 +50,22 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    leftActionPanel.add(new JLabel("<html><tt>CFR 0.149 "));
+    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.149", "Fernflower 15-05-20" });
+    decompilerSelection.addActionListener(this);
+    leftActionPanel.add(decompilerSelection);
     conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
     conversionMethod.setSelectedIndex(1);
     conversionMethod.addActionListener(this);
     leftActionPanel.add(conversionMethod);
     leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try catch blocks"));
     leftActionPanel.add(ignoreMon = new JCheckBox("Ignore synchronized"));
-    leftActionPanel.add(topsort = new JCheckBox("Top sort"));
+    leftActionPanel.add(aggressive = new JCheckBox("Aggressive"));
     ignoreTCB.setFocusable(false);
     ignoreTCB.addActionListener(this);
     ignoreMon.setFocusable(false);
     ignoreMon.addActionListener(this);
-    topsort.addActionListener(this);
-    topsort.setFocusable(false);
+    aggressive.addActionListener(this);
+    aggressive.setFocusable(false);
     JPanel rightActionPanel = new JPanel();
     rightActionPanel.setLayout(new GridBagLayout());
     JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
@@ -187,8 +191,9 @@ public class DecompilerPanel extends JPanel implements ActionListener {
             .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
       }
       bytes = Conversion.toBytecode0(copy);
-      CFR.setTopsort(topsort.isSelected());
-      String decompiled = CFR.decompile(clazz.node.name, bytes);
+      decompilerBridge = decompilerSelection.getSelectedIndex() == 0 ? new CFRBridge() : new FernflowerBridge();
+      decompilerBridge.setAggressive(aggressive.isSelected());
+      String decompiled = decompilerBridge.decompile(clazz.node.name, bytes);
       this.textArea.setText(decompiled);
     } catch (IOException e) {
       e.printStackTrace();

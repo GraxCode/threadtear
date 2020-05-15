@@ -9,7 +9,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import me.nov.threadtear.io.Conversion;
 
-public class CFR {
+public class CFRBridge implements IDecompilerBridge {
 
   public static final HashMap<String, String> options = new HashMap<>();
 
@@ -20,16 +20,16 @@ public class CFR {
     options.put("innerclasses", "false");
   }
 
-  public static void setTopsort(boolean topsort) {
+  public void setAggressive(boolean topsort) {
     options.put("forcetopsort", String.valueOf(topsort));
     options.put("forcetopsortaggress", String.valueOf(topsort));
   }
 
-  private static String decompiled;
+  private String result;
 
-  public static String decompile(String name, byte[] bytes) {
+  public String decompile(String name, byte[] bytes) {
     try {
-      decompiled = null;
+      this.result = null;
       OutputSinkFactory mySink = new OutputSinkFactory() {
         @Override
         public List<SinkClass> getSupportedSinks(SinkType sinkType, Collection<SinkClass> collection) {
@@ -44,7 +44,7 @@ public class CFR {
         public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
           if (sinkType == SinkType.JAVA && sinkClass == SinkClass.DECOMPILED) {
             return x -> {
-              decompiled = ((SinkReturns.Decompiled) x).getJava().substring(31);
+              result = ((SinkReturns.Decompiled) x).getJava().substring(31);
             };
           }
           return ignore -> {
@@ -88,9 +88,9 @@ public class CFR {
       e.printStackTrace(pw);
       return sw.toString();
     }
-    if (decompiled == null || decompiled.trim().isEmpty()) {
-      decompiled = "No CFR output received";
+    if (result == null || result.trim().isEmpty()) {
+      result = "No CFR output received";
     }
-    return decompiled;
+    return result;
   }
 }
