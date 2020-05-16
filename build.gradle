@@ -23,6 +23,7 @@ ext {
  
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
     flatDir {
        dirs 'libs'
     }
@@ -43,7 +44,7 @@ dependencies {
 	compile "org.ow2.asm:asm-analysis:${asm_ver}"
 	compile "org.ow2.asm:asm-util:${asm_ver}"
 	
-	compile 'org.benf:cfr:0.149'
+	compile 'com.github.leibnitz27:cfr:-SNAPSHOT'
 	compile name: 'fernflower-15-05-20'
 	
 	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'

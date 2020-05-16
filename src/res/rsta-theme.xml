@@ -64,10 +64,10 @@
         <style token="VARIABLE" fg="FD971F" bold="false"/>
         <style token="WHITESPACE" fg="d7dae0"/>
 
-        <style token="ERROR_IDENTIFIER" fg="d7dae0" bg="d82323"/>
-        <style token="ERROR_NUMBER_FORMAT" fg="d7dae0" bg="d82323"/>
-        <style token="ERROR_STRING_DOUBLE" fg="d7dae0" bg="d82323"/>
-        <style token="ERROR_CHAR" fg="d7dae0" bg="d82323"/>
+        <style token="ERROR_IDENTIFIER" fg="d7dae0" bg="21252B"/>
+        <style token="ERROR_NUMBER_FORMAT" fg="d7dae0" bg="21252B"/>
+        <style token="ERROR_STRING_DOUBLE" fg="d7dae0" bg="21252B"/>
+        <style token="ERROR_CHAR" fg="d7dae0" bg="21252B"/>
     </tokenStyles>
 
 </RSyntaxTheme>

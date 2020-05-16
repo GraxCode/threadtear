@@ -50,7 +50,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.149", "Fernflower 15-05-20" });
+    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.150", "Fernflower 15-05-20" });
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
     conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });

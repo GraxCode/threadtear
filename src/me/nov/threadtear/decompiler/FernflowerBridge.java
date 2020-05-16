@@ -59,8 +59,8 @@ public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, I
       File temp = JarIO.writeTempJar(name, bytez);
       f.addSource(temp);
       f.decompileContext();
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Throwable t) {
+      t.printStackTrace();
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       return pw.toString();
