@@ -50,7 +50,7 @@ public class TryCatchObfuscationRemover extends Execution {
 
   public boolean isFake(TryCatchBlockNode tcbn) {
     AbstractInsnNode ain = Instructions.getRealNext(tcbn.handler);
-    if (ain.getOpcode() == ATHROW) {
+    if (ain == null || ain.getOpcode() == ATHROW) {
       return true;
     } else if (ain.getType() == AbstractInsnNode.METHOD_INSN && ain.getNext().getOpcode() == ATHROW) {
       MethodInsnNode min = (MethodInsnNode) ain;
