@@ -78,7 +78,7 @@ public abstract class Execution implements Opcodes {
     Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(handler, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
     try {
       a.analyze(c.name, m);
-    } catch (AnalyzerException e) {
+    } catch (Throwable e) {
       logger.error("Failed stack analysis in {}, {}", referenceString(c, m), shortStacktrace(e));
       return null;
     }
