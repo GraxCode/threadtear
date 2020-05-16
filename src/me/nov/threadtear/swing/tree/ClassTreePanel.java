@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarEntry;
+import java.util.stream.Stream;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -230,6 +231,11 @@ public class ClassTreePanel extends JPanel implements ILoader {
     model = new DefaultTreeModel(root);
     classes.forEach(c -> {
       String[] packages = c.node.name.split("/");
+      if (c.node.name.contains("//") || packages.length >= 256) {
+        String last = packages[packages.length - 1];
+        boolean valid = last.chars().mapToObj(i -> (char) i).allMatch(cr -> Character.isJavaIdentifierPart(cr));
+        packages = new String[] { "<html><font color=\"red\">$invalid_name", valid ? last : ("<html><font color=\"red\">$" + last.hashCode()) };
+      }
       addToTree((ClassTreeNode) model.getRoot(), c, packages, 0);
     });
     for (Object n : Collections.list(root.depthFirstEnumeration())) {
