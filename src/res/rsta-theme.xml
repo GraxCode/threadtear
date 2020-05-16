@@ -8,7 +8,7 @@
     <!--  General editor colors. -->
     <background color="21252B"/>
     <caret color="D2D2D2"/>
-    <selection useFG="false" bg="373e48" roundedEdges="true"/>
+    <selection useFG="false" bg="373e48" roundedEdges="false"/>
     <currentLineHighlight color="5D626A" fade="true"/>
     <marginLine fg="373e48"/>
     <markAllHighlight color="2a2f37"/>
