@@ -63,15 +63,14 @@ public class CFRBridge implements IDecompilerBridge {
 
         @Override
         public Pair<byte[], String> getClassFileContent(String path) throws IOException {
-          String name = path.substring(0, path.length() - 6);
-          if (name.equals(name)) {
-            return Pair.make(bytes, name);
+          String clzName = path.substring(0, path.length() - 6);
+          if (clzName.equals(name)) {
+            return Pair.make(bytes, clzName);
           }
-          // cfr loads unnecessary classes. normally you should throw a FNF exception here, but this way, no long comment at the top of the code is created
           ClassNode dummy = new ClassNode();
-          dummy.name = name;
+          dummy.name = clzName;
           dummy.version = 52;
-          return Pair.make(Conversion.toBytecode0(dummy), name);
+          return Pair.make(Conversion.toBytecode0(dummy), clzName);
         }
 
         @Override

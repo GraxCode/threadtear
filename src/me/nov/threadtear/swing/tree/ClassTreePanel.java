@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarEntry;
-import java.util.stream.Stream;
 
 import javax.swing.*;
 import javax.swing.tree.*;
