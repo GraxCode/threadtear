@@ -73,7 +73,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
               encrypted++;
               try {
                 allowReflection(true);
-                MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, bsm, frame);
+                MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, frame);
                 if (handle != null) {
                   MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
                   for (Type t : Type.getArgumentTypes("(" + new StringBuilder(matchZKMIdynParams(idin.desc)).reverse().toString() + ")V")) { // create a fake desc if you are too lazy
@@ -103,7 +103,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     });
   }
 
-  private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm, Frame<ConstantValue> frame) throws Throwable {
+  private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Frame<ConstantValue> frame) throws Throwable {
     if (!vm.isLoaded(cn.name.replace('/', '.'))) {
       cn.methods.forEach(
           mn -> Instructions.isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"), (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
@@ -142,13 +142,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
             Threadtear.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i, referenceString(cn, null));
             return null;
           }
-          Object value = stack.getValue();
-
-          if (value instanceof Long) {
-            args.add((long) value);
-          } else {
-            args.add((int) value);
-          }
+          args.add(stack.getValue());
         }
         return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {

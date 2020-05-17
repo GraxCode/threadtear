@@ -113,7 +113,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     }
   }
 
-  //TODO seems to throw some exception sometimes, but works 90%
+  // TODO seems to throw some exception sometimes, but works 90%
   private CallSite loadCallSiteFromVM(ClassNode cn, MethodNode m, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
     ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism checks for method name and class name
 
@@ -134,11 +134,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
       List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
       for (int i = 0; i < idin.bsmArgs.length; i++) { // extra arguments
         Object value = idin.bsmArgs[i]; // paramorphism stores those extra parameters in bsmArgs
-        if (value instanceof Long) {
-          args.add((long) value);
-        } else {
-          args.add((int) value);
-        }
+        args.add(value);
       }
       Method bootstrapBridge = loadedProxy.getDeclaredMethods()[0];
       return (CallSite) bootstrapBridge.invoke(null, args.toArray());
@@ -155,8 +151,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
   @Override
   public ClassNode tryClassLoad(String name) {
     if (classes.containsKey(name)) {
-      ClassNode node = classes.get(name).node;
-      return node;
+      return classes.get(name).node;
     }
     if (verbose)
       logger.warning("Unresolved: {}, decryption might fail", name);

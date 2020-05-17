@@ -35,12 +35,6 @@ public class ExpirationDateRemoverAllatori extends Execution implements IConstan
     }
   }
 
-  public static <T> Collector<T, ?, Long> counting() {
-    return Collectors.reducing(0L, (var0) -> {
-      return 1L;
-    }, Long::sum);
-  }
-
   @Override
   public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
     return null;

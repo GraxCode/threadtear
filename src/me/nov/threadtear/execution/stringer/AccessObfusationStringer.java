@@ -53,9 +53,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     try {
       ClassNode proxy = Sandbox.createClassProxy(String.valueOf(cn.name.hashCode())); // can't use real class name here
       proxy.sourceFile = cn.name + ".java";
-      cn.methods.stream().filter(m -> m.desc.equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC)).forEach(m -> {
-        proxy.methods.add(m);
-      });
+      cn.methods.stream().filter(m -> m.desc.equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC)).forEach(m -> proxy.methods.add(m));
       vm.explicitlyPreload(proxy, true);
       Class<?> proxyClass = vm.loadClass(proxy.name, true);
       cn.methods.forEach(m -> {
@@ -69,7 +67,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                 encrypted++;
                 try {
                   allowReflection(true);
-                  CallSite callsite = loadCallSiteFromVM(proxyClass, cn, idin, bsm);
+                  CallSite callsite = loadCallSiteFromVM(proxyClass, idin, bsm);
                   if (callsite != null) {
                     MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(callsite.getTarget());
                     m.instructions.set(ain, DynamicReflection.getInstructionFromHandleInfo(methodInfo));
@@ -97,11 +95,10 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     }
   }
 
-  private CallSite loadCallSiteFromVM(Class<?> proxyClass, ClassNode cn, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
+  private CallSite loadCallSiteFromVM(Class<?> proxyClass, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
     Method bootstrap = proxyClass.getDeclaredMethod(bsm.getName(), Object.class, Object.class, Object.class);
     try {
-      CallSite callsite = (CallSite) bootstrap.invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
-      return callsite;
+      return (CallSite) bootstrap.invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
     } catch (IllegalArgumentException e) {
       Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
     } catch (Exception e) {

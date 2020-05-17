@@ -119,9 +119,9 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
       Object lowerVal = low.getValue();
       switch (op) {
       case IF_ICMPEQ:
-        return Casts.toInteger(upperVal) == Casts.toInteger(lowerVal) ? 2 : -2;
+        return ((Integer) upperVal).equals(lowerVal) ? 2 : -2;
       case IF_ICMPNE:
-        return Casts.toInteger(upperVal) != Casts.toInteger(lowerVal) ? 2 : -2;
+        return ((Integer) upperVal).equals(lowerVal) ? -2 : 2;
       case IF_ICMPLT:
         return Casts.toInteger(lowerVal) < Casts.toInteger(upperVal) ? 2 : -2;
       case IF_ICMPGE:

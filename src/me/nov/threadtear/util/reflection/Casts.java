@@ -34,7 +34,7 @@ public class Casts {
       return (int) ((Character) object).charValue();
     }
     if (object instanceof Boolean) {
-      return ((Boolean) object) ? 1 : 0;
+      return ((boolean) object) ? 1 : 0;
     }
 
     return object;
@@ -45,7 +45,7 @@ public class Casts {
       return (int) ((Character) object).charValue();
     }
     if (object instanceof Boolean) {
-      return ((Boolean) object) ? 1 : 0;
+      return ((boolean) object) ? 1 : 0;
     }
     if (object instanceof Number) {
       return ((Number) object).intValue();

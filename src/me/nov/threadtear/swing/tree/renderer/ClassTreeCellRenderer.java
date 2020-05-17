@@ -18,15 +18,15 @@ import me.nov.threadtear.util.asm.Access;
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
   private static final long serialVersionUID = 1L;
 
-  private Icon pack, clazz, enu, itf, failOverlay, ignoreOverlay;
+  private static final Icon pack, clazz, enu, itf, failOverlay, ignoreOverlay;
 
-  public ClassTreeCellRenderer() {
-    this.pack = IconLoader.get().loadSVGIcon("res/package.svg", false);
-    this.clazz = IconLoader.get().loadSVGIcon("res/class.svg", false);
-    this.enu = IconLoader.get().loadSVGIcon("res/enum.svg", false);
-    this.itf = IconLoader.get().loadSVGIcon("res/interface.svg", false);
-    this.failOverlay = IconLoader.get().loadSVGIcon("res/failure.svg", 10, 10, false);
-    this.ignoreOverlay = IconLoader.get().loadSVGIcon("res/ignore.svg", 10, 10, false);
+  static {
+    pack = IconLoader.get().loadSVGIcon("res/package.svg", false);
+    clazz = IconLoader.get().loadSVGIcon("res/class.svg", false);
+    enu = IconLoader.get().loadSVGIcon("res/enum.svg", false);
+    itf = IconLoader.get().loadSVGIcon("res/interface.svg", false);
+    failOverlay = IconLoader.get().loadSVGIcon("res/failure.svg", 10, 10, false);
+    ignoreOverlay = IconLoader.get().loadSVGIcon("res/ignore.svg", 10, 10, false);
   }
 
   @Override
@@ -34,24 +34,24 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
     super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
     if (node instanceof ClassTreeNode) {
-      Clazz clazz = ((ClassTreeNode) node).member;
-      if (clazz != null) {
-        ClassNode cn = clazz.node;
+      Clazz member = ((ClassTreeNode) node).member;
+      if (member != null) {
+        ClassNode cn = member.node;
         if (Access.isInterface(cn.access)) {
-          this.setIcon(this.itf);
+          this.setIcon(itf);
         } else if (Access.isEnum(cn.access)) {
-          this.setIcon(this.enu);
+          this.setIcon(enu);
         } else {
-          this.setIcon(this.clazz);
+          this.setIcon(clazz);
         }
-        if (!clazz.failures.isEmpty()) {
-          this.setToolTipText("<font color=\"#ff6b6b\">" + clazz.failures.stream().collect(Collectors.joining("<br><hr><font color=\"#ff6b6b\">")));
+        if (!member.failures.isEmpty()) {
+          this.setToolTipText("<font color=\"#ff6b6b\">" + member.failures.stream().collect(Collectors.joining("<br><hr><font color=\"#ff6b6b\">")));
           this.setIcon(new OverlayIcon(this.getIcon(), failOverlay));
-        } else if (!clazz.transform) {
+        } else if (!member.transform) {
           this.setIcon(new OverlayIcon(this.getIcon(), ignoreOverlay));
         }
       } else {
-        this.setIcon(this.pack);
+        this.setIcon(pack);
       }
     }
     return this;

@@ -282,9 +282,9 @@ public class ConstantAnalyzer implements Opcodes {
       Object lowerVal = low.getValue();
       switch (op) {
       case IF_ICMPEQ:
-        return ((Integer) upperVal) == ((Integer) lowerVal) ? 1 : -1;
+        return ((Integer) upperVal).equals(lowerVal) ? 1 : -1;
       case IF_ICMPNE:
-        return ((Integer) upperVal) != ((Integer) lowerVal) ? 1 : -1;
+        return ((Integer) upperVal).equals(lowerVal) ? -1 : 1;
       case IF_ICMPLT:
         return ((Integer) lowerVal) < ((Integer) upperVal) ? 1 : -1;
       case IF_ICMPGE:

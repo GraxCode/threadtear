@@ -11,7 +11,7 @@ import me.nov.threadtear.io.Conversion;
 
 public class CFRBridge implements IDecompilerBridge {
 
-  public static final HashMap<String, String> options = new HashMap<>();
+  protected static final Map<String, String> options = new HashMap<>();
 
   static {
     options.put("showversion", "false");
@@ -43,9 +43,7 @@ public class CFRBridge implements IDecompilerBridge {
         @Override
         public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
           if (sinkType == SinkType.JAVA && sinkClass == SinkClass.DECOMPILED) {
-            return x -> {
-              result = ((SinkReturns.Decompiled) x).getJava().substring(31);
-            };
+            return x -> result = ((SinkReturns.Decompiled) x).getJava().substring(31);
           }
           return ignore -> {
           };

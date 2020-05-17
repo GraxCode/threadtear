@@ -1,7 +1,7 @@
 package me.nov.threadtear.decompiler;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.jar.Manifest;
 
 import org.jetbrains.java.decompiler.main.Fernflower;
@@ -12,7 +12,8 @@ import me.nov.threadtear.io.JarIO;
 
 public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, IResultSaver {
 
-  public static final HashMap<String, Object> options = new HashMap<>();
+  protected static final Map<String, Object> options = new HashMap<>();
+
   static {
     options.put("rsy", "0");
     options.put("rbr", "0");

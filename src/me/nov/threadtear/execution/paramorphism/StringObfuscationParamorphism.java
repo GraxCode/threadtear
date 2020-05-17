@@ -89,8 +89,7 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
   @Override
   public ClassNode tryClassLoad(String name) {
     if (classes.containsKey(name)) {
-      ClassNode node = classes.get(name).node;
-      return node;
+      return classes.get(name).node;
     }
     if (verbose)
       logger.warning("Unresolved: {}, decryption might fail", name);

@@ -32,9 +32,7 @@ public class AnalysisFrame extends JFrame {
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
     JButton close = new JButton("Close");
-    close.addActionListener(e -> {
-      dispose();
-    });
+    close.addActionListener(e -> dispose());
     buttons.add(close);
     getContentPane().add(buttons, BorderLayout.SOUTH);
 
