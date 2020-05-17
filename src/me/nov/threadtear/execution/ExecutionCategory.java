@@ -1,8 +1,8 @@
 package me.nov.threadtear.execution;
 
 public enum ExecutionCategory {
-  GENERIC("Generic"), CLEANING("Cleaning"), ANALYSIS("Analysis"), TOOLS("Tools"), STRINGER("Obfuscators.Stringer Obfuscator"), ZKM("Obfuscators.ZKM Obfuscator"),
-  ALLATORI("Obfuscators.Allatori Obfuscator"), SB27("Obfuscators.Superblaubeere27 Obfuscator"), DASHO("Obfuscators.DashO Obfuscator");
+  GENERIC("Generic"), CLEANING("Cleaning"), ANALYSIS("Analysis"), TOOLS("Tools"), STRINGER("Obfuscators.Stringer"), ZKM("Obfuscators.ZKM"),
+  ALLATORI("Obfuscators.Allatori"), SB27("Obfuscators.Superblaubeere27"), DASHO("Obfuscators.DashO"), PARAMORPHISM("Obfuscators.Paramorphism");
 
   public final String name;
 

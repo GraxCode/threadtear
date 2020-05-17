@@ -15,6 +15,7 @@ import me.nov.threadtear.execution.cleanup.*;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
 import me.nov.threadtear.execution.dasho.StringObfuscationDashO;
 import me.nov.threadtear.execution.generic.*;
+import me.nov.threadtear.execution.paramorphism.*;
 import me.nov.threadtear.execution.stringer.*;
 import me.nov.threadtear.execution.tools.*;
 import me.nov.threadtear.execution.zkm.*;
@@ -101,6 +102,10 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new ExpirationDateRemoverAllatori());
 
       addExecution(root, new StringObfuscationDashO());
+
+      addExecution(root, new BadAttributeRemover());
+      addExecution(root, new StringObfuscationParamorphism());
+      addExecution(root, new AccessObfusationParamorphism());
 
       addExecution(root, new Java7Compatibility());
       addExecution(root, new Java8Compatibility());

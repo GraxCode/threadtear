@@ -280,11 +280,13 @@ public class Instructions implements Opcodes {
   public static void updateInstructions(MethodNode m, Map<LabelNode, LabelNode> labels, InsnList rewrittenCode) {
     m.instructions.clear();
     m.instructions = rewrittenCode;
-    m.tryCatchBlocks.forEach(tcb -> {
-      tcb.start = labels.get(tcb.start);
-      tcb.end = labels.get(tcb.end);
-      tcb.handler = labels.get(tcb.handler);
-    });
+    if (m.tryCatchBlocks != null) {
+      m.tryCatchBlocks.forEach(tcb -> {
+        tcb.start = labels.get(tcb.start);
+        tcb.end = labels.get(tcb.end);
+        tcb.handler = labels.get(tcb.handler);
+      });
+    }
     if (m.localVariables != null) {
       m.localVariables.forEach(lv -> {
         lv.start = labels.get(lv.start);
