@@ -47,13 +47,15 @@ public class KrakatauBridge implements IDecompilerBridge {
 
       BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
       String line;
+      output.append("/*\n");
       while ((line = in.readLine()) != null) {
         if (!line.startsWith("Loading") && !line.startsWith("Decompiling")) {
-          output.append("//");
+          output.append("    ");
           output.append(line);
           output.append("\n");
         }
       }
+      output.append("*/\n");
       p.waitFor();
       output.append(readOutput(krakatauOut));
       return output.toString();
