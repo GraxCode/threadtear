@@ -72,7 +72,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
     analyze.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
-        new AnalysisFrame(tn.member).setVisible(true);
+        new AnalysisFrame(inputFile, tn.member).setVisible(true);
       }
     });
     panel.add(analyze);
@@ -153,7 +153,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
           if (e.getClickCount() == 2) {
             ClassTreeNode tn = (ClassTreeNode) getLastSelectedPathComponent();
             if (tn != null && tn.member != null) {
-              new AnalysisFrame(tn.member).setVisible(true);
+              new AnalysisFrame(inputFile, tn.member).setVisible(true);
             }
           }
         }

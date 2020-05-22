@@ -27,7 +27,7 @@ public class CFRBridge implements IDecompilerBridge {
 
   private String result;
 
-  public String decompile(String name, byte[] bytes) {
+  public String decompile(File archive, String name, byte[] bytes) {
     try {
       this.result = null;
       OutputSinkFactory mySink = new OutputSinkFactory() {

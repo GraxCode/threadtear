@@ -1,6 +1,7 @@
 package me.nov.threadtear.swing.frame;
 
 import java.awt.*;
+import java.io.File;
 
 import javax.swing.*;
 
@@ -13,7 +14,7 @@ import me.nov.threadtear.swing.panel.*;
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
 
-  public AnalysisFrame(Clazz clazz) {
+  public AnalysisFrame(File archive, Clazz clazz) {
     setTitle(clazz.node.name);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
@@ -24,7 +25,7 @@ public class AnalysisFrame extends JFrame {
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(clazz));
+    tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(archive, clazz));
     tabbedPane.addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
 
     cp.add(tabbedPane, BorderLayout.CENTER);

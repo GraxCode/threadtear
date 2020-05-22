@@ -23,7 +23,7 @@ public class LogFrame extends JFrame {
   private static final long serialVersionUID = 1L;
 
   public static JTextPane area;
-  private static DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
 
   public LogFrame() {
     setTitle("Logger");

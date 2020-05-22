@@ -43,9 +43,17 @@ public class Conversion {
   }
 
   public static String textify(ClassNode cn) {
-    StringWriter out = new StringWriter();
-    new ClassReader(toBytecode0(cn)).accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
-    return out.toString();
+    try {
+      StringWriter out = new StringWriter();
+      new ClassReader(toBytecode0(cn)).accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
+      return out.toString();
+    } catch (Throwable t) {
+      t.printStackTrace();
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      t.printStackTrace(pw);
+      return sw.toString();
+    }
   }
 
   public static void saveDebugFile(ClassNode cn) {

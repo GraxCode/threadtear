@@ -33,7 +33,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
 
   private int searchIndex = -1;
   private String lastSearchText = null;
-
+  
+  private File archive;
   private Clazz clazz;
 
   private RTextScrollPane scp;
@@ -44,13 +45,14 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   private JCheckBox aggressive;
   private IDecompilerBridge decompilerBridge;
 
-  public DecompilerPanel(Clazz cn) {
+  public DecompilerPanel(File archive, Clazz cn) {
+    this.archive = archive;
     this.clazz = cn;
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.150", "Fernflower 15-05-20" });
+    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.150", "Fernflower 15-05-20", "Krakatau 22-05-20" });
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
     conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
@@ -191,9 +193,19 @@ public class DecompilerPanel extends JPanel implements ActionListener {
             .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
       }
       bytes = Conversion.toBytecode0(copy);
-      decompilerBridge = decompilerSelection.getSelectedIndex() == 0 ? new CFRBridge() : new FernflowerBridge();
+      switch (decompilerSelection.getSelectedIndex()) {
+      case 0:
+        decompilerBridge = new CFRBridge();
+        break;
+      case 1:
+        decompilerBridge = new FernflowerBridge();
+        break;
+      case 2:
+        decompilerBridge = new KrakatauBridge();
+        break;
+      }
       decompilerBridge.setAggressive(aggressive.isSelected());
-      String decompiled = decompilerBridge.decompile(clazz.node.name, bytes);
+      String decompiled = decompilerBridge.decompile(archive, clazz.node.name, bytes);
       this.textArea.setText(decompiled);
     } catch (IOException e) {
       e.printStackTrace();

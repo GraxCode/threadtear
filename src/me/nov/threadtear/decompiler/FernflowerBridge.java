@@ -51,7 +51,7 @@ public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, I
 
   private String result;
 
-  public String decompile(String name, byte[] bytez) {
+  public String decompile(File archive, String name, byte[] bytez) {
     ByteArrayOutputStream log = new ByteArrayOutputStream();
     try {
       this.result = null;
@@ -64,7 +64,8 @@ public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, I
       t.printStackTrace();
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
-      return pw.toString();
+      t.printStackTrace(pw);
+      return sw.toString();
     }
     if (result == null || result.trim().isEmpty()) {
       result = "No Fernflower output received\n\nOutput log:\n" + new String(log.toByteArray());
