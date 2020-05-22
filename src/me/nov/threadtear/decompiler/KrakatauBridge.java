@@ -37,7 +37,7 @@ public class KrakatauBridge implements IDecompilerBridge {
     }
     try {
       File krakatauOut = Files.createTempFile(name.hashCode() + "-decompiled", ".jar").toFile();
-      ProcessBuilder pb = new ProcessBuilder("pythong", "decompile.py", "-out", krakatauOut.getAbsolutePath(), krakatauIn.getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
+      ProcessBuilder pb = new ProcessBuilder("python", "decompile.py", "-out", krakatauOut.getAbsolutePath(), krakatauIn.getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
       pb.directory(krakatau.toFile());
       pb.redirectError();
       StringBuilder output = new StringBuilder();
