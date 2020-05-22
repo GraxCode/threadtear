@@ -33,9 +33,9 @@ public class DecompilerPanel extends JPanel implements ActionListener {
 
   private int searchIndex = -1;
   private String lastSearchText = null;
-  
-  private File archive;
-  private Clazz clazz;
+
+  public File archive;
+  public Clazz clazz;
 
   private RTextScrollPane scp;
   private JComboBox<String> decompilerSelection;
@@ -43,6 +43,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   private JCheckBox ignoreTCB;
   private JCheckBox ignoreMon;
   private JCheckBox aggressive;
+
+  private static int preferredDecompilerIndex = 0;
   private IDecompilerBridge decompilerBridge;
 
   public DecompilerPanel(File archive, Clazz cn) {
@@ -53,6 +55,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
     decompilerSelection = new JComboBox<>(new String[] { "CFR 0.150", "Fernflower 15-05-20", "Krakatau 22-05-20" });
+    decompilerSelection.setSelectedIndex(preferredDecompilerIndex);
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
     conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
@@ -161,16 +164,14 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.remove(scp);
     invalidate();
     validate();
-    SwingUtilities.invokeLater(() -> {
-      new Thread(() -> {
-        update();
-        this.remove(loadingLabel);
-        this.add(scp, BorderLayout.CENTER);
-        invalidate();
-        validate();
-        repaint();
-      }).start();
-    });
+    SwingUtilities.invokeLater(() -> new Thread(() -> {
+      update();
+      this.remove(loadingLabel);
+      this.add(scp, BorderLayout.CENTER);
+      invalidate();
+      validate();
+      repaint();
+    }).start());
   }
 
   public void update() {
@@ -204,6 +205,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
         decompilerBridge = new KrakatauBridge();
         break;
       }
+      preferredDecompilerIndex = decompilerSelection.getSelectedIndex();
       decompilerBridge.setAggressive(aggressive.isSelected());
       String decompiled = decompilerBridge.decompile(archive, clazz.node.name, bytes);
       this.textArea.setText(decompiled);

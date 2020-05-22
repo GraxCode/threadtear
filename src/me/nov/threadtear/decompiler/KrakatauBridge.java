@@ -81,9 +81,9 @@ public class KrakatauBridge implements IDecompilerBridge {
   }
 
   private File writeJar(String name, byte[] bytes) throws IOException {
-    File output = Files.createTempFile(String.valueOf(name.hashCode()), ".jar").toFile();
+    File output = Files.createTempFile(name.hashCode() + "-", ".jar").toFile();
     try (JarOutputStream out = new JarOutputStream(new FileOutputStream(output))) {
-      out.putNextEntry(new JarEntry(name + ".class"));
+      out.putNextEntry(new JarEntry("Target.class"));
       out.write(bytes);
       out.closeEntry();
     }

@@ -13,7 +13,6 @@ import me.nov.threadtear.swing.panel.*;
 
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
-
   public AnalysisFrame(File archive, Clazz clazz) {
     setTitle(clazz.node.name);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
