@@ -104,10 +104,10 @@ public class Threadtear extends JFrame {
   }
 
   private void initBounds() {
-    DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-    int width = (int) (displayMode.getWidth() * 0.5);
-    int height = (int) (displayMode.getHeight() * 0.5);
-    setBounds(displayMode.getWidth() / 2 - width / 2, displayMode.getHeight() / 2 - height / 2, width, height);
+    Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+    int width = screenSize.width / 2;
+    int height = screenSize.height / 2;
+    setBounds(screenSize.width / 2 - width / 2, screenSize.height / 2 - height / 2, width, height);
     setMinimumSize(new Dimension((int) (width / 1.25), (int) (height / 1.25)));
   }
 
