@@ -277,11 +277,11 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     case LREM:
       return num1.longValue() % num2.longValue();
     case LSHL:
-      return num1.longValue() << num2.longValue();
+      return num1.longValue() << num2.intValue();
     case LSHR:
-      return num1.longValue() >> num2.longValue();
+      return num1.longValue() >> num2.intValue();
     case LUSHR:
-      return num1.longValue() >>> num2.longValue();
+      return num1.longValue() >>> num2.intValue();
     case LAND:
       return num1.longValue() & num2.longValue();
     case LOR:
