@@ -102,8 +102,11 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       case LLOAD:
       case DLOAD:
       case FLOAD:
-        Object val = args[((VarInsnNode) insn).var];
-        value.setValue(val);
+        int var = ((VarInsnNode) insn).var;
+        if (var < args.length) {
+          Object val = args[var];
+          value.setValue(val);
+        }
         break;
       default:
         break;
@@ -156,6 +159,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     Number numVal = null;
     if (value instanceof Number) {
       numVal = (Number) value;
+    } else {
+      throw new IllegalArgumentException("not a number");
     }
     try {
       switch (opcode) {
@@ -321,7 +326,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
         if (array instanceof byte[]) {
           ((byte[]) array)[b.getInteger()] = value.byteValue();
         } else {
-          ((boolean[]) array)[b.getInteger()] = value.intValue() == 1 ? true : false;
+          ((boolean[]) array)[b.getInteger()] = value.intValue() == 1;
         }
         break;
       case CASTORE:
