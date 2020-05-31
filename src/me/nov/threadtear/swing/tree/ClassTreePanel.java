@@ -232,7 +232,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
       String[] packages = c.node.name.split("/");
       if (c.node.name.contains("//") || packages.length >= 256) {
         String last = packages[packages.length - 1];
-        boolean valid = last.chars().mapToObj(i -> (char) i).allMatch(cr -> Character.isJavaIdentifierPart(cr));
+        boolean valid = last.chars().mapToObj(i -> (char) i).allMatch(Character::isJavaIdentifierPart);
         packages = new String[] { "<html><font color=\"red\">$invalid_name", valid ? last : ("<html><font color=\"red\">$" + last.hashCode()) };
       }
       addToTree((ClassTreeNode) model.getRoot(), c, packages, 0);
