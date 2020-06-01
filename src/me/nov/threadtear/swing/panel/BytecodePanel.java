@@ -86,7 +86,7 @@ public class BytecodePanel extends JPanel {
     JPanel topPanel = new JPanel();
     topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
-    topPanel.add(new JLabel("<html>Bytecode of <tt>" + cn.name.replace('/', '.') + "</tt>"), BorderLayout.WEST);
+    topPanel.add(new JLabel("<html>Bytecode of <tt>" + Strings.min(cn.name.replace('/', '.'), 128) + "</tt>"), BorderLayout.WEST);
     topPanel.add(actionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
     this.textArea = new BytecodeTextArea();

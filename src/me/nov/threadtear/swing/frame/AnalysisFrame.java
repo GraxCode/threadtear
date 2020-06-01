@@ -10,11 +10,13 @@ import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.panel.*;
+import me.nov.threadtear.util.Strings;
 
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
+
   public AnalysisFrame(File archive, Clazz clazz) {
-    setTitle(clazz.node.name);
+    setTitle(Strings.min(clazz.node.name.replace('/', '.'), 128));
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
     setMinimumSize(new Dimension(900, 540));
