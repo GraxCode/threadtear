@@ -190,36 +190,21 @@ public class CFGPanel extends JPanel {
     return v1;
   }
 
-  public static final String KEYWORD = "#7f0055";
-
-  public static final String DEBUG = "#878787";
-  public static final String FIELD = "#0000c0";
-  public static final String METHOD = "#c00000";
-  public static final String STRING = "#090";
-  public static final String LOCAL = "#6a3e3e";
-  public static final String COMMENT = "#3f7f5f";
-
-  public static final String JUMP = "#39698a";
-  public static final String JUMP_GREEN = "#388a47";
-  public static final String JUMP_RED = "#8a3e38";
-  public static final String JUMP_PURPLE = "#ff71388a";
-  public static final String JUMP_PINK = "#ba057a";
-
   private String getEdgeColor(Block b, int i) {
     if (b.endsWithJump()) {
       if (b.getOutput().size() > 1) {
         if (i == 0) {
-          return JUMP_GREEN;
+          return "#009432";
         }
-        return JUMP_RED;
+        return "#EA2027";
       }
-      return JUMP;
+      return "#FFC312";
     }
     if (b.endsWithSwitch()) {
       if (i == 0) {
-        return JUMP_PINK;
+        return "#12CBC4";
       }
-      return JUMP_PURPLE;
+      return "#9980FA";
     }
     return Strings.hexColor(getForeground().darker());
   }

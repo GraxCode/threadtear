@@ -45,7 +45,7 @@ public class Converter implements Opcodes {
       correspBlock.put(ain, block);
       // end blocks
       int op = ain.getOpcode();
-      if (op >= IRETURN && op <= RETURN || ain instanceof JumpInsnNode || op == ATHROW || op == LOOKUPSWITCH || op == TABLESWITCH) {
+      if (op >= IRETURN && op <= RETURN || ain instanceof JumpInsnNode || op == ATHROW || op == LOOKUPSWITCH || op == TABLESWITCH || op == RET) {
         block.setEndNode(ain);
         blocks.add(block);
         block = null;
@@ -71,6 +71,7 @@ public class Converter implements Opcodes {
         Block blockAtLabel = correspBlock.get(jin.label);
         // blockAtLabel can be the same block!
         if (end.getOpcode() == GOTO) {
+          //TODO add RET for JSR here
           outputs.add(blockAtLabel);
           b.setOutput(outputs);
           blockAtLabel.getInput().add(b);
