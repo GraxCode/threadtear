@@ -2,7 +2,6 @@ package me.nov.threadtear.graph;
 
 import java.util.*;
 
-import org.eclipse.jdt.annotation.Nullable;
 import org.objectweb.asm.tree.*;
 
 public class Block {
@@ -17,7 +16,6 @@ public class Block {
   private List<Block> surroundingBlocks = new ArrayList<>();
   private int depth;
 
-  @Nullable
   private TryCatchBlockNode tcb;
   private int tcbIndex = -1;
 
