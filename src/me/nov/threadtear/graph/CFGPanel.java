@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.objectweb.asm.tree.*;
 
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
 
@@ -29,6 +30,7 @@ public class CFGPanel extends JPanel {
   private CFGraph graph;
   private CFGComponent graphComponent;
   private JScrollPane scrollPane;
+  public boolean useTreeLayout = false;
 
   public CFGPanel(ClassNode cn) {
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -41,6 +43,7 @@ public class CFGPanel extends JPanel {
 
     leftActionPanel.add(new JLabel("Control flow graph"));
     JComboBox<Object> methodSelection = new JComboBox<>(cn.methods.stream().map(m -> m.name + m.desc).toArray());
+    methodSelection.setPreferredSize(new Dimension(Math.min(400, methodSelection.getPreferredSize().width), methodSelection.getPreferredSize().height));
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(0, 4, 0, 0);
     leftActionPanel.add(methodSelection, gbc);
@@ -58,8 +61,14 @@ public class CFGPanel extends JPanel {
 
     JPanel rs = new JPanel();
     rs.setLayout(new GridLayout(1, 5));
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 2; i++)
       rs.add(new JPanel());
+    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial", "Compact" });
+    layout.addActionListener(a -> {
+      useTreeLayout = layout.getSelectedIndex() == 1;
+      generateGraph();
+    });
+    rs.add(layout);
     JButton save = new JButton("Save");
     save.addActionListener(l -> {
       File parentDir = new File(System.getProperty("user.home") + File.separator + "Desktop");
@@ -143,22 +152,24 @@ public class CFGPanel extends JPanel {
         }
       }
       graph.getView().setScale(1);
-//      new mxCircleLayout(graph).execute(graph.getDefaultParent());
-//      mxCompactTreeLayout layout = new mxCompactTreeLayout(graph);
-//       layout.setResetEdges(true);
-//       layout.setEdgeRouting(true);
-//       layout.setHorizontal(false);
-//       layout.setMoveTree(true);
-//       layout.setUseBoundingBox(true);
-//       layout.execute(graph.getDefaultParent());
-      PatchedHierarchicalLayout layout = new PatchedHierarchicalLayout(graph);
-      layout.setFineTuning(true);
-      layout.setIntraCellSpacing(25d);
-      layout.setInterRankCellSpacing(80d);
-      layout.setDisableEdgeStyle(true);
-      layout.setParallelEdgeSpacing(100d);
-      layout.setUseBoundingBox(true);
-      layout.execute(graph.getDefaultParent());
+      if (useTreeLayout) {
+        mxCompactTreeLayout layout = new mxCompactTreeLayout(graph);
+        layout.setResetEdges(true);
+        layout.setEdgeRouting(true);
+        layout.setHorizontal(false);
+        layout.setMoveTree(true);
+        layout.setUseBoundingBox(true);
+        layout.execute(graph.getDefaultParent());
+      } else {
+        PatchedHierarchicalLayout layout = new PatchedHierarchicalLayout(graph);
+        layout.setFineTuning(true);
+        layout.setIntraCellSpacing(20d);
+        layout.setInterRankCellSpacing(50d);
+        layout.setDisableEdgeStyle(true);
+        layout.setParallelEdgeSpacing(100d);
+        layout.setUseBoundingBox(true);
+        layout.execute(graph.getDefaultParent());
+      }
     } finally {
       graph.getModel().endUpdate();
     }
@@ -192,7 +203,7 @@ public class CFGPanel extends JPanel {
     for (int i = 0; i < next.size(); i++) {
       Block out = next.get(i);
       if (out.equals(b)) {
-        graph.insertEdge(parent, null, null, v1, v1, "strokeColor=" + getEdgeColor(b, i) + ";");
+        graph.insertEdge(parent, null, "Infinite loop", v1, v1, "strokeColor=" + getEdgeColor(b, i) + ";fontColor=" + Strings.hexColor(getForeground().brighter()));
       } else {
         mxCell vertexOut = addBlock(parent, out, vertex);
         graph.insertEdge(parent, null, null, v1, vertexOut, "strokeColor=" + getEdgeColor(b, i) + ";");

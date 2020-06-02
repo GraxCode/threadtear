@@ -598,15 +598,15 @@ public class OpFormat implements Opcodes {
       return s + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
     case AbstractInsnNode.TABLESWITCH_INSN:
       TableSwitchInsnNode ts = (TableSwitchInsnNode) ain;
-      return s + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream().map(ln -> getLabelString(getLabelIndex(ln))).collect(Collectors.joining(", ")) + ", d: "
+      return s + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: "
           + getLabelString(getLabelIndex(ts.dflt)) + "]";
     case AbstractInsnNode.LOOKUPSWITCH_INSN:
       LookupSwitchInsnNode ls = (LookupSwitchInsnNode) ain;
       return s + " [Keys: " + ls.keys.stream().map(String::valueOf).collect(Collectors.joining(", ")) + "], [Labels: "
-          + ls.labels.stream().map(ln -> getLabelString(getLabelIndex(ln))).collect(Collectors.joining(", ")) + ", d: " + getLabelString(getLabelIndex(ls.dflt)) + "]";
+          + ls.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: " + labelToString(ls.dflt) + "]";
     case AbstractInsnNode.JUMP_INSN:
       JumpInsnNode jin = (JumpInsnNode) ain;
-      return s + " " + getLabelString(getLabelIndex(jin.label));
+      return s + " " + labelToString(jin.label);
     case AbstractInsnNode.LDC_INSN:
       LdcInsnNode ldc = (LdcInsnNode) ain;
       if (ldc.cst instanceof String) {
@@ -634,11 +634,15 @@ public class OpFormat implements Opcodes {
     case AbstractInsnNode.LABEL:
       LabelNode ln = (LabelNode) ain;
       boolean hasLine = (ln.getNext() != null && ln.getNext().getType() == AbstractInsnNode.LINE);
-      return Html.mono("label " + getLabelString(getLabelIndex(ln)) + (hasLine ? ", line " + ((LineNumberNode) ln.getNext()).line : "") + ":");
+      return Html.mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln.getNext()).line : "") + ":");
     case AbstractInsnNode.INSN:
       return s;
     }
     return "";
+  }
+
+  public static String labelToString(LabelNode ln) {
+    return getLabelString(getLabelIndex(ln));
   }
 
   public static String descToString(String desc) {

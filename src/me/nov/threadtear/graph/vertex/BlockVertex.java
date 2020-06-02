@@ -39,9 +39,13 @@ public class BlockVertex {
     if (text == null) {
       StringBuilder sb = new StringBuilder();
       if (block.getTCB() != null) {
-        String type = block.getTCB().type;
+        TryCatchBlockNode tcb = block.getTCB();
+        String type = tcb.type;
         sb.append("<html>");
-        sb.append(Html.mono("tcb-handler " + block.getTCBIndex()) + ": (" + (type == null || type.equals("java/lang/Throwable") ? "all throwables" : type.replace('/', '.')) + ")");
+        sb.append(Html.mono("tcb-handler " +  OpFormat.labelToString(tcb.start) + " to " + OpFormat.labelToString(tcb.end) + " - N" + block.getTCBIndex()));
+        sb.append(": (");
+        sb.append((type == null || type.equals("java/lang/Throwable") ? "catch all" : type.replace('/', '.')));
+        sb.append(")");
         sb.append("\n");
       }
       for (AbstractInsnNode ain : nodes) {
