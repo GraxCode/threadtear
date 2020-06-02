@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
+import me.nov.threadtear.util.reflection.Primitives;
+
 public class OpFormat implements Opcodes {
   private static Map<Integer, String> opcodes = getCodes();
   private static Map<String, Integer> reopcodes = getReCodes();
@@ -616,7 +618,11 @@ public class OpFormat implements Opcodes {
       if (ldc.cst instanceof Handle) {
         return s + " Handle " + handleToString((Handle) ldc.cst);
       }
-      return s + " " + ldc.cst.getClass().getSimpleName() + " " + ldc.cst.toString();
+      if (ldc.cst instanceof ConstantDynamic) {
+        ConstantDynamic dyn = (ConstantDynamic) ldc.cst;
+        return s + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
+      }
+      return s + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass())).getDescriptor()) + " " + ldc.cst.toString();
     case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
       InvokeDynamicInsnNode id = (InvokeDynamicInsnNode) ain;
       return s + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays.toString(id.bsmArgs) : "");
@@ -687,7 +693,7 @@ public class OpFormat implements Opcodes {
   }
 
   public static String getLabelString(int idx) {
-    return Html.bold(Html.color("#9269e2", idx > 25 ? String.valueOf(idx) : String.valueOf((char) (idx + 65))));
+    return Html.mono(Html.bold(Html.color("#9269e2", idx > 25 ? String.valueOf(idx) : String.valueOf((char) (idx + 65)))));
   }
 
   public static int getLabelIndex(AbstractInsnNode ain) {
