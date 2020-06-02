@@ -49,6 +49,11 @@ public class CFGPanel extends JPanel {
       mn = cn.methods.stream().filter(m -> (m.name + m.desc).equals(item)).findAny().get();
       clear();
       generateGraph();
+      SwingUtilities.invokeLater(() -> {
+        Rectangle bounds = scrollPane.getViewport().getViewRect();
+        JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
+        horizontal.setValue((horizontal.getMaximum() - bounds.width) / 2);
+      });
     });
 
     JPanel rs = new JPanel();
@@ -138,6 +143,14 @@ public class CFGPanel extends JPanel {
         }
       }
       graph.getView().setScale(1);
+//      new mxCircleLayout(graph).execute(graph.getDefaultParent());
+//      mxCompactTreeLayout layout = new mxCompactTreeLayout(graph);
+//       layout.setResetEdges(true);
+//       layout.setEdgeRouting(true);
+//       layout.setHorizontal(false);
+//       layout.setMoveTree(true);
+//       layout.setUseBoundingBox(true);
+//       layout.execute(graph.getDefaultParent());
       PatchedHierarchicalLayout layout = new PatchedHierarchicalLayout(graph);
       layout.setFineTuning(true);
       layout.setIntraCellSpacing(25d);
@@ -151,10 +164,9 @@ public class CFGPanel extends JPanel {
     }
     this.revalidate();
     this.repaint();
-    // TODO set horizontal scroll to half
   }
 
-  private HashMap<Block, mxCell> existing = new HashMap<>();
+  private Map<Block, mxCell> existing = new HashMap<>();
 
   private mxCell addBlock(mxCell parent, Block b, BlockVertex input) {
     mxCell v1 = null;
@@ -170,9 +182,8 @@ public class CFGPanel extends JPanel {
       vertex.addInput(input);
     }
     v1 = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40, String.format("fillColor=%s;fontColor=%s;strokeColor=%s", Strings.hexColor(getBackground().brighter()),
-        Strings.hexColor(getForeground().brighter()), Strings.hexColor(getBackground().darker())));
+        Strings.hexColor(getForeground().brighter()), Strings.hexColor(getBackground().brighter().brighter())));
     graph.updateCellSize(v1); // resize cell
-
     existing.put(b, v1);
     if (v1 == null) {
       throw new RuntimeException();

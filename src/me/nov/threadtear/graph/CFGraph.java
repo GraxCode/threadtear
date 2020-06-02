@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.shape.mxRectangleShape;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.*;
 import com.mxgraph.view.*;
@@ -37,10 +39,23 @@ public class CFGraph extends mxGraph {
     Map<String, Object> edgeStyle = this.getStylesheet().getDefaultEdgeStyle();
     edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
     edgeStyle.put(mxConstants.STYLE_ELBOW, mxConstants.ELBOW_VERTICAL);
-    edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+    edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
     edgeStyle.put(mxConstants.STYLE_TARGET_PERIMETER_SPACING, 1d);
+    edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 1.25d);
+
     Map<String, Object> vertexStyle = this.getStylesheet().getDefaultVertexStyle();
-    vertexStyle.put(mxConstants.STYLE_SHADOW, false);
+    vertexStyle.put(mxConstants.STYLE_AUTOSIZE, 1);
+    vertexStyle.put(mxConstants.STYLE_SPACING, "5");
+    vertexStyle.put(mxConstants.STYLE_ORTHOGONAL, "true");
+    vertexStyle.put(mxConstants.STYLE_ROUNDED, true);
+    vertexStyle.put(mxConstants.STYLE_ARCSIZE, 5);
+    vertexStyle.put(mxConstants.STYLE_ALIGN, mxConstants.ALIGN_LEFT);
+    mxGraphics2DCanvas.putShape(mxConstants.SHAPE_RECTANGLE, new mxRectangleShape() {
+      @Override
+      protected int getArcSize(mxCellState state, double w, double h) {
+        return 10;
+      }
+    });
     mxStylesheet stylesheet = new mxStylesheet();
     stylesheet.setDefaultEdgeStyle(edgeStyle);
     stylesheet.setDefaultVertexStyle(vertexStyle);
