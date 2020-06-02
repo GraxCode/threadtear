@@ -9,8 +9,8 @@ import org.objectweb.asm.tree.analysis.*;
 
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.*;
+import me.nov.threadtear.util.format.Strings;
 import me.nov.threadtear.vm.*;
 
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {

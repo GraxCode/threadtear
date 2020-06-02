@@ -27,7 +27,7 @@ import me.nov.threadtear.swing.frame.AnalysisFrame;
 import me.nov.threadtear.swing.handler.*;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.format.Strings;
 
 public class ClassTreePanel extends JPanel implements ILoader {
   private static final long serialVersionUID = 1L;

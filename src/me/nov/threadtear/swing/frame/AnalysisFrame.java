@@ -8,9 +8,10 @@ import javax.swing.*;
 import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.graph.CFGPanel;
 import me.nov.threadtear.swing.Utils;
 import me.nov.threadtear.swing.panel.*;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.format.Strings;
 
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -28,6 +29,7 @@ public class AnalysisFrame extends JFrame {
     JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(archive, clazz));
     tabbedPane.addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
+    tabbedPane.addTab("Graph", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new CFGPanel(clazz.node));
 
     cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);

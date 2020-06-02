@@ -5,7 +5,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.text.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.*;

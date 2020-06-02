@@ -1,5 +1,6 @@
-package me.nov.threadtear.util;
+package me.nov.threadtear.util.format;
 
+import java.awt.Color;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -21,7 +22,7 @@ public class Strings {
   }
 
   public static boolean isHighSDev(String cst) {
-    return cst.length() >= 2 ? (calcSdev(cst) > 30) : false;
+    return cst.length() >= 2 && (calcSdev(cst) > 30);
   }
 
   public static boolean containsRegex(String input, String search) {
@@ -48,6 +49,10 @@ public class Strings {
     if (str.length() > maxLength)
       return str.substring(0, maxLength) + "...";
     return str;
+  }
+
+  public static String repeat(String s, int length) {
+    return s.length() >= length ? s.substring(0, length) : repeat(s + s, length);
   }
 
   public static Queue<String> generateWordQueue(int amount, InputStream wordList) {
@@ -98,5 +103,9 @@ public class Strings {
       ci.next();
     }
     return String.format("%.1f %cB", bytes / 1000.0, ci.current());
+  }
+
+  public static String hexColor(Color c) {
+    return String.format("#%06X", c.getRGB() & 0xffffff);
   }
 }

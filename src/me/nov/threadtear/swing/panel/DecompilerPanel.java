@@ -24,7 +24,7 @@ import me.nov.threadtear.decompiler.*;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.format.Strings;
 
 public class DecompilerPanel extends JPanel implements ActionListener {
   private static final long serialVersionUID = 1L;
@@ -133,21 +133,19 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     LoadingIndicator loadingLabel = new LoadingIndicator("Decompiling class file... ", JLabel.CENTER);
     loadingLabel.setRunning(true);
     this.add(loadingLabel, BorderLayout.CENTER);
-    SwingUtilities.invokeLater(() -> {
-      new Thread(() -> {
-        this.textArea = new DecompilerTextArea();
-        this.update();
-        scp = new RTextScrollPane(textArea);
-        scp.getVerticalScrollBar().setUnitIncrement(16);
-        scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-        this.remove(loadingLabel);
-        this.add(scp, BorderLayout.CENTER);
-        conversionMethod.setEnabled(true);
-        invalidate();
-        validate();
-        repaint();
-      }, "decompile-thread").start();
-    });
+    SwingUtilities.invokeLater(() -> new Thread(() -> {
+      this.textArea = new DecompilerTextArea();
+      this.update();
+      scp = new RTextScrollPane(textArea);
+      scp.getVerticalScrollBar().setUnitIncrement(16);
+      scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+      this.remove(loadingLabel);
+      this.add(scp, BorderLayout.CENTER);
+      conversionMethod.setEnabled(true);
+      invalidate();
+      validate();
+      repaint();
+    }, "decompile-thread").start());
   }
 
   @Override

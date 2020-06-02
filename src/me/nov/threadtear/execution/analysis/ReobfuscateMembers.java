@@ -9,8 +9,8 @@ import org.objectweb.asm.tree.*;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Conversion;
-import me.nov.threadtear.util.Strings;
 import me.nov.threadtear.util.asm.*;
+import me.nov.threadtear.util.format.Strings;
 
 public class ReobfuscateMembers extends Execution {
   private Map<String, Clazz> classes;

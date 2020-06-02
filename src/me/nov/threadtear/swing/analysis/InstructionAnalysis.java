@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.*;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.*;
+import me.nov.threadtear.util.format.Strings;
 
 public class InstructionAnalysis implements Opcodes {
   public static void analyze(List<Clazz> classes) {

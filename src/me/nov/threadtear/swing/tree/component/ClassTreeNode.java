@@ -5,7 +5,7 @@ import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.format.Strings;
 
 public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<ClassTreeNode> {
   private static final long serialVersionUID = 1L;

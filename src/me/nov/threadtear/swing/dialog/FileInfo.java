@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.util.Strings;
+import me.nov.threadtear.util.format.Strings;
 
 public class FileInfo extends JDialog {
   private static final long serialVersionUID = 1L;

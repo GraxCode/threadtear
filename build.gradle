@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
 }
 
-version = '2.6.0'
+version = '2.6.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -48,6 +48,8 @@ dependencies {
 	compile name: 'fernflower-15-05-20'
 	
 	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'
+	
+	compile 'com.github.jgraph:jgraphx:v4.0.0'
 	
 	compile 'ch.qos.logback:logback-classic:1.2.3'
 }
