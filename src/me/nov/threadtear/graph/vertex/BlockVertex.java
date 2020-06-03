@@ -48,6 +48,10 @@ public class BlockVertex {
         sb.append(")");
         sb.append("\n");
       }
+      if(block.getNodes().get(0).getPrevious() == null) {
+        sb.append(Html.mono("entry-point:"));
+        sb.append("\n");
+      }
       for (AbstractInsnNode ain : nodes) {
         String str = OpFormat.toString(ain);
         if (!str.trim().isEmpty()) {

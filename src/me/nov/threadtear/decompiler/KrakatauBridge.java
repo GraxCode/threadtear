@@ -60,7 +60,7 @@ public class KrakatauBridge implements IDecompilerBridge {
       output.append(readOutput(krakatauOut));
       return output.toString();
     } catch (Throwable t) {
-      if (t.getMessage().contains("Cannot run program")) {
+      if (t.getMessage() != null && t.getMessage().contains("Cannot run program")) {
         return "Could not run python executable. Please set your python 2.7 path correctly to use krakatau.\nError: " + t.getMessage() + "\n\n/*\nYour environment variables:\n"
             + System.getenv().entrySet().stream().map(e -> e.getKey() + " = \"" + e.getValue() + "\"").collect(Collectors.joining("\n")) + "\n*/";
       }
