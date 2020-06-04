@@ -86,6 +86,7 @@ public class VM extends ClassLoader implements Opcodes {
       if (dummyLoading) {
         ClassNode dummy = new ClassNode();
         dummy.name = name.replace('.', '/');
+        dummy.superName = "java/lang/Object";
         dummy.version = 52;
         return Conversion.toBytecode0(dummy);
       }
@@ -118,6 +119,9 @@ public class VM extends ClassLoader implements Opcodes {
     }
     if (Access.isInterface(access)) {
       newAccess |= ACC_INTERFACE;
+    }
+    if (Access.isEnum(access)) {
+      newAccess |= ACC_ENUM;
     }
     if (Access.isAbstract(access)) {
       newAccess |= ACC_ABSTRACT;

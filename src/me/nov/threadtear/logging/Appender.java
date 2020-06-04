@@ -69,31 +69,33 @@ public class Appender extends AppenderBase<ILoggingEvent> {
       if (textPane == null) {
         return;
       }
-      try {
-        int limite = 800;
-        int apaga = 200;
-        if (textPane.getDocument().getDefaultRootElement().getElementCount() > limite) {
-          int end = getLineEndOffset(textPane, apaga);
-          replaceRange(textPane, null, 0, end);
+      synchronized (textPane.getDocument()) {
+        try {
+          int limite = 800;
+          int apaga = 200;
+          if (textPane.getDocument().getDefaultRootElement().getElementCount() > limite) {
+            int end = getLineEndOffset(textPane, apaga);
+            replaceRange(textPane, null, 0, end);
+          }
+
+          if (event.getLevel() == Level.ERROR)
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, ERROR_ATT);
+          else if (event.getLevel() == Level.WARN)
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, WARN_ATT);
+          else if (event.getLevel() == Level.INFO)
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, INFO_ATT);
+          else if (event.getLevel() == Level.DEBUG)
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, DEBUG_ATT);
+          else if (event.getLevel() == Level.TRACE)
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, TRACE_ATT);
+          else
+            textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, RESTO_ATT);
+
+        } catch (BadLocationException e) {
         }
 
-        if (event.getLevel() == Level.ERROR)
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, ERROR_ATT);
-        else if (event.getLevel() == Level.WARN)
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, WARN_ATT);
-        else if (event.getLevel() == Level.INFO)
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, INFO_ATT);
-        else if (event.getLevel() == Level.DEBUG)
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, DEBUG_ATT);
-        else if (event.getLevel() == Level.TRACE)
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, TRACE_ATT);
-        else
-          textPane.getDocument().insertString(textPane.getDocument().getLength(), formattedMsg, RESTO_ATT);
-
-      } catch (BadLocationException e) {
+        textPane.setCaretPosition(textPane.getDocument().getLength());
       }
-
-      textPane.setCaretPosition(textPane.getDocument().getLength());
     });
   }
 
