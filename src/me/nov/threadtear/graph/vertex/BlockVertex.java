@@ -1,5 +1,6 @@
 package me.nov.threadtear.graph.vertex;
 
+import java.io.Serializable;
 import java.util.*;
 
 import org.objectweb.asm.tree.*;
@@ -7,7 +8,8 @@ import org.objectweb.asm.tree.*;
 import me.nov.threadtear.graph.Block;
 import me.nov.threadtear.util.format.*;
 
-public class BlockVertex {
+public class BlockVertex implements Serializable {
+  private static final long serialVersionUID = -5186897790572902164L;
   public MethodNode mn;
   public List<AbstractInsnNode> nodes;
 

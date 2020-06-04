@@ -72,6 +72,10 @@ public class CFGraph extends mxGraph {
       this.setEnabled(false);
       this.setBorder(new EmptyBorder(0, 0, 0, 0));
       this.setZoomFactor(1.1);
+      this.setAntiAlias(true);
+      this.setTextAntiAlias(true);
+      this.getHorizontalScrollBar().setEnabled(false);
+      this.getVerticalScrollBar().setEnabled(false);
       this.getGraphControl().addMouseWheelListener(e -> {
         if (e.isControlDown()) {
           if (e.getWheelRotation() < 0) {
@@ -81,6 +85,7 @@ public class CFGraph extends mxGraph {
           }
           repaint();
           revalidate();
+          scp.revalidate();
         } else if (scp != null) {
           // do we need this on linux too?
           scp.getVerticalScrollBar().setValue(scp.getVerticalScrollBar().getValue() + e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
@@ -94,6 +99,8 @@ public class CFGraph extends mxGraph {
       double scale = view.getScale();
       if (scale < 4) {
         zoom(zoomFactor);
+        repaint();
+
       }
     }
 
@@ -103,6 +110,7 @@ public class CFGraph extends mxGraph {
       double scale = view.getScale();
       if (scp != null && (scp.getVerticalScrollBar().isVisible() || scale >= 1) && scale > 0.3) {
         zoom(1 / zoomFactor);
+        repaint();
       }
     }
   }
