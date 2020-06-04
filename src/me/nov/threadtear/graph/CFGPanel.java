@@ -13,6 +13,7 @@ import javax.swing.filechooser.*;
 
 import org.objectweb.asm.tree.*;
 
+import com.github.weisj.darklaf.icons.IconLoader;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
@@ -59,17 +60,15 @@ public class CFGPanel extends JPanel {
       });
     });
 
-    JPanel rs = new JPanel();
-    rs.setLayout(new GridLayout(1, 5));
-    for (int i = 0; i < 2; i++)
-      rs.add(new JPanel());
-    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial", "Compact" });
+    JPanel rightActions = new JPanel();
+    rightActions.setLayout(new GridBagLayout());
+    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial layout", "Compact layout" });
     layout.addActionListener(a -> {
       useTreeLayout = layout.getSelectedIndex() == 1;
       generateGraph();
     });
-    rs.add(layout);
-    JButton save = new JButton("Save");
+    rightActions.add(layout);
+    JButton save = new JButton("Save as image");
     save.addActionListener(l -> {
       File parentDir = FileSystemView.getFileSystemView().getHomeDirectory();
       JFileChooser jfc = new JFileChooser(parentDir);
@@ -93,11 +92,11 @@ public class CFGPanel extends JPanel {
         }
       }
     });
-    rs.add(save);
-    JButton reload = new JButton("Reload");
+    rightActions.add(save);
+    JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
     reload.addActionListener(l -> generateGraph());
-    rs.add(reload);
-    rightActionPanel.add(rs);
+    rightActions.add(reload);
+    rightActionPanel.add(rightActions);
     JPanel topPanel = new JPanel();
     topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
