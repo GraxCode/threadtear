@@ -55,7 +55,7 @@ public class BlockVertex implements Serializable {
         sb.append("\n");
       }
       for (AbstractInsnNode ain : nodes) {
-        String str = OpFormat.toString(ain);
+        String str = OpFormat.toHtmlString(ain);
         if (!str.trim().isEmpty()) {
           sb.append(str);
           sb.append("\n");

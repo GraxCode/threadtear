@@ -9,7 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.*;
 
 import org.objectweb.asm.tree.*;
 
@@ -71,21 +71,21 @@ public class CFGPanel extends JPanel {
     rs.add(layout);
     JButton save = new JButton("Save");
     save.addActionListener(l -> {
-      File parentDir = new File(System.getProperty("user.home") + File.separator + "Desktop");
+      File parentDir = FileSystemView.getFileSystemView().getHomeDirectory();
       JFileChooser jfc = new JFileChooser(parentDir);
       jfc.setAcceptAllFileFilterUsed(false);
-      jfc.setFileFilter(new FileNameExtensionFilter("Bitmap image file (.bmp)", "bmp"));
-      jfc.addChoosableFileFilter(new FileNameExtensionFilter("Portable Network Graphics (.png)", "png"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Portable Network Graphics (.png)", "png"));
+      jfc.addChoosableFileFilter(new FileNameExtensionFilter("Bitmap image file (.bmp)", "bmp"));
       if (mn.name.length() < 32) {
-        jfc.setSelectedFile(new File(parentDir, mn.name + ".bmp"));
+        jfc.setSelectedFile(new File(parentDir, mn.name.replaceAll("[^a-zA-Z0-9-_\\.]", "_") + ".png"));
       } else {
-        jfc.setSelectedFile(new File(parentDir, "method.bmp"));
+        jfc.setSelectedFile(new File(parentDir, "method-" + (mn.name + mn.desc).hashCode() + ".png"));
       }
       int result = jfc.showSaveDialog(CFGPanel.this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();
         String type = ((FileNameExtensionFilter) jfc.getFileFilter()).getExtensions()[0];
-        BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, Color.WHITE, true, null);
+        BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 2, null, true, null);
         try {
           ImageIO.write(Images.watermark(image), type, output);
         } catch (IOException ioex) {

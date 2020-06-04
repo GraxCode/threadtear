@@ -38,9 +38,9 @@ public class Images {
   }
 
   private static BufferedImage broadenImage(BufferedImage source) {
-    BufferedImage b = new BufferedImage(source.getWidth() + 60, source.getHeight() + 60, source.getType());
+    BufferedImage b = new BufferedImage(source.getWidth() + 60, source.getHeight() + 60, BufferedImage.TYPE_INT_ARGB);
     Graphics g = b.createGraphics();
-    g.setColor(Color.WHITE);
+    g.setColor(new Color(0x00ffffff, true));
     g.fillRect(0, 0, source.getWidth() + 60, source.getHeight() + 60);
     g.setColor(Color.BLACK);
     g.drawImage(source, 30, 30, null);

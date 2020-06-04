@@ -578,65 +578,65 @@ public class OpFormat implements Opcodes {
     return new LdcInsnNode(i);
   }
 
-  public static String toString(AbstractInsnNode ain) {
-    String s = Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase()));
+  public static String toHtmlString(AbstractInsnNode ain) {
+    String opcode = Html.bold(Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase())));
     switch (ain.getType()) {
     case AbstractInsnNode.FIELD_INSN:
       FieldInsnNode fin = (FieldInsnNode) ain;
-      return s + " " + fin.owner.replace('/', '.') + " " + Html.escape(fin.name) + " " + descToString(fin.desc);
+      return opcode + " " + fin.owner.replace('/', '.') + " " + Html.escape(fin.name) + " " + descToString(fin.desc);
     case AbstractInsnNode.METHOD_INSN:
       MethodInsnNode min = (MethodInsnNode) ain;
-      return s + " " + min.owner.replace('/', '.') + " " + Html.escape(min.name) + descToString(min.desc);
+      return opcode + " " + min.owner.replace('/', '.') + " " + Html.escape(min.name) + descToString(min.desc);
     case AbstractInsnNode.VAR_INSN:
       VarInsnNode vin = (VarInsnNode) ain;
-      return s + " " + vin.var;
+      return opcode + " " + vin.var;
     case AbstractInsnNode.TYPE_INSN:
       TypeInsnNode tin = (TypeInsnNode) ain;
-      return s + " " + descToString("L" + tin.desc + ";");
+      return opcode + " " + descToString("L" + tin.desc + ";");
     case AbstractInsnNode.MULTIANEWARRAY_INSN:
       MultiANewArrayInsnNode mnin = (MultiANewArrayInsnNode) ain;
-      return s + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
+      return opcode + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
     case AbstractInsnNode.TABLESWITCH_INSN:
       TableSwitchInsnNode ts = (TableSwitchInsnNode) ain;
-      return s + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: "
+      return opcode + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: "
           + getLabelString(getLabelIndex(ts.dflt)) + "]";
     case AbstractInsnNode.LOOKUPSWITCH_INSN:
       LookupSwitchInsnNode ls = (LookupSwitchInsnNode) ain;
-      return s + " [Keys: " + ls.keys.stream().map(String::valueOf).collect(Collectors.joining(", ")) + "], [Labels: "
+      return opcode + " [Keys: " + ls.keys.stream().map(String::valueOf).collect(Collectors.joining(", ")) + "], [Labels: "
           + ls.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: " + labelToString(ls.dflt) + "]";
     case AbstractInsnNode.JUMP_INSN:
       JumpInsnNode jin = (JumpInsnNode) ain;
-      return s + " " + labelToString(jin.label);
+      return opcode + " " + labelToString(jin.label);
     case AbstractInsnNode.LDC_INSN:
       LdcInsnNode ldc = (LdcInsnNode) ain;
       if (ldc.cst instanceof String) {
-        return s + Html.color("#10ac84", " \"" + Html.escape(Strings.min((String) ldc.cst, 128)) + "\"");
+        return opcode + Html.color("#10ac84", " \"" + Html.escape(Strings.min((String) ldc.cst, 128)) + "\"");
       }
       if (ldc.cst instanceof Type) {
-        return s + " Type " + descToString(((Type) ldc.cst).getDescriptor());
+        return opcode + " Type " + descToString(((Type) ldc.cst).getDescriptor());
       }
       if (ldc.cst instanceof Handle) {
-        return s + " Handle " + handleToString((Handle) ldc.cst);
+        return opcode + " Handle " + handleToString((Handle) ldc.cst);
       }
       if (ldc.cst instanceof ConstantDynamic) {
         ConstantDynamic dyn = (ConstantDynamic) ldc.cst;
-        return s + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
+        return opcode + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
       }
-      return s + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass())).getDescriptor()) + " " + ldc.cst.toString();
+      return opcode + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass())).getDescriptor()) + " " + ldc.cst.toString();
     case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
       InvokeDynamicInsnNode id = (InvokeDynamicInsnNode) ain;
-      return s + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays.toString(id.bsmArgs) : "");
+      return opcode + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays.toString(id.bsmArgs) : "");
     case AbstractInsnNode.INT_INSN:
-      return s + " " + getIntValue(ain);
+      return opcode + " " + getIntValue(ain);
     case AbstractInsnNode.IINC_INSN:
       IincInsnNode iinc = (IincInsnNode) ain;
-      return s + " " + iinc.var + " +" + iinc.incr;
+      return opcode + " " + iinc.var + (iinc.incr > 0 ? " +" : " ") + iinc.incr;
     case AbstractInsnNode.LABEL:
       LabelNode ln = (LabelNode) ain;
       boolean hasLine = (ln.getNext() != null && ln.getNext().getType() == AbstractInsnNode.LINE);
       return Html.mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln.getNext()).line : "") + ":");
     case AbstractInsnNode.INSN:
-      return s;
+      return opcode;
     }
     return "";
   }
