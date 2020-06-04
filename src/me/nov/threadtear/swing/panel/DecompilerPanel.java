@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 
 import org.apache.commons.io.IOUtils;
+import org.benf.cfr.reader.util.CfrVersionInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.*;
 
@@ -54,7 +55,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(new String[] { "CFR 0.150", "Fernflower 15-05-20", "Krakatau 22-05-20" });
+    decompilerSelection = new JComboBox<>(new String[] { "CFR " + CfrVersionInfo.VERSION, "Fernflower 15-05-20", "Krakatau 22-05-20" });
     decompilerSelection.setSelectedIndex(preferredDecompilerIndex);
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
