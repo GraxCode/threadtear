@@ -3,7 +3,6 @@ package me.nov.threadtear.execution.zkm;
 import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.*;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -24,7 +23,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   /**
    * The method that returns the real MethodHandle
    */
-  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;#)Ljava/lang/invoke/MethodHandle;";
+  private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = "\\(Ljava/lang/invoke/MethodHandles\\$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)Ljava/lang/invoke/MethodHandle;";
 
   private Map<String, Clazz> classes;
   private int encrypted;
@@ -76,12 +75,24 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                 MethodHandle handle = loadZKMBuriedHandleFromVM(classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner())).findFirst().get(), idin, frame);
                 if (handle != null) {
                   MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
-                  for (Type t : Type.getArgumentTypes("(" + new StringBuilder(matchZKMIdynParams(idin.desc)).reverse().toString() + ")V")) { // create a fake desc if you are too lazy
-                    rewrittenCode.add(new InsnNode(t.getSize() > 1 ? POP2 : POP));
+                  AbstractInsnNode instruction = DynamicReflection.getInstructionFromHandleInfo(methodInfo);
+
+                  Type[] decryptionTypes = Type.getArgumentTypes(handle.type().toMethodDescriptorString()); // with extra values
+                  Type[] realTypes = Type.getArgumentTypes(methodInfo.getMethodType().toMethodDescriptorString()); // without
+                  int extraArgs = decryptionTypes.length - realTypes.length; // difference equals extra count
+                  if(instruction.getOpcode() != INVOKESTATIC && instruction.getOpcode() != GETSTATIC && instruction.getOpcode() != PUTSTATIC) {
+                    // object reference is an argument on the handle, we do not want to pop it
+                    extraArgs--;
                   }
-                  rewrittenCode.add(DynamicReflection.getInstructionFromHandleInfo(methodInfo));
+                  for (int i = 0; i < extraArgs; i++) {
+                    Type t = decryptionTypes[decryptionTypes.length - 1 - i];
+                    rewrittenCode.add(new InsnNode(t.getSize() > 1 ? POP2 : POP)); // pop off remaining decryption values
+                  }
+                  rewrittenCode.add(instruction);
                   decrypted++;
                   return;
+                } else {
+                  logger.warning("Handle null in {}", referenceString(cn, m));
                 }
                 allowReflection(false);
               } catch (Throwable t) {
@@ -112,28 +123,18 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     Class<?> proxyClass = vm.loadClass(cn.name.replace('/', '.'), true);
     Method bootstrap = null;
     for (Method m : proxyClass.getDeclaredMethods()) {
-      if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", matchZKMIdynParams(idin.desc)))) {
+      if (Type.getMethodDescriptor(m).matches(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX)) {
         bootstrap = m;
         break;
       }
     }
     if (bootstrap == null) {
-      // recovery pass, if no method matching desc is found
-      for (Method m : proxyClass.getDeclaredMethods()) {
-        if (Type.getMethodDescriptor(m).equals(ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", "J"))) {
-          bootstrap = m;
-          idin.desc = "(J)V";
-          break;
-        }
-      }
-    }
-    if (bootstrap == null) {
-      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC.replace("#", matchZKMIdynParams(idin.desc)));
+      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), idin.desc);
       return null;
     }
     if (idin.desc.matches("\\(.*[JI]+\\).*")) {
       try {
-        int invokedynamicParams = matchZKMIdynParams(idin.desc).length();
+        int invokedynamicParams = Type.getArgumentTypes(Type.getMethodDescriptor(bootstrap)).length - 4;
         List<Object> args = new ArrayList<>(
             Arrays.asList(DynamicReflection.getTrustedLookup(), null /* MutableCallSite, unused in method */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
         for (int i = 0; i < invokedynamicParams; i++) {
@@ -157,18 +158,6 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       logger.warning("Unimplemented or other dynamic desc variant in {}: {}", referenceString(cn, null), idin.desc);
       return null;
     }
-  }
-
-  private String matchZKMIdynParams(String desc) {
-
-    Pattern p = Pattern.compile("[JI]+\\)");
-    Matcher m = p.matcher(desc);
-    if (!m.find()) {
-      Threadtear.logger.error("Pattern matching failed for {}", desc);
-      return "";
-    }
-    String group = m.group();
-    return group.substring(0, group.length() - 1); // remove ")"
   }
 
   @Override

@@ -150,56 +150,56 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
           return new ConstantValue(v, new long[size]);
         }
       }
+    case ARRAYLENGTH:
+      if (value.value != null) {
+        Class<?> clz = value.value.getClass();
+        if (clz.isArray() && clz.getComponentType().isPrimitive()) {
+          return new ConstantValue(v, Array.getLength(value.value));
+        }
+      }
     default:
       return v == null ? null : new ConstantValue(v, getUnaryValue(insn.getOpcode(), value.value));
     }
   }
 
   private Object getUnaryValue(int opcode, Object value) {
-    Number numVal = null;
-    if (value instanceof Number) {
-      numVal = (Number) value;
-    } else {
-      throw new IllegalArgumentException("not a number");
-    }
-    try {
-      switch (opcode) {
-      case INEG:
-        return -((int) value);
-      case FNEG:
-        return -((float) value);
-      case LNEG:
-        return -((long) value);
-      case DNEG:
-        return -((double) value);
-      case L2I:
-      case F2I:
-      case D2I:
-        return numVal.intValue();
-      case I2B:
-        return numVal.byteValue();
-      case I2C:
-        return numVal.intValue() & 0x0000FFFF;
-      case I2S:
-        return numVal.shortValue();
-      case I2F:
-      case L2F:
-      case D2F:
-        return numVal.floatValue();
-      case I2L:
-      case F2L:
-      case D2L:
-        return numVal.longValue();
-      case I2D:
-      case L2D:
-      case F2D:
-        return numVal.doubleValue();
-      case CHECKCAST:
-        return value;
-      default:
-        return null;
-      }
-    } catch (NullPointerException e) {
+    if (!(value instanceof Number))
+      return null;
+    Number numVal = (Number) value;
+    switch (opcode) {
+    case INEG:
+      return -((int) value);
+    case FNEG:
+      return -((float) value);
+    case LNEG:
+      return -((long) value);
+    case DNEG:
+      return -((double) value);
+    case L2I:
+    case F2I:
+    case D2I:
+      return numVal.intValue();
+    case I2B:
+      return numVal.byteValue();
+    case I2C:
+      return numVal.intValue() & 0x0000FFFF;
+    case I2S:
+      return numVal.shortValue();
+    case I2F:
+    case L2F:
+    case D2F:
+      return numVal.floatValue();
+    case I2L:
+    case F2L:
+    case D2L:
+      return numVal.longValue();
+    case I2D:
+    case L2D:
+    case F2D:
+      return numVal.doubleValue();
+    case CHECKCAST:
+      return value;
+    default:
       return null;
     }
   }
