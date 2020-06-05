@@ -159,23 +159,23 @@ It's possible that there is an `Obfuscated-By: XXX` or `Protected-By: XXX` attri
 ##### ZKM
 Extremely (flow-) obfuscated code, often noticeable by a string decryption method in the static initializer containing switches,
  or string decryption methods with a very long switch block (about 250 cases).
-ZKM is one of the best (and oldest) obfuscators for java, and also very expensive.
+ZKM is one of the best (and oldest) obfuscators for java, and also very expensive. As ancient as the obfuscator is their website.
 ![ZKM](https://i.imgur.com/Psdagyb.png)
 ##### Stringer
 If your jar file contains some special classes with huge decryption algorithms that are used by string obfuscation and access obfuscation, it's probably Stringer.
+The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. 
+It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack, as it costs more than a car.
 If your file was obfuscated with multiple obfuscators, and Stringer is one of them, you should begin your deobfuscation with Stringer, as Stringer obfuscation cannot be overwritten. 
 (Due to custom JAR signature and usage of method names during string decryption)
-The protection is not bad and Stringer is one of the most expensive obfuscators. Unlike normal obfuscators it does not come with name obfuscation. 
-It is rather used as "second layer". Probably 90% of people that use this obfuscator are using a crack.
 ![Stringer](https://i.imgur.com/LmI9SYz.png)
 ![Stringer 2](https://i.imgur.com/M72plII.png)
 ##### Allatori
 Class names like IiIlIlIiIl or aUx, cOn, PrX indicate Allatori obfuscation.
-Allatori is very common, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
+Allatori is very common amongst obfuscated jar files, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
 ![Allatori](https://i.imgur.com/eWYKtR4.png)
 ##### Paramorphism
-Paramorphism is like the little brother of stringer, as it isn't as good as it. It also has some interesting features that aim to crash reverse engineering tools. 
-The obfuscation strength is not that high.
+Paramorphism is like the little brother of stringer, as it looks similar, but isn't as good as it. It also has some interesting features that aim to crash reverse engineering tools, which can be removed easily. 
+The obfuscation strength is comparable to Allatori.
 ![Paramorphism](https://i.imgur.com/netlEgl.png)
 
 ##### Other obfuscators
@@ -193,7 +193,7 @@ This tool was a ton of work.
 If I saved your time and you want to buy me a coffee you can do so here: [![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/37f6MxNoyyksgh3hWtbh9UKkkGDSAoHCtT)](https://en.cryptobadges.io/donate/37f6MxNoyyksgh3hWtbh9UKkkGDSAoHCtT)
 
 ## Notice
-Do NOT deobfuscate files that don't belong to you.  
+Use Threadtear for legal purposes only. Threadtear is not aiming to be a cracking tool, but rather to be a malware analysis toolkit. 
 Please open an issue or send me an email if a transformer doesn't work properly and attach the log.   
 Note that output files are most likely not runnable. If you still want to try to run them use `-noverify` as JVM argument!   
 This tool is intended for Java 8 but it will probably run on higher versions too. 
