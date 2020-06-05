@@ -3,12 +3,13 @@ Threadtear is a multifunctional deobfuscation tool for java. Android application
 Suitable for easier code analysis without worrying too much about obfuscation.
 Even the most expensive obfuscators like ZKM or Stringer are included. For easier debugging there are also other tools included. 
 Insert debug line numbers to better understand where exceptions originate, or add .printStackTrace() to try catch blocks without re-compiling your code. 
-Reverse compatibility is not a problem anymore, if no version specific methods are used.
+Reverse compatibility is not a problem anymore, if no version specific methods are used. Analyze code flow in a graph, to better understand algorithms.
 ![Screenshot 1](https://i.imgur.com/GJvUtEX.png)
 ![Screenshot 2](https://i.imgur.com/QQ4NA0T.png)
 ![Screenshot 3](https://i.imgur.com/Emjrrw1.png)
 ![Screenshot 4](https://i.imgur.com/D0MWzMr.png)
-![Screenshot 5](https://i.imgur.com/JV117pa.png)
+![Screenshot 5](https://i.imgur.com/mK1LmCD.png)
+![Screenshot 6](https://i.imgur.com/JV117pa.png)
 
 ## Executions 
 An "execution" is a task that is executed and modifies all loaded class files. 
@@ -172,6 +173,10 @@ It is rather used as "second layer". Probably 90% of people that use this obfusc
 Class names like IiIlIlIiIl or aUx, cOn, PrX indicate Allatori obfuscation.
 Allatori is very common, because it offers a free demo that accessible within a few clicks. The obfuscation is not that hard to reverse.
 ![Allatori](https://i.imgur.com/eWYKtR4.png)
+##### Paramorphism
+Paramorphism is like the little brother of stringer, as it isn't as good as it. It also has some interesting features that aim to crash reverse engineering tools. 
+The obfuscation strength is not that high.
+![Paramorphism](https://i.imgur.com/netlEgl.png)
 
 ##### Other obfuscators
 For other obfuscators you can try generic executions or open an issue and I'll see what i can do.
