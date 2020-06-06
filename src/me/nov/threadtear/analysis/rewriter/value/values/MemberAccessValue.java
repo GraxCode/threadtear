@@ -60,11 +60,8 @@ public class MemberAccessValue extends CodeReferenceValue {
     if (node != other.node)
       return false;
     if (owner == null) {
-      if (other.owner != null)
-        return false;
-    } else if (!owner.equals(other.owner))
-      return false;
-    return true;
+        return other.owner == null;
+    } else return owner.equals(other.owner);
   }
 
   @Override

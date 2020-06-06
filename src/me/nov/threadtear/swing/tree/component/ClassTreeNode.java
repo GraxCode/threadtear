@@ -37,7 +37,7 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
   @SuppressWarnings("unchecked")
   public void sort() {
     if (children != null)
-      Collections.sort(children, this);
+      children.sort(this);
   }
 
   @Override

@@ -153,11 +153,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
           Threadtear.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
         }
       }
-      return null;
     } else {
       logger.warning("Unimplemented or other dynamic desc variant in {}: {}", referenceString(cn, null), idin.desc);
-      return null;
     }
+    return null;
   }
 
   @Override

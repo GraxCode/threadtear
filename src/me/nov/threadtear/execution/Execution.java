@@ -75,7 +75,7 @@ public abstract class Execution implements Opcodes {
    * @return array of Frames, while the array index corresponds to the instruction index
    */
   protected Frame<ConstantValue>[] getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) {
-    Analyzer<ConstantValue> a = new Analyzer<ConstantValue>(new ConstantTracker(handler, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+    Analyzer<ConstantValue> a = new Analyzer<>(new ConstantTracker(handler, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
     try {
       a.analyze(c.name, m);
     } catch (Throwable e) {

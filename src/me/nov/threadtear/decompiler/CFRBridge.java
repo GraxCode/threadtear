@@ -83,7 +83,7 @@ public class CFRBridge implements IDecompilerBridge {
         }
       };
       CfrDriver cfrDriver = new CfrDriver.Builder().withClassFileSource(source).withOutputSink(mySink).withOptions(options).build();
-      cfrDriver.analyse(Arrays.asList(name));
+      cfrDriver.analyse(Collections.singletonList(name));
     } catch (Throwable t) {
       t.printStackTrace();
       StringWriter sw = new StringWriter();

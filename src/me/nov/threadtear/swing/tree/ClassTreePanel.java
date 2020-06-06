@@ -90,8 +90,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     ignore = new JButton("Ignore", IconLoader.get().loadSVGIcon("res/ignore.svg", false));
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
-      for (int i = 0; i < paths.length; i++) {
-        ClassTreeNode tn = (ClassTreeNode) paths[i].getLastPathComponent();
+      for (TreePath path : paths) {
+        ClassTreeNode tn = (ClassTreeNode) path.getLastPathComponent();
         ignoreChilds(tn);
       }
       refreshIgnored();

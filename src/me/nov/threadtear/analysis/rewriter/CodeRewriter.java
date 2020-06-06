@@ -41,8 +41,6 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   public CodeReferenceValue newOperation(AbstractInsnNode insn) throws AnalyzerException {
     BasicValue v = basic.newOperation(insn);
     switch (insn.getOpcode()) {
-    case ACONST_NULL:
-      return new UnknownInstructionValue(v, insn);
     case ICONST_M1:
     case ICONST_0:
     case ICONST_1:
@@ -76,6 +74,7 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
     case GETSTATIC:
       FieldInsnNode fin = (FieldInsnNode) insn;
       return fieldReference(v, null, fin);
+    case ACONST_NULL:
     default:
       return new UnknownInstructionValue(v, insn);
     }
