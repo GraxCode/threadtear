@@ -175,16 +175,16 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           decrypted++;
           return new AbstractInsnNode[] { new InsnNode(POP2), new LdcInsnNode(decryptedLDC) };
         } else if (verbose) {
-          logger.error("Failed string array decryption in {}", referenceString(cn, m));
+          logger.error("Failed decrypting {}", referenceString(cn, m));
         }
       } else if (verbose) {
-        logger.warning("Unexpected case, method is not feeded two ints: {}", referenceString(cn, m));
+        logger.warning("Failed to find arguments for {}", referenceString(cn, m));
       }
     } catch (Throwable t) {
       if (verbose) {
         t.printStackTrace();
       }
-      logger.error("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
+      logger.error("General failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { min };
   }
@@ -232,7 +232,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       if (verbose) {
         logger.error("Throwable", t);
       }
-      logger.error("Failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
+      logger.error("General failure in {}, {}", referenceString(cn, m), shortStacktrace(t));
     }
     return new AbstractInsnNode[] { ain };
   }
