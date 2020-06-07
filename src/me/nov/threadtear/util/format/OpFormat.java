@@ -8,13 +8,19 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.util.reflection.Primitives;
 
+@SuppressWarnings("unused")
 public class OpFormat implements Opcodes {
+  private static Map<Integer, String> accessCodes = getAccessCodes();
+  private static Map<Integer, String> typeCodes = getTypeCodes();
+  private static Map<Integer, String> handleCodes = getHandleCodes();
+  private static Map<Integer, String> frameTypes = getFrameTypes();
+
   private static Map<Integer, String> opcodes = getCodes();
   private static Map<String, Integer> reopcodes = getReCodes();
 
-  private static Map<Integer, String> getCodes() {
+  private static Map<Integer, String> getAccessCodes() {
     HashMap<Integer, String> map = new HashMap<>();
-    map.put(-1, "INVALID OPCODE");
+    map.put(-1, "INVALID ACCESS CODE");
     map.put(ACC_PUBLIC, "ACC_PUBLIC");
     map.put(ACC_PRIVATE, "ACC_PRIVATE");
     map.put(ACC_PROTECTED, "ACC_PROTECTED");
@@ -35,6 +41,12 @@ public class OpFormat implements Opcodes {
     map.put(ACC_ENUM, "ACC_ENUM");
     map.put(ACC_MANDATED, "ACC_MANDATED");
     map.put(ACC_DEPRECATED, "ACC_DEPRECATED");
+    return map;
+  }
+
+  private static Map<Integer, String> getTypeCodes() {
+    HashMap<Integer, String> map = new HashMap<>();
+    map.put(-1, "INVALID TYPE CODE");
     map.put(T_BOOLEAN, "T_BOOLEAN");
     map.put(T_CHAR, "T_CHAR");
     map.put(T_FLOAT, "T_FLOAT");
@@ -43,6 +55,12 @@ public class OpFormat implements Opcodes {
     map.put(T_SHORT, "T_SHORT");
     map.put(T_INT, "T_INT");
     map.put(T_LONG, "T_LONG");
+    return map;
+  }
+
+  private static Map<Integer, String> getHandleCodes() {
+    HashMap<Integer, String> map = new HashMap<>();
+    map.put(-1, "INVALID HANDLE OPCODE");
     map.put(H_GETFIELD, "H_GETFIELD");
     map.put(H_GETSTATIC, "H_GETSTATIC");
     map.put(H_PUTFIELD, "H_PUTFIELD");
@@ -52,12 +70,24 @@ public class OpFormat implements Opcodes {
     map.put(H_INVOKESPECIAL, "H_INVOKESPECIAL");
     map.put(H_NEWINVOKESPECIAL, "H_NEWINVOKESPECIAL");
     map.put(H_INVOKEINTERFACE, "H_INVOKEINTERFACE");
+    return map;
+  }
+
+  private static Map<Integer, String> getFrameTypes() {
+    HashMap<Integer, String> map = new HashMap<>();
+    map.put(-1, "INVALID OPCODE");
     map.put(F_NEW, "F_NEW");
     map.put(F_FULL, "F_FULL");
     map.put(F_APPEND, "F_APPEND");
     map.put(F_CHOP, "F_CHOP");
     map.put(F_SAME, "F_SAME");
     map.put(F_SAME1, "F_SAME1");
+    return map;
+  }
+
+  private static Map<Integer, String> getCodes() {
+    HashMap<Integer, String> map = new HashMap<>();
+    map.put(-1, "INVALID OPCODE");
     map.put(NOP, "NOP");
     map.put(ACONST_NULL, "ACONST_NULL");
     map.put(ICONST_M1, "ICONST_M1");
