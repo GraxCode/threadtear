@@ -32,7 +32,6 @@ public class LogFrame extends JFrame {
     setMinimumSize(new Dimension(500, 400));
     setLayout(new BorderLayout());
     setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/run.svg", 64, 64, false)));
-    this.setAlwaysOnTop(true);
     area = new JTextPane();
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));

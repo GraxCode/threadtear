@@ -23,7 +23,6 @@ public class AnalysisFrame extends JFrame {
     setMinimumSize(new Dimension(900, 540));
     setLayout(new BorderLayout());
     setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/decompile.svg", 64, 64, false)));
-    setAlwaysOnTop(true);
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
