@@ -2,8 +2,10 @@ package me.nov.threadtear.execution.zkm;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.*;
 
@@ -19,7 +21,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
   private boolean verbose;
 
-  private static final String ENCHANCED_MODE_METHOD_DESC = "(II)Ljava/lang/String;";
+  private static final String ENCHANCED_MODE_METHOD_DESC = "\\(II+\\)Ljava/lang/String;";
+  private ArgumentInfer argumentInfer;
 
   public StringObfuscationZKM() {
     super(ExecutionCategory.ZKM, "String obfuscation removal",
@@ -34,6 +37,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.verbose = verbose;
+    final List<ClassNode> classNodes = classes.values().stream().map(c -> c.node).collect(Collectors.toList());
+    argumentInfer = new ArgumentInfer(classNodes);
     classes.values().stream().filter(this::hasZKMBlock).forEach(this::decrypt);
     logger.info("Decrypted {} strings successfully.", decrypted);
     return decrypted > 0;
@@ -71,7 +76,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     proxyClass.methods.add(callMethod);
 
     // add decryption methods
-    cn.methods.stream().filter(m -> m.desc.equals(ENCHANCED_MODE_METHOD_DESC)).forEach(m -> {
+    cn.methods.stream().filter(m -> m.desc.matches(ENCHANCED_MODE_METHOD_DESC)).forEach(m -> {
       MethodNode copy = Sandbox.copyMethod(m);
       proxyClass.methods.add(copy);
       Instructions.isolateCallsThatMatch(copy, (name, desc) -> !name.matches(ALLOWED_CALLS),
@@ -108,6 +113,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       }
     }
     realClass.methods.stream().forEach(m -> {
+      argumentInfer.inline(new MethodContext(realClass, m));
       decryptedArrayField = null;
       m.instructions.forEach(ain -> {
         if (isLocalField(realClass, ain) && ((FieldInsnNode) ain).desc.equals("[Ljava/lang/String;")) {
@@ -148,21 +154,37 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     if (ain.getOpcode() != INVOKESTATIC)
       return false;
     MethodInsnNode min = ((MethodInsnNode) ain);
-    return min.owner.equals(cn.name) && min.desc.equals(ENCHANCED_MODE_METHOD_DESC);
+    return min.owner.equals(cn.name) && min.desc.matches(ENCHANCED_MODE_METHOD_DESC);
   }
 
   /**
-   * Replace decryption methods that take two ints as argument and returns the decrypted String. This does only occur sometimes!
+   * Replace decryption methods that take ints as argument and returns the decrypted String. This does only occur sometimes!
    */
   private void decryptMethodsAndRewrite(ClassNode cn, Class<?> callProxy, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame, InstructionModifier modifier) {
     try {
-      ConstantValue previous = frame.getStack(frame.getStackSize() - 1);
-      ConstantValue prePrevious = frame.getStack(frame.getStackSize() - 2);
-      if (previous.isInteger() && prePrevious.isInteger()) {
-        String decryptedLDC = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, prePrevious.getAsInteger(), previous.getAsInteger());
+      int argCount = (int) Arrays.stream(Type.getArgumentTypes(min.desc))
+          .filter(t -> t.getClassName().equals(int.class.getName()))
+          .count();
+
+      ConstantValue[] argValues = new ConstantValue[argCount];
+      for (int i = 0; i < argValues.length; i++) {
+        argValues[i] = frame.getStack(frame.getStackSize() - argValues.length + i);
+      }
+
+      if (Arrays.stream(argValues).allMatch(v -> v.isInteger() && v.isKnown())) {
+        final Object[] invokeArgs = new Object[argCount];
+        final Class<?>[] invokeArgTypes = new Class[argCount];
+        final InsnList newInsns = new InsnList();
+        for (int i = 0; i < argCount; i++) {
+          invokeArgs[i] = argValues[i].getAsInteger();
+          invokeArgTypes[i] = int.class;
+          newInsns.add(new InsnNode(POP));
+        }
+        
+        String decryptedLDC = (String) callProxy.getDeclaredMethod(min.name, invokeArgTypes).invoke(null, invokeArgs);
         if (!Strings.isHighUTF(decryptedLDC)) {
-          // avoid concurrent modification
-          modifier.replace(min, new InsnNode(POP2), new LdcInsnNode(decryptedLDC));
+          newInsns.add(new LdcInsnNode(decryptedLDC));
+          modifier.replace(min, newInsns);
           decrypted++;
         } else if (verbose) {
           logger.error("Failed decrypting {}", referenceString(cn, m));
