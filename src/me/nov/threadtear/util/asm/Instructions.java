@@ -31,6 +31,19 @@ public final class Instructions implements Opcodes {
     return labelMap;
   }
 
+  public static boolean isStoreVar(VarInsnNode instr) {
+    return !isLoadVar(instr);
+  }
+
+  public static boolean isLoadVar(VarInsnNode instr) {
+    return instr.getOpcode() < Opcodes.ISTORE;
+  }
+
+  private static final List<Integer> longVarOpcodes = Arrays.asList(Opcodes.LSTORE, Opcodes.LLOAD, Opcodes.DSTORE, Opcodes.DLOAD);
+  public static boolean isLongVar(VarInsnNode instr) {
+    return longVarOpcodes.contains(instr.getOpcode());
+  }
+
   public static boolean isComputable(AbstractInsnNode ain) {
     switch (ain.getType()) {
     case AbstractInsnNode.METHOD_INSN:
