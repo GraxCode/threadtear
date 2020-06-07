@@ -106,6 +106,7 @@ public class ExecutionSelection extends JDialog {
 
       addExecution(root, new StringObfuscationAllatori());
       addExecution(root, new ExpirationDateRemoverAllatori());
+      addExecution(root, new AntiFernflowerAllatori());
 
       addExecution(root, new StringObfuscationDashO());
 
