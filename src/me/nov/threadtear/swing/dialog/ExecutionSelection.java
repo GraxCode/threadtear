@@ -81,6 +81,7 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new InlineUnchangedFields());
       addExecution(root, new RemoveUnnecessary());
       addExecution(root, new RemoveAttributes());
+      addExecution(root, new ArgumentInliner());
 
       addExecution(root, new ObfuscatedAccess());
       addExecution(root, new KnownConditionalJumps());
