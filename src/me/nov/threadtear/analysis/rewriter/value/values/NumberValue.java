@@ -59,10 +59,10 @@ public class NumberValue extends CodeReferenceValue {
   @Override
   public Object getStackValueOrNull() {
     if (value instanceof Character) {
-      return (int) ((Character) value).charValue();
+      return (int) (Character) value;
     }
     if (value instanceof Boolean) {
-      return ((Boolean) value).booleanValue() ? 1 : 0;
+      return (Boolean) value ? 1 : 0;
     }
     return value;
   }

@@ -76,7 +76,7 @@ public class CFGPanel extends JPanel {
       jfc.setFileFilter(new FileNameExtensionFilter("Portable Network Graphics (.png)", "png"));
       jfc.addChoosableFileFilter(new FileNameExtensionFilter("Bitmap image file (.bmp)", "bmp"));
       if (mn.name.length() < 32) {
-        jfc.setSelectedFile(new File(parentDir, mn.name.replaceAll("[^a-zA-Z0-9-_\\.]", "_") + ".png"));
+        jfc.setSelectedFile(new File(parentDir, mn.name.replaceAll("[^a-zA-Z0-9-_.]", "_") + ".png"));
       } else {
         jfc.setSelectedFile(new File(parentDir, "method-" + (mn.name + mn.desc).hashCode() + ".png"));
       }

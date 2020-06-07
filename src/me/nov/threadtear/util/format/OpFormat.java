@@ -668,11 +668,10 @@ public class OpFormat implements Opcodes {
     case AbstractInsnNode.METHOD_INSN:
       return "#ad1037";
     case AbstractInsnNode.VAR_INSN:
+    case AbstractInsnNode.MULTIANEWARRAY_INSN:
       return "#ff6b6b";
     case AbstractInsnNode.TYPE_INSN:
       return "#48dbfb";
-    case AbstractInsnNode.MULTIANEWARRAY_INSN:
-      return "#ff6b6b";
     case AbstractInsnNode.TABLESWITCH_INSN:
       return "#ff9ff3";
     case AbstractInsnNode.LOOKUPSWITCH_INSN:

@@ -217,7 +217,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
         if (previous.getValue() != null) {
           int arrayIndex = previous.getInteger();
           Object reference = prePrevious.getValue();
-          if (reference != null && reference instanceof String[]) {
+          if (reference instanceof String[]) {
             String[] ref = (String[]) reference;
             String decryptedString = ref[arrayIndex];
             if (Strings.isHighUTF(decryptedString)) {

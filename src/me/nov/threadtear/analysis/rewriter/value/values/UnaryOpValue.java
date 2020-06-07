@@ -43,11 +43,8 @@ public class UnaryOpValue extends CodeReferenceValue {
     if (node.getOpcode() != other.node.getOpcode())
       return false;
     if (value == null) {
-      if (other.value != null)
-        return false;
-    } else if (!value.equals(other.value))
-      return false;
-    return true;
+        return other.value == null;
+    } else return value.equals(other.value);
   }
 
   @Override

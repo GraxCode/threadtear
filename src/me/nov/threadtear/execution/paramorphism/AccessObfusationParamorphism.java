@@ -120,9 +120,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     InsnList invoker = new InsnList();
     Type[] types = Type.getArgumentTypes(bsm.getDesc());
     int var = 0;
-    for (int i = 0; i < types.length; i++) {
-      invoker.add(new VarInsnNode(types[i].getOpcode(ILOAD), var));
-      var += types[i].getSize();
+    for (Type type : types) {
+      invoker.add(new VarInsnNode(type.getOpcode(ILOAD), var));
+      var += type.getSize();
     }
     invoker.add(new MethodInsnNode(INVOKESTATIC, bsm.getOwner(), bsm.getName(), bsm.getDesc())); // invokedynamic fake
     invoker.add(new InsnNode(ARETURN)); // return callsite
@@ -132,10 +132,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     Class<?> loadedProxy = vm.loadClass(proxy.name.replace('/', '.'));
     try {
       List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
-      for (int i = 0; i < idin.bsmArgs.length; i++) { // extra arguments
-        Object value = idin.bsmArgs[i]; // paramorphism stores those extra parameters in bsmArgs
-        args.add(value);
-      }
+        // extra arguments
+        // paramorphism stores those extra parameters in bsmArgs
+        args.addAll(Arrays.asList(idin.bsmArgs));
       Method bootstrapBridge = loadedProxy.getDeclaredMethods()[0];
       return (CallSite) bootstrapBridge.invoke(null, args.toArray());
     } catch (IllegalArgumentException e) {

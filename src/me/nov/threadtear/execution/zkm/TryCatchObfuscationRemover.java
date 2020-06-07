@@ -34,7 +34,7 @@ public class TryCatchObfuscationRemover extends Execution {
   }
 
   private long getAmountBlocks() {
-    return classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks).flatMap(List::stream).count();
+    return classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks).mapToLong(List::size).sum();
   }
 
   public void checkTCBs(ClassNode c, List<MethodNode> methods) {

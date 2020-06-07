@@ -94,6 +94,14 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
         case FSTORE:
         case DSTORE:
         case ASTORE:
+        case IFEQ:
+        case IFNE:
+        case IFNULL:
+        case IFNONNULL:
+        case IFGT:
+        case IFGE:
+        case IFLT:
+        case IFLE:
           rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
           rewrittenCode.add(ain.clone(labels));
           break;
@@ -142,17 +150,6 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
             rewrittenCode.add(first.combine().cloneInstructions());
             rewrittenCode.add(ain.clone(null));
           }
-          break;
-        case IFEQ:
-        case IFNE:
-        case IFNULL:
-        case IFNONNULL:
-        case IFGT:
-        case IFGE:
-        case IFLT:
-        case IFLE:
-          rewrittenCode.add(frame.getStack(stackSize - 1).combine().cloneInstructions());
-          rewrittenCode.add(ain.clone(labels));
           break;
         case IF_ICMPEQ:
         case IF_ICMPNE:

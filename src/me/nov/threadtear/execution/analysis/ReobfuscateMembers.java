@@ -29,7 +29,7 @@ public class ReobfuscateMembers extends Execution {
 
     logger.info("Generating random names");
     this.words = Strings.generateWordQueue(
-        (int) (classes.values().stream().map(c -> c.node.fields).flatMap(List::stream).count() + classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).count()),
+        (int) (classes.values().stream().map(c -> c.node.fields).mapToLong(List::size).sum() + classes.values().stream().map(c -> c.node.methods).mapToLong(List::size).sum()),
         ReobfuscateMembers.class.getResourceAsStream("/res/english-words.txt"));
 
     logger.info("Making method mappings");

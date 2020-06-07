@@ -51,11 +51,8 @@ public class BinaryOpValue extends CodeReferenceValue {
     if (node.getOpcode() != other.node.getOpcode())
       return false;
     if (right == null) {
-      if (other.right != null)
-        return false;
-    } else if (!right.equals(other.right))
-      return false;
-    return true;
+        return other.right == null;
+    } else return right.equals(other.right);
   }
 
   @Override

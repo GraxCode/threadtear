@@ -15,7 +15,7 @@ import me.nov.threadtear.execution.Clazz;
 public class JarIO {
 
   public static ArrayList<Clazz> loadClasses(File jarFile) throws IOException {
-    ArrayList<Clazz> classes = new ArrayList<Clazz>();
+    ArrayList<Clazz> classes = new ArrayList<>();
     JarFile jar = new JarFile(jarFile);
     Stream<JarEntry> str = jar.stream();
     str.forEach(z -> readEntry(jar, z, classes));
@@ -44,7 +44,7 @@ public class JarIO {
     return classes;
   }
 
-  public static final String CERT_REGEX = "META-INF\\/.+(\\.SF|\\.RSA|\\.DSA)";
+  public static final String CERT_REGEX = "META-INF/.+(\\.SF|\\.RSA|\\.DSA)";
 
   public static void saveAsJar(File original, File output, List<Clazz> classes, boolean noSignature, boolean watermark) {
     try {

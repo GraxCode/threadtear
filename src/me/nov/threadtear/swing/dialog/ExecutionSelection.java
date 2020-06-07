@@ -129,10 +129,10 @@ public class ExecutionSelection extends JDialog {
       });
       this.addTreeSelectionListener(e -> {
         TreePath[] paths = e.getPaths();
-        for (int i = 0; i < paths.length; i++) {
-          DefaultMutableTreeNode tn = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
+        for (TreePath path : paths) {
+          DefaultMutableTreeNode tn = (DefaultMutableTreeNode) path.getLastPathComponent();
           if (tn.getChildCount() > 0)
-            removeSelectionPath(paths[i]);
+            removeSelectionPath(path);
         }
       });
     }

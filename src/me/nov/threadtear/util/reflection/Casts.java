@@ -9,7 +9,7 @@ public class Casts {
     if (type == short.class) {
       return ((Integer) value).shortValue();
     } else if (type == boolean.class) {
-      return ((Integer) value).intValue() == 0 ? true : false;
+      return (Integer) value == 0;
     } else if (type == char.class) {
       return (char) ((Integer) value).intValue();
     } else if (type == byte.class) {
@@ -21,7 +21,7 @@ public class Casts {
     } else if (type == long.class) {
       return ((Integer) value).longValue();
     } else if (type == int.class) {
-      return ((Integer) value).intValue();
+      return value;
     }
     return type.cast(value);
   }
@@ -31,7 +31,7 @@ public class Casts {
    */
   public static Object toNumber(Object object) {
     if (object instanceof Character) {
-      return (int) ((Character) object).charValue();
+      return (int) (Character) object;
     }
     if (object instanceof Boolean) {
       return ((boolean) object) ? 1 : 0;
@@ -42,7 +42,7 @@ public class Casts {
 
   public static Integer toInteger(Object object) {
     if (object instanceof Character) {
-      return (int) ((Character) object).charValue();
+      return (int) (Character) object;
     }
     if (object instanceof Boolean) {
       return ((boolean) object) ? 1 : 0;

@@ -25,7 +25,7 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
     if (member == null)
       return null;
     StringBuilder b = new StringBuilder();
-    b.append("<html><h3>" + member.name);
+    b.append("<html><h3>").append(member.name);
     b.append("</h3>");
     b.append(member.description);
     b.append("<br><i><b>");

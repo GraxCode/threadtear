@@ -2,6 +2,7 @@ package me.nov.threadtear.util.format;
 
 import java.awt.Color;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
@@ -58,7 +59,7 @@ public class Strings {
   public static Queue<String> generateWordQueue(int amount, InputStream wordList) {
     Queue<String> queue = new LinkedList<>();
     try {
-      String list = IOUtils.toString(wordList, "UTF-8");
+      String list = IOUtils.toString(wordList, StandardCharsets.UTF_8);
       List<String> words = Arrays.asList(list.split("\n"));
       Collections.shuffle(words);
       int i = 0;

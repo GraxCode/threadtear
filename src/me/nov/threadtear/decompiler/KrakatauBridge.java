@@ -18,10 +18,7 @@ public class KrakatauBridge implements IDecompilerBridge {
     if (!setup) {
       String error = setupKrakatau();
       if (error != null) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Failed to unzip krakatau in temp directory.\n");
-        sb.append(error);
-        return sb.toString();
+        return "Failed to unzip krakatau in temp directory.\n" + error;
       }
     }
     File krakatauIn;
@@ -30,7 +27,7 @@ public class KrakatauBridge implements IDecompilerBridge {
     } catch (Throwable t) {
       t.printStackTrace();
       StringWriter sw = new StringWriter();
-      sw.append("Failed to make temp jar for class \"" + name + "\"\n");
+      sw.append("Failed to make temp jar for class \"").append(name).append("\"\n");
       PrintWriter pw = new PrintWriter(sw);
       t.printStackTrace(pw);
       return sw.toString();
@@ -66,7 +63,7 @@ public class KrakatauBridge implements IDecompilerBridge {
       }
       t.printStackTrace();
       StringWriter sw = new StringWriter();
-      sw.append("Failed krakatau execution for class \"" + name + "\"\n");
+      sw.append("Failed krakatau execution for class \"").append(name).append("\"\n");
       PrintWriter pw = new PrintWriter(sw);
       t.printStackTrace(pw);
       return sw.toString();

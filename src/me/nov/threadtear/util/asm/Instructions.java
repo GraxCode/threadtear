@@ -19,7 +19,7 @@ public class Instructions implements Opcodes {
   }
 
   public static Map<LabelNode, LabelNode> cloneLabels(InsnList insns) {
-    HashMap<LabelNode, LabelNode> labelMap = new HashMap<LabelNode, LabelNode>();
+    HashMap<LabelNode, LabelNode> labelMap = new HashMap<>();
     for (AbstractInsnNode insn = insns.getFirst(); insn != null; insn = insn.getNext()) {
       if (insn.getType() == AbstractInsnNode.LABEL) {
         labelMap.put((LabelNode) insn, new LabelNode());
