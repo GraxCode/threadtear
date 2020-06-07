@@ -169,7 +169,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       ConstantValue previous = frame.getStack(frame.getStackSize() - 1);
       ConstantValue prePrevious = frame.getStack(frame.getStackSize() - 2);
       if (previous.isInteger() && prePrevious.isInteger()) {
-        String decryptedLDC = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, prePrevious.getInteger(), previous.getInteger());
+        String decryptedLDC = (String) callProxy.getDeclaredMethod(min.name, int.class, int.class).invoke(null, prePrevious.getAsInteger(), previous.getAsInteger());
         if (!Strings.isHighUTF(decryptedLDC)) {
           // avoid concurrent modification
           decrypted++;
@@ -215,7 +215,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
         ConstantValue prePrevious = frame.getStack(frame.getStackSize() - 2);
 
         if (previous.getValue() != null) {
-          int arrayIndex = previous.getInteger();
+          int arrayIndex = previous.getAsInteger();
           Object reference = prePrevious.getValue();
           if (reference instanceof String[]) {
             String[] ref = (String[]) reference;

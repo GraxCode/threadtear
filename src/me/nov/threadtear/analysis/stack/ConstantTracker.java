@@ -129,7 +129,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       FieldInsnNode fin = (FieldInsnNode) insn;
       return new ConstantValue(v, referenceHandler.getFieldValueOrNull(v, fin.owner, fin.name, fin.desc));
     case NEWARRAY:
-      Integer size = value.getInteger();
+      Integer size = value.getAsInteger();
       if (size != null) {
         switch (((IntInsnNode) insn).operand) {
         case T_BOOLEAN:
@@ -217,7 +217,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       case DALOAD:
       case LALOAD:
       case AALOAD: // this won't happen for now but let's include it
-        return new ConstantValue(v, Casts.toNumber(Array.get(a.value, b.getInteger())));
+        return new ConstantValue(v, Casts.toNumber(Array.get(a.value, b.getAsInteger())));
       }
     }
     return v == null ? null : new ConstantValue(v, getBinaryValue(insn.getOpcode(), a.value, b.value));
@@ -241,8 +241,16 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     case IMUL:
       return num1.intValue() * num2.intValue();
     case IDIV:
+      if (num2.intValue() == 0) {
+        // we do not want arithmetic exceptions
+        return null;
+      }
       return num1.intValue() / num2.intValue();
     case IREM:
+      if (num2.intValue() == 0) {
+        // we do not want arithmetic exceptions
+        return null;
+      }
       return num1.intValue() % num2.intValue();
     case ISHL:
       return num1.intValue() << num2.intValue();
@@ -273,8 +281,16 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     case LMUL:
       return num1.longValue() * num2.longValue();
     case LDIV:
+      if (num2.intValue() == 0) {
+        // we do not want arithmetic exceptions
+        return null;
+      }
       return num1.longValue() / num2.longValue();
     case LREM:
+      if (num2.intValue() == 0) {
+        // we do not want arithmetic exceptions
+        return null;
+      }
       return num1.longValue() % num2.longValue();
     case LSHL:
       return num1.longValue() << num2.intValue();
@@ -324,28 +340,28 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       switch (insn.getOpcode()) {
       case BASTORE:
         if (array instanceof byte[]) {
-          ((byte[]) array)[b.getInteger()] = value.byteValue();
+          ((byte[]) array)[b.getAsInteger()] = value.byteValue();
         } else {
-          ((boolean[]) array)[b.getInteger()] = value.intValue() == 1;
+          ((boolean[]) array)[b.getAsInteger()] = value.intValue() != 0;
         }
         break;
       case CASTORE:
-        ((char[]) array)[b.getInteger()] = (char) value.intValue();
+        ((char[]) array)[b.getAsInteger()] = (char) value.intValue();
         break;
       case SASTORE:
-        ((short[]) array)[b.getInteger()] = value.shortValue();
+        ((short[]) array)[b.getAsInteger()] = value.shortValue();
         break;
       case IASTORE:
-        ((int[]) array)[b.getInteger()] = value.intValue();
+        ((int[]) array)[b.getAsInteger()] = value.intValue();
         break;
       case FASTORE:
-        ((float[]) array)[b.getInteger()] = value.floatValue();
+        ((float[]) array)[b.getAsInteger()] = value.floatValue();
         break;
       case DASTORE:
-        ((double[]) array)[b.getInteger()] = value.doubleValue();
+        ((double[]) array)[b.getAsInteger()] = value.doubleValue();
         break;
       case LASTORE:
-        ((long[]) array)[b.getInteger()] = value.longValue();
+        ((long[]) array)[b.getAsInteger()] = value.longValue();
         break;
       case AASTORE:
         throw new IllegalArgumentException("unimplemented");

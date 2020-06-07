@@ -79,7 +79,7 @@ public abstract class Execution implements Opcodes {
     try {
       a.analyze(c.name, m);
     } catch (Throwable e) {
-      logger.error("Failed stack analysis in {}, {}", referenceString(c, m), shortStacktrace(e));
+      logger.error("Failed stack analysis in {}, {}", e, referenceString(c, m), shortStacktrace(e));
       return null;
     }
     return a.getFrames();

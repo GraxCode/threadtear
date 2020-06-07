@@ -53,6 +53,28 @@ public class ConstantValue implements Value {
     this.value = value;
   }
 
+  public BasicValue getType() {
+    return type;
+  }
+
+  public boolean isUninitialized() {
+    return getType().getType() == null;
+  }
+
+  /**
+   * @return true if value is known, false if value is unknown. A known value of "null" returns true.
+   */
+  public boolean isKnown() {
+    return value != null;
+  }
+
+  public boolean isNull() {
+    return this == ConstantTracker.NULL;
+  }
+
+  /**
+   * @return true for Integer, Short, Byte, Boolean, Character
+   */
   public boolean isInteger() {
     return getType() == BasicValue.INT_VALUE;
   }
@@ -65,18 +87,9 @@ public class ConstantValue implements Value {
     return getType() == BasicValue.LONG_VALUE;
   }
 
-  public Integer getInteger() {
+  public Integer getAsInteger() {
     if (value == null)
       return null;
-    return (Integer) value;
+    return ((Number) value).intValue();
   }
-
-  public BasicValue getType() {
-    return type;
-  }
-
-  public boolean isKnown() {
-    return value != null;
-  }
-
 }

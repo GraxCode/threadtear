@@ -55,7 +55,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
           if (frame.getStackSize() > 0) {
             ConstantValue up = frame.getStack(frame.getStackSize() - 1);
             if (up.isKnown() && up.isInteger()) {
-              int input = up.getInteger();
+              int input = up.getAsInteger();
               int index = lsin.keys.indexOf(input);
               rewrittenCode.add(new InsnNode(POP));
               rewrittenCode.add(new JumpInsnNode(GOTO, labels.get(index == -1 ? lsin.dflt : lsin.labels.get(index))));
@@ -68,7 +68,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
           if (frame.getStackSize() > 0) {
             ConstantValue up = frame.getStack(frame.getStackSize() - 1);
             if (up.isKnown() && up.isInteger()) {
-              int input = up.getInteger();
+              int input = up.getAsInteger();
               int index = input - tsin.min;
               boolean dflt = index < 0 || index > tsin.max;
               rewrittenCode.add(new InsnNode(POP));
