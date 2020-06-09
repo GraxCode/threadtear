@@ -12,7 +12,9 @@ import org.objectweb.asm.tree.ClassNode;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 
-public class JarIO {
+public final class JarIO {
+  private JarIO() {
+  }
 
   public static ArrayList<Clazz> loadClasses(File jarFile) throws IOException {
     ArrayList<Clazz> classes = new ArrayList<>();

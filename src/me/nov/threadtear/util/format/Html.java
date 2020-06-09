@@ -1,6 +1,9 @@
 package me.nov.threadtear.util.format;
 
-public class Html {
+public final class Html {
+  private Html() {
+  }
+
   public static String color(String color, String text) {
     return "<font color=\"" + color + "\">" + text + "</font>";
   }

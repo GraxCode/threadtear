@@ -7,7 +7,9 @@ import java.lang.reflect.*;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-public class DynamicReflection implements Opcodes {
+public final class DynamicReflection implements Opcodes {
+  private DynamicReflection() {
+  }
 
   private static final String BMHL = "java.lang.invoke.BoundMethodHandle$Species_L";
 

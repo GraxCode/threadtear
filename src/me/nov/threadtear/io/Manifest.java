@@ -4,7 +4,10 @@ import java.io.UnsupportedEncodingException;
 
 import me.nov.threadtear.swing.Utils;
 
-public class Manifest {
+public final class Manifest {
+  private Manifest() {
+  }
+
   private static String lineSeparator = "\r\n";
 
   public static byte[] patchManifest(byte[] manifestBytes) throws UnsupportedEncodingException {

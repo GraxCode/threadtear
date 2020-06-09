@@ -11,7 +11,10 @@ import javax.lang.model.SourceVersion;
 
 import org.apache.commons.io.IOUtils;
 
-public class Strings {
+public final class Strings {
+  private Strings() {
+  }
+
   public static boolean isHighUTF(String cst) {
     int unicodes = 0;
     for (char c : cst.toCharArray()) {

@@ -8,7 +8,10 @@ import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.*;
 import org.objectweb.asm.tree.analysis.Frame;
 
-public class Instructions implements Opcodes {
+public final class Instructions implements Opcodes {
+  private Instructions() {
+  }
+
   public static InsnList copy(InsnList insnList) {
     InsnList copy = new InsnList();
     Map<LabelNode, LabelNode> labels = cloneLabels(insnList);

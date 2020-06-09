@@ -6,7 +6,10 @@ import static org.objectweb.asm.Opcodes.*;
  * @author <a href="https://github.com/notaudrey/">Audrey</a>
  * @since 4/30/15
  */
-public class Access {
+public final class Access {
+  private Access() {
+  }
+
   /**
    * Tells whether a given access modifier is public
    *

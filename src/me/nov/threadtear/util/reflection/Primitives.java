@@ -1,6 +1,9 @@
 package me.nov.threadtear.util.reflection;
 
-public class Primitives {
+public final class Primitives {
+  private Primitives() {
+  }
+
   public static Class<?> objectiveClass(Class<?> klass) {
     if (klass.isPrimitive()) {
       if (klass == char.class)

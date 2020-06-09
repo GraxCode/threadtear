@@ -8,15 +8,17 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.util.reflection.Primitives;
 
-@SuppressWarnings("unused")
-public class OpFormat implements Opcodes {
-  private static Map<Integer, String> accessCodes = getAccessCodes();
-  private static Map<Integer, String> typeCodes = getTypeCodes();
-  private static Map<Integer, String> handleCodes = getHandleCodes();
-  private static Map<Integer, String> frameTypes = getFrameTypes();
+public final class OpFormat implements Opcodes {
+  private OpFormat() {
+  }
 
-  private static Map<Integer, String> opcodes = getCodes();
-  private static Map<String, Integer> reopcodes = getReCodes();
+  public static Map<Integer, String> accessCodes = getAccessCodes();
+  public static Map<Integer, String> typeCodes = getTypeCodes();
+  public static Map<Integer, String> handleCodes = getHandleCodes();
+  public static Map<Integer, String> frameTypes = getFrameTypes();
+
+  public static Map<Integer, String> opCodes = getCodes();
+  public static Map<String, Integer> reCodes = getReCodes();
 
   private static Map<Integer, String> getAccessCodes() {
     HashMap<Integer, String> map = new HashMap<>();
@@ -461,7 +463,7 @@ public class OpFormat implements Opcodes {
    * @return
    */
   public static int getOpcodeIndex(String opcode) {
-    return reopcodes.get(opcode.toUpperCase());
+    return reCodes.get(opcode.toUpperCase());
   }
 
   /**
@@ -471,7 +473,7 @@ public class OpFormat implements Opcodes {
    * @return
    */
   public static String getOpcodeText(int opcode) {
-    return opcodes.get(opcode);
+    return opCodes.get(opcode);
   }
 
   /**
@@ -480,7 +482,7 @@ public class OpFormat implements Opcodes {
    * @return
    */
   public static Set<String> getOpcodes() {
-    return reopcodes.keySet();
+    return reCodes.keySet();
   }
 
   /**

@@ -4,7 +4,9 @@ import java.util.stream.IntStream;
 
 import org.objectweb.asm.tree.*;
 
-public class Counting {
+public final class Counting {
+  private Counting() {
+  }
 
   public static double percentOf(int nodeType, InsnList instructions, int... searchFor) {
     AbstractInsnNode insn = instructions.getFirst();
@@ -57,6 +59,6 @@ public class Counting {
       }
       insn = insn.getNext();
     }
-    return true;
+    return false;
   }
 }

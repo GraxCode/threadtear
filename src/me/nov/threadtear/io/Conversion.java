@@ -7,7 +7,10 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-public class Conversion {
+public final class Conversion {
+  private Conversion() {
+  }
+
   public static byte[] toBytecode(ClassNode cn, boolean useMaxs) {
     try {
       ClassWriter cw = new ClassWriter(useMaxs ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);

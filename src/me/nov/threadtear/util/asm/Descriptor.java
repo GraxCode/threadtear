@@ -4,7 +4,10 @@ import java.util.Map;
 
 import org.objectweb.asm.Type;
 
-public class Descriptor {
+public final class Descriptor {
+  private Descriptor() {
+  }
+
   public static String fixMethodDesc(String desc, Map<String, String> map) {
     assert (desc.contains("(") && desc.contains(")"));
     StringBuilder newDesc = new StringBuilder("(");

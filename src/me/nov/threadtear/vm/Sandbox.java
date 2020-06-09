@@ -8,7 +8,9 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.util.asm.Instructions;
 
-public class Sandbox implements Opcodes {
+public final class Sandbox implements Opcodes {
+  private Sandbox() {
+  }
 
   public static MethodNode createMethodProxy(InsnList code, String name, String desc) {
     boolean isConstructor = name.equals("<init>");

@@ -2,12 +2,12 @@ package me.nov.threadtear.swing.tree.component;
 
 import java.util.*;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.*;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.format.Strings;
 
-public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<ClassTreeNode> {
+public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<TreeNode> {
   private static final long serialVersionUID = 1L;
 
   public Clazz member;
@@ -63,13 +63,13 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
   }
 
   @Override
-  public int compare(ClassTreeNode node1, ClassTreeNode node2) {
-    boolean leaf1 = node1.member != null;
-    boolean leaf2 = node2.member != null;
+  public int compare(TreeNode node1, TreeNode node2) {
+    boolean leaf1 = ((ClassTreeNode) node1).member != null;
+    boolean leaf2 = ((ClassTreeNode) node2).member != null;
 
     if (leaf1 != leaf2) {
       return leaf1 ? 1 : -1;
     }
-    return node1.text.compareTo(node2.text);
+    return ((ClassTreeNode) node1).text.compareTo(((ClassTreeNode) node2).text);
   }
 }

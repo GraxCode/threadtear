@@ -7,7 +7,10 @@ import javax.swing.ImageIcon;
 
 import me.nov.threadtear.swing.Utils;
 
-public class Images {
+public final class Images {
+  private Images() {
+  }
+
   public static ImageIcon combine(ImageIcon icon1, ImageIcon icon2) {
     Image img1 = icon1.getImage();
     Image img2 = icon2.getImage();

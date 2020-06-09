@@ -7,105 +7,105 @@ import java.security.Permission;
 
 import me.nov.threadtear.Threadtear;
 
-public class VMSecurityManager extends SecurityManager {
+public final class VMSecurityManager extends SecurityManager {
   private boolean grantAll;
   private boolean checkReflection = true;
 
   @Override
-  public void checkPermission(Permission perm) {
+  public final void checkPermission(Permission perm) {
     if (perm instanceof ReflectPermission || perm instanceof RuntimePermission)
       return;
     throwIfNotGranted();
   }
 
   @Override
-  public void checkPermission(Permission perm, Object context) {
+  public final void checkPermission(Permission perm, Object context) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkExec(String cmd) {
+  public final void checkExec(String cmd) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkLink(String lib) {
+  public final void checkLink(String lib) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkWrite(FileDescriptor fd) {
+  public final void checkWrite(FileDescriptor fd) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkWrite(String file) {
+  public final void checkWrite(String file) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkDelete(String file) {
+  public final void checkDelete(String file) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkConnect(String host, int port) {
+  public final void checkConnect(String host, int port) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkConnect(String host, int port, Object context) {
+  public final void checkConnect(String host, int port, Object context) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkPropertiesAccess() {
+  public final void checkPropertiesAccess() {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkCreateClassLoader() {
+  public final void checkCreateClassLoader() {
     if (checkReflection)
       throwIfNotGranted();
   }
 
   @Override
-  public void checkSecurityAccess(String target) {
+  public final void checkSecurityAccess(String target) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkAccept(String host, int port) {
+  public final void checkAccept(String host, int port) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkExit(int status) {
+  public final void checkExit(int status) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkListen(int port) {
+  public final void checkListen(int port) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkMulticast(InetAddress maddr) {
+  public final void checkMulticast(InetAddress maddr) {
     throwIfNotGranted();
   }
 
   @Override
-  public void checkPackageAccess(String pkg) {
+  public final void checkPackageAccess(String pkg) {
     if (pkg.startsWith("sun.misc") || pkg.startsWith(Threadtear.class.getPackage().getName()) || checkReflection(pkg)) {
       throwIfNotGranted();
     }
   }
 
-  private boolean checkReflection(String pkg) {
+  private final boolean checkReflection(String pkg) {
     return checkReflection && pkg.startsWith("java.lang.reflect");
   }
 
-  public void allowReflection(boolean allow) {
+  public final void allowReflection(boolean allow) {
     if (grantAccess())
       checkReflection = !allow;
   }

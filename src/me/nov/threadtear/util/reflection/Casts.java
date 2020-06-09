@@ -3,7 +3,10 @@ package me.nov.threadtear.util.reflection;
 /**
  * This class is needed because of how shitty java is
  */
-public class Casts {
+public final class Casts {
+  private Casts() {
+  }
+
   public static Object castWithPrimitives(Class<?> type, Object value) {
     // these values can't be casted from java.lang.Integer
     if (type == short.class) {

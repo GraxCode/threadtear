@@ -7,7 +7,9 @@ import org.objectweb.asm.tree.*;
 
 import me.nov.threadtear.execution.analysis.ReobfuscateMembers.MappedMember;
 
-public class References {
+public final class References {
+  private References() {
+  }
 
   /**
    * Remap class references, if ain has one
