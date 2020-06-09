@@ -24,7 +24,7 @@ import me.nov.threadtear.swing.tree.renderer.ExecutionTreeCellRenderer;
 
 public class ExecutionSelection extends JDialog {
   private static final long serialVersionUID = 1L;
-  public JTree tree = null;
+  public JTree tree;
   private JButton ok;
 
   public ExecutionSelection(Component parent) {
@@ -55,9 +55,7 @@ public class ExecutionSelection extends JDialog {
     getContentPane().add(buttons, BorderLayout.SOUTH);
     ok = new JButton("OK");
     ok.setEnabled(false);
-    ok.addActionListener(e -> {
-      dispose();
-    });
+    ok.addActionListener(e -> dispose());
     ok.setActionCommand("OK");
     buttons.add(ok);
     getRootPane().setDefaultButton(ok);
@@ -76,6 +74,9 @@ public class ExecutionSelection extends JDialog {
       ExecutionTreeNode root = new ExecutionTreeNode("");
       DefaultTreeModel model = new DefaultTreeModel(root);
       this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+      /*
+       * LINK YOUR EXECUTION HERE
+       */
       addExecution(root, new InlineMethods());
       addExecution(root, new InlineUnchangedFields());
       addExecution(root, new RemoveUnnecessary());
@@ -97,6 +98,8 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new TryCatchObfuscationRemover());
       addExecution(root, new StringObfuscationZKM());
       addExecution(root, new AccessObfusationZKM());
+      addExecution(root, new FlowObfuscationZKM());
+
 
       addExecution(root, new StringObfuscationAllatori());
       addExecution(root, new ExpirationDateRemoverAllatori());
