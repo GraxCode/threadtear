@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.*;
 
+import me.nov.threadtear.swing.component.AutoCompletion;
 import org.objectweb.asm.tree.*;
 
 import com.github.weisj.darklaf.icons.IconLoader;
@@ -44,6 +45,7 @@ public class CFGPanel extends JPanel {
 
     leftActionPanel.add(new JLabel("Control flow graph"));
     JComboBox<Object> methodSelection = new JComboBox<>(cn.methods.stream().map(m -> m.name + m.desc).toArray());
+    AutoCompletion.enable(methodSelection);
     methodSelection.setPreferredSize(new Dimension(Math.min(400, methodSelection.getPreferredSize().width), methodSelection.getPreferredSize().height));
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(0, 4, 0, 0);
