@@ -17,8 +17,7 @@ public class TryCatchObfuscationRemover extends Execution {
   private boolean verbose;
 
   public TryCatchObfuscationRemover() {
-    super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks", "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", ExecutionTag.RUNNABLE,
-        ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks", "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.", ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override
@@ -40,9 +39,7 @@ public class TryCatchObfuscationRemover extends Execution {
   public void checkTCBs(ClassNode c, List<MethodNode> methods) {
     methods.forEach(m -> {
       if (m.tryCatchBlocks.stream().anyMatch(this::isFake)) {
-        m.tryCatchBlocks.stream().filter(this::isFake).collect(Collectors.toSet()).forEach(tcb -> {
-          m.tryCatchBlocks.remove(tcb);
-        });
+        m.tryCatchBlocks.stream().filter(this::isFake).collect(Collectors.toSet()).forEach(tcb -> m.tryCatchBlocks.remove(tcb));
         Instructions.removeDeadCode(c, m);
       }
     });
@@ -71,9 +68,7 @@ public class TryCatchObfuscationRemover extends Execution {
         getterFirst = ain.getNext();
       }
       if (getterFirst instanceof VarInsnNode && getterFirst.getNext().getOpcode() == ARETURN) {
-        if (((VarInsnNode) getterFirst).var == 0) {
-          return true;
-        }
+        return ((VarInsnNode) getterFirst).var == 0;
       }
     }
     // method not matching zkm fake athrow getter
