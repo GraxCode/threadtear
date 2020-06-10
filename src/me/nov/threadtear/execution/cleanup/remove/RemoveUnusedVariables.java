@@ -3,6 +3,7 @@ package me.nov.threadtear.execution.cleanup.remove;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.InstructionModifier;
 import me.nov.threadtear.util.asm.Instructions;
@@ -18,7 +19,7 @@ import java.util.stream.StreamSupport;
 
 public class RemoveUnusedVariables extends Execution {
   public RemoveUnusedVariables() {
-    super(ExecutionCategory.CLEANING, "Remove unused variables", "Removes unused variables");
+    super(ExecutionCategory.CLEANING, "Remove unused variables", "Removes unused variables", ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override

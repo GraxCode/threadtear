@@ -35,6 +35,7 @@ public class ExecutionTreeNode extends DefaultMutableTreeNode {
     }
     b.append("</b></i><br><br>");
     if (member.getAuthor() != null) {
+      b.append("Created by: ");
       b.append(member.getAuthor());
       b.append("<br>");
     }

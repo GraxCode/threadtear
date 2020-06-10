@@ -3,6 +3,7 @@ package me.nov.threadtear.execution.allatori;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.asm.InstructionModifier;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -15,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 public class JunkRemoverAllatori extends Execution {
   public JunkRemoverAllatori() {
-    super(ExecutionCategory.ALLATORI, "Junk instruction remover", "Removes junk instructions that create a lot of boolean variables when decompiled with Fernflower.");
+    super(ExecutionCategory.ALLATORI, "Junk instruction remover", "Removes junk instructions that create a lot of boolean variables when decompiled with Fernflower.", ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override
