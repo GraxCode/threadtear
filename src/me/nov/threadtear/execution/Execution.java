@@ -80,6 +80,8 @@ public abstract class Execution implements Opcodes {
       a.analyze(c.name, m);
     } catch (Throwable e) {
       logger.error("Failed stack analysis in {}, {}", e, referenceString(c, m), shortStacktrace(e));
+      // for debugging
+      // BytecodeDebugger.show(c, (Exception) e);
       return null;
     }
     return a.getFrames();

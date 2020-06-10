@@ -160,8 +160,9 @@ public final class Instructions implements Opcodes {
       if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
         MethodInsnNode min = (MethodInsnNode) ain;
         if (methodRemove != null && methodRemove.test(min.owner, min.desc)) {
-          for (Type t : Type.getArgumentTypes(min.desc)) {
-            mn.instructions.insertBefore(min, new InsnNode(t.getSize() > 1 ? POP2 : POP));
+          Type[] argumentTypes = Type.getArgumentTypes(min.desc);
+          for (int idx = argumentTypes.length - 1; idx >= 0; idx--) {
+            mn.instructions.insertBefore(min, new InsnNode(argumentTypes[idx].getSize() > 1 ? POP2 : POP));
             i += 1;
           }
           if (min.getOpcode() != INVOKESTATIC) {
@@ -201,7 +202,7 @@ public final class Instructions implements Opcodes {
               mn.instructions.set(tin, new InsnNode(ACONST_NULL));
               break;
             case ANEWARRAY:
-              mn.instructions.set(tin, new TypeInsnNode(tin.getOpcode(), "java/lang/Object"));
+              mn.instructions.set(tin, new TypeInsnNode(ANEWARRAY, "java/lang/Object"));
               break;
             case INSTANCEOF:
               mn.instructions.insertBefore(tin, new InsnNode(POP));
@@ -217,7 +218,7 @@ public final class Instructions implements Opcodes {
         MultiANewArrayInsnNode marr = (MultiANewArrayInsnNode) ain;
         if (methodRemove != null && methodRemove.test(marr.desc, "")) {
           for (int j = 0; j < marr.dims; j++) {
-            mn.instructions.insertBefore(marr, new InsnNode(POP));
+            mn.instructions.insertBefore(marr, new InsnNode(POP)); // array sizes (int)
             i += 1;
           }
           mn.instructions.set(marr, new InsnNode(ACONST_NULL));
@@ -237,8 +238,9 @@ public final class Instructions implements Opcodes {
           }
         }
         if (remove) {
-          for (Type t : Type.getArgumentTypes(idin.desc)) {
-            mn.instructions.insertBefore(idin, new InsnNode(t.getSize() > 1 ? POP2 : POP));
+          Type[] argumentTypes = Type.getArgumentTypes(idin.desc);
+          for (int idx = argumentTypes.length - 1; idx >= 0; idx--) {
+            mn.instructions.insertBefore(idin, new InsnNode(argumentTypes[idx].getSize() > 1 ? POP2 : POP));
             i += 1;
           }
           mn.instructions.set(idin, makeNullPush(Type.getReturnType(idin.desc)));
@@ -264,6 +266,7 @@ public final class Instructions implements Opcodes {
     switch (type.getSort()) {
       case Type.OBJECT:
       case Type.ARRAY:
+      case Type.METHOD:
         return new InsnNode(ACONST_NULL);
       case Type.VOID:
         return new InsnNode(NOP);
