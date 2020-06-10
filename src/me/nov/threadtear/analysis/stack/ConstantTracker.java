@@ -207,25 +207,29 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
   @Override
   public ConstantValue binaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b) throws AnalyzerException {
     BasicValue v = basic.binaryOperation(insn, a.getType(), b.getType());
-    if (a.isKnown() && b.isKnown() && b.isInteger()) {
-      int index = b.getAsInteger();
-      // we do not want an OOB exception here, just keep it unknown
-      if (index >= 0 && index < Array.getLength(a.value)) {
-        switch (insn.getOpcode()) {
-          case BALOAD:
-          case CALOAD:
-          case SALOAD:
-          case IALOAD:
-          case FALOAD:
-          case DALOAD:
-          case LALOAD:
-            return new ConstantValue(v, Casts.toNumber(Array.get(a.value, index)));
-          case AALOAD:
-            return new ConstantValue(v, Array.get(a.value, index));
+    switch (insn.getOpcode()) {
+      case BALOAD:
+      case CALOAD:
+      case SALOAD:
+      case IALOAD:
+      case FALOAD:
+      case DALOAD:
+      case LALOAD:
+      case AALOAD:
+        if (a.isKnown() && b.isKnown() && b.isInteger()) {
+          int index = b.getAsInteger();
+          // we do not want an OOB exception here, just keep it unknown
+          if (index >= 0 && index < Array.getLength(a.value)) {
+            if (insn.getOpcode() == AALOAD)
+              return new ConstantValue(v, Array.get(a.value, index));
+            else
+              return new ConstantValue(v, Casts.toNumber(Array.get(a.value, index)));
+          }
         }
-      }
+        return new ConstantValue(v, null);
+      default:
+        return v == null ? null : new ConstantValue(v, getBinaryValue(insn.getOpcode(), a.value, b.value));
     }
-    return v == null ? null : new ConstantValue(v, getBinaryValue(insn.getOpcode(), a.value, b.value));
   }
 
   private Object getBinaryValue(int opcode, Object a, Object b) {
