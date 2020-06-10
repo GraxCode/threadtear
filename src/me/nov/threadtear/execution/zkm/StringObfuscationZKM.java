@@ -112,7 +112,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
         logger.info("NPE in " + realClass.name);
       }
     }
-    realClass.methods.stream().forEach(m -> {
+    realClass.methods.forEach(m -> {
       argumentInfer.inline(new MethodContext(realClass, m));
       decryptedArrayField = null;
       m.instructions.forEach(ain -> {
@@ -121,6 +121,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           try {
             decryptedFieldValue = (String[]) callProxy.getField(((FieldInsnNode) ain).name).get(null);
           } catch (Exception e) {
+            logger.error("Failed to get decrypted field value in {}", referenceString(realClass, m));
           }
         }
       });
@@ -148,7 +149,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   }
 
   /**
-   * Is ain a method call to enchanced method decryption?
+   * Is ain a method call to enhanced method decryption?
    */
   private boolean isZKMMethod(ClassNode cn, AbstractInsnNode ain) {
     if (ain.getOpcode() != INVOKESTATIC)

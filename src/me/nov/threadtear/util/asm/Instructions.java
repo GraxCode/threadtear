@@ -31,44 +31,45 @@ public final class Instructions implements Opcodes {
     return labelMap;
   }
 
-  public static boolean isStoreVar(VarInsnNode instr) {
-    return !isLoadVar(instr);
+  public static boolean isStoreVarInsn(VarInsnNode instr) {
+    return !isLoadVarInsn(instr);
   }
 
-  public static boolean isLoadVar(VarInsnNode instr) {
-    return instr.getOpcode() < Opcodes.ISTORE;
+  public static boolean isLoadVarInsn(VarInsnNode instr) {
+    return instr.getOpcode() < ISTORE;
   }
 
-  private static final List<Integer> longVarOpcodes = Arrays.asList(Opcodes.LSTORE, Opcodes.LLOAD, Opcodes.DSTORE, Opcodes.DLOAD);
-  public static boolean isLongVar(VarInsnNode instr) {
-    return longVarOpcodes.contains(instr.getOpcode());
+  private static final List<Integer> wideVarOpcodes = Arrays.asList(LSTORE, LLOAD, DSTORE, DLOAD);
+
+  public static boolean isWideVarInsn(VarInsnNode instr) {
+    return wideVarOpcodes.contains(instr.getOpcode());
   }
 
   public static boolean isComputable(AbstractInsnNode ain) {
     switch (ain.getType()) {
-    case AbstractInsnNode.METHOD_INSN:
-    case AbstractInsnNode.FIELD_INSN:
-    case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
-    case AbstractInsnNode.VAR_INSN:
-    case AbstractInsnNode.JUMP_INSN:
-      return false;
-    default:
-      return !isCodeEnd(ain);
+      case AbstractInsnNode.METHOD_INSN:
+      case AbstractInsnNode.FIELD_INSN:
+      case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
+      case AbstractInsnNode.VAR_INSN:
+      case AbstractInsnNode.JUMP_INSN:
+        return false;
+      default:
+        return !isCodeEnd(ain);
     }
   }
 
   public static boolean isCodeEnd(AbstractInsnNode ain) {
     switch (ain.getOpcode()) {
-    case ATHROW:
-    case RETURN:
-    case ARETURN:
-    case DRETURN:
-    case FRETURN:
-    case IRETURN:
-    case LRETURN:
-      return true;
-    default:
-      return false;
+      case ATHROW:
+      case RETURN:
+      case ARETURN:
+      case DRETURN:
+      case FRETURN:
+      case IRETURN:
+      case LRETURN:
+        return true;
+      default:
+        return false;
     }
   }
 
@@ -115,16 +116,16 @@ public final class Instructions implements Opcodes {
     int op = ain.getOpcode();
 
     switch (op) {
-    case BIPUSH:
-    case SIPUSH:
-    case ICONST_M1:
-    case ICONST_0:
-    case ICONST_1:
-    case ICONST_2:
-    case ICONST_3:
-    case ICONST_4:
-    case ICONST_5:
-      return true;
+      case BIPUSH:
+      case SIPUSH:
+      case ICONST_M1:
+      case ICONST_0:
+      case ICONST_1:
+      case ICONST_2:
+      case ICONST_3:
+      case ICONST_4:
+      case ICONST_5:
+        return true;
     }
     if (ain.getType() == AbstractInsnNode.LDC_INSN) {
       return ((LdcInsnNode) ain).cst instanceof Integer;
@@ -147,7 +148,7 @@ public final class Instructions implements Opcodes {
 
   /**
    * Isolate all calls matching a certain predicate
-   * 
+   *
    * @param mn           method to isolate
    * @param methodRemove (owner, desc) -> (...), also used for everything else referencing something. desc can be an empty string, if there is no desc. owner is of format
    *                     java/foo/bar
@@ -173,43 +174,43 @@ public final class Instructions implements Opcodes {
         if (fieldRemove != null && fieldRemove.test(fin.owner, fin.desc)) {
           Type type = Type.getType(fin.desc);
           switch (fin.getOpcode()) {
-          case GETFIELD:
-            mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
-            i += 1;
-          case GETSTATIC:
-            mn.instructions.set(fin, makeNullPush(type));
-            break;
-          case PUTFIELD:
-            mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
-            mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
-            mn.instructions.set(fin, makeNullPush(type));
-            i += 2;
-            break;
-          case PUTSTATIC:
-            mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
-            mn.instructions.set(fin, makeNullPush(type));
-            i += 1;
-            break;
+            case GETFIELD:
+              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
+              i += 1;
+            case GETSTATIC:
+              mn.instructions.set(fin, makeNullPush(type));
+              break;
+            case PUTFIELD:
+              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
+              mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
+              mn.instructions.set(fin, makeNullPush(type));
+              i += 2;
+              break;
+            case PUTSTATIC:
+              mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
+              mn.instructions.set(fin, makeNullPush(type));
+              i += 1;
+              break;
           }
         }
       } else if (ain.getType() == AbstractInsnNode.TYPE_INSN) {
         TypeInsnNode tin = (TypeInsnNode) ain;
         if (methodRemove != null && methodRemove.test(tin.desc, "")) {
           switch (tin.getOpcode()) {
-          case NEW:
-            mn.instructions.set(tin, new InsnNode(ACONST_NULL));
-            break;
-          case ANEWARRAY:
-            mn.instructions.set(tin, new TypeInsnNode(tin.getOpcode(), "java/lang/Object"));
-            break;
-          case INSTANCEOF:
-            mn.instructions.insertBefore(tin, new InsnNode(POP));
-            mn.instructions.set(tin, new InsnNode(ICONST_0));
-            i += 1;
-            break;
-          case CHECKCAST:
-            mn.instructions.set(tin, new InsnNode(NOP));
-            break;
+            case NEW:
+              mn.instructions.set(tin, new InsnNode(ACONST_NULL));
+              break;
+            case ANEWARRAY:
+              mn.instructions.set(tin, new TypeInsnNode(tin.getOpcode(), "java/lang/Object"));
+              break;
+            case INSTANCEOF:
+              mn.instructions.insertBefore(tin, new InsnNode(POP));
+              mn.instructions.set(tin, new InsnNode(ICONST_0));
+              i += 1;
+              break;
+            case CHECKCAST:
+              mn.instructions.set(tin, new InsnNode(NOP));
+              break;
           }
         }
       } else if (ain.getType() == AbstractInsnNode.MULTIANEWARRAY_INSN) {
@@ -261,19 +262,19 @@ public final class Instructions implements Opcodes {
    */
   public static AbstractInsnNode makeNullPush(Type type) {
     switch (type.getSort()) {
-    case Type.OBJECT:
-    case Type.ARRAY:
-      return new InsnNode(ACONST_NULL);
-    case Type.VOID:
-      return new InsnNode(NOP);
-    case Type.DOUBLE:
-      return new InsnNode(DCONST_0);
-    case Type.FLOAT:
-      return new InsnNode(FCONST_0);
-    case Type.LONG:
-      return new InsnNode(LCONST_0);
-    default:
-      return new InsnNode(ICONST_0);
+      case Type.OBJECT:
+      case Type.ARRAY:
+        return new InsnNode(ACONST_NULL);
+      case Type.VOID:
+        return new InsnNode(NOP);
+      case Type.DOUBLE:
+        return new InsnNode(DCONST_0);
+      case Type.FLOAT:
+        return new InsnNode(FCONST_0);
+      case Type.LONG:
+        return new InsnNode(LCONST_0);
+      default:
+        return new InsnNode(ICONST_0);
     }
   }
 

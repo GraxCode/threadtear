@@ -1,5 +1,6 @@
 package me.nov.threadtear.util.asm;
 
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
@@ -19,8 +20,10 @@ import java.util.stream.IntStream;
 
 /**
  * Infers method arguments from caller methods, allowing you to inline those that are constant.
+ *
+ * @author ViRb3
  */
-public class ArgumentInfer implements IConstantReferenceHandler {
+public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   private final Map<MethodNode, List<MethodContext>> references;
   private final Map<MethodNode, List<ConstantValue>> cache;
   private HashSet<MethodNode> trace;
@@ -109,16 +112,11 @@ public class ArgumentInfer implements IConstantReferenceHandler {
    * It will only stop if it is guaranteed that more than two values exist for the same argument.
    */
   private List<ConstantValue> getCommonArgs(Collection<List<ConstantValue>> inferredArgs) {
-    final List<ConstantValue> result = inferredArgs.stream()
-        .max(Comparator.comparing(List::size))
-        .orElse(new ArrayList<>());
+    final List<ConstantValue> result = inferredArgs.stream().max(Comparator.comparing(List::size)).orElse(new ArrayList<>());
 
     for (int i = 0; i < result.size(); i++) {
       final int I = i;
-      final Set<ConstantValue> args = inferredArgs.stream()
-          .filter(a -> a.size() > I)
-          .map(a -> a.get(I))
-          .collect(Collectors.toSet());
+      final Set<ConstantValue> args = inferredArgs.stream().filter(a -> a.size() > I).map(a -> a.get(I)).collect(Collectors.toSet());
       if (args.size() == 1) {
         result.set(i, args.iterator().next());
       } else {
@@ -146,9 +144,7 @@ public class ArgumentInfer implements IConstantReferenceHandler {
           break;
         }
         if (methodCtx.getSignature().equals(new MethodSignature(methodInsnNode))) {
-          results.add(IntStream.range(0, methodArgs.length)
-              .mapToObj(u -> frame.getStack(frame.getStackSize() - methodArgs.length + u))
-              .collect(Collectors.toList()));
+          results.add(IntStream.range(0, methodArgs.length).mapToObj(u -> frame.getStack(frame.getStackSize() - methodArgs.length + u)).collect(Collectors.toList()));
         }
       }
     }
@@ -163,51 +159,43 @@ public class ArgumentInfer implements IConstantReferenceHandler {
    *
    * @return Was anything changed.
    */
-  /*
-  TODO:
-    - new LdcInsnNode(null) is illegal, use new InsnNode(ACONST_NULL)
-    - [J is size 1 and J is size 2
-    - [J needs ASTORE and J needs LSTORE
-    - arg.getType().getType().getOpcode(ISTORE) will return the equivalent store opcode
-    - Actually remove args and inline as variables
-   */
   private static boolean injectArgs(MethodNode method, List<ConstantValue> args) {
     int oldLen = method.instructions.size();
-    int i = Access.isStatic(method.access) ? 0 : 1;
+    int varIndex = Access.isStatic(method.access) ? 0 : 1;
     for (ConstantValue arg : args) {
-      if (arg.isLong()) {
-        if (arg.isKnown()) {
-          method.instructions.insert(new VarInsnNode(Opcodes.LSTORE, i));
-          method.instructions.insert(new LdcInsnNode(arg.getValue()));
-        }
-        i++; // long takes 2
-      } else if (arg.isInteger()) {
-        if (arg.isKnown()) {
-          method.instructions.insert(new VarInsnNode(Opcodes.ISTORE, i));
-          method.instructions.insert(new LdcInsnNode(arg.getAsInteger()));
-        }
-      } else if (arg.isString()) {
-        if (arg.isKnown()) {
-          method.instructions.insert(new VarInsnNode(Opcodes.ASTORE, i));
-          method.instructions.insert(new LdcInsnNode(arg.getValue()));
+      if (arg.isKnown()) {
+        if (arg.isInteger()) {
+          method.instructions.insert(new VarInsnNode(ISTORE, varIndex));
+          method.instructions.insert(new LdcInsnNode(arg.getAsInteger())); // make sure shorts or bytes are also ints
+        } else {
+          if (arg.isNull()) {
+            method.instructions.insert(new VarInsnNode(ASTORE, varIndex));
+            method.instructions.insert(new InsnNode(ACONST_NULL));
+          } else {
+            Type type = arg.getType().getType();
+            if (type != null) {
+              method.instructions.insert(new VarInsnNode(type.getOpcode(ISTORE), varIndex));
+              method.instructions.insert(new LdcInsnNode(arg.getValue()));
+            }
+          }
         }
       }
-      i++;
+      varIndex += arg.getType().getSize();
     }
-    return method.instructions.size() != oldLen;
+    return method.instructions.size() > oldLen;
   }
 
   private Frame<ConstantValue>[] calculateFrames(MethodContext methodCtx) {
     final ClassNode owner = methodCtx.getOwner();
     final MethodNode method = methodCtx.getMethod();
 
-    Analyzer<ConstantValue> analyzer = new Analyzer<>(
-        new ConstantTracker(this, Access.isStatic(method.access),
-            method.maxLocals, method.desc, new Object[0]));
+    Analyzer<ConstantValue> analyzer = new Analyzer<>(new ConstantTracker(this, Access.isStatic(method.access), method.maxLocals, method.desc, new Object[0]));
     try {
       analyzer.analyze(owner.name, method);
     } catch (AnalyzerException e) {
-      BytecodeDebugger.show(method, e);
+      Threadtear.logger.error("Failed analysis", e);
+      // for debugging purposes:
+      // BytecodeDebugger.show(method, e);
     }
     return analyzer.getFrames();
   }

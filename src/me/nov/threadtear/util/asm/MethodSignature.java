@@ -20,29 +20,37 @@ public class MethodSignature {
     this.desc = min.desc;
   }
 
+  public MethodSignature(String owner, String name, String desc) {
+    this.owner = owner;
+    this.name = name;
+    this.desc = desc;
+  }
+
   public MethodSignature(ClassNode clazz, MethodNode method) {
     this.owner = clazz.name;
     this.name = method.name;
     this.desc = method.desc;
   }
 
+  public MethodSignature(String owner, MethodNode method) {
+    this.owner = owner;
+    this.name = method.name;
+    this.desc = method.desc;
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
     MethodSignature that = (MethodSignature) o;
-    return Objects.equals(owner, that.owner) &&
-        Objects.equals(name, that.name) &&
-        Objects.equals(desc, that.desc);
+    return Objects.equals(owner, that.owner) && Objects.equals(name, that.name) && Objects.equals(desc, that.desc);
   }
 
   @Override
   public String toString() {
-    return "MethodSignature{" +
-        "owner='" + owner + '\'' +
-        ", name='" + name + '\'' +
-        ", desc='" + desc + '\'' +
-        '}';
+    return "MethodSignature{" + "owner='" + owner + '\'' + ", name='" + name + '\'' + ", desc='" + desc + '\'' + '}';
   }
 
   @Override

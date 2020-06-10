@@ -6,7 +6,6 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.InstructionModifier;
 import me.nov.threadtear.util.asm.Instructions;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.util.HashSet;
@@ -43,32 +42,23 @@ public class RemoveUnusedVariables extends Execution {
   }
 
   private int processMethod(MethodNode method) {
-    final List<VarInsnNode> varInstrs = StreamSupport.stream(method.instructions.spliterator(), false)
-        .filter(i -> i.getType() == AbstractInsnNode.VAR_INSN)
-        .map(i -> (VarInsnNode) i)
-        .collect(Collectors.toList());
+    final List<VarInsnNode> varInstrs = StreamSupport.stream(method.instructions.spliterator(), false).filter(i -> i.getType() == AbstractInsnNode.VAR_INSN).map(i -> (VarInsnNode) i).collect(Collectors.toList());
 
     HashSet<Integer> loadVars = new HashSet<>();
     if (!Access.isStatic(method.access)) {
       loadVars.add(0);
     }
-    varInstrs.stream()
-        .filter(Instructions::isLoadVar)
-        .map(i -> i.var)
-        .forEach(loadVars::add);
+    varInstrs.stream().filter(Instructions::isLoadVarInsn).map(i -> i.var).forEach(loadVars::add);
 
     AtomicInteger removed = new AtomicInteger();
     InstructionModifier modifier = new InstructionModifier();
-    varInstrs.stream()
-        .filter(i -> Instructions.isStoreVar(i) && !loadVars.contains(i.var))
-        .forEach(i -> {
-          removed.getAndIncrement();
-          if (Instructions.isLongVar(i)) {
-            modifier.replace(i, new InsnNode(Opcodes.POP2));
-          } else {
-            modifier.replace(i, new InsnNode(Opcodes.POP));
-          }
-        });
+    varInstrs.stream().filter(i -> Instructions.isStoreVarInsn(i) && !loadVars.contains(i.var)).forEach(i -> {
+      removed.getAndIncrement();
+      if (Instructions.isWideVarInsn(i))
+        modifier.replace(i, new InsnNode(POP2));
+      else
+        modifier.replace(i, new InsnNode(POP));
+    });
     modifier.apply(method);
     return removed.get();
   }

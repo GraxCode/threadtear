@@ -35,6 +35,7 @@ public class InstructionModifier {
   public void append(AbstractInsnNode original, InsnList append) {
     appends.put(original, append);
   }
+
   public void prepend(AbstractInsnNode original, InsnList append) {
     prepends.put(original, append);
   }
@@ -66,11 +67,7 @@ public class InstructionModifier {
       methodNode.instructions.insert(insn, list);
       methodNode.instructions.remove(insn);
     });
-    prepends.forEach((insn, list) -> {
-      methodNode.instructions.insertBefore(insn, list);
-    });
-    appends.forEach((insn, list) -> {
-      methodNode.instructions.insert(insn, list);
-    });
+    prepends.forEach((insn, list) -> methodNode.instructions.insertBefore(insn, list));
+    appends.forEach((insn, list) -> methodNode.instructions.insert(insn, list));
   }
 }

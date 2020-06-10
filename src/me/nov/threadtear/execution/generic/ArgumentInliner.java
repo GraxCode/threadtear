@@ -35,4 +35,9 @@ public class ArgumentInliner extends Execution {
     logger.info("Inlined {}/{} methods.", inlined, total);
     return inlined > 0;
   }
+
+  @Override
+  public String getAuthor() {
+    return "ViRb3";
+  }
 }
