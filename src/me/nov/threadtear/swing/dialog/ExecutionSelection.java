@@ -12,6 +12,7 @@ import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.allatori.*;
 import me.nov.threadtear.execution.analysis.*;
 import me.nov.threadtear.execution.cleanup.*;
+import me.nov.threadtear.execution.cleanup.remove.RemoveUnusedVariables;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
 import me.nov.threadtear.execution.dasho.StringObfuscationDashO;
 import me.nov.threadtear.execution.generic.*;
@@ -80,7 +81,9 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new InlineMethods());
       addExecution(root, new InlineUnchangedFields());
       addExecution(root, new RemoveUnnecessary());
+      addExecution(root, new RemoveUnusedVariables());
       addExecution(root, new RemoveAttributes());
+      addExecution(root, new ArgumentInliner());
 
       addExecution(root, new ObfuscatedAccess());
       addExecution(root, new KnownConditionalJumps());
@@ -103,6 +106,7 @@ public class ExecutionSelection extends JDialog {
 
       addExecution(root, new StringObfuscationAllatori());
       addExecution(root, new ExpirationDateRemoverAllatori());
+      addExecution(root, new AntiFernflowerAllatori());
 
       addExecution(root, new StringObfuscationDashO());
 

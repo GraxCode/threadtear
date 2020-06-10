@@ -15,9 +15,26 @@ import me.nov.threadtear.util.format.Strings;
 
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
+  private final File archive;
+  private final Clazz clazz;
+  private final String title;
+
+  public AnalysisFrame(String title, Clazz clazz) {
+    this.clazz = clazz;
+    this.archive = new File("");
+    this.title = title;
+    createFrame();
+  }
 
   public AnalysisFrame(File archive, Clazz clazz) {
-    setTitle(Strings.min(clazz.node.name.replace('/', '.'), 128));
+    this.clazz = clazz;
+    this.archive = archive;
+    this.title = Strings.min(clazz.node.name.replace('/', '.'), 128);
+    createFrame();
+  }
+
+  private void createFrame() {
+    setTitle(title);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 1000, 600);
     setMinimumSize(new Dimension(900, 540));
