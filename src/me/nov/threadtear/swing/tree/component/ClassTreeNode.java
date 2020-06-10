@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.tree.*;
 
 import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.util.format.Html;
 import me.nov.threadtear.util.format.Strings;
 
 public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<TreeNode> {
@@ -25,16 +26,22 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
 
   public void updateClassName() {
     if (member != null) {
-      String[] split = member.node.name.split("/");
+      String topName = getTopName();
       if (member.transform) {
-        this.text = Strings.min(split[split.length - 1], 50);
+        this.text = "<html>" + topName;
       } else {
-        this.text = "<html><strike>" + Strings.min(split[split.length - 1], 50);
+        this.text = "<html><strike>" + topName;
       }
     }
   }
 
-  @SuppressWarnings("unchecked")
+  private String getTopName() {
+    String[] split = member.node.name.split("/");
+    String topName = Strings.min(split[split.length - 1], 50);
+    topName += " " + Html.color("#666666", member.getMetadataString());
+    return topName;
+  }
+
   public void sort() {
     if (children != null)
       children.sort(this);
@@ -45,7 +52,6 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
     return text;
   }
 
-  @SuppressWarnings("unchecked")
   public void combinePackage(ClassTreeNode pckg) {
     if (pckg.member != null)
       throw new IllegalArgumentException("cannot merge package with file");

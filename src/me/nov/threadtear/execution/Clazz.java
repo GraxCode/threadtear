@@ -1,10 +1,12 @@
 package me.nov.threadtear.execution;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.jar.*;
 import java.util.stream.*;
 
+import me.nov.threadtear.util.format.Strings;
 import org.objectweb.asm.tree.ClassNode;
 
 public class Clazz {
@@ -37,5 +39,14 @@ public class Clazz {
   public void addFail(String fail) {
     if (!failures.contains(fail))
       failures.add(fail);
+  }
+
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+
+  public String getMetadataString() {
+    if(oldEntry != null) {
+      return Strings.formatBytes(oldEntry.getSize()) + ", " + dateFormat.format(oldEntry.getTime());
+    }
+    return "";
   }
 }
