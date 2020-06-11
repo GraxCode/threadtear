@@ -20,18 +20,16 @@ public class IsolatePossiblyMalicious extends Execution {
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.changed = 0;
     logger.info("Isolating all {} classes", classes.size());
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.methods.forEach(m -> {
-        int oldSize = m.instructions.size();
-        Instructions.isolateCallsThatMatch(m, (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX), (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX));
-        if (oldSize != m.instructions.size()) {
-          changed++;
-          if (verbose) {
-            logger.info("Removed calls in {}", referenceString(c, m));
-          }
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> {
+      int oldSize = m.instructions.size();
+      Instructions.isolateCallsThatMatch(m, (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX), (name, desc) -> name.matches(POSSIBLY_MALICIOUS_REGEX));
+      if (oldSize != m.instructions.size()) {
+        changed++;
+        if (verbose) {
+          logger.info("Removed calls in {}", referenceString(c, m));
         }
-      });
-    });
+      }
+    }));
     logger.info("{} methods containing calls were isolated", changed);
     return changed > 0;
   }

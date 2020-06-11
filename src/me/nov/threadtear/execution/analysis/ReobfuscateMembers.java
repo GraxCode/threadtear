@@ -33,13 +33,11 @@ public class ReobfuscateMembers extends Execution {
         ReobfuscateMembers.class.getResourceAsStream("/res/english-words.txt"));
 
     logger.info("Making method mappings");
-    classes.values().stream().map(c -> c.node).forEach(c -> makeMethodMappings(c));
+    classes.values().stream().map(c -> c.node).forEach(this::makeMethodMappings);
     logger.info(methods.size() + " method mappings created for classes and superclasses");
 
     logger.info("Renaming methods");
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.methods.forEach(m -> m.name = methods.get(c.name).stream().filter(mapped -> mapped.equalsMethod(m)).findFirst().get().newName);
-    });
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> m.name = methods.get(c.name).stream().filter(mapped -> mapped.equalsMethod(m)).findFirst().get().newName));
 
     logger.info("Updating method references in code");
     int mrefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
@@ -47,12 +45,10 @@ public class ReobfuscateMembers extends Execution {
     logger.info(mrefs + " method references updated successfully!");
 
     logger.info("Making field mappings");
-    classes.values().stream().map(c -> c.node).forEach(c -> makeFieldMappings(c));
+    classes.values().stream().map(c -> c.node).forEach(this::makeFieldMappings);
 
     logger.info("Renaming fields");
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.fields.forEach(f -> f.name = fields.get(c.name).stream().filter(mapped -> mapped.equalsField(f)).findFirst().get().newName);
-    });
+    classes.values().stream().map(c -> c.node).forEach(c -> c.fields.forEach(f -> f.name = fields.get(c.name).stream().filter(mapped -> mapped.equalsField(f)).findFirst().get().newName));
 
     logger.info("Updating field references in code");
     int frefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray()).flatMap(Arrays::stream)

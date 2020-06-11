@@ -37,9 +37,7 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
   }
 
   private void optimize(ClassNode cn) {
-    cn.methods.forEach(m -> {
-      m.instructions = simulateAndRewrite(cn, m);
-    });
+    cn.methods.forEach(m -> m.instructions = simulateAndRewrite(cn, m));
   }
 
   private InsnList simulateAndRewrite(ClassNode cn, MethodNode m) {

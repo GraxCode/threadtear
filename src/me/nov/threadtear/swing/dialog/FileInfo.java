@@ -69,9 +69,7 @@ public class FileInfo extends JDialog {
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
     getContentPane().add(buttons, BorderLayout.SOUTH);
     JButton ok = new JButton("OK");
-    ok.addActionListener(e -> {
-      dispose();
-    });
+    ok.addActionListener(e -> dispose());
     ok.setActionCommand("OK");
     buttons.add(ok);
     getRootPane().setDefaultButton(ok);

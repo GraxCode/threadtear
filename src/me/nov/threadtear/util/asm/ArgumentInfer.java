@@ -4,7 +4,6 @@ import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
-import me.nov.threadtear.util.BytecodeDebugger;
 import me.nov.threadtear.vm.Sandbox;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

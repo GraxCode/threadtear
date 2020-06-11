@@ -180,24 +180,22 @@ public class ClassTreePanel extends JPanel implements ILoader {
     this.validate();
     this.repaint();
     try {
-      SwingUtilities.invokeLater(() -> {
-        new Thread(() -> {
-          this.inputFile = input;
-          this.loadFile(type);
-          Threadtear.logger.info("Loaded {} class file(s)", classes.size());
-          loadTree(classes);
-          refreshIgnored();
-          model.reload();
-          obfAnalysis.setEnabled(true);
-          threadtear.configPanel.run.setEnabled(true);
-          threadtear.configPanel.save.setEnabled(true);
-          this.remove(loadingLabel);
-          this.add(outerPanel, BorderLayout.CENTER);
-          this.invalidate();
-          this.validate();
-          this.repaint();
-        }).start();
-      });
+      SwingUtilities.invokeLater(() -> new Thread(() -> {
+        this.inputFile = input;
+        this.loadFile(type);
+        Threadtear.logger.info("Loaded {} class file(s)", classes.size());
+        loadTree(classes);
+        refreshIgnored();
+        model.reload();
+        obfAnalysis.setEnabled(true);
+        threadtear.configPanel.run.setEnabled(true);
+        threadtear.configPanel.save.setEnabled(true);
+        this.remove(loadingLabel);
+        this.add(outerPanel, BorderLayout.CENTER);
+        this.invalidate();
+        this.validate();
+        this.repaint();
+      }).start());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -224,7 +222,6 @@ public class ClassTreePanel extends JPanel implements ILoader {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public void loadTree(List<Clazz> classes) {
     ClassTreeNode root = new ClassTreeNode("");
     model = new DefaultTreeModel(root);

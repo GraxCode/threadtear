@@ -64,14 +64,10 @@ public class LogFrame extends JFrame {
     });
     buttons.add(save);
     JButton copy = new JButton("Copy to clipboard");
-    copy.addActionListener(e -> {
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(area.getText()), null);
-    });
+    copy.addActionListener(e -> Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(area.getText()), null));
     buttons.add(copy);
     JButton close = new JButton("Close");
-    close.addActionListener(e -> {
-      dispose();
-    });
+    close.addActionListener(e -> dispose());
     buttons.add(close);
     getContentPane().add(buttons, BorderLayout.SOUTH);
   }

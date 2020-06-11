@@ -20,25 +20,21 @@ public class InlineMethods extends Execution {
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     HashMap<String, MethodNode> map = new HashMap<>();
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.methods.stream().filter(this::isUnnecessary).forEach(m -> map.put(c.name + "." + m.name + m.desc, m));
-    });
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.stream().filter(this::isUnnecessary).forEach(m -> map.put(c.name + "." + m.name + m.desc, m)));
     logger.info("{} unnecessary methods found that could be inlined", map.size());
     inlines = 0;
-    classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> {
-      m.instructions.forEach(ain -> {
-        if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be superclass and real overrides
-          MethodInsnNode min = (MethodInsnNode) ain;
-          String key = min.owner + "." + min.name + min.desc;
-          if (map.containsKey(key)) {
-            inlineMethod(m, min, map.get(key));
-            m.maxStack = Math.max(map.get(key).maxStack, m.maxStack);
-            m.maxLocals = Math.max(map.get(key).maxLocals, m.maxLocals);
-            inlines++;
-          }
+    classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).forEach(m -> m.instructions.forEach(ain -> {
+      if (ain.getOpcode() == INVOKESTATIC) { // can't inline invokevirtual / special as object could only be superclass and real overrides
+        MethodInsnNode min = (MethodInsnNode) ain;
+        String key = min.owner + "." + min.name + min.desc;
+        if (map.containsKey(key)) {
+          inlineMethod(m, min, map.get(key));
+          m.maxStack = Math.max(map.get(key).maxStack, m.maxStack);
+          m.maxLocals = Math.max(map.get(key).maxLocals, m.maxLocals);
+          inlines++;
         }
-      });
-    });
+      }
+    }));
 
     // map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.removeIf(m -> m.equals(method) && !Access.isPublic(method.access)));
     map.forEach((key, method) -> classes.get(key.substring(0, key.lastIndexOf('.'))).node.methods.remove(method));

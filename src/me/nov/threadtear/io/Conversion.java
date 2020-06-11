@@ -15,8 +15,7 @@ public final class Conversion {
     try {
       ClassWriter cw = new ClassWriter(useMaxs ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);
       cn.accept(cw);
-      byte[] b = cw.toByteArray();
-      return b;
+      return cw.toByteArray();
     } catch (Exception e) {
       return toBytecode0(cn);
     }
@@ -25,8 +24,7 @@ public final class Conversion {
   public static byte[] toBytecode0(ClassNode cn) {
     ClassWriter cw = new ClassWriter(0);
     cn.accept(cw);
-    byte[] b = cw.toByteArray();
-    return b;
+    return cw.toByteArray();
   }
 
   public static ClassNode toNode(final byte[] bytez) {

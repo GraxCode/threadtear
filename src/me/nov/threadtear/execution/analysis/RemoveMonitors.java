@@ -14,13 +14,11 @@ public class RemoveMonitors extends Execution {
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.methods.forEach(m -> {
-        for (AbstractInsnNode ain : m.instructions.toArray())
-          if (ain.getOpcode() == MONITORENTER || ain.getOpcode() == MONITOREXIT)
-            m.instructions.set(ain, new InsnNode(POP));
-      });
-    });
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> {
+      for (AbstractInsnNode ain : m.instructions.toArray())
+        if (ain.getOpcode() == MONITORENTER || ain.getOpcode() == MONITOREXIT)
+          m.instructions.set(ain, new InsnNode(POP));
+    }));
     logger.info("Removed all synchronized blocks");
     return true;
   }

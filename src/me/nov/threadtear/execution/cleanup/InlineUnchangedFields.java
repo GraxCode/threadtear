@@ -29,9 +29,7 @@ public class InlineUnchangedFields extends Execution {
     this.fieldPuts = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
         .filter(ain -> ain.getOpcode() == PUTFIELD || ain.getOpcode() == PUTSTATIC).map(ain -> (FieldInsnNode) ain).collect(Collectors.toList());
 
-    classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access)).forEach(c -> {
-      c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f));
-    });
+    classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access)).forEach(c -> c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f)));
     logger.info("Inlined {} method references!", inlines);
     return inlines > 0;
   }
@@ -41,19 +39,17 @@ public class InlineUnchangedFields extends Execution {
   }
 
   public void inline(ClassNode cn, FieldNode fn) {
-    classes.values().stream().map(c -> c.node).forEach(c -> {
-      c.methods.forEach(m -> {
-        for (AbstractInsnNode ain : m.instructions) {
-          if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
-            FieldInsnNode fin = (FieldInsnNode) ain;
-            if (isGetReferenceTo(cn, fin, fn)) {
-              m.instructions.set(ain, Instructions.makeNullPush(Type.getType(fn.desc)));
-              inlines++;
-            }
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> {
+      for (AbstractInsnNode ain : m.instructions) {
+        if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
+          FieldInsnNode fin = (FieldInsnNode) ain;
+          if (isGetReferenceTo(cn, fin, fn)) {
+            m.instructions.set(ain, Instructions.makeNullPush(Type.getType(fn.desc)));
+            inlines++;
           }
         }
-      });
-    });
+      }
+    }));
   }
 
   private boolean isGetReferenceTo(ClassNode cn, FieldInsnNode fin, FieldNode fn) {
