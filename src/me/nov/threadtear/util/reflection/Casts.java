@@ -30,7 +30,8 @@ public final class Casts {
   }
 
   /**
-   * Character and Boolean don't extend Number, fuck you Java!
+   * Character and Boolean don't extend Number, fuck you
+   * Java!
    */
   public static Object toNumber(Object object) {
     if (object instanceof Character) {

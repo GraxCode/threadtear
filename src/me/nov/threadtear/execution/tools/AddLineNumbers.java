@@ -12,7 +12,8 @@ public class AddLineNumbers extends Execution {
   private int method;
 
   public AddLineNumbers() {
-    super(ExecutionCategory.TOOLS, "Add debug line numbers", "Adds line numbers to the code to find out where exactly exceptions happen.", ExecutionTag.RUNNABLE);
+    super(ExecutionCategory.TOOLS, "Add debug line " + "numbers", "Adds line numbers to the code to " + "find out " +
+            "where exactly exceptions happen.", ExecutionTag.RUNNABLE);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class AddLineNumbers extends Execution {
       });
     });
 
-    logger.info("Created fake line numbers for debugging purposes!");
+    logger.info("Created fake line numbers for debugging " + "purposes!");
     return true;
   }
 
@@ -48,24 +49,24 @@ public class AddLineNumbers extends Execution {
     if (ain.getType() == AbstractInsnNode.METHOD_INSN)
       return true;
     switch (ain.getOpcode()) {
-    case IASTORE:
-    case LASTORE:
-    case FASTORE:
-    case DASTORE:
-    case AASTORE:
-    case BASTORE:
-    case CASTORE:
-    case SASTORE:
-    case IALOAD:
-    case LALOAD:
-    case FALOAD:
-    case DALOAD:
-    case AALOAD:
-    case BALOAD:
-    case CALOAD:
-    case SALOAD:
-    case ATHROW:
-      return true;
+      case IASTORE:
+      case LASTORE:
+      case FASTORE:
+      case DASTORE:
+      case AASTORE:
+      case BASTORE:
+      case CASTORE:
+      case SASTORE:
+      case IALOAD:
+      case LALOAD:
+      case FALOAD:
+      case DALOAD:
+      case AALOAD:
+      case BALOAD:
+      case CALOAD:
+      case SALOAD:
+      case ATHROW:
+        return true;
     }
     return false;
   }

@@ -12,8 +12,9 @@ import me.nov.threadtear.util.asm.*;
 public class InlineUnchangedFields extends Execution {
 
   public InlineUnchangedFields() {
-    super(ExecutionCategory.CLEANING, "Inline unchanged fields", "Inline fields that are not set anywhere in the code.<br>Can be useful for ZKM deobfuscation.", ExecutionTag.RUNNABLE,
-        ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
+    super(ExecutionCategory.CLEANING, "Inline unchanged " + "fields", "Inline fields that are not set " + "anywhere " +
+            "in the code.<br>Can be useful for " + "ZKM deobfuscation.", ExecutionTag.RUNNABLE,
+            ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
   }
 
   public int inlines;
@@ -24,12 +25,16 @@ public class InlineUnchangedFields extends Execution {
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.classes = classes;
     this.inlines = 0;
-    // TODO static initializer should be excluded, we can still calculate the field
+    // TODO static initializer should be excluded, we can
+    //  still calculate the field
     // value
-    this.fieldPuts = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-        .filter(ain -> ain.getOpcode() == PUTFIELD || ain.getOpcode() == PUTSTATIC).map(ain -> (FieldInsnNode) ain).collect(Collectors.toList());
+    this.fieldPuts = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
+            .map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
+            .filter(ain -> ain.getOpcode() == PUTFIELD || ain.getOpcode() == PUTSTATIC).map(ain -> (FieldInsnNode) ain)
+            .collect(Collectors.toList());
 
-    classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access)).forEach(c -> c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f)));
+    classes.values().stream().map(c -> c.node).filter(c -> !Access.isEnum(c.access))
+            .forEach(c -> c.fields.stream().filter(f -> isNotReferenced(c, f)).forEach(f -> inline(c, f)));
     logger.info("Inlined {} method references!", inlines);
     return inlines > 0;
   }

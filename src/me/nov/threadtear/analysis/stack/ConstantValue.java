@@ -24,8 +24,9 @@ public class ConstantValue implements Value {
     Type t = getType().getType();
     if (t == null)
       return "uninitialized";
-    String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a reference type" : t.getClassName();
-    return this == ConstantTracker.NULL ? "null" : value == null ? "unknown value of " + typeName : value + " (" + typeName + ")";
+    String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a " + "reference type" : t.getClassName();
+    return this == ConstantTracker.NULL ? "null" : value == null ? "unknown value of " + typeName :
+            value + " (" + typeName + ")";
   }
 
   public Object getValue() {
@@ -62,7 +63,8 @@ public class ConstantValue implements Value {
   }
 
   /**
-   * @return true if value is known, false if value is unknown. A known value of "null" returns true.
+   * @return true if value is known, false if value is
+   * unknown. A known value of "null" returns true.
    */
   public boolean isKnown() {
     return value != null;
@@ -73,7 +75,8 @@ public class ConstantValue implements Value {
   }
 
   /**
-   * @return true for Integer, Short, Byte, Boolean, Character
+   * @return true for Integer, Short, Byte, Boolean,
+   * Character
    */
   public boolean isInteger() {
     return getType() == BasicValue.INT_VALUE;

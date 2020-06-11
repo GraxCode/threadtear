@@ -11,7 +11,8 @@ import ch.qos.logback.core.AppenderBase;
 import me.nov.threadtear.swing.frame.LogFrame;
 
 /**
- * @author Rodrigo Garcia Lima (email: rodgarcialima@gmail.com | github: rodgarcialima)
+ * @author Rodrigo Garcia Lima (email:
+ * rodgarcialima@gmail.com | github: rodgarcialima)
  */
 public class Appender extends AppenderBase<ILoggingEvent> {
 
@@ -54,7 +55,7 @@ public class Appender extends AppenderBase<ILoggingEvent> {
   public void start() {
     patternLayout = new PatternLayout();
     patternLayout.setContext(getContext());
-    patternLayout.setPattern("%d{HH:mm:ss.SSS} %-5level: %msg %ex{2}%nopex%n");
+    patternLayout.setPattern("%d{HH:mm:ss.SSS} %-5level: %msg " + "%ex{2}%nopex%n");
     patternLayout.start();
 
     super.start();

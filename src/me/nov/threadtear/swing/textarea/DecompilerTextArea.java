@@ -16,7 +16,8 @@ public class DecompilerTextArea extends RSyntaxTextArea {
     this.setAntiAliasingEnabled(true);
     this.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
     this.setEditable(false);
-    String themeName = com.github.weisj.darklaf.theme.Theme.isDark(LafManager.getTheme()) ? "/res/rsta-theme.xml" : "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
+    String themeName = com.github.weisj.darklaf.theme.Theme.isDark(LafManager
+            .getTheme()) ? "/res/rsta-theme.xml" : "/org/fife/ui/rsyntaxtextarea/themes" + "/eclipse.xml";
     try {
       Theme theme = Theme.load(getClass().getResourceAsStream(themeName));
       theme.apply(this);

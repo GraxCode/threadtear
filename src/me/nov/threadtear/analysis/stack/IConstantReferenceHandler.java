@@ -8,6 +8,7 @@ public interface IConstantReferenceHandler {
 
   Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc);
 
-  Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values);
+  Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                               List<? extends ConstantValue> values);
 
 }

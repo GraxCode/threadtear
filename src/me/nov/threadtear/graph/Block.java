@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.*;
 
 public class Block implements Serializable {
   private static final long serialVersionUID = -5027761519661700375L;
-  
+
   private List<Block> output = new ArrayList<>();
   private List<Block> input = new ArrayList<>();
 

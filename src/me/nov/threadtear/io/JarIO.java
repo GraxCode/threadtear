@@ -46,12 +46,14 @@ public final class JarIO {
     return classes;
   }
 
-  public static final String CERT_REGEX = "META-INF/.+(\\.SF|\\.RSA|\\.DSA)";
+  public static final String CERT_REGEX = "META-INF/.+(\\" + ".SF|\\.RSA|\\.DSA)";
 
-  public static void saveAsJar(File original, File output, List<Clazz> classes, boolean noSignature, boolean watermark) {
+  public static void saveAsJar(File original, File output, List<Clazz> classes, boolean noSignature,
+                               boolean watermark) {
     try {
       JarOutputStream out = new JarOutputStream(new FileOutputStream(output));
-      Rewriting: {
+      Rewriting:
+      {
         JarFile jar;
         try {
           jar = new JarFile(original);
@@ -89,7 +91,8 @@ public final class JarIO {
             out.write(IOUtils.toByteArray(jar.getInputStream(z)));
             out.closeEntry();
           } catch (Exception e) {
-            Threadtear.logger.error("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
+            Threadtear.logger
+                    .error("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
           }
         });
         jar.close();
@@ -101,7 +104,8 @@ public final class JarIO {
           out.write(Conversion.toBytecode0(c.node));
           out.closeEntry();
         } catch (Exception e) {
-          Threadtear.logger.error("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
+          Threadtear.logger
+                  .error("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
         }
       }
       out.close();
@@ -125,7 +129,8 @@ public final class JarIO {
   }
 
   private static boolean isClassFile(byte[] bytes) {
-    return bytes.length >= 4 && String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3]).equals("CAFEBABE");
+    return bytes.length >= 4 && String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3])
+            .equals("CAFEBABE");
   }
 
   private static JarEntry cloneOldEntry(JarEntry old, String name) {

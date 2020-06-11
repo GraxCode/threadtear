@@ -17,7 +17,8 @@ import java.util.List;
 public class Mapping {
 
   /**
-   * @return a map of every method and its callers. This will not account for Reflection.
+   * @return a map of every method and its callers. This
+   * will not account for Reflection.
    */
   public static HashMap<MethodNode, List<MethodContext>> getMethodReferences(List<ClassNode> classes) {
     HashMap<MethodSignature, MethodContext> methodMap = getMethodSignatures(classes);
@@ -30,7 +31,8 @@ public class Mapping {
           if (instr instanceof MethodInsnNode) {
             MethodInsnNode min = (MethodInsnNode) instr;
             final MethodContext calleeCtx = methodMap.get(new MethodSignature(min));
-            //TODO: Method calling itself is still technically valid
+            //TODO: Method calling itself is still
+            // technically valid
             if (calleeCtx != null && calleeCtx.getMethod() != method) {
               referenceMap.computeIfAbsent(calleeCtx.getMethod(), k -> new ArrayList<>()).add(callerCtx);
             }
@@ -43,7 +45,8 @@ public class Mapping {
   }
 
   /**
-   * @return A map of every method's signature and its {@link MethodContext}.
+   * @return A map of every method's signature and its
+   * {@link MethodContext}.
    */
   public static HashMap<MethodSignature, MethodContext> getMethodSignatures(List<ClassNode> classes) {
     HashMap<MethodSignature, MethodContext> methodMap = new HashMap<>();

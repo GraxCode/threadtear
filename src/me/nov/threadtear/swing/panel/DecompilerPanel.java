@@ -55,16 +55,17 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(new String[] { "CFR " + CfrVersionInfo.VERSION, "Fernflower 15-05-20", "Krakatau 22-05-20" });
+    decompilerSelection = new JComboBox<>(new String[]{"CFR " + CfrVersionInfo.VERSION, "Fernflower " + "15-05-20",
+            "Krakatau 22-05-20"});
     decompilerSelection.setSelectedIndex(preferredDecompilerIndex);
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
-    conversionMethod = new JComboBox<>(new String[] { "Source", "Transformed" });
+    conversionMethod = new JComboBox<>(new String[]{"Source", "Transformed"});
     conversionMethod.setSelectedIndex(1);
     conversionMethod.addActionListener(this);
     leftActionPanel.add(conversionMethod);
-    leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try catch blocks"));
-    leftActionPanel.add(ignoreMon = new JCheckBox("Ignore synchronized"));
+    leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try " + "catch blocks"));
+    leftActionPanel.add(ignoreMon = new JCheckBox("Ignore " + "synchronized"));
     leftActionPanel.add(aggressive = new JCheckBox("Aggressive"));
     ignoreTCB.setFocusable(false);
     ignoreTCB.addActionListener(this);
@@ -94,12 +95,14 @@ public class DecompilerPanel extends JPanel implements ActionListener {
         String[] split = textArea.getText().split("\\r?\\n");
         int firstIndex = -1;
         boolean first = false;
-        Label: {
+        Label:
+        {
           for (int i = 0; i < split.length; i++) {
             String line = split[i];
             if (Strings.containsRegex(line, searchText)) {
               if (i > searchIndex) {
-                textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(i).getStartOffset());
+                textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(i)
+                        .getStartOffset());
                 searchIndex = i;
                 break Label;
               } else if (!first) {
@@ -111,7 +114,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
           Toolkit.getDefaultToolkit().beep();
           if (first) {
             // go back to first line
-            textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(firstIndex).getStartOffset());
+            textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(firstIndex)
+                    .getStartOffset());
             searchIndex = firstIndex;
           }
         }
@@ -189,20 +193,21 @@ public class DecompilerPanel extends JPanel implements ActionListener {
         copy.methods.forEach(m -> m.tryCatchBlocks = null);
       }
       if (ignoreMon.isSelected()) {
-        copy.methods.forEach(m -> StreamSupport.stream(m.instructions.spliterator(), false).filter(i -> i.getOpcode() == MONITORENTER || i.getOpcode() == MONITOREXIT)
-            .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
+        copy.methods.forEach(m -> StreamSupport.stream(m.instructions.spliterator(), false)
+                .filter(i -> i.getOpcode() == MONITORENTER || i.getOpcode() == MONITOREXIT)
+                .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
       }
       bytes = Conversion.toBytecode0(copy);
       switch (decompilerSelection.getSelectedIndex()) {
-      case 0:
-        decompilerBridge = new CFRBridge();
-        break;
-      case 1:
-        decompilerBridge = new FernflowerBridge();
-        break;
-      case 2:
-        decompilerBridge = new KrakatauBridge();
-        break;
+        case 0:
+          decompilerBridge = new CFRBridge();
+          break;
+        case 1:
+          decompilerBridge = new FernflowerBridge();
+          break;
+        case 2:
+          decompilerBridge = new KrakatauBridge();
+          break;
       }
       preferredDecompilerIndex = decompilerSelection.getSelectedIndex();
       decompilerBridge.setAggressive(aggressive.isSelected());
@@ -224,7 +229,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     String text = document.getText(0, document.getLength()).toLowerCase();
     int pos = text.indexOf(searchText);
     while (pos >= 0) {
-      highlighter.addHighlight(pos, pos + searchText.length(), new DefaultHighlighter.DefaultHighlightPainter(new Color(0x0078d7)));
+      highlighter.addHighlight(pos, pos + searchText
+              .length(), new DefaultHighlighter.DefaultHighlightPainter(new Color(0x0078d7)));
       pos = text.indexOf(searchText, pos + searchText.length());
     }
   }

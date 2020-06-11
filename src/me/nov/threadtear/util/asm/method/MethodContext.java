@@ -4,7 +4,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * A bundle of {@link MethodNode} and its owner {@link ClassNode}.
+ * A bundle of {@link MethodNode} and its owner
+ * {@link ClassNode}.
  */
 public class MethodContext {
 

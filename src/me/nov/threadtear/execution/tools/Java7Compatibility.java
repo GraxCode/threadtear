@@ -10,7 +10,8 @@ public class Java7Compatibility extends Execution {
   private boolean success;
 
   public Java7Compatibility() {
-    super(ExecutionCategory.TOOLS, "Make Java 7 compatible", "Only works when no lambda expressions and no Java 8 specific methods are present.", ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.TOOLS, "Make Java 7 " + "compatible", "Only works when no lambda " + "expressions and no " +
+            "Java 8 specific methods " + "are present.", ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override
@@ -19,7 +20,7 @@ public class Java7Compatibility extends Execution {
     success = true;
     classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> {
       if (StreamSupport.stream(m.instructions.spliterator(), false).anyMatch(ain -> ain.getOpcode() == INVOKEDYNAMIC)) {
-        logger.error("{} contains instructions that are not supported by Java 7.", referenceString(c, m));
+        logger.error("{} contains instructions " + "that are not supported by Java 7" + ".", referenceString(c, m));
         success = false;
       }
     }));

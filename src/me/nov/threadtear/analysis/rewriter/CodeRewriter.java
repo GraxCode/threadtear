@@ -41,72 +41,72 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   public CodeReferenceValue newOperation(AbstractInsnNode insn) throws AnalyzerException {
     BasicValue v = basic.newOperation(insn);
     switch (insn.getOpcode()) {
-    case ICONST_M1:
-    case ICONST_0:
-    case ICONST_1:
-    case ICONST_2:
-    case ICONST_3:
-    case ICONST_4:
-    case ICONST_5:
-      return new NumberValue(BasicValue.INT_VALUE, insn, insn.getOpcode() - ICONST_0);
-    case LCONST_0:
-    case LCONST_1:
-      return new NumberValue(BasicValue.LONG_VALUE, insn, (long) (insn.getOpcode() - LCONST_0));
-    case FCONST_0:
-    case FCONST_1:
-    case FCONST_2:
-      return new NumberValue(BasicValue.FLOAT_VALUE, insn, (float) (insn.getOpcode() - FCONST_0));
-    case DCONST_0:
-    case DCONST_1:
-      return new NumberValue(BasicValue.DOUBLE_VALUE, insn, (double) (insn.getOpcode() - DCONST_0));
-    case BIPUSH:
-    case SIPUSH:
-      return new NumberValue(BasicValue.INT_VALUE, insn, ((IntInsnNode) insn).operand);
-    case LDC:
-      Object cst = ((LdcInsnNode) insn).cst;
-      if (cst instanceof String) {
-        return new StringValue(v, insn, cst.toString());
-      } else if (cst instanceof Number) {
-        return new NumberValue(v, insn, cst);
-      } else {
+      case ICONST_M1:
+      case ICONST_0:
+      case ICONST_1:
+      case ICONST_2:
+      case ICONST_3:
+      case ICONST_4:
+      case ICONST_5:
+        return new NumberValue(BasicValue.INT_VALUE, insn, insn.getOpcode() - ICONST_0);
+      case LCONST_0:
+      case LCONST_1:
+        return new NumberValue(BasicValue.LONG_VALUE, insn, (long) (insn.getOpcode() - LCONST_0));
+      case FCONST_0:
+      case FCONST_1:
+      case FCONST_2:
+        return new NumberValue(BasicValue.FLOAT_VALUE, insn, (float) (insn.getOpcode() - FCONST_0));
+      case DCONST_0:
+      case DCONST_1:
+        return new NumberValue(BasicValue.DOUBLE_VALUE, insn, (double) (insn.getOpcode() - DCONST_0));
+      case BIPUSH:
+      case SIPUSH:
+        return new NumberValue(BasicValue.INT_VALUE, insn, ((IntInsnNode) insn).operand);
+      case LDC:
+        Object cst = ((LdcInsnNode) insn).cst;
+        if (cst instanceof String) {
+          return new StringValue(v, insn, cst.toString());
+        } else if (cst instanceof Number) {
+          return new NumberValue(v, insn, cst);
+        } else {
+          return new UnknownInstructionValue(v, insn);
+        }
+      case GETSTATIC:
+        FieldInsnNode fin = (FieldInsnNode) insn;
+        return fieldReference(v, null, fin);
+      case ACONST_NULL:
+      default:
         return new UnknownInstructionValue(v, insn);
-      }
-    case GETSTATIC:
-      FieldInsnNode fin = (FieldInsnNode) insn;
-      return fieldReference(v, null, fin);
-    case ACONST_NULL:
-    default:
-      return new UnknownInstructionValue(v, insn);
     }
   }
 
   @Override
   public CodeReferenceValue copyOperation(AbstractInsnNode insn, CodeReferenceValue value) throws AnalyzerException {
     switch (insn.getOpcode()) {
-    case ALOAD:
-    case ILOAD:
-    case LLOAD:
-    case DLOAD:
-    case FLOAD:
-      CodeReferenceValue var = presetArgs != null ? presetArgs[((VarInsnNode) insn).var] : null;
-      return var == null ? new UnknownInstructionValue(value.getType(), insn) : var.setType(value.getType());
-    case ASTORE:
-    case ISTORE:
-    case LSTORE:
-    case DSTORE:
-    case FSTORE:
-      if (presetArgs != null) {
-        presetArgs[((VarInsnNode) insn).var] = value;
-      }
-    case DUP:
-    case DUP_X1:
-    case DUP_X2:
-    case DUP2:
-    case DUP2_X1:
-    case DUP2_X2:
-    case SWAP:
-    default:
-      break;
+      case ALOAD:
+      case ILOAD:
+      case LLOAD:
+      case DLOAD:
+      case FLOAD:
+        CodeReferenceValue var = presetArgs != null ? presetArgs[((VarInsnNode) insn).var] : null;
+        return var == null ? new UnknownInstructionValue(value.getType(), insn) : var.setType(value.getType());
+      case ASTORE:
+      case ISTORE:
+      case LSTORE:
+      case DSTORE:
+      case FSTORE:
+        if (presetArgs != null) {
+          presetArgs[((VarInsnNode) insn).var] = value;
+        }
+      case DUP:
+      case DUP_X1:
+      case DUP_X2:
+      case DUP2:
+      case DUP2_X1:
+      case DUP2_X2:
+      case SWAP:
+      default:
+        break;
     }
     return value; // stack ops
   }
@@ -118,9 +118,12 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   }
 
   @Override
-  public CodeReferenceValue newExceptionValue(TryCatchBlockNode tryCatchBlockNode, Frame<CodeReferenceValue> handlerFrame, Type exceptionType) {
+  public CodeReferenceValue newExceptionValue(TryCatchBlockNode tryCatchBlockNode,
+                                              Frame<CodeReferenceValue> handlerFrame, Type exceptionType) {
     BasicValue v = basic.newValue(exceptionType);
-    return new UnknownInstructionValue(v, new InsnNode(ACONST_NULL)); // TODO make AlreadyOnStackInstruction so that aconst_null doesn't end up in code
+    return new UnknownInstructionValue(v, new InsnNode(ACONST_NULL)); // TODO make
+    // AlreadyOnStackInstruction so that aconst_null
+    // doesn't end up in code
   }
 
   @Override
@@ -133,42 +136,42 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
     // TODO checkcast, instanceof
     BasicValue v = basic.unaryOperation(insn, value.getType());
     switch (insn.getOpcode()) {
-    case GETFIELD:
-      FieldInsnNode fin = (FieldInsnNode) insn;
-      return fieldReference(v, value, fin);
-    case INEG:
-    case FNEG:
-    case LNEG:
-    case DNEG:
-    case L2I:
-    case F2I:
-    case D2I:
-    case I2B:
-    case I2C:
-    case I2S:
-    case I2F:
-    case L2F:
-    case D2F:
-    case I2L:
-    case F2L:
-    case D2L:
-    case I2D:
-    case L2D:
-    case F2D:
-      return new UnaryOpValue(v, (InsnNode) insn, value);
-    case IFEQ:
-    case IFNE:
-    case IFLT:
-    case IFGE:
-    case IFGT:
-    case IFLE:
-    case TABLESWITCH:
-    case LOOKUPSWITCH:
-    case MONITORENTER:
-    case MONITOREXIT:
-    case PUTSTATIC:
-    default:
-      return v == null ? null : new UnknownInstructionValue(v, insn);
+      case GETFIELD:
+        FieldInsnNode fin = (FieldInsnNode) insn;
+        return fieldReference(v, value, fin);
+      case INEG:
+      case FNEG:
+      case LNEG:
+      case DNEG:
+      case L2I:
+      case F2I:
+      case D2I:
+      case I2B:
+      case I2C:
+      case I2S:
+      case I2F:
+      case L2F:
+      case D2F:
+      case I2L:
+      case F2L:
+      case D2L:
+      case I2D:
+      case L2D:
+      case F2D:
+        return new UnaryOpValue(v, (InsnNode) insn, value);
+      case IFEQ:
+      case IFNE:
+      case IFLT:
+      case IFGE:
+      case IFGT:
+      case IFLE:
+      case TABLESWITCH:
+      case LOOKUPSWITCH:
+      case MONITORENTER:
+      case MONITOREXIT:
+      case PUTSTATIC:
+      default:
+        return v == null ? null : new UnknownInstructionValue(v, insn);
     }
   }
 
@@ -176,54 +179,55 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   public CodeReferenceValue binaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b) throws AnalyzerException {
     BasicValue v = basic.binaryOperation(insn, a.getType(), b.getType());
     switch (insn.getOpcode()) {
-    case BALOAD:
-    case CALOAD:
-    case SALOAD:
-    case IALOAD:
-    case FALOAD:
-    case DALOAD:
-    case LALOAD:
-    case AALOAD:
-      return new UnknownInstructionValue(v, insn);
-    case IADD:
-    case ISUB:
-    case IMUL:
-    case IDIV:
-    case IREM:
-    case ISHL:
-    case ISHR:
-    case IUSHR:
-    case IAND:
-    case IOR:
-    case IXOR:
-    case FADD:
-    case FSUB:
-    case FMUL:
-    case FDIV:
-    case FREM:
-    case LADD:
-    case LSUB:
-    case LMUL:
-    case LDIV:
-    case LREM:
-    case LSHL:
-    case LSHR:
-    case LUSHR:
-    case LAND:
-    case LOR:
-    case LXOR:
-    case DADD:
-    case DSUB:
-    case DMUL:
-    case DDIV:
-    case DREM:
-      return new BinaryOpValue(v, (InsnNode) insn, a, b);
+      case BALOAD:
+      case CALOAD:
+      case SALOAD:
+      case IALOAD:
+      case FALOAD:
+      case DALOAD:
+      case LALOAD:
+      case AALOAD:
+        return new UnknownInstructionValue(v, insn);
+      case IADD:
+      case ISUB:
+      case IMUL:
+      case IDIV:
+      case IREM:
+      case ISHL:
+      case ISHR:
+      case IUSHR:
+      case IAND:
+      case IOR:
+      case IXOR:
+      case FADD:
+      case FSUB:
+      case FMUL:
+      case FDIV:
+      case FREM:
+      case LADD:
+      case LSUB:
+      case LMUL:
+      case LDIV:
+      case LREM:
+      case LSHL:
+      case LSHR:
+      case LUSHR:
+      case LAND:
+      case LOR:
+      case LXOR:
+      case DADD:
+      case DSUB:
+      case DMUL:
+      case DDIV:
+      case DREM:
+        return new BinaryOpValue(v, (InsnNode) insn, a, b);
     }
     return v == null ? null : new UnknownInstructionValue(v, insn);
   }
 
   @Override
-  public CodeReferenceValue ternaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b, CodeReferenceValue c) throws AnalyzerException {
+  public CodeReferenceValue ternaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b,
+                                             CodeReferenceValue c) throws AnalyzerException {
     // add to code
 
     // no stack push here, we don't care
@@ -232,18 +236,19 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
 
   @Override
   public CodeReferenceValue naryOperation(AbstractInsnNode insn, List<? extends CodeReferenceValue> values) throws AnalyzerException {
-    BasicValue v = basic.naryOperation(insn, null); // values unused by BasicInterpreter
+    BasicValue v = basic.naryOperation(insn, null); // values unused
+    // by BasicInterpreter
     switch (insn.getOpcode()) {
-    case INVOKEVIRTUAL:
-    case INVOKESPECIAL:
-    case INVOKEINTERFACE:
-      MethodInsnNode min = (MethodInsnNode) insn;
-      return v == null ? null : methodReference(v, values.remove(0), min, values);
-    case INVOKESTATIC:
-      MethodInsnNode staticMin = (MethodInsnNode) insn;
-      return v == null ? null : methodReference(v, null, staticMin, values);
-    default:
-      return v == null ? null : new UnknownInstructionValue(v, insn);
+      case INVOKEVIRTUAL:
+      case INVOKESPECIAL:
+      case INVOKEINTERFACE:
+        MethodInsnNode min = (MethodInsnNode) insn;
+        return v == null ? null : methodReference(v, values.remove(0), min, values);
+      case INVOKESTATIC:
+        MethodInsnNode staticMin = (MethodInsnNode) insn;
+        return v == null ? null : methodReference(v, null, staticMin, values);
+      default:
+        return v == null ? null : new UnknownInstructionValue(v, insn);
     }
   }
 
@@ -273,7 +278,8 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
     return new MemberAccessValue(v, reference, fin, fin.owner, fin.name, fin.desc);
   }
 
-  private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min, List<? extends CodeReferenceValue> values) {
+  private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min, List<?
+          extends CodeReferenceValue> values) {
     Object o = referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values);
     if (o != null) {
       if (o instanceof String) {

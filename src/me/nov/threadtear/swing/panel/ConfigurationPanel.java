@@ -42,22 +42,24 @@ public class ConfigurationPanel extends JPanel {
   private JPanel createCheckboxes() {
     JPanel panel = new JPanel(new GridLayout(2, 2));
     panel.add(verbose = new JCheckBox("Verbose logging"));
-    verbose.setToolTipText("Log more information and print full stack traces.");
-    panel.add(watermark = new JCheckBox("<html>Watermark <tt>MANIFEST.MF</tt>"));
-    watermark.setToolTipText("<html>Adds a \"<tt>Deobfuscated-By\" attribute to the manifest file.");
+    verbose.setToolTipText("Log more information and " + "print full stack traces.");
+    panel.add(watermark = new JCheckBox("<html>Watermark " + "<tt>MANIFEST.MF</tt>"));
+    watermark.setToolTipText("<html>Adds a " + "\"<tt>Deobfuscated-By\" attribute to" + " the manifest file.");
     watermark.setSelected(true);
-    panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"));
-    disableSecurity.setToolTipText("Remove the protection agains unwanted calls. Could improve deobfuscation.");
+    panel.add(disableSecurity = new JCheckBox("<html" + ">Disable <tt>SecurityManager</tt> " + "protection"));
+    disableSecurity
+            .setToolTipText("Remove the protection agains" + " unwanted calls. Could improve " + "deobfuscation.");
     disableSecurity.addActionListener(l -> {
       if (disableSecurity.isSelected()) {
-        if (JOptionPane.showConfirmDialog(this.getParent(), "<html>You are disabling the <tt>SecurityManager</tt> that protects you<br>from arbitrary code execution. Are you sure?", "Warning",
-            JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+        if (JOptionPane.showConfirmDialog(this
+                .getParent(), "<html>You are disabling " + "the <tt>SecurityManager</tt> that " + "protects " +
+                "you<br>from arbitrary code " + "execution. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
           disableSecurity.setSelected(false);
         }
       }
     });
-    panel.add(removeSignature = new JCheckBox("Remove manifest signature"));
-    removeSignature.setToolTipText("Remove the signature from the manifest file, if available.");
+    panel.add(removeSignature = new JCheckBox("Remove " + "manifest signature"));
+    removeSignature.setToolTipText("Remove the signature from " + "the manifest file, if available.");
     return panel;
   }
 
@@ -96,18 +98,19 @@ public class ConfigurationPanel extends JPanel {
       save.setEnabled(false);
       File inputFile = main.listPanel.classList.inputFile;
       if (inputFile == null) {
-        JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
+        JOptionPane.showMessageDialog(this, "You have to " + "load a jar file first.");
         return;
       }
       JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setSelectedFile(new File(FilenameUtils.removeExtension(inputFile.getAbsolutePath()) + ".jar"));
       jfc.setDialogTitle("Save transformed jar archive");
-      jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar)", "jar"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Java" + " Package (*.jar)", "jar"));
       int result = jfc.showSaveDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();
-        JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(), watermark.isSelected());
+        JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(), watermark
+                .isSelected());
         Threadtear.logger.info("Saved to " + output.getAbsolutePath());
       }
       save.setEnabled(true);
@@ -118,8 +121,10 @@ public class ConfigurationPanel extends JPanel {
     run.addActionListener(l -> {
       run.setEnabled(false);
       if (!Utils.isNoverify()) {
-        JOptionPane.showMessageDialog(main, "<html>You started without \"-noverify\". Some deobfuscators could fail.<br>Use \"<tt>java -noverify -jar ...</tt>\" to start the application.", "Warning",
-            JOptionPane.WARNING_MESSAGE);
+        JOptionPane
+                .showMessageDialog(main, "<html>You " + "started without \"-noverify\". " + "Some deobfuscators could" +
+                        " fail" + ".<br>Use \"<tt>java -noverify " + "-jar ...</tt>\" to start the " + "application."
+                        , "Warning", JOptionPane.WARNING_MESSAGE);
       }
       main.run(verbose.isSelected(), disableSecurity.isSelected());
     });
@@ -130,8 +135,9 @@ public class ConfigurationPanel extends JPanel {
   private void saveConfig(File output) {
     try {
       output.createNewFile();
-      FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-          .configure(new Parameters().fileBased().setFile(output));
+      FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+              new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+              .configure(new Parameters().fileBased().setFile(output));
       FileBasedConfiguration config = builder.getConfiguration();
       config.setProperty("verbose", verbose.isSelected());
       config.setProperty("no_sec", disableSecurity.isSelected());
@@ -140,7 +146,8 @@ public class ConfigurationPanel extends JPanel {
       File input = main.listPanel.classList.inputFile;
       if (input != null) {
         config.setProperty("file", input.getAbsolutePath());
-        config.setProperty("ignored", main.listPanel.classList.classes.stream().filter(c -> !c.transform).map(c -> c.node.name).toArray(String[]::new));
+        config.setProperty("ignored", main.listPanel.classList.classes.stream().filter(c -> !c.transform)
+                .map(c -> c.node.name).toArray(String[]::new));
       }
       ArrayList<Execution> executions = main.listPanel.executionList.getExecutions();
       if (!executions.isEmpty()) {
@@ -154,8 +161,9 @@ public class ConfigurationPanel extends JPanel {
 
   private void loadConfig(File input) {
     try {
-      FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-          .configure(new Parameters().fileBased().setFile(input));
+      FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+              new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+              .configure(new Parameters().fileBased().setFile(input));
       Configuration config = builder.getConfiguration();
       verbose.setSelected(config.getBoolean("verbose"));
       watermark.setSelected(true);
@@ -176,7 +184,7 @@ public class ConfigurationPanel extends JPanel {
             main.listPanel.classList.repaint();
           }
         } else {
-          JOptionPane.showMessageDialog(this, "Input file not found: " + file.getAbsolutePath());
+          JOptionPane.showMessageDialog(this, "Input file " + "not found: " + file.getAbsolutePath());
         }
       }
       if (config.containsKey("executions")) {
@@ -188,7 +196,8 @@ public class ConfigurationPanel extends JPanel {
             main.listPanel.executionList.model.reload();
             main.listPanel.executionList.repaint();
           } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Execution failed to initialize: " + execution + " (" + e.toString() + ")");
+            JOptionPane.showMessageDialog(this, "Execution failed to initialize: " + execution + " (" + e
+                    .toString() + ")");
           }
         }
       }

@@ -44,13 +44,14 @@ public class BlockVertex implements Serializable {
         TryCatchBlockNode tcb = block.getTCB();
         String type = tcb.type;
         sb.append("<html>");
-        sb.append(Html.mono("tcb-handler " +  OpFormat.labelToString(tcb.start) + " to " + OpFormat.labelToString(tcb.end) + " - N" + block.getTCBIndex()));
+        sb.append(Html.mono("tcb-handler " + OpFormat.labelToString(tcb.start) + " to " + OpFormat
+                .labelToString(tcb.end) + " - N" + block.getTCBIndex()));
         sb.append(": (");
-        sb.append((type == null || type.equals("java/lang/Throwable") ? "catch all" : type.replace('/', '.')));
+        sb.append((type == null || type.equals("java/lang/Throwable") ? "catch " + "all" : type.replace('/', '.')));
         sb.append(")");
         sb.append("\n");
       }
-      if(block.getNodes().get(0).getPrevious() == null) {
+      if (block.getNodes().get(0).getPrevious() == null) {
         sb.append(Html.mono("entry-point:"));
         sb.append("\n");
       }

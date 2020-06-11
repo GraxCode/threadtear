@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Infers method arguments from caller methods, allowing you to inline those that are constant.
+ * Infers method arguments from caller methods, allowing
+ * you to inline those that are constant.
  *
  * @author ViRb3
  */
@@ -37,7 +38,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   /**
-   * Infers arguments for {@code methodCtx} and then inlines those that are constant.
+   * Infers arguments for {@code methodCtx} and then
+   * inlines those that are constant.
    * <p>
    * This will modify {@code methodCtx}.
    *
@@ -109,17 +111,23 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   /**
-   * Combines arguments from multiple callers so that only the constant arguments found in all collections remain.
+   * Combines arguments from multiple callers so that
+   * only the constant arguments found in all collections
+   * remain.
    * <p>
-   * This is a naive implementation - it will skip Analyzer failures.
-   * It will only stop if it is guaranteed that more than two values exist for the same argument.
+   * This is a naive implementation - it will skip
+   * Analyzer failures.
+   * It will only stop if it is guaranteed that more than
+   * two values exist for the same argument.
    */
   private List<ConstantValue> getCommonArgs(Collection<List<ConstantValue>> inferredArgs) {
-    final List<ConstantValue> result = inferredArgs.stream().max(Comparator.comparing(List::size)).orElse(new ArrayList<>());
+    final List<ConstantValue> result = inferredArgs.stream().max(Comparator.comparing(List::size))
+            .orElse(new ArrayList<>());
 
     for (int i = 0; i < result.size(); i++) {
       final int I = i;
-      final Set<ConstantValue> args = inferredArgs.stream().filter(a -> a.size() > I).map(a -> a.get(I)).collect(Collectors.toSet());
+      final Set<ConstantValue> args = inferredArgs.stream().filter(a -> a.size() > I).map(a -> a.get(I))
+              .collect(Collectors.toSet());
       if (args.size() == 1) {
         result.set(i, args.iterator().next());
       } else {
@@ -132,9 +140,11 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   /**
-   * Scans {@code callerCtx} for calls to {@code methodCtx} and builds a list of all matching arguments.
+   * Scans {@code callerCtx} for calls to {@code
+   * methodCtx} and builds a list of all matching arguments.
    */
-  private List<List<ConstantValue>> getMatchingArgs(MethodContext methodCtx, MethodContext callerCtx, Frame<ConstantValue>[] frames) {
+  private List<List<ConstantValue>> getMatchingArgs(MethodContext methodCtx, MethodContext callerCtx,
+                                                    Frame<ConstantValue>[] frames) {
     final Type[] methodArgs = Type.getArgumentTypes(methodCtx.getMethod().desc);
     final List<List<ConstantValue>> results = new ArrayList<>();
 
@@ -147,7 +157,9 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
           break;
         }
         if (methodCtx.getSignature().equals(new MethodSignature(methodInsnNode))) {
-          results.add(IntStream.range(0, methodArgs.length).mapToObj(u -> frame.getStack(frame.getStackSize() - methodArgs.length + u)).collect(Collectors.toList()));
+          results.add(IntStream.range(0, methodArgs.length)
+                  .mapToObj(u -> frame.getStack(frame.getStackSize() - methodArgs.length + u))
+                  .collect(Collectors.toList()));
         }
       }
     }
@@ -155,10 +167,13 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   /**
-   * Injects arguments by prepending LDC+STORE instructions to {@code method}.
+   * Injects arguments by prepending LDC+STORE
+   * instructions to {@code method}.
    * This change is used by analyzers and decompilers.
    * <p>
-   * This will modify {@code method}, create a copy with {@link Sandbox#copyMethod(MethodNode)} if you wish to preserve it.
+   * This will modify {@code method}, create a copy with
+   * {@link Sandbox#copyMethod(MethodNode)} if you wish
+   * to preserve it.
    *
    * @return Was anything changed.
    */
@@ -169,7 +184,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
       if (arg.isKnown()) {
         if (arg.isInteger()) {
           method.instructions.insert(new VarInsnNode(ISTORE, varIndex));
-          method.instructions.insert(new LdcInsnNode(arg.getAsInteger())); // make sure shorts or bytes are also ints
+          method.instructions.insert(new LdcInsnNode(arg.getAsInteger())); // make sure shorts
+          // or bytes are also ints
         } else {
           if (arg.isNull()) {
             method.instructions.insert(new VarInsnNode(ASTORE, varIndex));
@@ -192,7 +208,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
     final ClassNode owner = methodCtx.getOwner();
     final MethodNode method = methodCtx.getMethod();
 
-    Analyzer<ConstantValue> analyzer = new Analyzer<>(new ConstantTracker(this, Access.isStatic(method.access), method.maxLocals, method.desc, new Object[0]));
+    Analyzer<ConstantValue> analyzer = new Analyzer<>(new ConstantTracker(this, Access
+            .isStatic(method.access), method.maxLocals, method.desc, new Object[0]));
     try {
       analyzer.analyze(owner.name, method);
     } catch (AnalyzerException e) {
@@ -209,7 +226,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
+          extends ConstantValue> values) {
     return null;
   }
 }

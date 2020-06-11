@@ -43,8 +43,9 @@ public class UnaryOpValue extends CodeReferenceValue {
     if (node.getOpcode() != other.node.getOpcode())
       return false;
     if (value == null) {
-        return other.value == null;
-    } else return value.equals(other.value);
+      return other.value == null;
+    } else
+      return value.equals(other.value);
   }
 
   @Override
@@ -70,38 +71,38 @@ public class UnaryOpValue extends CodeReferenceValue {
     }
     Number num = (Number) value.getStackValueOrNull();
     switch (node.getOpcode()) {
-    case INEG:
-      return -num.intValue();
-    case FNEG:
-      return -num.floatValue();
-    case LNEG:
-      return -num.longValue();
-    case DNEG:
-      return -num.doubleValue();
-    case L2I:
-    case F2I:
-    case D2I:
-      return num.intValue();
-    case I2B:
-      return num.byteValue();
-    case I2C:
-      return num.intValue() & 0x0000FFFF;
-    case I2S:
-      return num.shortValue();
-    case I2F:
-    case L2F:
-    case D2F:
-      return num.floatValue();
-    case I2L:
-    case F2L:
-    case D2L:
-      return num.longValue();
-    case I2D:
-    case L2D:
-    case F2D:
-      return num.doubleValue();
-    default:
-      throw new IllegalArgumentException();
+      case INEG:
+        return -num.intValue();
+      case FNEG:
+        return -num.floatValue();
+      case LNEG:
+        return -num.longValue();
+      case DNEG:
+        return -num.doubleValue();
+      case L2I:
+      case F2I:
+      case D2I:
+        return num.intValue();
+      case I2B:
+        return num.byteValue();
+      case I2C:
+        return num.intValue() & 0x0000FFFF;
+      case I2S:
+        return num.shortValue();
+      case I2F:
+      case L2F:
+      case D2F:
+        return num.floatValue();
+      case I2L:
+      case F2L:
+      case D2L:
+        return num.longValue();
+      case I2D:
+      case L2D:
+      case F2D:
+        return num.doubleValue();
+      default:
+        throw new IllegalArgumentException();
     }
   }
 

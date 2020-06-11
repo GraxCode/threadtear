@@ -17,14 +17,16 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   private int predictedSwitches;
 
   public KnownConditionalJumps() {
-    super(ExecutionCategory.GENERIC, "Remove obvious flow obfuscation", "Removes conditional jumps that are predictable.<br>This works for obfuscators like smoke or superblaubeere27.",
-        ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
+    super(ExecutionCategory.GENERIC, "Remove obvious flow" + " obfuscation", "Removes conditional jumps " + "that are" +
+            " predictable.<br>This works for " + "obfuscators like smoke or superblaubeere27.",
+            ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
   }
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     classes.values().stream().forEach(this::decrypt);
-    logger.info("Removed " + predictedJumps + " unnecessary conditional jumps and " + predictedSwitches + " unnecessary switches.");
+    logger.info("Removed " + predictedJumps + " " + "unnecessary conditional jumps and " + predictedSwitches + " " +
+            "unnecessary switches.");
     return true;
   }
 
@@ -95,22 +97,22 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
       return 0;
     Object upperVal = up.getValue();
     switch (op) {
-    case IFEQ:
-      return Casts.toInteger(upperVal) == 0 ? 1 : -1;
-    case IFNE:
-      return Casts.toInteger(upperVal) != 0 ? 1 : -1;
-    case IFNULL:
-      return upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
-    case IFNONNULL:
-      return !upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
-    case IFGT:
-      return Casts.toInteger(upperVal) > 0 ? 1 : -1;
-    case IFGE:
-      return Casts.toInteger(upperVal) >= 0 ? 1 : -1;
-    case IFLT:
-      return Casts.toInteger(upperVal) < 0 ? 1 : -1;
-    case IFLE:
-      return Casts.toInteger(upperVal) <= 0 ? 1 : -1;
+      case IFEQ:
+        return Casts.toInteger(upperVal) == 0 ? 1 : -1;
+      case IFNE:
+        return Casts.toInteger(upperVal) != 0 ? 1 : -1;
+      case IFNULL:
+        return upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
+      case IFNONNULL:
+        return !upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
+      case IFGT:
+        return Casts.toInteger(upperVal) > 0 ? 1 : -1;
+      case IFGE:
+        return Casts.toInteger(upperVal) >= 0 ? 1 : -1;
+      case IFLT:
+        return Casts.toInteger(upperVal) < 0 ? 1 : -1;
+      case IFLE:
+        return Casts.toInteger(upperVal) <= 0 ? 1 : -1;
     }
     if (frame.getStackSize() >= 2) {
       ConstantValue low = frame.getStack(frame.getStackSize() - 2);
@@ -118,22 +120,22 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
         return 0;
       Object lowerVal = low.getValue();
       switch (op) {
-      case IF_ICMPEQ:
-        return upperVal.equals(lowerVal) ? 2 : -2;
-      case IF_ICMPNE:
-        return upperVal.equals(lowerVal) ? -2 : 2;
-      case IF_ICMPLT:
-        return Casts.toInteger(lowerVal) < Casts.toInteger(upperVal) ? 2 : -2;
-      case IF_ICMPGE:
-        return Casts.toInteger(lowerVal) >= Casts.toInteger(upperVal) ? 2 : -2;
-      case IF_ICMPGT:
-        return Casts.toInteger(lowerVal) > Casts.toInteger(upperVal) ? 2 : -2;
-      case IF_ICMPLE:
-        return Casts.toInteger(lowerVal) <= Casts.toInteger(upperVal) ? 2 : -2;
-      case IF_ACMPEQ:
-        return up.equals(low) ? 2 : -2;
-      case IF_ACMPNE:
-        return !up.equals(low) ? 2 : -2;
+        case IF_ICMPEQ:
+          return upperVal.equals(lowerVal) ? 2 : -2;
+        case IF_ICMPNE:
+          return upperVal.equals(lowerVal) ? -2 : 2;
+        case IF_ICMPLT:
+          return Casts.toInteger(lowerVal) < Casts.toInteger(upperVal) ? 2 : -2;
+        case IF_ICMPGE:
+          return Casts.toInteger(lowerVal) >= Casts.toInteger(upperVal) ? 2 : -2;
+        case IF_ICMPGT:
+          return Casts.toInteger(lowerVal) > Casts.toInteger(upperVal) ? 2 : -2;
+        case IF_ICMPLE:
+          return Casts.toInteger(lowerVal) <= Casts.toInteger(upperVal) ? 2 : -2;
+        case IF_ACMPEQ:
+          return up.equals(low) ? 2 : -2;
+        case IF_ACMPNE:
+          return !up.equals(low) ? 2 : -2;
       }
     }
     return 0;
@@ -146,7 +148,8 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<? extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
+          extends ConstantValue> values) {
     if (owner.equals("java/lang/String") && desc.startsWith("()")) {
       if (values.size() != 1 || !values.get(0).isKnown()) {
         return null;

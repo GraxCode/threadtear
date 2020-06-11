@@ -21,7 +21,8 @@ public class Converter implements Opcodes {
     this.nodes = new ArrayList<>(Arrays.asList(array));
   }
 
-  public List<Block> convert(boolean simplify, boolean removeRedundant, boolean skipDupeSwitches, int maxInputRemoveNonsense) {
+  public List<Block> convert(boolean simplify, boolean removeRedundant, boolean skipDupeSwitches,
+                             int maxInputRemoveNonsense) {
     ArrayList<Block> blocks = new ArrayList<>();
     Map<AbstractInsnNode, Block> correspBlock = new HashMap<>();
     Block block = null;
@@ -79,10 +80,10 @@ public class Converter implements Opcodes {
           // ifs have two outputs: either it jumps or not
           outputs.add(blockAtLabel);
           if (jin.getNext() == null) {
-            throw new RuntimeException("if has no next entry");
+            throw new RuntimeException("if has no next " + "entry");
           }
           if (correspBlock.get(jin.getNext()) == b) {
-            throw new RuntimeException("next node is self?");
+            throw new RuntimeException("next node is " + "self?");
           }
           Block blockAfter = correspBlock.get(jin.getNext());
           outputs.add(blockAfter);
@@ -170,7 +171,8 @@ public class Converter implements Opcodes {
     }
     visited.add(b);
     if (b.endsWithJump()) {
-      if (b.getInput().size() <= maxInputRemoveNonsense && b.getOutput().size() == 1) { // there could be more inputs but that might lead to a unreadable graph
+      if (b.getInput().size() <= maxInputRemoveNonsense && b.getOutput().size() == 1) { // there could be more
+        // inputs but that might lead to a unreadable graph
         if (isJumpBlock(b)) {
           Block output = b.getOutput().get(0);
           for (Block input : b.getInput()) {

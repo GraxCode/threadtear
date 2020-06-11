@@ -31,7 +31,8 @@ public class CFGraph extends mxGraph {
   @Override
   public mxRectangle getPreferredSizeForCell(Object arg0) {
     mxRectangle size = super.getPreferredSizeForCell(arg0);
-    size.setWidth(size.getWidth() + 10); // some items touch the border
+    size.setWidth(size.getWidth() + 10); // some items touch the
+    // border
     return size;
   }
 
@@ -88,7 +89,9 @@ public class CFGraph extends mxGraph {
           scp.revalidate();
         } else if (scp != null) {
           // do we need this on linux too?
-          scp.getVerticalScrollBar().setValue(scp.getVerticalScrollBar().getValue() + e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
+          scp.getVerticalScrollBar()
+                  .setValue(scp.getVerticalScrollBar().getValue() + e.getUnitsToScroll() * scp.getVerticalScrollBar()
+                          .getUnitIncrement());
         }
       });
     }

@@ -45,7 +45,8 @@ public final class AutoCompletion extends PlainDocument {
           comboBox.setPopupVisible(true);
         hitBackspace = false;
         switch (e.getKeyCode()) {
-          // determine if the pressed key is backspace (needed by the remove method)
+          // determine if the pressed key is backspace
+          // (needed by the remove method)
           case KeyEvent.VK_BACK_SPACE:
             hitBackspace = true;
             hitBackspaceOnSelection = editor.getSelectionStart() != editor.getSelectionEnd();
@@ -104,8 +105,10 @@ public final class AutoCompletion extends PlainDocument {
         if (hitBackspaceOnSelection)
           offs--;
       } else {
-        // User hit backspace with the cursor positioned on the start => beep
-        comboBox.getToolkit().beep(); // when available use: UIManager.getLookAndFeel().provideErrorFeedback(comboBox);
+        // User hit backspace with the cursor positioned
+        // on the start => beep
+        comboBox.getToolkit().beep(); // when available use: UIManager
+        // .getLookAndFeel().provideErrorFeedback(comboBox);
       }
       highlightCompletedText(offs);
     } else {
@@ -126,10 +129,14 @@ public final class AutoCompletion extends PlainDocument {
     } else {
       // keep old item selected if there is no match
       item = comboBox.getSelectedItem();
-      // imitate no insert (later on offs will be incremented by str.length(): selection won't move forward)
+      // imitate no insert (later on offs will be
+      // incremented by str.length(): selection won't
+      // move forward)
       offs = offs - str.length();
-      // provide feedback to the user that his input has been received but can not be accepted
-      comboBox.getToolkit().beep(); // when available use: UIManager.getLookAndFeel().provideErrorFeedback(comboBox);
+      // provide feedback to the user that his input has
+      // been received but can not be accepted
+      comboBox.getToolkit().beep(); // when available use: UIManager
+      // .getLookAndFeel().provideErrorFeedback(comboBox);
     }
     setText(item == null ? "" : item.toString());
     // select the completed part
@@ -159,7 +166,8 @@ public final class AutoCompletion extends PlainDocument {
 
   private Object lookupItem(String pattern) {
     Object selectedItem = model.getSelectedItem();
-    // only search for a different item if the currently selected does not match
+    // only search for a different item if the currently
+    // selected does not match
     if (selectedItem != null && startsWithIgnoreCase(selectedItem.toString(), pattern)) {
       return selectedItem;
     } else {

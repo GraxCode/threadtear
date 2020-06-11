@@ -13,7 +13,7 @@ public final class References {
 
   /**
    * Remap class references, if ain has one
-   * 
+   *
    * @param map Map<old class name, new class name>
    * @param ain instruction
    * @return 1 if updated, 0 if not
@@ -37,15 +37,15 @@ public final class References {
         Object o = idin.bsmArgs[i];
         if (o instanceof Handle) {
           Handle handle = (Handle) o;
-          idin.bsmArgs[i] = new Handle(handle.getTag(), map.getOrDefault(handle.getOwner(), handle.getOwner()), handle.getName(), Descriptor.fixMethodDesc(handle.getDesc(), map),
-              handle.isInterface());
+          idin.bsmArgs[i] = new Handle(handle.getTag(), map.getOrDefault(handle.getOwner(), handle.getOwner()), handle
+                  .getName(), Descriptor.fixMethodDesc(handle.getDesc(), map), handle.isInterface());
         } else if (o instanceof Type) {
           Type type = (Type) o;
           idin.bsmArgs[i] = Descriptor.fixType(type, map);
         }
         if (idin.bsm != null) {
-          idin.bsm = new Handle(idin.bsm.getTag(), map.getOrDefault(idin.bsm.getOwner(), idin.bsm.getOwner()), idin.bsm.getName(), Descriptor.fixMethodDesc(idin.bsm.getDesc(), map),
-              idin.bsm.isInterface());
+          idin.bsm = new Handle(idin.bsm.getTag(), map.getOrDefault(idin.bsm.getOwner(), idin.bsm.getOwner()), idin.bsm
+                  .getName(), Descriptor.fixMethodDesc(idin.bsm.getDesc(), map), idin.bsm.isInterface());
         }
       }
     } else if (ain instanceof LdcInsnNode) {
@@ -78,9 +78,12 @@ public final class References {
       MethodInsnNode min = (MethodInsnNode) ain;
       if (!methods.containsKey(min.owner))
         return 0;
-      MappedMember newMapping = methods.get(min.owner).stream().filter(mapped -> mapped.oldName.equals(min.name) && mapped.oldDesc.equals(min.desc)).findFirst().orElse(null);
+      MappedMember newMapping = methods.get(min.owner).stream()
+              .filter(mapped -> mapped.oldName.equals(min.name) && mapped.oldDesc.equals(min.desc)).findFirst()
+              .orElse(null);
       if (newMapping == null) {
-        // this shouldn't happen, only if the code is referencing a library
+        // this shouldn't happen, only if the code is
+        // referencing a library
         return 0;
       }
       min.name = newMapping.newName;
@@ -93,18 +96,18 @@ public final class References {
           String owner = handle.getOwner();
           String name = handle.getName();
           String desc = handle.getDesc();
-          idin.bsmArgs[i] = new Handle(handle.getTag(), owner,
-              methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
-              handle.isInterface());
+          idin.bsmArgs[i] = new Handle(handle.getTag(), owner, methods.containsKey(owner) ? methods.get(owner).stream()
+                  .filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst()
+                  .get().newName : name, desc, handle.isInterface());
         }
       }
       if (idin.bsm != null) {
         String owner = idin.bsm.getOwner();
         String name = idin.bsm.getName();
         String desc = idin.bsm.getDesc();
-        idin.bsm = new Handle(idin.bsm.getTag(), owner,
-            methods.containsKey(owner) ? methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst().get().newName : name, desc,
-            idin.bsm.isInterface());
+        idin.bsm = new Handle(idin.bsm.getTag(), owner, methods.containsKey(owner) ? methods.get(owner).stream()
+                .filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst()
+                .get().newName : name, desc, idin.bsm.isInterface());
       }
     } else {
       return 0;
@@ -117,9 +120,12 @@ public final class References {
       FieldInsnNode fin = (FieldInsnNode) ain;
       if (!fields.containsKey(fin.owner))
         return 0;
-      MappedMember newMapping = fields.get(fin.owner).stream().filter(mapped -> mapped.oldName.equals(fin.name) && mapped.oldDesc.equals(fin.desc)).findFirst().orElse(null);
+      MappedMember newMapping = fields.get(fin.owner).stream()
+              .filter(mapped -> mapped.oldName.equals(fin.name) && mapped.oldDesc.equals(fin.desc)).findFirst()
+              .orElse(null);
       if (newMapping == null) {
-        // this shouldn't happen, only if the code is referencing a library
+        // this shouldn't happen, only if the code is
+        // referencing a library
         return 0;
       }
       fin.name = newMapping.newName;
@@ -146,8 +152,10 @@ public final class References {
     if (mn.visibleTypeAnnotations != null)
       mn.visibleTypeAnnotations.forEach(a -> a.desc = Descriptor.fixTypeDesc(a.desc, map));
     mn.signature = null;
-    // cn.attrs.forEach(at -> at.type = Descriptor.fixDesc(at.type, map));
-    // TODO remap signature, is actually not necessary. other annotations, etc..
+    // cn.attrs.forEach(at -> at.type = Descriptor
+    // .fixDesc(at.type, map));
+    // TODO remap signature, is actually not necessary.
+    //  other annotations, etc..
   }
 
   public static void remapClassType(Map<String, String> map, ClassNode cn) {

@@ -10,7 +10,8 @@ public class SuperInterpreter extends BasicInterpreter {
 
   @Override
   public BasicValue newValue(Type type) {
-    return type != null && (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) ? new BasicValue(type) : super.newValue(type);
+    return type != null && (type.getSort() == Type.OBJECT || type
+            .getSort() == Type.ARRAY) ? new BasicValue(type) : super.newValue(type);
   }
 
   @Override
@@ -18,7 +19,8 @@ public class SuperInterpreter extends BasicInterpreter {
     if (a.equals(b))
       return a;
     if (a.isReference() && b.isReference())
-      // this is the place to consider the actual type hierarchy if you want
+      // this is the place to consider the actual type
+      // hierarchy if you want
       return BasicValue.REFERENCE_VALUE;
     return BasicValue.UNINITIALIZED_VALUE;
   }

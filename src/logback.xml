@@ -11,8 +11,8 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level: %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="FORM" class="me.nov.threadtear.logging.Appender" />
-    
+    <appender name="FORM" class="me.nov.threadtear.logging.Appender"/>
+
     <logger name="console" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

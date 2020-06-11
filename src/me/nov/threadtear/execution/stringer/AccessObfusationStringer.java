@@ -14,7 +14,8 @@ import me.nov.threadtear.vm.*;
 
 public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
 
-  private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC = "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
+  private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC = "(Ljava/lang/Object;Ljava/lang/Object;" +
+          "Ljava/lang/Object;)Ljava/lang/Object;";
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
@@ -22,8 +23,8 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private VM vm;
 
   public AccessObfusationStringer() {
-    super(ExecutionCategory.STRINGER, "Access obfuscation removal", "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE,
-        ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.STRINGER, "Access obfuscation" + " removal", "Works for version 3 - 9.<br>Only" + " works" +
+            " with invokedynamic obfuscation for " + "now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -33,17 +34,20 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references");
-    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
+    logger.warning("Make sure all required libraries or " + "dynamic classes are in the jar itself, or " + "else some" +
+            " invokedynamics cannot be " + "deobfuscated!");
 
-    this.vm = VM.constructVM(this); // can't use non-initializing as decryption class needs <clinit>
+    this.vm = VM.constructVM(this); // can't use
+    // non-initializing as decryption class needs <clinit>
     vm.setDummyLoading(true);
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
+      logger.error("No access obfuscation matching " + "stringer 3 - 9 has been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25, encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted",
+            decryptionRatio <= 0.25, encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -51,9 +55,11 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     logger.collectErrors(c);
     ClassNode cn = c.node;
     try {
-      ClassNode proxy = Sandbox.createClassProxy(String.valueOf(cn.name.hashCode())); // can't use real class name here
+      ClassNode proxy = Sandbox.createClassProxy(String.valueOf(cn.name.hashCode())); // can't use real
+      // class name here
       proxy.sourceFile = cn.name + ".java";
-      cn.methods.stream().filter(m -> m.desc.equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC)).forEach(m -> proxy.methods.add(m));
+      cn.methods.stream().filter(m -> m.desc.equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC))
+              .forEach(m -> proxy.methods.add(m));
       vm.explicitlyPreload(proxy, true);
       Class<?> proxyClass = vm.loadClass(proxy.name, true);
       cn.methods.forEach(m -> {
@@ -78,10 +84,12 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
+                  logger.error("Failed to get callsite " + "using classloader in {}, {}", referenceString(cn, m),
+                          shortStacktrace(t));
                 }
               } else if (verbose) {
-                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " + bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
+                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner()
+                        .equals(cn.name) + " " + bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
               }
             }
           }
@@ -98,9 +106,10 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private CallSite loadCallSiteFromVM(Class<?> proxyClass, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
     Method bootstrap = proxyClass.getDeclaredMethod(bsm.getName(), Object.class, Object.class, Object.class);
     try {
-      return (CallSite) bootstrap.invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
+      return (CallSite) bootstrap
+              .invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
     } catch (IllegalArgumentException e) {
-      Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+      Threadtear.logger.error("One or more classes not in jar " + "file: {}, cannot decrypt!", idin.desc);
     } catch (Exception e) {
       if (verbose)
         Threadtear.logger.error("CallSite exception", e);
@@ -110,12 +119,15 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
   private boolean keepInitializer(ClassNode node) {
     // TODO this can probably be solved in a better way
-    if (node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/Class;")) && node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Method;"))
-        && node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Field;"))) {
+    if (node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/Class;")) && node.methods.stream()
+            .anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect" + "/Method;")) && node.methods.stream()
+            .anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Field;"))) {
       // decryption class
       return true;
     }
-    if (node.methods.stream().anyMatch(m -> m.desc.startsWith("(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType"))) {
+    if (node.methods.stream().anyMatch(m -> m.desc
+            .startsWith("(Ljava/lang/invoke" + "/MethodHandles$Lookup;" + "Ljava/lang/String;" + "Ljava/lang/invoke" +
+                    "/MethodType"))) {
       // other decryption class
       return true;
     }

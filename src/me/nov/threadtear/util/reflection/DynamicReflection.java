@@ -11,12 +11,13 @@ public final class DynamicReflection implements Opcodes {
   private DynamicReflection() {
   }
 
-  private static final String BMHL = "java.lang.invoke.BoundMethodHandle$Species_L";
+  private static final String BMHL = "java.lang.invoke" + ".BoundMethodHandle$Species_L";
 
   /**
    * This probably only works for java 8
    */
-  public static MethodHandleInfo revealMethodInfo(MethodHandle handle) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+  public static MethodHandleInfo revealMethodInfo(MethodHandle handle) throws IllegalArgumentException,
+          IllegalAccessException, NoSuchFieldException, SecurityException {
     if (handle.getClass().getName().startsWith(BMHL)) {
       Field original = handle.getClass().getDeclaredField("argL0");
       original.setAccessible(true);
@@ -25,11 +26,13 @@ public final class DynamicReflection implements Opcodes {
     return revealTrusted(handle);
   }
 
-  public static MethodHandleInfo revealTrusted(MethodHandle handle) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+  public static MethodHandleInfo revealTrusted(MethodHandle handle) throws NoSuchFieldException, SecurityException,
+          IllegalArgumentException, IllegalAccessException {
     return getTrustedLookup().revealDirect(handle);
   }
 
-  public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+  public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException,
+          IllegalArgumentException, IllegalAccessException {
     Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
     impl.setAccessible(true);
     return (Lookup) impl.get(null);
@@ -43,39 +46,44 @@ public final class DynamicReflection implements Opcodes {
     int op = bootstrapTagToOp(refKind);
     if (refKind <= H_PUTSTATIC) {
       if (refKind <= H_GETSTATIC) {
-        // method handle treats field retrieving as a method ()X
-        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType.toMethodDescriptorString().substring(2));
+        // method handle treats field retrieving as a
+        // method ()X
+        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType
+                .toMethodDescriptorString().substring(2));
       } else {
-        // method handle treats field putting as a method (returning void) -> (X)V
+        // method handle treats field putting as a method
+        // (returning void) -> (X)V
         String mds = methodType.toMethodDescriptorString();
-        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, mds.substring(1, mds.lastIndexOf(')')));
+        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, mds
+                .substring(1, mds.lastIndexOf(')')));
       }
     } else {
-      return new MethodInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType.toMethodDescriptorString());
+      return new MethodInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType
+              .toMethodDescriptorString());
     }
   }
 
   public static int bootstrapTagToOp(int tag) {
     switch (tag) {
-    case H_GETFIELD:
-      return GETFIELD;
-    case H_GETSTATIC:
-      return GETSTATIC;
-    case H_PUTFIELD:
-      return PUTFIELD;
-    case H_PUTSTATIC:
-      return PUTSTATIC;
-    case H_INVOKEVIRTUAL:
-      return INVOKEVIRTUAL;
-    case H_INVOKESTATIC:
-      return INVOKESTATIC;
-    case H_INVOKESPECIAL:
-    case H_NEWINVOKESPECIAL:
-      return INVOKESPECIAL;
-    case H_INVOKEINTERFACE:
-      return INVOKEINTERFACE;
+      case H_GETFIELD:
+        return GETFIELD;
+      case H_GETSTATIC:
+        return GETSTATIC;
+      case H_PUTFIELD:
+        return PUTFIELD;
+      case H_PUTSTATIC:
+        return PUTSTATIC;
+      case H_INVOKEVIRTUAL:
+        return INVOKEVIRTUAL;
+      case H_INVOKESTATIC:
+        return INVOKESTATIC;
+      case H_INVOKESPECIAL:
+      case H_NEWINVOKESPECIAL:
+        return INVOKESPECIAL;
+      case H_INVOKEINTERFACE:
+        return INVOKEINTERFACE;
     }
-    throw new IllegalArgumentException("not a bootstrap tag: " + tag);
+    throw new IllegalArgumentException("not a bootstrap " + "tag: " + tag);
   }
 
   public static void setFinalStatic(Field field, Object newValue) throws Exception {

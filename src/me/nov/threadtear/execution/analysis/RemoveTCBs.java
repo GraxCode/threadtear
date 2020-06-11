@@ -7,7 +7,8 @@ import me.nov.threadtear.execution.*;
 public class RemoveTCBs extends Execution {
 
   public RemoveTCBs() {
-    super(ExecutionCategory.ANALYSIS, "Remove try catch blocks", "Removes all try catch blocks", ExecutionTag.POSSIBLE_DAMAGE, ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.ANALYSIS, "Remove try catch " + "blocks", "Removes all try catch blocks",
+            ExecutionTag.POSSIBLE_DAMAGE, ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override

@@ -11,7 +11,8 @@ import me.nov.threadtear.analysis.SuperInterpreter;
 import me.nov.threadtear.util.reflection.Casts;
 
 /**
- * @author Holger https://stackoverflow.com/users/2711488/holger (Modified version)
+ * @author Holger https://stackoverflow
+ * .com/users/2711488/holger (Modified version)
  */
 public class ConstantTracker extends Interpreter<ConstantValue> implements Opcodes {
   public static final ConstantValue NULL = new ConstantValue(BasicValue.REFERENCE_VALUE, null);
@@ -28,7 +29,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     this.referenceHandler = referenceHandler;
   }
 
-  public ConstantTracker(IConstantReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr, Object[] args) {
+  public ConstantTracker(IConstantReferenceHandler referenceHandler, boolean isStatic, int localVariables,
+                         String descr, Object[] args) {
     super(ASM8);
     this.referenceHandler = referenceHandler;
     this.desc = Type.getArgumentTypes(descr);
@@ -39,7 +41,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     for (int i = 0; i < desc.length; ++i) {
       reformatted.add(i >= args.length ? null : args[i]);
       if (desc[i].getSize() == 2) {
-        reformatted.add(null); // placeholder for long and double
+        reformatted.add(null); // placeholder for long and
+        // double
       }
     }
     if (reformatted.size() > localVariables) {
@@ -218,7 +221,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       case AALOAD:
         if (a.isKnown() && b.isKnown() && b.isInteger()) {
           int index = b.getAsInteger();
-          // we do not want an OOB exception here, just keep it unknown
+          // we do not want an OOB exception here, just
+          // keep it unknown
           if (index >= 0 && index < Array.getLength(a.value)) {
             if (insn.getOpcode() == AALOAD)
               return new ConstantValue(v, Array.get(a.value, index));
@@ -324,7 +328,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       case DREM:
         return num1.doubleValue() % num2.doubleValue();
 
-      // compare instructions not tested, could return wrong result
+      // compare instructions not tested, could return
+      // wrong result
       case LCMP:
         return Long.compare(num1.longValue(), num2.longValue());
       case FCMPL:
@@ -342,7 +347,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 
   @Override
   public ConstantValue ternaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b, ConstantValue c) {
-    // basic analyzer returns null, so no need for basic.ternaryOperation here
+    // basic analyzer returns null, so no need for basic
+    // .ternaryOperation here
     // only array store instructions here
     if (a.isKnown() && b.isKnown() && c.isKnown() && c.value instanceof Number) {
       Object array = a.value;
@@ -382,14 +388,16 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
 
   @Override
   public ConstantValue naryOperation(AbstractInsnNode insn, List<? extends ConstantValue> values) throws AnalyzerException {
-    BasicValue v = basic.naryOperation(insn, null); // values unused by BasicInterpreter
+    BasicValue v = basic.naryOperation(insn, null); // values unused
+    // by BasicInterpreter
     switch (insn.getOpcode()) {
       case INVOKEVIRTUAL:
       case INVOKESTATIC:
       case INVOKESPECIAL:
       case INVOKEINTERFACE:
         MethodInsnNode min = (MethodInsnNode) insn;
-        return v == null ? null : new ConstantValue(v, referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values));
+        return v == null ? null : new ConstantValue(v, referenceHandler
+                .getMethodReturnOrNull(v, min.owner, min.name, min.desc, values));
 
       // TODO how to handle invokedynamic here?
       default:
@@ -408,6 +416,7 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     BasicValue t = basic.merge(a.getType(), b.getType());
 
     return new ConstantValue(t, a.value);
-    //		return t.equals(a.getType()) && (a.value == null && a != NULL || a.value != null && a.value.equals(b.value)) ? a : t.equals(b.getType()) && b.value == null && b != NULL ? b : new ConstantValue(t, null);
+    //		return t.equals(a.getType()) && (a.value == null && a != NULL || a.value != null && a.value.equals(b
+    //		.value)) ? a : t.equals(b.getType()) && b.value == null && b != NULL ? b : new ConstantValue(t, null);
   }
 }

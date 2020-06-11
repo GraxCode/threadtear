@@ -30,8 +30,9 @@ public abstract class Execution implements Opcodes {
   }
 
   /**
-   * Add your name here, if you are planning to make a pull request
-   * 
+   * Add your name here, if you are planning to make a
+   * pull request
+   *
    * @return null by default
    */
   public String getAuthor() {
@@ -45,9 +46,12 @@ public abstract class Execution implements Opcodes {
 
   /**
    * Run the execution
-   * 
-   * @param map     a map of all loaded classes, while the key is the internal name (java/foo/bar)
-   * @param verbose true when the user wants more logging output
+   *
+   * @param map     a map of all loaded classes, while
+   *                the key is the internal name
+   *                (java/foo/bar)
+   * @param verbose true when the user wants more logging
+   *                output
    * @return success (true) or failure (false)
    */
   public abstract boolean execute(Map<String, Clazz> map, boolean verbose);
@@ -69,13 +73,18 @@ public abstract class Execution implements Opcodes {
   }
 
   /**
-   * Run the constant analyzer and get the frames The frames will have more information than normal ASM ones and pre-compute easy calculations.
-   * 
-   * @param handler a reference handler to integrate more methods or fields in the computation
-   * @return array of Frames, while the array index corresponds to the instruction index
+   * Run the constant analyzer and get the frames The
+   * frames will have more information than normal ASM
+   * ones and pre-compute easy calculations.
+   *
+   * @param handler a reference handler to integrate more
+   *                methods or fields in the computation
+   * @return array of Frames, while the array index
+   * corresponds to the instruction index
    */
   protected Frame<ConstantValue>[] getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) {
-    Analyzer<ConstantValue> a = new Analyzer<>(new ConstantTracker(handler, Access.isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
+    Analyzer<ConstantValue> a = new Analyzer<>(new ConstantTracker(handler, Access
+            .isStatic(m.access), m.maxLocals, m.desc, new Object[0]));
     try {
       a.analyze(c.name, m);
     } catch (Throwable e) {
@@ -88,9 +97,11 @@ public abstract class Execution implements Opcodes {
   }
 
   /**
-   * see {@link #getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) getConstantFrames}
+   * see
+   * {@link #getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) getConstantFrames}
    */
-  protected void loopConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler, BiConsumer<AbstractInsnNode, Frame<ConstantValue>> consumer) {
+  protected void loopConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler,
+                                    BiConsumer<AbstractInsnNode, Frame<ConstantValue>> consumer) {
     Frame<ConstantValue>[] frames = getConstantFrames(c, m, handler);
     if (frames == null)
       return;
@@ -101,10 +112,12 @@ public abstract class Execution implements Opcodes {
   }
 
   /**
-   * 
-   * @return all labels with a corresponding (ConstantValue) frame, see {@link #getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) getConstantFrames}
+   * @return all labels with a corresponding
+   * (ConstantValue) frame, see
+   * {@link #getConstantFrames(ClassNode c, MethodNode m, IConstantReferenceHandler handler) getConstantFrames}
    */
-  protected HashMap<LabelNode, Frame<ConstantValue>> collectLabels(ClassNode c, MethodNode m, IConstantReferenceHandler handler) {
+  protected HashMap<LabelNode, Frame<ConstantValue>> collectLabels(ClassNode c, MethodNode m,
+                                                                   IConstantReferenceHandler handler) {
     HashMap<LabelNode, Frame<ConstantValue>> map = new HashMap<>();
     loopConstantFrames(c, m, handler, (ain, frame) -> {
       if (ain.getType() == AbstractInsnNode.LABEL) {

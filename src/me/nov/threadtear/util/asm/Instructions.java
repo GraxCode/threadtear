@@ -93,7 +93,8 @@ public final class Instructions implements Opcodes {
   }
 
   /**
-   * Get succeeding instruction, but skip labels, frames and line numbers
+   * Get succeeding instruction, but skip labels, frames
+   * and line numbers
    */
   public static AbstractInsnNode getRealNext(AbstractInsnNode ain) {
     do {
@@ -103,7 +104,8 @@ public final class Instructions implements Opcodes {
   }
 
   /**
-   * Get previous instruction, but skip labels, frames and line numbers
+   * Get previous instruction, but skip labels, frames
+   * and line numbers
    */
   public static AbstractInsnNode getRealPrevious(AbstractInsnNode ain) {
     do {
@@ -150,11 +152,17 @@ public final class Instructions implements Opcodes {
    * Isolate all calls matching a certain predicate
    *
    * @param mn           method to isolate
-   * @param methodRemove (owner, desc) -> (...), also used for everything else referencing something. desc can be an empty string, if there is no desc. owner is of format
+   * @param methodRemove (owner, desc) -> (...), also
+   *                     used for everything else
+   *                     referencing something. desc can
+   *                     be an empty string, if there is
+   *                     no desc. owner is of format
    *                     java/foo/bar
-   * @param fieldRemove  (owner, desc) -> (...), only for fields
+   * @param fieldRemove  (owner, desc) -> (...), only for
+   *                     fields
    */
-  public static void isolateCallsThatMatch(MethodNode mn, BiPredicate<String, String> methodRemove, BiPredicate<String, String> fieldRemove) {
+  public static void isolateCallsThatMatch(MethodNode mn, BiPredicate<String, String> methodRemove,
+                                           BiPredicate<String, String> fieldRemove) {
     for (int i = 0; i < mn.instructions.size(); i++) {
       AbstractInsnNode ain = mn.instructions.get(i);
       if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
@@ -176,13 +184,15 @@ public final class Instructions implements Opcodes {
           Type type = Type.getType(fin.desc);
           switch (fin.getOpcode()) {
             case GETFIELD:
-              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
+              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop
+              // reference
               i += 1;
             case GETSTATIC:
               mn.instructions.set(fin, makeNullPush(type));
               break;
             case PUTFIELD:
-              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop reference
+              mn.instructions.insertBefore(fin, new InsnNode(POP)); // pop
+              // reference
               mn.instructions.insertBefore(fin, new InsnNode(Type.getType(fin.desc).getSize() > 1 ? POP2 : POP));
               mn.instructions.set(fin, makeNullPush(type));
               i += 2;
@@ -218,7 +228,8 @@ public final class Instructions implements Opcodes {
         MultiANewArrayInsnNode marr = (MultiANewArrayInsnNode) ain;
         if (methodRemove != null && methodRemove.test(marr.desc, "")) {
           for (int j = 0; j < marr.dims; j++) {
-            mn.instructions.insertBefore(marr, new InsnNode(POP)); // array sizes (int)
+            mn.instructions.insertBefore(marr, new InsnNode(POP)); // array
+            // sizes (int)
             i += 1;
           }
           mn.instructions.set(marr, new InsnNode(ACONST_NULL));

@@ -112,7 +112,8 @@ public final class VMSecurityManager extends SecurityManager {
 
   private final void throwIfNotGranted() {
     if (!grantAccess())
-      throw new SecurityException("An execution ran code that it's not supposed to. If you think this is a false call, open an issue on GitHub.");
+      throw new SecurityException("An execution ran code " + "that it's not supposed to. If you think " + "this is a " +
+              "false call, open an issue on " + "GitHub.");
   }
 
   private static final String granted = "sun\\..*";
@@ -126,7 +127,8 @@ public final class VMSecurityManager extends SecurityManager {
       if (ste.getClassName().matches(granted))
         continue;
       if (!isLocal(ste.getClassName())) {
-        Threadtear.logger.warning("Dynamic class was blocked trying to execute forbidden code: {}, {}", ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
+        Threadtear.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}", ste
+                .getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
         return false;
       }
     }
@@ -135,12 +137,17 @@ public final class VMSecurityManager extends SecurityManager {
 
   public final boolean isLocal(String name) {
     try {
-      grantAll = true; // we have to grant everything for the next check, otherwise we would end up in a loop
+      grantAll = true; // we have to grant everything for
+      // the next check, otherwise we would end up in a loop
       /*
-       * This way you could check if they are really in the jar file itself
-       * 
-       * return Class.forName(name, false, ClassLoader.getSystemClassLoader()).getProtectionDomain().getCodeSource().getLocation().getPath()
-       * .equals(Threadtear.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+       * This way you could check if they are really in
+       * the jar file itself
+       *
+       * return Class.forName(name, false, ClassLoader
+       * .getSystemClassLoader()).getProtectionDomain()
+       * .getCodeSource().getLocation().getPath()
+       * .equals(Threadtear.class.getProtectionDomain()
+       * .getCodeSource().getLocation().getPath());
        */
       Class.forName(name, false, ClassLoader.getSystemClassLoader());
       // no exception thrown, class is local

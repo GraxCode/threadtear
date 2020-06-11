@@ -36,9 +36,12 @@ public class LogFrame extends JFrame {
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
     area.setFont(new Font("Consolas", Font.PLAIN, 11));
-    area.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), TransferHandler.getCopyAction());
+    area.getKeymap()
+            .addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), TransferHandler
+                    .getCopyAction());
     JPanel cp = new JPanel(new BorderLayout());
-    cp.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8), BorderFactory.createLoweredBevelBorder()));
+    cp.setBorder(BorderFactory
+            .createCompoundBorder(new EmptyBorder(8, 8, 8, 8), BorderFactory.createLoweredBevelBorder()));
     cp.add(new JScrollPane(area), BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
@@ -50,7 +53,7 @@ public class LogFrame extends JFrame {
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setSelectedFile(inputFile);
       jfc.setDialogTitle("Save log to file");
-      jfc.setFileFilter(new FileNameExtensionFilter("Log file (*.log)", "log"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Log " + "file (*.log)", "log"));
       int result = jfc.showSaveDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();
@@ -64,7 +67,8 @@ public class LogFrame extends JFrame {
     });
     buttons.add(save);
     JButton copy = new JButton("Copy to clipboard");
-    copy.addActionListener(e -> Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(area.getText()), null));
+    copy.addActionListener(e -> Toolkit.getDefaultToolkit().getSystemClipboard()
+            .setContents(new StringSelection(area.getText()), null));
     buttons.add(copy);
     JButton close = new JButton("Close");
     close.addActionListener(e -> dispose());

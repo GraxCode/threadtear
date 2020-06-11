@@ -17,7 +17,8 @@ public class OverlayIcon implements Icon {
   @Override
   public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
     icon.paintIcon(c, g, x, y);
-    overlay.paintIcon(c, g, x + (icon.getIconWidth() - overlay.getIconWidth()), y + (icon.getIconHeight() - overlay.getIconHeight()));
+    overlay.paintIcon(c, g, x + (icon.getIconWidth() - overlay.getIconWidth()), y + (icon.getIconHeight() - overlay
+            .getIconHeight()));
   }
 
   @Override

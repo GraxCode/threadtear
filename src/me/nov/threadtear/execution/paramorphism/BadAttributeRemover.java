@@ -7,7 +7,8 @@ import me.nov.threadtear.execution.*;
 public class BadAttributeRemover extends Execution {
 
   public BadAttributeRemover() {
-    super(ExecutionCategory.PARAMORPHISM, "Remove bad attributes", "Removes all inner and outer class attributes.", ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.PARAMORPHISM, "Remove bad " + "attributes", "Removes all inner and outer " + "class " +
+            "attributes.", ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override

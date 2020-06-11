@@ -18,8 +18,8 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
   private VM vm;
 
   public StringObfuscationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "String obfuscation removal", "Tested on version 2.1<br>Make sure to decrypt access obfuscation first.", ExecutionTag.RUNNABLE,
-        ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.PARAMORPHISM, "String " + "obfuscation removal", "Tested on version 2" + ".1<br>Make sure" +
+            " to decrypt access " + "obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -31,11 +31,11 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
     this.vm = VM.constructVM(this);
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No strings matching Paramorphism 2.1 string obfuscation have been found!");
+      logger.error("No strings matching Paramorphism 2.1 " + "string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total {} encrypted strings, {}% were successfully decrypted", encrypted, decryptionRatio);
+    logger.info("Of a total {} encrypted strings, {}% " + "were successfully decrypted", encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -53,7 +53,7 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
               String string = invokeVM(cn, m, min);
               if (string != null) {
                 if (Strings.isHighUTF(string)) {
-                  logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
+                  logger.warning("String may have not " + "decrypted correctly in {}", referenceString(cn, m));
                 }
                 this.decrypted++;
                 m.instructions.set(ain, new LdcInsnNode(string));
@@ -66,7 +66,8 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
   }
 
   private String invokeVM(ClassNode cn, MethodNode m, MethodInsnNode min) {
-    ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism checks for method name and class name
+    ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism
+    // checks for method name and class name
 
     InsnList invoker = new InsnList();
     invoker.add(min.clone(null)); // clone method
@@ -74,7 +75,8 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
     String name = m.name.startsWith("<") ? '\0' + m.name : m.name;
     proxy.methods.add(Sandbox.createMethodProxy(invoker, name, min.desc)); // same desc
     if (!vm.isLoaded(proxy.name.replace('/', '.')))
-      vm.explicitlyPreload(proxy, true); // we need no clinit here
+      vm.explicitlyPreload(proxy, true); // we need no
+    // clinit here
     try {
       Class<?> loadedProxy = vm.loadClass(proxy.name.replace('/', '.'));
       Method stringGetterBridge = loadedProxy.getDeclaredMethods()[0];

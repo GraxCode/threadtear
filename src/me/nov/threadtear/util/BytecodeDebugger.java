@@ -13,7 +13,9 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * A wrapper around {@link AnalysisFrame} that will display class, method and exception for quick and easy debugging.
+ * A wrapper around {@link AnalysisFrame} that will
+ * display class, method and exception for quick and easy
+ * debugging.
  */
 public class BytecodeDebugger {
   /**

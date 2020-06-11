@@ -19,7 +19,8 @@ import java.util.stream.StreamSupport;
 
 public class RemoveUnusedVariables extends Execution {
   public RemoveUnusedVariables() {
-    super(ExecutionCategory.CLEANING, "Remove unused variables", "Removes unused variables", ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.CLEANING, "Remove unused " + "variables", "Removes unused variables",
+            ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override
@@ -38,12 +39,14 @@ public class RemoveUnusedVariables extends Execution {
         }
       }
     }
-    logger.info("Removed {} unused variables from {}/{} methods.", removedTotal, methodModified, methodTotal);
+    logger.info("Removed {} unused variables from {}/{} " + "methods.", removedTotal, methodModified, methodTotal);
     return true;
   }
 
   private int processMethod(MethodNode method) {
-    final List<VarInsnNode> varInstrs = StreamSupport.stream(method.instructions.spliterator(), false).filter(i -> i.getType() == AbstractInsnNode.VAR_INSN).map(i -> (VarInsnNode) i).collect(Collectors.toList());
+    final List<VarInsnNode> varInstrs = StreamSupport.stream(method.instructions.spliterator(), false)
+            .filter(i -> i.getType() == AbstractInsnNode.VAR_INSN).map(i -> (VarInsnNode) i)
+            .collect(Collectors.toList());
 
     HashSet<Integer> loadVars = new HashSet<>();
     if (!Access.isStatic(method.access)) {

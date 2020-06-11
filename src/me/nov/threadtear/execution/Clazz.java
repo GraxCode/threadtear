@@ -44,7 +44,7 @@ public class Clazz {
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 
   public String getMetadataString() {
-    if(oldEntry != null) {
+    if (oldEntry != null) {
       return Strings.formatBytes(oldEntry.getSize()) + ", " + dateFormat.format(oldEntry.getTime());
     }
     return "";

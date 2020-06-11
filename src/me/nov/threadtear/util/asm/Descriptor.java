@@ -53,7 +53,8 @@ public final class Descriptor {
     String x = description.replaceAll("(?=([L;()/\\[IDFJBZV]))", "");
     if (x.isEmpty()) {
       return true;
-    } else if (x.equals("Z") || x.equals("J") || x.equals("I") || x.equals("F") || x.equals("D") || x.equals("C") || x.equals("T") || x.equals("G")) {
+    } else if (x.equals("Z") || x.equals("J") || x.equals("I") || x.equals("F") || x.equals("D") || x.equals("C") || x
+            .equals("T") || x.equals("G")) {
       return true;
     }
     return false;

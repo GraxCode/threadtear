@@ -457,8 +457,9 @@ public final class OpFormat implements Opcodes {
   }
 
   /**
-   * Given an opcode (as text), returns the opcode as an index.
-   * 
+   * Given an opcode (as text), returns the opcode as an
+   * index.
+   *
    * @param opcode
    * @return
    */
@@ -468,7 +469,7 @@ public final class OpFormat implements Opcodes {
 
   /**
    * Given an opcode (index), returns the opcode as text.
-   * 
+   *
    * @param opcode
    * @return
    */
@@ -478,7 +479,7 @@ public final class OpFormat implements Opcodes {
 
   /**
    * Returns a set of all the opcodes as strings.
-   * 
+   *
    * @return
    */
   public static Set<String> getOpcodes() {
@@ -487,7 +488,7 @@ public final class OpFormat implements Opcodes {
 
   /**
    * Get the integer value of a InsnNode.
-   * 
+   *
    * @param ain
    * @return
    */
@@ -502,7 +503,7 @@ public final class OpFormat implements Opcodes {
 
   /**
    * Gets the integer value of a given opcode.
-   * 
+   *
    * @param opcode
    * @return
    */
@@ -526,31 +527,31 @@ public final class OpFormat implements Opcodes {
 
   public static String getHandleOpcodeText(int hop) {
     switch (hop) {
-    case H_GETFIELD:
-      return "H_GETFIELD";
-    case H_GETSTATIC:
-      return "H_GETSTATIC";
-    case H_PUTFIELD:
-      return "H_PUTFIELD";
-    case H_PUTSTATIC:
-      return "H_PUTSTATIC";
-    case H_INVOKEVIRTUAL:
-      return "H_INVOKEVIRTUAL";
-    case H_INVOKESTATIC:
-      return "H_INVOKESTATIC";
-    case H_INVOKESPECIAL:
-      return "H_INVOKESPECIAL";
-    case H_NEWINVOKESPECIAL:
-      return "H_NEWINVOKESPECIAL";
-    case H_INVOKEINTERFACE:
-      return "H_INVOKEINTERFACE";
+      case H_GETFIELD:
+        return "H_GETFIELD";
+      case H_GETSTATIC:
+        return "H_GETSTATIC";
+      case H_PUTFIELD:
+        return "H_PUTFIELD";
+      case H_PUTSTATIC:
+        return "H_PUTSTATIC";
+      case H_INVOKEVIRTUAL:
+        return "H_INVOKEVIRTUAL";
+      case H_INVOKESTATIC:
+        return "H_INVOKESTATIC";
+      case H_INVOKESPECIAL:
+        return "H_INVOKESPECIAL";
+      case H_NEWINVOKESPECIAL:
+        return "H_NEWINVOKESPECIAL";
+      case H_INVOKEINTERFACE:
+        return "H_INVOKEINTERFACE";
     }
     return null;
   }
 
   /**
    * Gets the index of a AbstractInsnNode.
-   * 
+   *
    * @param ain
    * @return
    */
@@ -565,44 +566,45 @@ public final class OpFormat implements Opcodes {
 
   public static String getFrameType(int type) {
     switch (type) {
-    case F_NEW:
-      return "F_NEW";
-    case F_FULL:
-      return "F_FULL";
-    case F_APPEND:
-      return "F_APPEND";
-    case F_CHOP:
-      return "F_CHOP";
-    case F_SAME:
-      return "F_SAME";
-    case F_SAME1:
-      return "F_SAME1";
+      case F_NEW:
+        return "F_NEW";
+      case F_FULL:
+        return "F_FULL";
+      case F_APPEND:
+        return "F_APPEND";
+      case F_CHOP:
+        return "F_CHOP";
+      case F_SAME:
+        return "F_SAME";
+      case F_SAME1:
+        return "F_SAME1";
     }
     return "FRAME";
   }
 
   /**
-   * Given an integer, returns an InsnNode that will properly represent the int.
-   * 
+   * Given an integer, returns an InsnNode that will
+   * properly represent the int.
+   *
    * @param i
    * @return
    */
   public static AbstractInsnNode toInt(int i) {
     switch (i) {
-    case -1:
-      return new InsnNode(ICONST_M1);
-    case 0:
-      return new InsnNode(ICONST_0);
-    case 1:
-      return new InsnNode(ICONST_1);
-    case 2:
-      return new InsnNode(ICONST_2);
-    case 3:
-      return new InsnNode(ICONST_3);
-    case 4:
-      return new InsnNode(ICONST_4);
-    case 5:
-      return new InsnNode(ICONST_5);
+      case -1:
+        return new InsnNode(ICONST_M1);
+      case 0:
+        return new InsnNode(ICONST_0);
+      case 1:
+        return new InsnNode(ICONST_1);
+      case 2:
+        return new InsnNode(ICONST_2);
+      case 3:
+        return new InsnNode(ICONST_3);
+      case 4:
+        return new InsnNode(ICONST_4);
+      case 5:
+        return new InsnNode(ICONST_5);
     }
     if (i > -129 && i < 128) {
       return new IntInsnNode(BIPUSH, i);
@@ -611,64 +613,70 @@ public final class OpFormat implements Opcodes {
   }
 
   public static String toHtmlString(AbstractInsnNode ain) {
-    String opcode = Html.bold(Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase())));
+    String opcode = Html
+            .bold(Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase())));
     switch (ain.getType()) {
-    case AbstractInsnNode.FIELD_INSN:
-      FieldInsnNode fin = (FieldInsnNode) ain;
-      return opcode + " " + fin.owner.replace('/', '.') + " " + Html.escape(fin.name) + " " + descToString(fin.desc);
-    case AbstractInsnNode.METHOD_INSN:
-      MethodInsnNode min = (MethodInsnNode) ain;
-      return opcode + " " + min.owner.replace('/', '.') + " " + Html.escape(min.name) + descToString(min.desc);
-    case AbstractInsnNode.VAR_INSN:
-      VarInsnNode vin = (VarInsnNode) ain;
-      return opcode + " " + vin.var;
-    case AbstractInsnNode.TYPE_INSN:
-      TypeInsnNode tin = (TypeInsnNode) ain;
-      return opcode + " " + descToString("L" + tin.desc + ";");
-    case AbstractInsnNode.MULTIANEWARRAY_INSN:
-      MultiANewArrayInsnNode mnin = (MultiANewArrayInsnNode) ain;
-      return opcode + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
-    case AbstractInsnNode.TABLESWITCH_INSN:
-      TableSwitchInsnNode ts = (TableSwitchInsnNode) ain;
-      return opcode + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: "
-          + getLabelString(getLabelIndex(ts.dflt)) + "]";
-    case AbstractInsnNode.LOOKUPSWITCH_INSN:
-      LookupSwitchInsnNode ls = (LookupSwitchInsnNode) ain;
-      return opcode + " [Keys: " + ls.keys.stream().map(String::valueOf).collect(Collectors.joining(", ")) + "], [Labels: "
-          + ls.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: " + labelToString(ls.dflt) + "]";
-    case AbstractInsnNode.JUMP_INSN:
-      JumpInsnNode jin = (JumpInsnNode) ain;
-      return opcode + " " + labelToString(jin.label);
-    case AbstractInsnNode.LDC_INSN:
-      LdcInsnNode ldc = (LdcInsnNode) ain;
-      if (ldc.cst instanceof String) {
-        return opcode + Html.color("#10ac84", " \"" + Html.escape(Strings.min((String) ldc.cst, 128)) + "\"");
-      }
-      if (ldc.cst instanceof Type) {
-        return opcode + " Type " + descToString(((Type) ldc.cst).getDescriptor());
-      }
-      if (ldc.cst instanceof Handle) {
-        return opcode + " Handle " + handleToString((Handle) ldc.cst);
-      }
-      if (ldc.cst instanceof ConstantDynamic) {
-        ConstantDynamic dyn = (ConstantDynamic) ldc.cst;
-        return opcode + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
-      }
-      return opcode + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass())).getDescriptor()) + " " + ldc.cst.toString();
-    case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
-      InvokeDynamicInsnNode id = (InvokeDynamicInsnNode) ain;
-      return opcode + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays.toString(id.bsmArgs) : "");
-    case AbstractInsnNode.INT_INSN:
-      return opcode + " " + getIntValue(ain);
-    case AbstractInsnNode.IINC_INSN:
-      IincInsnNode iinc = (IincInsnNode) ain;
-      return opcode + " " + iinc.var + (iinc.incr > 0 ? " +" : " ") + iinc.incr;
-    case AbstractInsnNode.LABEL:
-      LabelNode ln = (LabelNode) ain;
-      boolean hasLine = (ln.getNext() != null && ln.getNext().getType() == AbstractInsnNode.LINE);
-      return Html.mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln.getNext()).line : "") + ":");
-    case AbstractInsnNode.INSN:
-      return opcode;
+      case AbstractInsnNode.FIELD_INSN:
+        FieldInsnNode fin = (FieldInsnNode) ain;
+        return opcode + " " + fin.owner.replace('/', '.') + " " + Html.escape(fin.name) + " " + descToString(fin.desc);
+      case AbstractInsnNode.METHOD_INSN:
+        MethodInsnNode min = (MethodInsnNode) ain;
+        return opcode + " " + min.owner.replace('/', '.') + " " + Html.escape(min.name) + descToString(min.desc);
+      case AbstractInsnNode.VAR_INSN:
+        VarInsnNode vin = (VarInsnNode) ain;
+        return opcode + " " + vin.var;
+      case AbstractInsnNode.TYPE_INSN:
+        TypeInsnNode tin = (TypeInsnNode) ain;
+        return opcode + " " + descToString("L" + tin.desc + ";");
+      case AbstractInsnNode.MULTIANEWARRAY_INSN:
+        MultiANewArrayInsnNode mnin = (MultiANewArrayInsnNode) ain;
+        return opcode + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
+      case AbstractInsnNode.TABLESWITCH_INSN:
+        TableSwitchInsnNode ts = (TableSwitchInsnNode) ain;
+        return opcode + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream()
+                .map(OpFormat::labelToString)
+                .collect(Collectors.joining(", ")) + ", d: " + getLabelString(getLabelIndex(ts.dflt)) + "]";
+      case AbstractInsnNode.LOOKUPSWITCH_INSN:
+        LookupSwitchInsnNode ls = (LookupSwitchInsnNode) ain;
+        return opcode + " [Keys: " + ls.keys.stream().map(String::valueOf)
+                .collect(Collectors.joining(", ")) + "], [Labels: " + ls.labels.stream().map(OpFormat::labelToString)
+                .collect(Collectors.joining(", ")) + ", d: " + labelToString(ls.dflt) + "]";
+      case AbstractInsnNode.JUMP_INSN:
+        JumpInsnNode jin = (JumpInsnNode) ain;
+        return opcode + " " + labelToString(jin.label);
+      case AbstractInsnNode.LDC_INSN:
+        LdcInsnNode ldc = (LdcInsnNode) ain;
+        if (ldc.cst instanceof String) {
+          return opcode + Html.color("#10ac84", " \"" + Html.escape(Strings.min((String) ldc.cst, 128)) + "\"");
+        }
+        if (ldc.cst instanceof Type) {
+          return opcode + " Type " + descToString(((Type) ldc.cst).getDescriptor());
+        }
+        if (ldc.cst instanceof Handle) {
+          return opcode + " Handle " + handleToString((Handle) ldc.cst);
+        }
+        if (ldc.cst instanceof ConstantDynamic) {
+          ConstantDynamic dyn = (ConstantDynamic) ldc.cst;
+          return opcode + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
+        }
+        return opcode + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass()))
+                .getDescriptor()) + " " + ldc.cst.toString();
+      case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
+        InvokeDynamicInsnNode id = (InvokeDynamicInsnNode) ain;
+        return opcode + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays
+                .toString(id.bsmArgs) : "");
+      case AbstractInsnNode.INT_INSN:
+        return opcode + " " + getIntValue(ain);
+      case AbstractInsnNode.IINC_INSN:
+        IincInsnNode iinc = (IincInsnNode) ain;
+        return opcode + " " + iinc.var + (iinc.incr > 0 ? " +" : " ") + iinc.incr;
+      case AbstractInsnNode.LABEL:
+        LabelNode ln = (LabelNode) ain;
+        boolean hasLine = (ln.getNext() != null && ln.getNext().getType() == AbstractInsnNode.LINE);
+        return Html.mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln
+                .getNext()).line : "") + ":");
+      case AbstractInsnNode.INSN:
+        return opcode;
     }
     return "";
   }
@@ -679,7 +687,8 @@ public final class OpFormat implements Opcodes {
 
   public static String descToString(String desc) {
     if (desc.startsWith("(")) {
-      return "(" + Arrays.stream(Type.getArgumentTypes(desc)).map(OpFormat::getTypeClassName).collect(Collectors.joining(", ")) + ") " + getTypeClassName(Type.getReturnType(desc));
+      return "(" + Arrays.stream(Type.getArgumentTypes(desc)).map(OpFormat::getTypeClassName)
+              .collect(Collectors.joining(", ")) + ") " + getTypeClassName(Type.getReturnType(desc));
     } else {
       return getTypeClassName(Type.getType(desc));
     }
@@ -695,30 +704,30 @@ public final class OpFormat implements Opcodes {
 
   private static String colorForType(int type) {
     switch (type) {
-    case AbstractInsnNode.FIELD_INSN:
-      return "#ad5e10";
-    case AbstractInsnNode.METHOD_INSN:
-      return "#ad1037";
-    case AbstractInsnNode.VAR_INSN:
-    case AbstractInsnNode.MULTIANEWARRAY_INSN:
-      return "#ff6b6b";
-    case AbstractInsnNode.TYPE_INSN:
-      return "#48dbfb";
-    case AbstractInsnNode.TABLESWITCH_INSN:
-      return "#ff9ff3";
-    case AbstractInsnNode.LOOKUPSWITCH_INSN:
-      return "#f368e0";
-    case AbstractInsnNode.JUMP_INSN:
-      return "#576574";
-    case AbstractInsnNode.LDC_INSN:
-      return "#54a0ff";
-    case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
-      return "#5f27cd";
-    case AbstractInsnNode.INT_INSN:
-      return "#00d2d3";
-    case AbstractInsnNode.IINC_INSN:
-    case AbstractInsnNode.INSN:
-      return "#10adad";
+      case AbstractInsnNode.FIELD_INSN:
+        return "#ad5e10";
+      case AbstractInsnNode.METHOD_INSN:
+        return "#ad1037";
+      case AbstractInsnNode.VAR_INSN:
+      case AbstractInsnNode.MULTIANEWARRAY_INSN:
+        return "#ff6b6b";
+      case AbstractInsnNode.TYPE_INSN:
+        return "#48dbfb";
+      case AbstractInsnNode.TABLESWITCH_INSN:
+        return "#ff9ff3";
+      case AbstractInsnNode.LOOKUPSWITCH_INSN:
+        return "#f368e0";
+      case AbstractInsnNode.JUMP_INSN:
+        return "#576574";
+      case AbstractInsnNode.LDC_INSN:
+        return "#54a0ff";
+      case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
+        return "#5f27cd";
+      case AbstractInsnNode.INT_INSN:
+        return "#00d2d3";
+      case AbstractInsnNode.IINC_INSN:
+      case AbstractInsnNode.INSN:
+        return "#10adad";
     }
     return "#000000";
   }
@@ -728,7 +737,8 @@ public final class OpFormat implements Opcodes {
   }
 
   public static String getLabelString(int idx) {
-    return Html.mono(Html.bold(Html.color("#9269e2", idx > 25 ? String.valueOf(idx) : String.valueOf((char) (idx + 65)))));
+    return Html
+            .mono(Html.bold(Html.color("#9269e2", idx > 25 ? String.valueOf(idx) : String.valueOf((char) (idx + 65)))));
   }
 
   public static int getLabelIndex(AbstractInsnNode ain) {

@@ -15,7 +15,7 @@ import me.nov.threadtear.util.asm.*;
 public class VM extends ClassLoader implements Opcodes {
   public HashMap<String, Class<?>> loaded = new HashMap<>();
 
-  public static final String RT_REGEX = "((?:com\\.(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
+  public static final String RT_REGEX = "((?:com\\." + "(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
   private IVMReferenceHandler handler;
 
   public boolean noInitialization;
@@ -30,11 +30,13 @@ public class VM extends ClassLoader implements Opcodes {
 
   private Class<?> bytesToClass(String name, byte[] bytes) {
     if (loaded.containsKey(name))
-      throw new RuntimeException("class " + name + " is already defined");
+      throw new RuntimeException("class " + name + " is " + "already defined");
     if (isForbiddenName(name))
-      throw new RuntimeException(name + " is not an allowed class name");
+      throw new RuntimeException(name + " is not an " + "allowed class name");
     try {
-      Method define = ClassLoader.class.getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
+      Method define = ClassLoader.class
+              .getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class,
+                      ProtectionDomain.class);
       define.setAccessible(true);
       Class<?> c = (Class<?>) define.invoke(this, name, bytes, 0, bytes.length, null);
       resolveClass(c);
@@ -46,7 +48,7 @@ public class VM extends ClassLoader implements Opcodes {
       resolveClass(c);
       return c;
     } catch (Throwable t) {
-      Threadtear.logger.error("Failed to resolve class using defineClass", t);
+      Threadtear.logger.error("Failed to resolve class using " + "defineClass", t);
       return null;
     }
   }
@@ -62,7 +64,7 @@ public class VM extends ClassLoader implements Opcodes {
     if (name.contains("/"))
       throw new IllegalArgumentException();
     if (name.startsWith(threadtearPkg)) {
-      Threadtear.logger.warning("Dynamic class tried to access a threadtear package!");
+      Threadtear.logger.warning("Dynamic class tried to access a " + "threadtear package!");
       return null;
     }
     if (loaded.containsKey(name)) {
@@ -81,7 +83,8 @@ public class VM extends ClassLoader implements Opcodes {
     return loadedClass;
   }
 
-  private byte[] convert(String name, ClassNode node, boolean noInitialization, BiPredicate<String, String> removalPredicate) {
+  private byte[] convert(String name, ClassNode node, boolean noInitialization,
+                         BiPredicate<String, String> removalPredicate) {
     if (node == null) {
       if (dummyLoading) {
         ClassNode dummy = new ClassNode();
@@ -92,7 +95,8 @@ public class VM extends ClassLoader implements Opcodes {
       }
       return null;
     }
-    ClassNode vmnode = Conversion.toNode(Conversion.toBytecode0(node)); // clone ClassNode the easy way
+    ClassNode vmnode = Conversion.toNode(Conversion.toBytecode0(node)); // clone ClassNode the
+    // easy way
     vmnode.methods.forEach(m -> m.access = fixAccess(m.access));
     vmnode.fields.forEach(f -> f.access = fixAccess(f.access));
     vmnode.access = fixAccess(node.access);

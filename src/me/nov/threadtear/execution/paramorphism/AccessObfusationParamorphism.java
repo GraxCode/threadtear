@@ -15,7 +15,8 @@ import me.nov.threadtear.vm.*;
 
 public class AccessObfusationParamorphism extends Execution implements IVMReferenceHandler {
 
-  private static final String PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC = "\\(Ljava/lang/invoke/MethodHandles\\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)Ljava/lang/invoke/CallSite;";
+  private static final String PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC = "\\(Ljava/lang/invoke/MethodHandles\\$Lookup;" +
+          "Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)Ljava/lang/invoke/CallSite;";
   private static final String DEPTH_TEST_METHOD = "([Ljava/lang/StackTraceElement;I)I";
   private Map<String, Clazz> classes;
   private int encrypted;
@@ -24,8 +25,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
   private VM vm;
 
   public AccessObfusationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "Access obfuscation removal", "Tested on version 2.1.<br>This is unfinished: Doesn't work on constructors and static initializers.", ExecutionTag.RUNNABLE,
-        ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.PARAMORPHISM, "Access " + "obfuscation removal", "Tested on version 2.1" + ".<br>This is " +
+            "unfinished: Doesn't work on " + "constructors and static initializers.", ExecutionTag.RUNNABLE,
+            ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -35,17 +37,19 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references");
-    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some invokedynamics cannot be deobfuscated!");
+    logger.warning("Make sure all required libraries or " + "dynamic classes are in the jar itself, or " + "else some" +
+            " invokedynamics cannot be " + "deobfuscated!");
     classes.values().stream().forEach(this::patchThrowableDepth);
-    logger.info("Make sure to remove bad attributes first!");
-    logger.info("Starting decryption, this could take some time!");
+    logger.info("Make sure to remove bad attributes " + "first!");
+    logger.info("Starting decryption, this could take " + "some time!");
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No access obfuscation matching Paramorphism 2.1 have been found!");
+      logger.error("No access obfuscation matching " + "Paramorphism 2.1 have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25, encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted",
+            decryptionRatio <= 0.25, encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -69,7 +73,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
         for (int i = 0; i < m.instructions.size(); i++) {
           AbstractInsnNode ain = m.instructions.get(i);
           if (ain.getOpcode() == INVOKEDYNAMIC) {
-            // we need an own VM for each invokedynamic. this slows down everything but is the only option.
+            // we need an own VM for each invokedynamic.
+            // this slows down everything but is the only
+            // option.
             this.vm = VM.constructVM(this);
             vm.setDummyLoading(true);
             InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
@@ -77,7 +83,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
               Handle bsm = idin.bsm;
               if (bsm.getDesc().matches(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC)) {
                 if (!classes.containsKey(bsm.getOwner())) {
-                  logger.error("Missing decryption class: {}", bsm.getOwner());
+                  logger.error("Missing decryption class:" + " {}", bsm.getOwner());
                   continue;
                 }
                 encrypted++;
@@ -96,10 +102,12 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m), shortStacktrace(t));
+                  logger.error("Failed to get callsite " + "using classloader in {}, {}", referenceString(cn, m),
+                          shortStacktrace(t));
                 }
               } else if (verbose) {
-                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " + bsm.getDesc().equals(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC));
+                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner()
+                        .equals(cn.name) + " " + bsm.getDesc().equals(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC));
               }
             }
           }
@@ -113,9 +121,11 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     }
   }
 
-  // TODO seems to throw some exception sometimes, but works 90%
+  // TODO seems to throw some exception sometimes, but
+  //  works 90%
   private CallSite loadCallSiteFromVM(ClassNode cn, MethodNode m, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
-    ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism checks for method name and class name
+    ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism
+    // checks for method name and class name
 
     InsnList invoker = new InsnList();
     Type[] types = Type.getArgumentTypes(bsm.getDesc());
@@ -131,10 +141,12 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     vm.explicitlyPreload(proxy);
     Class<?> loadedProxy = vm.loadClass(proxy.name.replace('/', '.'));
     try {
-      List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
-        // extra arguments
-        // paramorphism stores those extra parameters in bsmArgs
-        args.addAll(Arrays.asList(idin.bsmArgs));
+      List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name, MethodType
+              .fromMethodDescriptorString(idin.desc, vm)));
+      // extra arguments
+      // paramorphism stores those extra parameters in
+      // bsmArgs
+      args.addAll(Arrays.asList(idin.bsmArgs));
       Method bootstrapBridge = loadedProxy.getDeclaredMethods()[0];
       return (CallSite) bootstrapBridge.invoke(null, args.toArray());
     } catch (IllegalArgumentException e) {

@@ -12,10 +12,14 @@ import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 
 /**
- * Analyzer that uses known stack values to handle known jumps without losing stack values. Only usable with CodeReferenceValue.
- * 
- * FIXME sometimes predicting jumps that shouldn't be predicted (sample: org.benf.cfr.reader.bytecode.analysis.parse.expression.AbstractExpression.class:dumpWithOuterPrecedence)
- *
+ * Analyzer that uses known stack values to handle known
+ * jumps without losing stack values. Only usable with
+ * CodeReferenceValue.
+ * <p>
+ * FIXME sometimes predicting jumps that shouldn't be
+ * predicted (sample: org.benf.cfr.reader.bytecode
+ * .analysis.parse.expression.AbstractExpression
+ * .class:dumpWithOuterPrecedence)
  */
 public class CodeAnalyzer implements Opcodes {
 
@@ -56,9 +60,11 @@ public class CodeAnalyzer implements Opcodes {
     instructionsToProcess = new int[insnListSize];
     numInstructionsToProcess = 0;
 
-    // For each exception handler, and each instruction within its range, record in
+    // For each exception handler, and each instruction
+    // within its range, record in
     // 'handlers' the
-    // fact that execution can flow from this instruction to the exception handler.
+    // fact that execution can flow from this instruction
+    // to the exception handler.
     for (int i = 0; i < method.tryCatchBlocks.size(); ++i) {
       TryCatchBlockNode tryCatchBlock = method.tryCatchBlocks.get(i);
       int startIndex = insnList.indexOf(tryCatchBlock.start);
@@ -73,13 +79,16 @@ public class CodeAnalyzer implements Opcodes {
       }
     }
 
-    // For each instruction, compute the subroutine to which it belongs.
-    // Follow the main 'subroutine', and collect the jsr instructions to nested
+    // For each instruction, compute the subroutine to
+    // which it belongs.
+    // Follow the main 'subroutine', and collect the jsr
+    // instructions to nested
     // subroutines.
     Subroutine main = new Subroutine(null, method.maxLocals, null);
     List<AbstractInsnNode> jsrInsns = new ArrayList<>();
     findSubroutine(0, main, jsrInsns);
-    // Follow the nested subroutines, and collect their own nested subroutines,
+    // Follow the nested subroutines, and collect their
+    // own nested subroutines,
     // until all
     // subroutines are found.
     Map<LabelNode, Subroutine> jsrSubroutines = new HashMap<>();
@@ -94,7 +103,8 @@ public class CodeAnalyzer implements Opcodes {
         subroutine.callers.add(jsrInsn);
       }
     }
-    // Clear the main 'subroutine', which is not a real subroutine (and was used
+    // Clear the main 'subroutine', which is not a real
+    // subroutine (and was used
     // only as an
     // intermediate step above to find the real ones).
     for (int i = 0; i < insnListSize; ++i) {
@@ -103,14 +113,16 @@ public class CodeAnalyzer implements Opcodes {
       }
     }
 
-    // Initializes the data structures for the control flow analysis.
+    // Initializes the data structures for the control
+    // flow analysis.
     Frame<CodeReferenceValue> currentFrame = computeInitialFrame(owner, method);
     merge(0, currentFrame, null);
     init(owner, method);
 
     // Control flow analysis.
     while (numInstructionsToProcess > 0) {
-      // Get and remove one instruction from the list of instructions to process.
+      // Get and remove one instruction from the list of
+      // instructions to process.
       int insnIndex = instructionsToProcess[--numInstructionsToProcess];
       Frame<CodeReferenceValue> oldFrame = frames[insnIndex];
       Subroutine subroutine = subroutines[insnIndex];
@@ -128,7 +140,9 @@ public class CodeAnalyzer implements Opcodes {
           newControlFlowEdge(insnIndex, insnIndex + 1);
         } else {
           // XXX here the hack happens
-          int jump = predictJump(currentFrame, insnNode.getOpcode()); // predict possible jump outcome before popping off stack in frame execution
+          int jump = predictJump(currentFrame, insnNode.getOpcode()); // predict possible jump
+          // outcome before popping off stack in frame
+          // execution
           currentFrame.init(oldFrame).execute(insnNode, interpreter);
           subroutine = subroutine == null ? null : new Subroutine(subroutine);
 
@@ -189,13 +203,14 @@ public class CodeAnalyzer implements Opcodes {
             }
           } else if (insnOpcode == RET) {
             if (subroutine == null) {
-              throw new AnalyzerException(insnNode, "RET instruction outside of a subroutine");
+              throw new AnalyzerException(insnNode, "RET " + "instruction outside of a " + "subroutine");
             }
             for (int i = 0; i < subroutine.callers.size(); ++i) {
               JumpInsnNode caller = subroutine.callers.get(i);
               int jsrInsnIndex = insnList.indexOf(caller);
               if (frames[jsrInsnIndex] != null) {
-                merge(jsrInsnIndex + 1, frames[jsrInsnIndex], currentFrame, subroutines[jsrInsnIndex], subroutine.localsUsed);
+                merge(jsrInsnIndex + 1, frames[jsrInsnIndex], currentFrame, subroutines[jsrInsnIndex],
+                        subroutine.localsUsed);
                 newControlFlowEdge(insnIndex, jsrInsnIndex + 1);
               }
             }
@@ -235,10 +250,11 @@ public class CodeAnalyzer implements Opcodes {
           }
         }
       } catch (AnalyzerException e) {
-        throw new AnalyzerException(e.node, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
+        throw new AnalyzerException(e.node, "Error at " + "instruction " + insnIndex + ": " + e.getMessage(), e);
       } catch (RuntimeException e) {
-        // DontCheck(IllegalCatch): can't be fixed, for backward compatibility.
-        throw new AnalyzerException(insnNode, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
+        // DontCheck(IllegalCatch): can't be fixed, for
+        // backward compatibility.
+        throw new AnalyzerException(insnNode, "Error at " + "instruction " + insnIndex + ": " + e.getMessage(), e);
       }
     }
 
@@ -246,8 +262,9 @@ public class CodeAnalyzer implements Opcodes {
   }
 
   /**
-   * XXX this predicts the outcome of a jump by knowing top frame values
-   * 
+   * XXX this predicts the outcome of a jump by knowing
+   * top frame values
+   *
    * @param frame
    * @param op
    * @return
@@ -260,22 +277,22 @@ public class CodeAnalyzer implements Opcodes {
       return 0;
     Object upperVal = up.getStackValueOrNull();
     switch (op) {
-    case IFEQ:
-      return ((Integer) upperVal) == 0 ? 1 : -1;
-    case IFNE:
-      return ((Integer) upperVal) != 0 ? 1 : -1;
-    case IFNULL:
-      return upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
-    case IFNONNULL:
-      return !upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
-    case IFGT:
-      return ((Integer) upperVal) > 0 ? 1 : -1;
-    case IFGE:
-      return ((Integer) upperVal) >= 0 ? 1 : -1;
-    case IFLT:
-      return ((Integer) upperVal) < 0 ? 1 : -1;
-    case IFLE:
-      return ((Integer) upperVal) <= 0 ? 1 : -1;
+      case IFEQ:
+        return ((Integer) upperVal) == 0 ? 1 : -1;
+      case IFNE:
+        return ((Integer) upperVal) != 0 ? 1 : -1;
+      case IFNULL:
+        return upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
+      case IFNONNULL:
+        return !upperVal.equals(ConstantTracker.NULL) ? 1 : -1;
+      case IFGT:
+        return ((Integer) upperVal) > 0 ? 1 : -1;
+      case IFGE:
+        return ((Integer) upperVal) >= 0 ? 1 : -1;
+      case IFLT:
+        return ((Integer) upperVal) < 0 ? 1 : -1;
+      case IFLE:
+        return ((Integer) upperVal) <= 0 ? 1 : -1;
     }
     if (frame.getStackSize() >= 2) {
       CodeReferenceValue low = frame.getStack(frame.getStackSize() - 2);
@@ -283,35 +300,36 @@ public class CodeAnalyzer implements Opcodes {
         return 0;
       Object lowerVal = low.getStackValueOrNull();
       switch (op) {
-      case IF_ICMPEQ:
-        return upperVal.equals(lowerVal) ? 1 : -1;
-      case IF_ICMPNE:
-        return upperVal.equals(lowerVal) ? -1 : 1;
-      case IF_ICMPLT:
-        return (Integer) lowerVal < (Integer) upperVal ? 1 : -1;
-      case IF_ICMPGE:
-        return (Integer) lowerVal >= (Integer) upperVal ? 1 : -1;
-      case IF_ICMPGT:
-        return (Integer) lowerVal > (Integer) upperVal ? 1 : -1;
-      case IF_ICMPLE:
-        return (Integer) lowerVal <= (Integer) upperVal ? 1 : -1;
-      case IF_ACMPEQ:
-        return up.equals(low) ? 1 : -1;
-      case IF_ACMPNE:
-        return !up.equals(low) ? 1 : -1;
+        case IF_ICMPEQ:
+          return upperVal.equals(lowerVal) ? 1 : -1;
+        case IF_ICMPNE:
+          return upperVal.equals(lowerVal) ? -1 : 1;
+        case IF_ICMPLT:
+          return (Integer) lowerVal < (Integer) upperVal ? 1 : -1;
+        case IF_ICMPGE:
+          return (Integer) lowerVal >= (Integer) upperVal ? 1 : -1;
+        case IF_ICMPGT:
+          return (Integer) lowerVal > (Integer) upperVal ? 1 : -1;
+        case IF_ICMPLE:
+          return (Integer) lowerVal <= (Integer) upperVal ? 1 : -1;
+        case IF_ACMPEQ:
+          return up.equals(low) ? 1 : -1;
+        case IF_ACMPNE:
+          return !up.equals(low) ? 1 : -1;
       }
     }
     return 0;
 
   }
 
-  private void findSubroutine(final int insnIndex, final Subroutine subroutine, final List<AbstractInsnNode> jsrInsns) throws AnalyzerException {
+  private void findSubroutine(final int insnIndex, final Subroutine subroutine,
+                              final List<AbstractInsnNode> jsrInsns) throws AnalyzerException {
     ArrayList<Integer> instructionIndicesToProcess = new ArrayList<>();
     instructionIndicesToProcess.add(insnIndex);
     while (!instructionIndicesToProcess.isEmpty()) {
       int currentInsnIndex = instructionIndicesToProcess.remove(instructionIndicesToProcess.size() - 1);
       if (currentInsnIndex < 0 || currentInsnIndex >= insnListSize) {
-        throw new AnalyzerException(null, "Execution can fall off the end of the code");
+        throw new AnalyzerException(null, "Execution can " + "fall off the end of the code");
       }
       if (subroutines[currentInsnIndex] != null) {
         continue;
@@ -319,10 +337,12 @@ public class CodeAnalyzer implements Opcodes {
       subroutines[currentInsnIndex] = new Subroutine(subroutine);
       AbstractInsnNode currentInsn = insnList.get(currentInsnIndex);
 
-      // Push the normal successors of currentInsn onto instructionIndicesToProcess.
+      // Push the normal successors of currentInsn onto
+      // instructionIndicesToProcess.
       if (currentInsn instanceof JumpInsnNode) {
         if (currentInsn.getOpcode() == JSR) {
-          // Do not follow a jsr, it leads to another subroutine!
+          // Do not follow a jsr, it leads to another
+          // subroutine!
           jsrInsns.add(currentInsn);
         } else {
           JumpInsnNode jumpInsn = (JumpInsnNode) currentInsn;
@@ -344,7 +364,8 @@ public class CodeAnalyzer implements Opcodes {
         }
       }
 
-      // Push the exception handler successors of currentInsn onto
+      // Push the exception handler successors of
+      // currentInsn onto
       // instructionIndicesToProcess.
       List<TryCatchBlockNode> insnHandlers = handlers[currentInsnIndex];
       if (insnHandlers != null) {
@@ -353,24 +374,25 @@ public class CodeAnalyzer implements Opcodes {
         }
       }
 
-      // Push the next instruction, if the control flow can go from currentInsn to the
+      // Push the next instruction, if the control flow
+      // can go from currentInsn to the
       // next.
       switch (currentInsn.getOpcode()) {
-      case GOTO:
-      case RET:
-      case TABLESWITCH:
-      case LOOKUPSWITCH:
-      case IRETURN:
-      case LRETURN:
-      case FRETURN:
-      case DRETURN:
-      case ARETURN:
-      case RETURN:
-      case ATHROW:
-        break;
-      default:
-        instructionIndicesToProcess.add(currentInsnIndex + 1);
-        break;
+        case GOTO:
+        case RET:
+        case TABLESWITCH:
+        case LOOKUPSWITCH:
+        case IRETURN:
+        case LRETURN:
+        case FRETURN:
+        case DRETURN:
+        case ARETURN:
+        case RETURN:
+        case ATHROW:
+          break;
+        default:
+          instructionIndicesToProcess.add(currentInsnIndex + 1);
+          break;
       }
     }
   }
@@ -461,8 +483,9 @@ public class CodeAnalyzer implements Opcodes {
     }
   }
 
-  private void merge(final int insnIndex, final Frame<CodeReferenceValue> frameBeforeJsr, final Frame<CodeReferenceValue> frameAfterRet, final Subroutine subroutineBeforeJsr,
-      final boolean[] localsUsed) throws AnalyzerException {
+  private void merge(final int insnIndex, final Frame<CodeReferenceValue> frameBeforeJsr,
+                     final Frame<CodeReferenceValue> frameAfterRet, final Subroutine subroutineBeforeJsr,
+                     final boolean[] localsUsed) throws AnalyzerException {
     frameAfterRet.merge(frameBeforeJsr, localsUsed);
 
     boolean changed;

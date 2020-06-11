@@ -43,8 +43,10 @@ public class AnalysisFrame extends JFrame {
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(archive, clazz));
-    tabbedPane.addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
+    tabbedPane.addTab("Decompiler", IconLoader.get()
+            .loadSVGIcon("res/decompile.svg", false), new DecompilerPanel(archive, clazz));
+    tabbedPane
+            .addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
     tabbedPane.addTab("Graph", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new CFGPanel(clazz.node));
 
     cp.add(tabbedPane, BorderLayout.CENTER);

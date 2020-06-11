@@ -14,7 +14,8 @@ public class MemberAccessValue extends CodeReferenceValue {
   public String name;
   public String desc;
 
-  public MemberAccessValue(BasicValue type, CodeReferenceValue ownerReference, AbstractInsnNode node, String owner, String name, String desc) {
+  public MemberAccessValue(BasicValue type, CodeReferenceValue ownerReference, AbstractInsnNode node, String owner,
+                           String name, String desc) {
     super(type, node);
     if (!(node instanceof MethodInsnNode || node instanceof FieldInsnNode)) {
       throw new IllegalArgumentException();
@@ -60,8 +61,9 @@ public class MemberAccessValue extends CodeReferenceValue {
     if (node != other.node)
       return false;
     if (owner == null) {
-        return other.owner == null;
-    } else return owner.equals(other.owner);
+      return other.owner == null;
+    } else
+      return owner.equals(other.owner);
   }
 
   @Override
@@ -71,20 +73,20 @@ public class MemberAccessValue extends CodeReferenceValue {
       list.add(ownerRef.cloneInstructions());
     }
     switch (node.getOpcode()) {
-    case GETSTATIC:
-    case PUTSTATIC:
-    case GETFIELD:
-    case PUTFIELD:
-      list.add(new FieldInsnNode(node.getOpcode(), owner, name, desc));
-      break;
-    case INVOKEINTERFACE:
-    case INVOKESTATIC:
-    case INVOKEVIRTUAL:
-    case INVOKESPECIAL:
-      list.add(new MethodInsnNode(node.getOpcode(), owner, name, desc));
-      break;
-    default:
-      throw new IllegalArgumentException();
+      case GETSTATIC:
+      case PUTSTATIC:
+      case GETFIELD:
+      case PUTFIELD:
+        list.add(new FieldInsnNode(node.getOpcode(), owner, name, desc));
+        break;
+      case INVOKEINTERFACE:
+      case INVOKESTATIC:
+      case INVOKEVIRTUAL:
+      case INVOKESPECIAL:
+        list.add(new MethodInsnNode(node.getOpcode(), owner, name, desc));
+        break;
+      default:
+        throw new IllegalArgumentException();
     }
     return list;
   }

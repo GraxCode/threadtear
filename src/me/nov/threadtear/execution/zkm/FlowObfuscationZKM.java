@@ -14,7 +14,8 @@ import java.util.function.Predicate;
 public class FlowObfuscationZKM extends Execution {
 
   public FlowObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "Flow obfuscation removal", "Tested on ZKM 14, could work on newer versions too.", ExecutionTag.POSSIBLE_DAMAGE, ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.ZKM, "Flow obfuscation " + "removal", "Tested on ZKM 14, could work on " + "newer " +
+            "versions too.", ExecutionTag.POSSIBLE_DAMAGE, ExecutionTag.BETTER_DECOMPILE);
   }
 
   private int replaced;
@@ -24,11 +25,12 @@ public class FlowObfuscationZKM extends Execution {
     replaced = 0;
     logger.info("Removing all garbage jumps");
     classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(this::removeZKMJumps));
-    logger.info("Removed {} jumps matching ZKM pattern in total", replaced);
+    logger.info("Removed {} jumps matching ZKM pattern in" + " total", replaced);
     return replaced > 0;
   }
 
-  private static final Predicate<Integer> singleJump = op -> (op >= IFEQ && op <= IFLE) || op == IFNULL || op == IFNONNULL;
+  private static final Predicate<Integer> singleJump =
+          op -> (op >= IFEQ && op <= IFLE) || op == IFNULL || op == IFNONNULL;
 
   public void removeZKMJumps(MethodNode mn) {
     for (AbstractInsnNode ain : mn.instructions.toArray()) {

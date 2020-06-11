@@ -7,7 +7,8 @@ import org.objectweb.asm.tree.MethodNode;
 import java.util.Objects;
 
 /**
- * A comparable method signature that includes its owner class's name.
+ * A comparable method signature that includes its owner
+ * class's name.
  */
 public class MethodSignature {
   private final String owner;

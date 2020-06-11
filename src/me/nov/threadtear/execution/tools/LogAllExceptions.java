@@ -10,7 +10,8 @@ import me.nov.threadtear.util.asm.Instructions;
 public class LogAllExceptions extends Execution {
 
   public LogAllExceptions() {
-    super(ExecutionCategory.TOOLS, "Log all exceptions", "Adds .printStackTrace() in every try catch block handler.", ExecutionTag.RUNNABLE);
+    super(ExecutionCategory.TOOLS, "Log all exceptions", "Adds .printStackTrace() in every try catch " + "block " +
+            "handler.", ExecutionTag.RUNNABLE);
   }
 
   @Override
@@ -22,12 +23,14 @@ public class LogAllExceptions extends Execution {
         AbstractInsnNode firstInstructionAfterHandler = Instructions.getRealNext(tcb.handler);
         if (!printsAlready(firstInstructionAfterHandler)) {
           m.instructions.insertBefore(firstInstructionAfterHandler, new InsnNode(DUP));
-          m.instructions.insertBefore(firstInstructionAfterHandler, new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V"));
+          m.instructions
+                  .insertBefore(firstInstructionAfterHandler, new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable"
+                          , "printStackTrace", "()V"));
         }
       });
       m.maxStack = Math.max(m.maxStack, 2);
     });
-    logger.info("Inserted .printStackTrace() in every catch block!");
+    logger.info("Inserted .printStackTrace() in every " + "catch block!");
     return true;
   }
 

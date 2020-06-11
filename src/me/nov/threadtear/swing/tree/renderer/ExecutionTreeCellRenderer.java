@@ -27,7 +27,9 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
   }
 
   @Override
-  public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean sel, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
+  public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean sel,
+                                                final boolean expanded, final boolean leaf, final int row,
+                                                final boolean hasFocus) {
     super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
     if (node instanceof ExecutionTreeNode) {
@@ -39,16 +41,16 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
           this.setIcon(this.executionPurple);
         } else {
           switch (exec.type) {
-          case ANALYSIS:
-            this.setIcon(this.executionGreen);
-            break;
-          case CLEANING:
-          case TOOLS:
-            this.setIcon(this.executionBlue);
-            break;
-          default:
-            this.setIcon(this.executionRed);
-            break;
+            case ANALYSIS:
+              this.setIcon(this.executionGreen);
+              break;
+            case CLEANING:
+            case TOOLS:
+              this.setIcon(this.executionBlue);
+              break;
+            default:
+              this.setIcon(this.executionRed);
+              break;
           }
         }
       } else {

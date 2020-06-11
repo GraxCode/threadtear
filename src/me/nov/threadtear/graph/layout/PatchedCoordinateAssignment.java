@@ -15,16 +15,16 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 
 /**
- * Patched hierarchical layout to route directly cross-group edges
- * 
- * @author Loison
+ * Patched hierarchical layout to route directly
+ * cross-group edges
  *
+ * @author Loison
  */
 public class PatchedCoordinateAssignment extends mxCoordinateAssignment {
 
   /**
    * Constructor
-   * 
+   *
    * @param layout
    * @param intraCellSpacing
    * @param interRankCellSpacing
@@ -32,19 +32,20 @@ public class PatchedCoordinateAssignment extends mxCoordinateAssignment {
    * @param initialX
    * @param parallelEdgeSpacing
    */
-  public PatchedCoordinateAssignment(mxHierarchicalLayout layout, double intraCellSpacing, double interRankCellSpacing, int orientation,
-      double initialX, double parallelEdgeSpacing) {
+  public PatchedCoordinateAssignment(mxHierarchicalLayout layout, double intraCellSpacing,
+                                     double interRankCellSpacing, int orientation, double initialX,
+                                     double parallelEdgeSpacing) {
     super(layout, intraCellSpacing, interRankCellSpacing, orientation, initialX, parallelEdgeSpacing);
   }
 
   /**
-   * Sets the cell locations in the facade to those stored after this layout
+   * Sets the cell locations in the facade to those
+   * stored after this layout
    * processing step has completed.
-   * 
-   * @param graph
-   *          the facade describing the input graph
-   * @param model
-   *          an internal model of the hierarchical layout
+   *
+   * @param graph the facade describing the input graph
+   * @param model an internal model of the hierarchical
+   *              layout
    */
   @Override
   protected void setCellLocations(mxGraph graph, mxGraphHierarchyModel model) {
@@ -65,8 +66,10 @@ public class PatchedCoordinateAssignment extends mxCoordinateAssignment {
     Map<Object, mxGraphHierarchyEdge> edges = model.getEdgeMapper();
     Map<Object, mxGraphHierarchyNode> vertices = model.getVertexMapper();
 
-    // Process vertices all first, since they define the lower and 
-    // limits of each rank. Between these limits lie the channels
+    // Process vertices all first, since they define the
+    // lower and
+    // limits of each rank. Between these limits lie the
+    // channels
     // where the edges can be routed across the graph
 
     for (mxGraphHierarchyNode cell : vertices.values()) {
@@ -83,15 +86,18 @@ public class PatchedCoordinateAssignment extends mxCoordinateAssignment {
 
     // MODIF FLO : enum is not visible
 
-    // Post process edge styles. Needs the vertex locations set for initial
+    // Post process edge styles. Needs the vertex
+    // locations set for initial
     // values of the top and bottoms of each rank
     //if (this.edgeStyle == HierarchicalEdgeStyle.ORTHOGONAL
-    //        || this.edgeStyle == HierarchicalEdgeStyle.POLYLINE)
+    //        || this.edgeStyle == HierarchicalEdgeStyle
+    //        .POLYLINE)
     //{
     localEdgeProcessing(model);
     //}
 
-    // MODIF FLO : remove jetty and ranks for cross-groups edges : they are garbled
+    // MODIF FLO : remove jetty and ranks for
+    // cross-groups edges : they are garbled
 
     for (mxGraphAbstractHierarchyCell cell : edges.values()) {
       mxGraphHierarchyEdge edge = (mxGraphHierarchyEdge) cell;

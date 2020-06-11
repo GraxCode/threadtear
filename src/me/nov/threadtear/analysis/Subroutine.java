@@ -11,23 +11,32 @@ import org.objectweb.asm.tree.*;
  */
 public final class Subroutine {
 
-  /** The start of this subroutine. */
+  /**
+   * The start of this subroutine.
+   */
   public final LabelNode start;
 
   /**
-   * The local variables that are read or written by this subroutine. The i-th element is true if and only if the local variable at index i is read or written by this subroutine.
+   * The local variables that are read or written by this
+   * subroutine. The i-th element is true if and only if
+   * the local variable at index i is read or written by
+   * this subroutine.
    */
   public final boolean[] localsUsed;
 
-  /** The JSR instructions that jump to this subroutine. */
+  /**
+   * The JSR instructions that jump to this subroutine.
+   */
   public final List<JumpInsnNode> callers;
 
   /**
    * Constructs a new {@link Subroutine}.
    *
    * @param start     the start of this subroutine.
-   * @param maxLocals the local variables that are read or written by this subroutine.
-   * @param caller    a JSR instruction that jump to this subroutine.
+   * @param maxLocals the local variables that are read
+   *                  or written by this subroutine.
+   * @param caller    a JSR instruction that jump to this
+   *                  subroutine.
    */
   public Subroutine(final LabelNode start, final int maxLocals, final JumpInsnNode caller) {
     this.start = start;
@@ -48,11 +57,18 @@ public final class Subroutine {
   }
 
   /**
-   * Merges the given subroutine into this subroutine. The local variables read or written by the given subroutine are marked as read or written by this one, and the callers of the
-   * given subroutine are added as callers of this one (if both have the same start).
+   * Merges the given subroutine into this subroutine.
+   * The local variables read or written by the given
+   * subroutine are marked as read or written by this
+   * one, and the callers of the
+   * given subroutine are added as callers of this one
+   * (if both have the same start).
    *
-   * @param subroutine another subroutine. This subroutine is left unchanged by this method.
-   * @return whether this subroutine has been modified by this method.
+   * @param subroutine another subroutine. This
+   *                   subroutine is left unchanged by
+   *                   this method.
+   * @return whether this subroutine has been modified by
+   * this method.
    */
   public boolean merge(final Subroutine subroutine) {
     boolean changed = false;

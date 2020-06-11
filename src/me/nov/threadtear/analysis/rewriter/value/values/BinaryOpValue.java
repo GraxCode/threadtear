@@ -51,8 +51,9 @@ public class BinaryOpValue extends CodeReferenceValue {
     if (node.getOpcode() != other.node.getOpcode())
       return false;
     if (right == null) {
-        return other.right == null;
-    } else return right.equals(other.right);
+      return other.right == null;
+    } else
+      return right.equals(other.right);
   }
 
   @Override
@@ -81,84 +82,85 @@ public class BinaryOpValue extends CodeReferenceValue {
     Number num1 = (Number) left.getStackValueOrNull();
     Number num2 = (Number) right.getStackValueOrNull();
     switch (node.getOpcode()) {
-    case IADD:
-      return num1.intValue() + num2.intValue();
-    case ISUB:
-      return num1.intValue() - num2.intValue();
-    case IMUL:
-      return num1.intValue() * num2.intValue();
-    case IDIV:
-      return num1.intValue() / num2.intValue();
-    case IREM:
-      return num1.intValue() % num2.intValue();
-    case ISHL:
-      return num1.intValue() << num2.intValue();
-    case ISHR:
-      return num1.intValue() >> num2.intValue();
-    case IUSHR:
-      return num1.intValue() >>> num2.intValue();
-    case IAND:
-      return num1.intValue() & num2.intValue();
-    case IOR:
-      return num1.intValue() | num2.intValue();
-    case IXOR:
-      return num1.intValue() ^ num2.intValue();
-    case FADD:
-      return num1.floatValue() + num2.floatValue();
-    case FSUB:
-      return num1.floatValue() - num2.floatValue();
-    case FMUL:
-      return num1.floatValue() * num2.floatValue();
-    case FDIV:
-      return num1.floatValue() / num2.floatValue();
-    case FREM:
-      return num1.floatValue() % num2.floatValue();
-    case LADD:
-      return num1.longValue() + num2.longValue();
-    case LSUB:
-      return num1.longValue() - num2.longValue();
-    case LMUL:
-      return num1.longValue() * num2.longValue();
-    case LDIV:
-      return num1.longValue() / num2.longValue();
-    case LREM:
-      return num1.longValue() % num2.longValue();
-    case LSHL:
-      return num1.longValue() << num2.longValue();
-    case LSHR:
-      return num1.longValue() >> num2.longValue();
-    case LUSHR:
-      return num1.longValue() >>> num2.longValue();
-    case LAND:
-      return num1.longValue() & num2.longValue();
-    case LOR:
-      return num1.longValue() | num2.longValue();
-    case LXOR:
-      return num1.longValue() ^ num2.longValue();
-    case DADD:
-      return num1.doubleValue() + num2.doubleValue();
-    case DSUB:
-      return num1.doubleValue() - num2.doubleValue();
-    case DMUL:
-      return num1.doubleValue() * num2.doubleValue();
-    case DDIV:
-      return num1.doubleValue() / num2.doubleValue();
-    case DREM:
-      return num1.doubleValue() % num2.doubleValue();
+      case IADD:
+        return num1.intValue() + num2.intValue();
+      case ISUB:
+        return num1.intValue() - num2.intValue();
+      case IMUL:
+        return num1.intValue() * num2.intValue();
+      case IDIV:
+        return num1.intValue() / num2.intValue();
+      case IREM:
+        return num1.intValue() % num2.intValue();
+      case ISHL:
+        return num1.intValue() << num2.intValue();
+      case ISHR:
+        return num1.intValue() >> num2.intValue();
+      case IUSHR:
+        return num1.intValue() >>> num2.intValue();
+      case IAND:
+        return num1.intValue() & num2.intValue();
+      case IOR:
+        return num1.intValue() | num2.intValue();
+      case IXOR:
+        return num1.intValue() ^ num2.intValue();
+      case FADD:
+        return num1.floatValue() + num2.floatValue();
+      case FSUB:
+        return num1.floatValue() - num2.floatValue();
+      case FMUL:
+        return num1.floatValue() * num2.floatValue();
+      case FDIV:
+        return num1.floatValue() / num2.floatValue();
+      case FREM:
+        return num1.floatValue() % num2.floatValue();
+      case LADD:
+        return num1.longValue() + num2.longValue();
+      case LSUB:
+        return num1.longValue() - num2.longValue();
+      case LMUL:
+        return num1.longValue() * num2.longValue();
+      case LDIV:
+        return num1.longValue() / num2.longValue();
+      case LREM:
+        return num1.longValue() % num2.longValue();
+      case LSHL:
+        return num1.longValue() << num2.longValue();
+      case LSHR:
+        return num1.longValue() >> num2.longValue();
+      case LUSHR:
+        return num1.longValue() >>> num2.longValue();
+      case LAND:
+        return num1.longValue() & num2.longValue();
+      case LOR:
+        return num1.longValue() | num2.longValue();
+      case LXOR:
+        return num1.longValue() ^ num2.longValue();
+      case DADD:
+        return num1.doubleValue() + num2.doubleValue();
+      case DSUB:
+        return num1.doubleValue() - num2.doubleValue();
+      case DMUL:
+        return num1.doubleValue() * num2.doubleValue();
+      case DDIV:
+        return num1.doubleValue() / num2.doubleValue();
+      case DREM:
+        return num1.doubleValue() % num2.doubleValue();
 
-    // compare instructions not tested, could return wrong result
-    case LCMP:
-      return Long.compare(num1.longValue(), num2.longValue());
-    case FCMPL:
-    case FCMPG:
-      // no NaN handling, could affect results
-      return Float.compare(num1.longValue(), num2.longValue());
-    case DCMPL:
-    case DCMPG:
-      // no NaN handling, could affect results
-      return Double.compare(num1.longValue(), num2.longValue());
-    default:
-      return null;
+      // compare instructions not tested, could return
+      // wrong result
+      case LCMP:
+        return Long.compare(num1.longValue(), num2.longValue());
+      case FCMPL:
+      case FCMPG:
+        // no NaN handling, could affect results
+        return Float.compare(num1.longValue(), num2.longValue());
+      case DCMPL:
+      case DCMPG:
+        // no NaN handling, could affect results
+        return Double.compare(num1.longValue(), num2.longValue());
+      default:
+        return null;
     }
   }
 }
