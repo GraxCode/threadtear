@@ -111,7 +111,12 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
     // we need this because stringer checks for
     // stacktrace method name and class
 
-    ClassNode decryptionMethodOwner = classes.get(min.owner).node;
+    final Clazz owner = classes.get(min.owner);
+    if (owner == null) {
+      logger.error("Could not find owner class in class list");
+      return null;
+    }
+    ClassNode decryptionMethodOwner = owner.node;
     if (decryptionMethodOwner == null)
       return null;
     vm.explicitlyPreload(fakeInvocationClone); // proxy

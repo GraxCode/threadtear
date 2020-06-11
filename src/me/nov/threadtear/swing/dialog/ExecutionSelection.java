@@ -94,6 +94,7 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new RestoreSourceFiles());
       addExecution(root, new ReobfuscateClassNames());
       addExecution(root, new ReobfuscateMembers());
+      addExecution(root, new ReobfuscateVariableNames());
       addExecution(root, new RemoveMonitors());
       addExecution(root, new RemoveTCBs());
 

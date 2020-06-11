@@ -266,7 +266,7 @@ public final class Instructions implements Opcodes {
       }
     }
     if (mn.tryCatchBlocks != null && methodRemove != null) {
-      mn.tryCatchBlocks.removeIf(tcb -> methodRemove.test(tcb.type, ""));
+      mn.tryCatchBlocks.removeIf(tcb -> methodRemove.test(tcb.type == null ? "java/lang/Throwable" : tcb.type, ""));
     }
   }
 
