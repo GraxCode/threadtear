@@ -38,7 +38,7 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
   private String getTopName() {
     String[] split = member.node.name.split("/");
     String topName = Strings.min(split[split.length - 1], 50);
-    topName += " " + Html.color("#666666", member.getMetadataString());
+    topName += " <font size=-2>" + Html.color("#666666", member.getMetadataString());
     return topName;
   }
 

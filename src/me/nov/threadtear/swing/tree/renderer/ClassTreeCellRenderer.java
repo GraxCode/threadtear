@@ -18,11 +18,13 @@ import me.nov.threadtear.util.asm.Access;
 public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Opcodes {
   private static final long serialVersionUID = 1L;
 
-  private static final Icon pack, clazz, enu, itf, failOverlay, ignoreOverlay;
+  private static final Icon pack, clazz, innerClazz, mainClazz, enu, itf, failOverlay, ignoreOverlay;
 
   static {
     pack = IconLoader.get().loadSVGIcon("res/package.svg", false);
     clazz = IconLoader.get().loadSVGIcon("res/class.svg", false);
+    innerClazz = IconLoader.get().loadSVGIcon("res/innerClass.svg", false);
+    mainClazz = IconLoader.get().loadSVGIcon("res/mainClass.svg", false);
     enu = IconLoader.get().loadSVGIcon("res/enum.svg", false);
     itf = IconLoader.get().loadSVGIcon("res/interface.svg", false);
     failOverlay = IconLoader.get().loadSVGIcon("res/failure.svg", 10, 10, false);
@@ -41,8 +43,14 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
           this.setIcon(itf);
         } else if (Access.isEnum(cn.access)) {
           this.setIcon(enu);
-        } else {
-          this.setIcon(clazz);
+        }  else {
+          if (cn.methods.stream().anyMatch(mn -> mn.name.equals("main") && mn.desc.equals("([Ljava/lang/String;)V"))) {
+            this.setIcon(mainClazz);
+          } else if (cn.name.contains("$") && cn.outerClass != null) {
+            this.setIcon(innerClazz);
+          } else {
+            this.setIcon(clazz);
+          }
         }
         if (!member.failures.isEmpty()) {
           this.setToolTipText("<font color=\"#ff6b6b\">" + member.failures.stream().collect(Collectors.joining("<br><hr><font color=\"#ff6b6b\">")));
