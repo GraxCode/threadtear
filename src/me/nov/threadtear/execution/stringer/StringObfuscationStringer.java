@@ -16,16 +16,17 @@ import me.nov.threadtear.vm.*;
 
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-  private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX = "\\(Ljava/lang/Object;" +
-          "[^\\[L]?[^\\[L]?[^\\[L]?[^\\[L]?\\)Ljava/lang/String;";
+  private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX =
+          "\\(Ljava/lang/Object;" + "[^\\[L]?[^\\[L]?[^\\[L]?[^\\[L]?\\)Ljava/lang/String;";
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
   private boolean verbose;
 
   public StringObfuscationStringer() {
-    super(ExecutionCategory.STRINGER, "String obfuscation" + " removal", "Works for version 3 - 9.<br>Make" + " sure " +
-            "to decrypt access obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.STRINGER, "String obfuscation" + " removal",
+            "Works for version 3 - 9.<br>Make" + " sure " + "to decrypt access obfuscation first.",
+            ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   /*
@@ -125,7 +126,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     return new AbstractInsnNode[]{ain};
   }
 
-  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame) throws Exception {
+  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, Frame<ConstantValue> frame)
+          throws Exception {
     if (frame == null) {
       if (verbose) {
         logger.error("Unvisited frame in {}: {}", referenceString(cn, m), frame);
@@ -152,8 +154,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       ConstantValue stackValue = frame.getStack(frame.getStackSize() - arguments + i);
       if (!stackValue.isKnown()) {
         if (verbose) {
-          logger.error("Stack index " + i + " is unknown " + "in " + cn.name + "." + m.name + ": " + "field type: " + proxyField
-                  .getType().getName() + ", stack type: " + stackValue.getType());
+          logger.error("Stack index " + i + " is unknown " + "in " + cn.name + "." + m.name + ": " + "field type: " +
+                  proxyField.getType().getName() + ", stack type: " + stackValue.getType());
         }
         return null;
       }
@@ -230,8 +232,8 @@ public class StringObfuscationStringer extends Execution implements IVMReference
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
       if (!values.get(0).isKnown()) {
         if (verbose) {

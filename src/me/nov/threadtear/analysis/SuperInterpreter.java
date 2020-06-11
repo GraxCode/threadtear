@@ -10,8 +10,8 @@ public class SuperInterpreter extends BasicInterpreter {
 
   @Override
   public BasicValue newValue(Type type) {
-    return type != null && (type.getSort() == Type.OBJECT || type
-            .getSort() == Type.ARRAY) ? new BasicValue(type) : super.newValue(type);
+    return type != null && (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) ? new BasicValue(type) :
+            super.newValue(type);
   }
 
   @Override

@@ -84,9 +84,16 @@ public class Threadtear extends JFrame {
     JMenuItem laf = new JMenuItem("Look and feel settings");
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
     JMenuItem about = new JMenuItem("About threadtear " + Utils.getVersion());
-    about.addActionListener(l -> JOptionPane
-            .showMessageDialog(this, "<html>This tool is " + "not intended to produce runnable " + "code, but rather " +
-                    "analyzable code" + ".<br>Add executions to the list on " + "the left side. Make sure to have " + "them in right order." + "<br>If you " + "click \"Run\", they will get " + "executed in order and transform the " + "loaded classes.<br><br>Threadtear " + "was made by <i>noverify</i> a.k.a " + "<i>GraxCode</i> in 2020.<br><br>" + "This project is licensed under GNU " + "GENERAL PUBLIC LICENSE Version 3" + ".<br>You are welcome to contribute " + "to this project on " + "GitHub!<br><br><b>Do <i>NOT</i> use " + "this on files you don't have legal " + "rights for!</b>", "About", JOptionPane.INFORMATION_MESSAGE));
+    about.addActionListener(l -> JOptionPane.showMessageDialog(this,
+            "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
+                    ".<br>Add executions to the list on " + "the left side. Make sure to have " +
+                    "them in right order." + "<br>If you " + "click \"Run\", they will get " +
+                    "executed in order and transform the " + "loaded classes.<br><br>Threadtear " +
+                    "was made by <i>noverify</i> a.k.a " + "<i>GraxCode</i> in 2020.<br><br>" +
+                    "This project is licensed under GNU " + "GENERAL PUBLIC LICENSE Version 3" +
+                    ".<br>You are welcome to contribute " + "to this project on " +
+                    "GitHub!<br><br><b>Do <i>NOT</i> use " + "this on files you don't have legal " + "rights for!</b>",
+            "About", JOptionPane.INFORMATION_MESSAGE));
     help.add(about);
     help.add(laf);
     bar.add(help);
@@ -160,8 +167,8 @@ public class Threadtear extends JFrame {
         logger.info("Executing " + e.getClass().getName());
         boolean success = e.execute(map, verbose);
         logger.collectErrors(null);
-        logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure", (System
-                .currentTimeMillis() - ms));
+        logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure",
+                (System.currentTimeMillis() - ms));
         logFrame.append("-----------------------------------------------------------\n");
       });
       classes.addAll(ignoredClasses); // re-add ignored

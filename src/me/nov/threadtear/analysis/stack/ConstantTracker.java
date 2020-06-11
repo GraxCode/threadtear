@@ -29,8 +29,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     this.referenceHandler = referenceHandler;
   }
 
-  public ConstantTracker(IConstantReferenceHandler referenceHandler, boolean isStatic, int localVariables,
-                         String descr, Object[] args) {
+  public ConstantTracker(IConstantReferenceHandler referenceHandler, boolean isStatic, int localVariables, String descr,
+                         Object[] args) {
     super(ASM8);
     this.referenceHandler = referenceHandler;
     this.desc = Type.getArgumentTypes(descr);
@@ -208,7 +208,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
   }
 
   @Override
-  public ConstantValue binaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b) throws AnalyzerException {
+  public ConstantValue binaryOperation(AbstractInsnNode insn, ConstantValue a, ConstantValue b)
+          throws AnalyzerException {
     BasicValue v = basic.binaryOperation(insn, a.getType(), b.getType());
     switch (insn.getOpcode()) {
       case BALOAD:
@@ -387,7 +388,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
   }
 
   @Override
-  public ConstantValue naryOperation(AbstractInsnNode insn, List<? extends ConstantValue> values) throws AnalyzerException {
+  public ConstantValue naryOperation(AbstractInsnNode insn, List<? extends ConstantValue> values)
+          throws AnalyzerException {
     BasicValue v = basic.naryOperation(insn, null); // values unused
     // by BasicInterpreter
     switch (insn.getOpcode()) {
@@ -396,8 +398,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
       case INVOKESPECIAL:
       case INVOKEINTERFACE:
         MethodInsnNode min = (MethodInsnNode) insn;
-        return v == null ? null : new ConstantValue(v, referenceHandler
-                .getMethodReturnOrNull(v, min.owner, min.name, min.desc, values));
+        return v == null ? null :
+                new ConstantValue(v, referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values));
 
       // TODO how to handle invokedynamic here?
       default:

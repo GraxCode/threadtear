@@ -36,12 +36,11 @@ public class LogFrame extends JFrame {
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
     area.setFont(new Font("Consolas", Font.PLAIN, 11));
-    area.getKeymap()
-            .addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), TransferHandler
-                    .getCopyAction());
+    area.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+            TransferHandler.getCopyAction());
     JPanel cp = new JPanel(new BorderLayout());
-    cp.setBorder(BorderFactory
-            .createCompoundBorder(new EmptyBorder(8, 8, 8, 8), BorderFactory.createLoweredBevelBorder()));
+    cp.setBorder(
+            BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8), BorderFactory.createLoweredBevelBorder()));
     cp.add(new JScrollPane(area), BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();

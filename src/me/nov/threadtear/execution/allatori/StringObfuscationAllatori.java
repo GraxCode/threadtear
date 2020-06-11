@@ -21,8 +21,9 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
   private boolean verbose;
 
   public StringObfuscationAllatori() {
-    super(ExecutionCategory.ALLATORI, "String obfuscation" + " removal", "Tested on version 7.3, should " + "work for" +
-            " older versions too.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.ALLATORI, "String obfuscation" + " removal",
+            "Tested on version 7.3, should " + "work for" + " older versions too.", ExecutionTag.RUNNABLE,
+            ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -94,8 +95,9 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.error("Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass()
-                  .getName() + ", " + e.getMessage());
+          logger.error(
+                  "Failed to decrypt string in " + cn.name + "." + m.name + m.desc + ": " + e.getClass().getName() +
+                          ", " + e.getMessage());
         }
       }
     }
@@ -172,8 +174,8 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     return null;
   }
 }

@@ -16,8 +16,8 @@ public final class DynamicReflection implements Opcodes {
   /**
    * This probably only works for java 8
    */
-  public static MethodHandleInfo revealMethodInfo(MethodHandle handle) throws IllegalArgumentException,
-          IllegalAccessException, NoSuchFieldException, SecurityException {
+  public static MethodHandleInfo revealMethodInfo(MethodHandle handle)
+          throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
     if (handle.getClass().getName().startsWith(BMHL)) {
       Field original = handle.getClass().getDeclaredField("argL0");
       original.setAccessible(true);
@@ -26,13 +26,13 @@ public final class DynamicReflection implements Opcodes {
     return revealTrusted(handle);
   }
 
-  public static MethodHandleInfo revealTrusted(MethodHandle handle) throws NoSuchFieldException, SecurityException,
-          IllegalArgumentException, IllegalAccessException {
+  public static MethodHandleInfo revealTrusted(MethodHandle handle)
+          throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
     return getTrustedLookup().revealDirect(handle);
   }
 
-  public static MethodHandles.Lookup getTrustedLookup() throws NoSuchFieldException, SecurityException,
-          IllegalArgumentException, IllegalAccessException {
+  public static MethodHandles.Lookup getTrustedLookup()
+          throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
     Field impl = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
     impl.setAccessible(true);
     return (Lookup) impl.get(null);
@@ -48,18 +48,18 @@ public final class DynamicReflection implements Opcodes {
       if (refKind <= H_GETSTATIC) {
         // method handle treats field retrieving as a
         // method ()X
-        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType
-                .toMethodDescriptorString().substring(2));
+        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name,
+                methodType.toMethodDescriptorString().substring(2));
       } else {
         // method handle treats field putting as a method
         // (returning void) -> (X)V
         String mds = methodType.toMethodDescriptorString();
-        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name, mds
-                .substring(1, mds.lastIndexOf(')')));
+        return new FieldInsnNode(op, declaringClass.getName().replace('.', '/'), name,
+                mds.substring(1, mds.lastIndexOf(')')));
       }
     } else {
-      return new MethodInsnNode(op, declaringClass.getName().replace('.', '/'), name, methodType
-              .toMethodDescriptorString());
+      return new MethodInsnNode(op, declaringClass.getName().replace('.', '/'), name,
+              methodType.toMethodDescriptorString());
     }
   }
 

@@ -46,7 +46,8 @@ public class Converter implements Opcodes {
       correspBlock.put(ain, block);
       // end blocks
       int op = ain.getOpcode();
-      if (op >= IRETURN && op <= RETURN || ain instanceof JumpInsnNode || op == ATHROW || op == LOOKUPSWITCH || op == TABLESWITCH || op == RET) {
+      if (op >= IRETURN && op <= RETURN || ain instanceof JumpInsnNode || op == ATHROW || op == LOOKUPSWITCH ||
+              op == TABLESWITCH || op == RET) {
         block.setEndNode(ain);
         blocks.add(block);
         block = null;
@@ -192,7 +193,8 @@ public class Converter implements Opcodes {
   private boolean isJumpBlock(Block b) {
     for (AbstractInsnNode ain : b.getNodes()) {
       int type = ain.getType();
-      if (type != AbstractInsnNode.LABEL && type != AbstractInsnNode.LINE && type != AbstractInsnNode.FRAME && type != AbstractInsnNode.JUMP_INSN) {
+      if (type != AbstractInsnNode.LABEL && type != AbstractInsnNode.LINE && type != AbstractInsnNode.FRAME &&
+              type != AbstractInsnNode.JUMP_INSN) {
         return false;
       }
     }

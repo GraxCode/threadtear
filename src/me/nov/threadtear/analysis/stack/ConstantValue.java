@@ -25,8 +25,8 @@ public class ConstantValue implements Value {
     if (t == null)
       return "uninitialized";
     String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a " + "reference type" : t.getClassName();
-    return this == ConstantTracker.NULL ? "null" : value == null ? "unknown value of " + typeName :
-            value + " (" + typeName + ")";
+    return this == ConstantTracker.NULL ? "null" :
+            value == null ? "unknown value of " + typeName : value + " (" + typeName + ")";
   }
 
   public Object getValue() {

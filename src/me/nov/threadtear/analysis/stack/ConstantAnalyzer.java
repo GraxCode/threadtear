@@ -133,7 +133,8 @@ public class ConstantAnalyzer implements Opcodes {
         int insnOpcode = insnNode.getOpcode();
         int insnType = insnNode.getType();
 
-        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
+        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE ||
+                insnType == AbstractInsnNode.FRAME) {
           merge(insnIndex + 1, oldFrame, subroutine);
           newControlFlowEdge(insnIndex, insnIndex + 1);
         } else {
@@ -320,8 +321,8 @@ public class ConstantAnalyzer implements Opcodes {
 
   }
 
-  private void findSubroutine(final int insnIndex, final Subroutine subroutine,
-                              final List<AbstractInsnNode> jsrInsns) throws AnalyzerException {
+  private void findSubroutine(final int insnIndex, final Subroutine subroutine, final List<AbstractInsnNode> jsrInsns)
+          throws AnalyzerException {
     ArrayList<Integer> instructionIndicesToProcess = new ArrayList<>();
     instructionIndicesToProcess.add(insnIndex);
     while (!instructionIndicesToProcess.isEmpty()) {
@@ -455,7 +456,8 @@ public class ConstantAnalyzer implements Opcodes {
 
   // -----------------------------------------------------------------------------------------------
 
-  private void merge(final int insnIndex, final Frame<ConstantValue> frame, final Subroutine subroutine) throws AnalyzerException {
+  private void merge(final int insnIndex, final Frame<ConstantValue> frame, final Subroutine subroutine)
+          throws AnalyzerException {
     boolean changed;
     Frame<ConstantValue> oldFrame = frames[insnIndex];
     if (oldFrame == null) {

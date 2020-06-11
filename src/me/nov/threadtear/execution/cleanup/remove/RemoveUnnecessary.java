@@ -14,9 +14,9 @@ import me.nov.threadtear.util.asm.*;
 public class RemoveUnnecessary extends Execution implements ICRReferenceHandler {
 
   public RemoveUnnecessary() {
-    super(ExecutionCategory.CLEANING, "<html><s>Remove " + "unnecessary instructions</s>", "Remove " + "unnecessary " +
-            "instructions or flow obfuscation" + " that can be optimized.<br>This could " + "include number or flow " +
-            "obfuscation.<br><b>Do" + " not run this, it is unfinished!</b>");
+    super(ExecutionCategory.CLEANING, "<html><s>Remove " + "unnecessary instructions</s>",
+            "Remove " + "unnecessary " + "instructions or flow obfuscation" + " that can be optimized.<br>This could " +
+                    "include number or flow " + "obfuscation.<br><b>Do" + " not run this, it is unfinished!</b>");
   }
 
   /*
@@ -229,8 +229,8 @@ public class RemoveUnnecessary extends Execution implements ICRReferenceHandler 
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends CodeReferenceValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends CodeReferenceValue> values) {
     if (name.equals("toCharArray") && owner.equals("java/lang/String")) {
     }
     return null;

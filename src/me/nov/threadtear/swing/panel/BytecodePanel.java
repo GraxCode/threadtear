@@ -56,8 +56,8 @@ public class BytecodePanel extends JPanel {
             String line = split[i];
             if (Strings.containsRegex(line, searchText)) {
               if (i > searchIndex) {
-                textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(i)
-                        .getStartOffset());
+                textArea.setCaretPosition(
+                        textArea.getDocument().getDefaultRootElement().getElement(i).getStartOffset());
                 searchIndex = i;
                 break Label;
               } else if (!first) {
@@ -69,8 +69,8 @@ public class BytecodePanel extends JPanel {
           Toolkit.getDefaultToolkit().beep();
           if (first) {
             // go back to first line
-            textArea.setCaretPosition(textArea.getDocument().getDefaultRootElement().getElement(firstIndex)
-                    .getStartOffset());
+            textArea.setCaretPosition(
+                    textArea.getDocument().getDefaultRootElement().getElement(firstIndex).getStartOffset());
             searchIndex = firstIndex;
           }
         }
@@ -87,8 +87,8 @@ public class BytecodePanel extends JPanel {
     JPanel topPanel = new JPanel();
     topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
-    topPanel.add(new JLabel("<html>Bytecode of <tt>" + Strings
-            .min(cn.name.replace('/', '.'), 128) + "</tt>"), BorderLayout.WEST);
+    topPanel.add(new JLabel("<html>Bytecode of <tt>" + Strings.min(cn.name.replace('/', '.'), 128) + "</tt>"),
+            BorderLayout.WEST);
     topPanel.add(actionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
     this.textArea = new DecompilerTextArea();
@@ -106,8 +106,8 @@ public class BytecodePanel extends JPanel {
     String text = document.getText(0, document.getLength()).toLowerCase();
     int pos = text.indexOf(searchText);
     while (pos >= 0) {
-      highlighter.addHighlight(pos, pos + searchText
-              .length(), new DefaultHighlighter.DefaultHighlightPainter(new Color(0x0078d7)));
+      highlighter.addHighlight(pos, pos + searchText.length(),
+              new DefaultHighlighter.DefaultHighlightPainter(new Color(0x0078d7)));
       pos = text.indexOf(searchText, pos + searchText.length());
     }
   }

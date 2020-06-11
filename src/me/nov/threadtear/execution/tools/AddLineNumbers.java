@@ -12,8 +12,9 @@ public class AddLineNumbers extends Execution {
   private int method;
 
   public AddLineNumbers() {
-    super(ExecutionCategory.TOOLS, "Add debug line " + "numbers", "Adds line numbers to the code to " + "find out " +
-            "where exactly exceptions happen.", ExecutionTag.RUNNABLE);
+    super(ExecutionCategory.TOOLS, "Add debug line " + "numbers",
+            "Adds line numbers to the code to " + "find out " + "where exactly exceptions happen.",
+            ExecutionTag.RUNNABLE);
   }
 
   @Override

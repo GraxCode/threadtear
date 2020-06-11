@@ -27,9 +27,10 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   private ArgumentInfer argumentInfer;
 
   public StringObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "String obfuscation " + "removal", "Tested on ZKM 5 - 11, could work " + "on newer " +
-            "versions too.<br>" + "<i>String " + "encryption using DES Cipher is currently " + "<b>NOT</b> supported" +
-            ".</i>", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.ZKM, "String obfuscation " + "removal",
+            "Tested on ZKM 5 - 11, could work " + "on newer " + "versions too.<br>" + "<i>String " +
+                    "encryption using DES Cipher is currently " + "<b>NOT</b> supported" + ".</i>",
+            ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   /*
@@ -58,9 +59,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     MethodNode mn = getStaticInitializer(cn);
     if (mn == null)
       return false;
-    return StreamSupport.stream(mn.instructions.spliterator(), false)
-            .anyMatch(ain -> ain.getType() == AbstractInsnNode.LDC_INSN && Strings
-                    .isHighSDev(((LdcInsnNode) ain).cst.toString()));
+    return StreamSupport.stream(mn.instructions.spliterator(), false).anyMatch(
+            ain -> ain.getType() == AbstractInsnNode.LDC_INSN &&
+                    Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
   }
 
   private static final String ALLOWED_CALLS = "(java/lang" + "/String).*";
@@ -79,16 +80,18 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     MethodNode callMethod = Sandbox.copyMethod(clinit);
     callMethod.name = "clinitProxy";
     callMethod.access = ACC_PUBLIC | ACC_STATIC;
-    Instructions.isolateCallsThatMatch(callMethod, (name, desc) -> !name.matches(ALLOWED_CALLS), (name, desc) -> !name
-            .equals(cn.name) || (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
+    Instructions.isolateCallsThatMatch(callMethod, (name, desc) -> !name.matches(ALLOWED_CALLS),
+            (name, desc) -> !name.equals(cn.name) ||
+                    (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
     proxyClass.methods.add(callMethod);
 
     // add decryption methods
     cn.methods.stream().filter(m -> m.desc.matches(ENCHANCED_MODE_METHOD_DESC)).forEach(m -> {
       MethodNode copy = Sandbox.copyMethod(m);
       proxyClass.methods.add(copy);
-      Instructions.isolateCallsThatMatch(copy, (name, desc) -> !name.matches(ALLOWED_CALLS), (name, desc) -> !name
-              .equals(cn.name) || (!desc.equals("[Ljava/lang" + "/String;") && !desc.equals("Ljava/lang/String;")));
+      Instructions.isolateCallsThatMatch(copy, (name, desc) -> !name.matches(ALLOWED_CALLS),
+              (name, desc) -> !name.equals(cn.name) ||
+                      (!desc.equals("[Ljava/lang" + "/String;") && !desc.equals("Ljava/lang/String;")));
     });
     cn.fields.stream().filter(m -> m.desc.equals("[Ljava/lang/String;") || m.desc.equals("Ljava/lang/String;"))
             .forEach(f -> proxyClass.fields.add(f));
@@ -271,13 +274,13 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
 
   @Override
   public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
-    return decryptedArrayField != null && decryptedArrayField.owner.equals(owner) && decryptedArrayField.name
-            .equals(name) && decryptedArrayField.desc.equals(desc) ? decryptedFieldValue : null;
+    return decryptedArrayField != null && decryptedArrayField.owner.equals(owner) &&
+            decryptedArrayField.name.equals(name) && decryptedArrayField.desc.equals(desc) ? decryptedFieldValue : null;
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     return null;
   }
 

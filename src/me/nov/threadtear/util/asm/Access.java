@@ -319,8 +319,8 @@ public final class Access {
    * @return True if the field is generic, false otherwise
    */
   public static boolean isFieldGeneric(String desc, String signature) {
-    return signature != null && desc != null && signature.startsWith("T") && signature.endsWith(";") && Character
-            .isUpperCase(signature.charAt(1)) && desc.contains("java/lang/Object");
+    return signature != null && desc != null && signature.startsWith("T") && signature.endsWith(";") &&
+            Character.isUpperCase(signature.charAt(1)) && desc.contains("java/lang/Object");
   }
 
   public static int removeAccess(int access, int... remove) {

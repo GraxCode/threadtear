@@ -14,8 +14,9 @@ import java.util.function.Predicate;
 public class FlowObfuscationZKM extends Execution {
 
   public FlowObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "Flow obfuscation " + "removal", "Tested on ZKM 14, could work on " + "newer " +
-            "versions too.", ExecutionTag.POSSIBLE_DAMAGE, ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.ZKM, "Flow obfuscation " + "removal",
+            "Tested on ZKM 14, could work on " + "newer " + "versions too.", ExecutionTag.POSSIBLE_DAMAGE,
+            ExecutionTag.BETTER_DECOMPILE);
   }
 
   private int replaced;

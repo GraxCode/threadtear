@@ -15,8 +15,9 @@ import java.util.stream.StreamSupport;
 
 public class JunkRemoverAllatori extends Execution {
   public JunkRemoverAllatori() {
-    super(ExecutionCategory.ALLATORI, "Junk instruction " + "remover", "Removes junk instructions that " + "create a " +
-            "lot of boolean variables when " + "decompiled with Fernflower.", ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.ALLATORI, "Junk instruction " + "remover",
+            "Removes junk instructions that " + "create a " + "lot of boolean variables when " +
+                    "decompiled with Fernflower.", ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override
@@ -43,8 +44,8 @@ public class JunkRemoverAllatori extends Execution {
     AtomicInteger removed = new AtomicInteger();
     InstructionModifier modifier = new InstructionModifier();
     StreamSupport.stream(method.instructions.spliterator(), false)
-            .filter(i -> i.getOpcode() == ICONST_1 && i.getNext() != null && i.getNext().getOpcode() == DUP && i
-                    .getNext().getNext() != null && i.getNext().getNext().getOpcode() == POP2).map(i -> (InsnNode) i)
+            .filter(i -> i.getOpcode() == ICONST_1 && i.getNext() != null && i.getNext().getOpcode() == DUP &&
+                    i.getNext().getNext() != null && i.getNext().getNext().getOpcode() == POP2).map(i -> (InsnNode) i)
             .forEach(i -> {
               removed.getAndIncrement();
               modifier.remove(i);

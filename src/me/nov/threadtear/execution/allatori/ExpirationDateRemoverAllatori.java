@@ -13,9 +13,10 @@ import me.nov.threadtear.execution.*;
 public class ExpirationDateRemoverAllatori extends Execution implements IConstantReferenceHandler {
 
   public ExpirationDateRemoverAllatori() {
-    super(ExecutionCategory.ALLATORI, "Remove expiry " + "date", "Allatori adds expiration dates to " + "the " +
-            "code<br>that stop the obfuscated jar " + "file from running after being passed" + ".<br>They can be " +
-            "removed easily.", ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.ALLATORI, "Remove expiry " + "date",
+            "Allatori adds expiration dates to " + "the " + "code<br>that stop the obfuscated jar " +
+                    "file from running after being passed" + ".<br>They can be " + "removed easily.",
+            ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override
@@ -47,8 +48,8 @@ public class ExpirationDateRemoverAllatori extends Execution implements IConstan
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     return null;
   }
 }

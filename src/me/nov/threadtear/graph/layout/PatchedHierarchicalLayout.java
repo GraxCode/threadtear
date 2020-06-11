@@ -29,8 +29,9 @@ public class PatchedHierarchicalLayout extends mxHierarchicalLayout {
    */
   @Override
   public double placementStage(double initialX, Object parent) {
-    mxCoordinateAssignment placementStage = new PatchedCoordinateAssignment(this, intraCellSpacing,
-            interRankCellSpacing, orientation, initialX, parallelEdgeSpacing);
+    mxCoordinateAssignment placementStage =
+            new PatchedCoordinateAssignment(this, intraCellSpacing, interRankCellSpacing, orientation, initialX,
+                    parallelEdgeSpacing);
     placementStage.setFineTuning(fineTuning);
     placementStage.execute(parent);
 

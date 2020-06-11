@@ -25,9 +25,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
   private VM vm;
 
   public AccessObfusationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "Access " + "obfuscation removal", "Tested on version 2.1" + ".<br>This is " +
-            "unfinished: Doesn't work on " + "constructors and static initializers.", ExecutionTag.RUNNABLE,
-            ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.PARAMORPHISM, "Access " + "obfuscation removal",
+            "Tested on version 2.1" + ".<br>This is " + "unfinished: Doesn't work on " +
+                    "constructors and static initializers.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -48,8 +48,8 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted",
-            decryptionRatio <= 0.25, encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted", decryptionRatio <= 0.25,
+            encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -106,8 +106,9 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
                           shortStacktrace(t));
                 }
               } else if (verbose) {
-                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner()
-                        .equals(cn.name) + " " + bsm.getDesc().equals(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC));
+                logger.warning(
+                        "Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " +
+                                bsm.getDesc().equals(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC));
               }
             }
           }
@@ -123,7 +124,8 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
 
   // TODO seems to throw some exception sometimes, but
   //  works 90%
-  private CallSite loadCallSiteFromVM(ClassNode cn, MethodNode m, InvokeDynamicInsnNode idin, Handle bsm) throws Throwable {
+  private CallSite loadCallSiteFromVM(ClassNode cn, MethodNode m, InvokeDynamicInsnNode idin, Handle bsm)
+          throws Throwable {
     ClassNode proxy = Sandbox.createClassProxy(cn.name); // paramorphism
     // checks for method name and class name
 
@@ -141,8 +143,8 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     vm.explicitlyPreload(proxy);
     Class<?> loadedProxy = vm.loadClass(proxy.name.replace('/', '.'));
     try {
-      List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name, MethodType
-              .fromMethodDescriptorString(idin.desc, vm)));
+      List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), idin.name,
+              MethodType.fromMethodDescriptorString(idin.desc, vm)));
       // extra arguments
       // paramorphism stores those extra parameters in
       // bsmArgs

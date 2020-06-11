@@ -46,8 +46,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
   public ClassTreePanel(Threadtear threadtear) {
     this.threadtear = threadtear;
     this.setLayout(new BorderLayout());
-    this.add(outerPanel = Utils
-            .addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())), BorderLayout.CENTER);
+    this.add(outerPanel = Utils.addTitleAndBorder("Class list", new JScrollPane(tree = new ClassTree())),
+            BorderLayout.CENTER);
     this.add(createButtons(), BorderLayout.SOUTH);
     this.setTransferHandler(new JarDropHandler(this));
   }
@@ -106,8 +106,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
   public void refreshIgnored() {
     if (classes != null) {
       long disabled = classes.stream().filter(c -> !c.transform).count();
-      outerPanel.setBorder(BorderFactory.createTitledBorder(Strings.min(inputFile.getName(), 40) + " - " + classes
-              .size() + " classes (" + disabled + " ignored)"));
+      outerPanel.setBorder(BorderFactory.createTitledBorder(
+              Strings.min(inputFile.getName(), 40) + " - " + classes.size() + " classes (" + disabled + " ignored)"));
     }
     repaint();
   }
@@ -209,18 +209,17 @@ public class ClassTreePanel extends JPanel implements ILoader {
         case "jar":
           this.classes = JarIO.loadClasses(inputFile);
           if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
-            JOptionPane
-                    .showMessageDialog(this,
-                            "<html" + ">Warning: File is signed and" + " may not load correctly if " + "already " +
-                                    "modified, remove the" + " signature<br>" + "(<tt>META-INF\\MANIFEST" + ".MF</tt" +
-                                    ">) and certificates " + "(<tt>META-INF\\*.SF/" + ".RSA</tt>) first!", "Signature" +
-                                    " warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "<html" + ">Warning: File is signed and" + " may not load correctly if " + "already " +
+                            "modified, remove the" + " signature<br>" + "(<tt>META-INF\\MANIFEST" + ".MF</tt" +
+                            ">) and certificates " + "(<tt>META-INF\\*.SF/" + ".RSA</tt>) first!",
+                    "Signature" + " warning", JOptionPane.WARNING_MESSAGE);
           }
           break;
         case "class":
           ClassNode node = Conversion.toNode(Files.readAllBytes(inputFile.toPath()));
-          this.classes = new ArrayList<>(Collections
-                  .singletonList(new Clazz(node, new JarEntry(node.name), inputFile)));
+          this.classes =
+                  new ArrayList<>(Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile)));
           break;
       }
     } catch (IOException e) {
@@ -236,9 +235,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
       if (c.node.name.contains("//") || packages.length >= 256) {
         String last = packages[packages.length - 1];
         boolean valid = last.chars().mapToObj(i -> (char) i).allMatch(Character::isJavaIdentifierPart);
-        packages = new String[]{"<html><font " + "color=\"red\">$invalid_name", valid ? last : ("<html><font " +
-                "color=\"red\">$" + last
-                .hashCode())};
+        packages = new String[]{"<html><font " + "color=\"red\">$invalid_name",
+                valid ? last : ("<html><font " + "color=\"red\">$" + last.hashCode())};
       }
       addToTree((ClassTreeNode) model.getRoot(), c, packages, 0);
     });

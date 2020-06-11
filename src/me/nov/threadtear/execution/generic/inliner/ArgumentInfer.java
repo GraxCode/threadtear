@@ -121,13 +121,13 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
    * two values exist for the same argument.
    */
   private List<ConstantValue> getCommonArgs(Collection<List<ConstantValue>> inferredArgs) {
-    final List<ConstantValue> result = inferredArgs.stream().max(Comparator.comparing(List::size))
-            .orElse(new ArrayList<>());
+    final List<ConstantValue> result =
+            inferredArgs.stream().max(Comparator.comparing(List::size)).orElse(new ArrayList<>());
 
     for (int i = 0; i < result.size(); i++) {
       final int I = i;
-      final Set<ConstantValue> args = inferredArgs.stream().filter(a -> a.size() > I).map(a -> a.get(I))
-              .collect(Collectors.toSet());
+      final Set<ConstantValue> args =
+              inferredArgs.stream().filter(a -> a.size() > I).map(a -> a.get(I)).collect(Collectors.toSet());
       if (args.size() == 1) {
         result.set(i, args.iterator().next());
       } else {
@@ -208,8 +208,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
     final ClassNode owner = methodCtx.getOwner();
     final MethodNode method = methodCtx.getMethod();
 
-    Analyzer<ConstantValue> analyzer = new Analyzer<>(new ConstantTracker(this, Access
-            .isStatic(method.access), method.maxLocals, method.desc, new Object[0]));
+    Analyzer<ConstantValue> analyzer = new Analyzer<>(
+            new ConstantTracker(this, Access.isStatic(method.access), method.maxLocals, method.desc, new Object[0]));
     try {
       analyzer.analyze(owner.name, method);
     } catch (AnalyzerException e) {
@@ -226,8 +226,8 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     return null;
   }
 }

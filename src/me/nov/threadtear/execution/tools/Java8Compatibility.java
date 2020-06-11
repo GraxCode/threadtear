@@ -7,8 +7,8 @@ import me.nov.threadtear.execution.*;
 public class Java8Compatibility extends Execution {
 
   public Java8Compatibility() {
-    super(ExecutionCategory.TOOLS, "Make Java 8 " + "compatible", "Only works when no Java 9+ " + "specific methods " +
-            "are present.", ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.TOOLS, "Make Java 8 " + "compatible",
+            "Only works when no Java 9+ " + "specific methods " + "are present.", ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override

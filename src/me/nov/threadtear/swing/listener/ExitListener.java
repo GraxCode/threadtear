@@ -14,7 +14,8 @@ public class ExitListener extends WindowAdapter {
   @Override
   public void windowClosing(WindowEvent we) {
     if (JOptionPane
-            .showConfirmDialog(frame, "Do you really want" + " to exit?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            .showConfirmDialog(frame, "Do you really want" + " to exit?", "Confirm", JOptionPane.YES_NO_OPTION) ==
+            JOptionPane.YES_OPTION) {
       Runtime.getRuntime().exit(0);
     }
   }

@@ -613,8 +613,8 @@ public final class OpFormat implements Opcodes {
   }
 
   public static String toHtmlString(AbstractInsnNode ain) {
-    String opcode = Html
-            .bold(Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase())));
+    String opcode =
+            Html.bold(Html.mono(Html.color(colorForType(ain.getType()), getOpcodeText(ain.getOpcode()).toLowerCase())));
     switch (ain.getType()) {
       case AbstractInsnNode.FIELD_INSN:
         FieldInsnNode fin = (FieldInsnNode) ain;
@@ -633,14 +633,14 @@ public final class OpFormat implements Opcodes {
         return opcode + " " + descToString(mnin.desc) + Strings.repeat("[]", mnin.dims * 2);
       case AbstractInsnNode.TABLESWITCH_INSN:
         TableSwitchInsnNode ts = (TableSwitchInsnNode) ain;
-        return opcode + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " + ts.labels.stream()
-                .map(OpFormat::labelToString)
-                .collect(Collectors.joining(", ")) + ", d: " + getLabelString(getLabelIndex(ts.dflt)) + "]";
+        return opcode + " [Keys: " + ts.min + " to " + ts.max + "], [Labels: " +
+                ts.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) + ", d: " +
+                getLabelString(getLabelIndex(ts.dflt)) + "]";
       case AbstractInsnNode.LOOKUPSWITCH_INSN:
         LookupSwitchInsnNode ls = (LookupSwitchInsnNode) ain;
-        return opcode + " [Keys: " + ls.keys.stream().map(String::valueOf)
-                .collect(Collectors.joining(", ")) + "], [Labels: " + ls.labels.stream().map(OpFormat::labelToString)
-                .collect(Collectors.joining(", ")) + ", d: " + labelToString(ls.dflt) + "]";
+        return opcode + " [Keys: " + ls.keys.stream().map(String::valueOf).collect(Collectors.joining(", ")) +
+                "], [Labels: " + ls.labels.stream().map(OpFormat::labelToString).collect(Collectors.joining(", ")) +
+                ", d: " + labelToString(ls.dflt) + "]";
       case AbstractInsnNode.JUMP_INSN:
         JumpInsnNode jin = (JumpInsnNode) ain;
         return opcode + " " + labelToString(jin.label);
@@ -659,12 +659,13 @@ public final class OpFormat implements Opcodes {
           ConstantDynamic dyn = (ConstantDynamic) ldc.cst;
           return opcode + " dynamic constant " + handleToString(dyn.getBootstrapMethod());
         }
-        return opcode + " " + descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass()))
-                .getDescriptor()) + " " + ldc.cst.toString();
+        return opcode + " " +
+                descToString(Type.getType(Primitives.primitiveClass(ldc.cst.getClass())).getDescriptor()) + " " +
+                ldc.cst.toString();
       case AbstractInsnNode.INVOKE_DYNAMIC_INSN:
         InvokeDynamicInsnNode id = (InvokeDynamicInsnNode) ain;
-        return opcode + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " + (id.bsmArgs != null ? Arrays
-                .toString(id.bsmArgs) : "");
+        return opcode + " " + descToString(id.desc) + " " + handleToString(id.bsm) + " " +
+                (id.bsmArgs != null ? Arrays.toString(id.bsmArgs) : "");
       case AbstractInsnNode.INT_INSN:
         return opcode + " " + getIntValue(ain);
       case AbstractInsnNode.IINC_INSN:
@@ -673,8 +674,9 @@ public final class OpFormat implements Opcodes {
       case AbstractInsnNode.LABEL:
         LabelNode ln = (LabelNode) ain;
         boolean hasLine = (ln.getNext() != null && ln.getNext().getType() == AbstractInsnNode.LINE);
-        return Html.mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln
-                .getNext()).line : "") + ":");
+        return Html
+                .mono("label " + labelToString(ln) + (hasLine ? ", line " + ((LineNumberNode) ln.getNext()).line : "") +
+                        ":");
       case AbstractInsnNode.INSN:
         return opcode;
     }

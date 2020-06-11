@@ -18,8 +18,9 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
   private VM vm;
 
   public StringObfuscationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "String " + "obfuscation removal", "Tested on version 2" + ".1<br>Make sure" +
-            " to decrypt access " + "obfuscation first.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.PARAMORPHISM, "String " + "obfuscation removal",
+            "Tested on version 2" + ".1<br>Make sure" + " to decrypt access " + "obfuscation first.",
+            ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override

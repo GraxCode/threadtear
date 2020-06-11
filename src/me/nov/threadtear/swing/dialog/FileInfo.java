@@ -33,8 +33,8 @@ public class FileInfo extends JDialog {
     descriptions.add(new CustomLabel("File name: "));
     values.add(new CustomLabel(member.oldEntry.getName()));
     descriptions.add(new CustomLabel("Size: "));
-    values.add(new CustomLabel(Strings.formatBytes(member.oldEntry.getSize()) + "; compressed: " + Strings
-            .formatBytes(member.oldEntry.getCompressedSize())));
+    values.add(new CustomLabel(Strings.formatBytes(member.oldEntry.getSize()) + "; compressed: " +
+            Strings.formatBytes(member.oldEntry.getCompressedSize())));
     if (member.oldEntry.getCreationTime() != null) {
       descriptions.add(new CustomLabel("Creation time: "));
       values.add(new CustomLabel(format.format(new Date(member.oldEntry.getCreationTime().toMillis()))));
@@ -56,9 +56,9 @@ public class FileInfo extends JDialog {
       values.add(new CustomLabel(Arrays.toString(arr)));
     }
     descriptions.add(new CustomLabel("Signature: "));
-    values.add(new CustomLabel(member.oldEntry
-            .getCertificates() != null ? "<font " + "color=\"red\">signed, please remove " + "certs</font>" : "<font " +
-            "color=\"green\">not " + "signed</font>"));
+    values.add(new CustomLabel(member.oldEntry.getCertificates() != null ?
+            "<font " + "color=\"red\">signed, please remove " + "certs</font>" :
+            "<font " + "color=\"green\">not " + "signed</font>"));
 
     descriptions.add(new CustomLabel("CRC-32 hash: "));
     values.add(new CustomLabel(Long.toHexString(member.oldEntry.getCrc())));

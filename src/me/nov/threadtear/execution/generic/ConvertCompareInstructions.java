@@ -12,10 +12,11 @@ public class ConvertCompareInstructions extends Execution {
   private int count;
 
   public ConvertCompareInstructions() {
-    super(ExecutionCategory.GENERIC, "Remove abnormal " + "compare instructions", "Changes double-, " + "float- and " +
-            "long-compare instructions to real" + " invocations.<br>This is used by some " + "obfuscators to trick " +
-            "decompilers.<br>Could " + "slightly affect code behavior, as NaN " + "handling is different.",
-            ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.GENERIC, "Remove abnormal " + "compare instructions",
+            "Changes double-, " + "float- and " + "long-compare instructions to real" +
+                    " invocations.<br>This is used by some " + "obfuscators to trick " + "decompilers.<br>Could " +
+                    "slightly affect code behavior, as NaN " + "handling is different.", ExecutionTag.RUNNABLE,
+            ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override

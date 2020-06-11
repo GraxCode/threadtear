@@ -10,8 +10,9 @@ public class Java7Compatibility extends Execution {
   private boolean success;
 
   public Java7Compatibility() {
-    super(ExecutionCategory.TOOLS, "Make Java 7 " + "compatible", "Only works when no lambda " + "expressions and no " +
-            "Java 8 specific methods " + "are present.", ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.TOOLS, "Make Java 7 " + "compatible",
+            "Only works when no lambda " + "expressions and no " + "Java 8 specific methods " + "are present.",
+            ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override

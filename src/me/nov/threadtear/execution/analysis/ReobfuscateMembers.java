@@ -18,9 +18,10 @@ public class ReobfuscateMembers extends Execution {
   private boolean verbose;
 
   public ReobfuscateMembers() {
-    super(ExecutionCategory.ANALYSIS, "Reobfuscate " + "methods and fields", "Reobfuscate method and" + " field names" +
-            " for easier analysis.<br>Gets " + "rid of annoying method names like 恼人的名字.",
-            ExecutionTag.BETTER_DECOMPILE, ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.ANALYSIS, "Reobfuscate " + "methods and fields",
+            "Reobfuscate method and" + " field names" + " for easier analysis.<br>Gets " +
+                    "rid of annoying method names like 恼人的名字.", ExecutionTag.BETTER_DECOMPILE,
+            ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   @Override
@@ -29,38 +30,36 @@ public class ReobfuscateMembers extends Execution {
     this.verbose = verbose;
 
     logger.info("Generating random names");
-    this.words = Strings
-            .generateWordQueue((int) (classes.values().stream().map(c -> c.node.fields).mapToLong(List::size)
-                    .sum() + classes.values().stream().map(c -> c.node.methods).mapToLong(List::size)
-                    .sum()), ReobfuscateMembers.class.getResourceAsStream("/res/english" + "-words.txt"));
+    this.words = Strings.generateWordQueue(
+            (int) (classes.values().stream().map(c -> c.node.fields).mapToLong(List::size).sum() +
+                    classes.values().stream().map(c -> c.node.methods).mapToLong(List::size).sum()),
+            ReobfuscateMembers.class.getResourceAsStream("/res/english" + "-words.txt"));
 
     logger.info("Making method mappings");
     classes.values().stream().map(c -> c.node).forEach(this::makeMethodMappings);
     logger.info(methods.size() + " method mappings created for " + "classes and superclasses");
 
     logger.info("Renaming methods");
-    classes.values().stream().map(c -> c.node).forEach(c -> c.methods
-            .forEach(m -> m.name = methods.get(c.name).stream().filter(mapped -> mapped.equalsMethod(m)).findFirst()
-                    .get().newName));
+    classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> m.name =
+            methods.get(c.name).stream().filter(mapped -> mapped.equalsMethod(m)).findFirst().get().newName));
 
     logger.info("Updating method references in code");
-    int mrefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
-            .map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-            .mapToInt(ain -> References.remapMethodRefs(methods, ain)).sum();
+    int mrefs =
+            classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
+                    .flatMap(Arrays::stream).mapToInt(ain -> References.remapMethodRefs(methods, ain)).sum();
     logger.info(mrefs + " method references updated " + "successfully!");
 
     logger.info("Making field mappings");
     classes.values().stream().map(c -> c.node).forEach(this::makeFieldMappings);
 
     logger.info("Renaming fields");
-    classes.values().stream().map(c -> c.node).forEach(c -> c.fields
-            .forEach(f -> f.name = fields.get(c.name).stream().filter(mapped -> mapped.equalsField(f)).findFirst()
-                    .get().newName));
+    classes.values().stream().map(c -> c.node).forEach(c -> c.fields.forEach(f -> f.name =
+            fields.get(c.name).stream().filter(mapped -> mapped.equalsField(f)).findFirst().get().newName));
 
     logger.info("Updating field references in code");
-    int frefs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
-            .map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-            .mapToInt(ain -> References.remapFieldRefs(fields, ain)).sum();
+    int frefs =
+            classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
+                    .flatMap(Arrays::stream).mapToInt(ain -> References.remapFieldRefs(fields, ain)).sum();
     logger.info(frefs + " field references updated " + "successfully!");
     return frefs > 0 && mrefs > 0;
   }
@@ -104,14 +103,15 @@ public class ReobfuscateMembers extends Execution {
     // are better solutions in terms of performance but
     // this is the simplest one
     final boolean local = isLocal;
-    c.methods.forEach(m -> list
-            .add(new MappedMember(m.name, m.desc, local && isChangeable(m) ? makeName(parents, m) : m.name)));
+    c.methods.forEach(
+            m -> list.add(new MappedMember(m.name, m.desc, local && isChangeable(m) ? makeName(parents, m) : m.name)));
     methods.put(c.name, list);
   }
 
   private String makeName(ArrayList<ClassNode> parents, MethodNode m) {
-    MappedMember overriddenMethod = parents.stream().map(c -> c.name).filter(methods::containsKey).map(methods::get)
-            .flatMap(List::stream).filter(mapped -> mapped.equalsMethod(m)).findFirst().orElse(null);
+    MappedMember overriddenMethod =
+            parents.stream().map(c -> c.name).filter(methods::containsKey).map(methods::get).flatMap(List::stream)
+                    .filter(mapped -> mapped.equalsMethod(m)).findFirst().orElse(null);
     if (overriddenMethod != null) {
       // return parent name
       return overriddenMethod.newName;
@@ -120,8 +120,8 @@ public class ReobfuscateMembers extends Execution {
     // collisions
   }
 
-  private static final List<String> ignore = Arrays
-          .asList("valueOf", "values", "ordinal", "toString", "hashCode"); // save some time
+  private static final List<String> ignore = Arrays.asList("valueOf", "values", "ordinal", "toString", "hashCode");
+          // save some time
 
   private boolean isChangeable(MethodNode m) {
     if (Access.isNative(m.access))

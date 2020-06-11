@@ -17,9 +17,10 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   private int predictedSwitches;
 
   public KnownConditionalJumps() {
-    super(ExecutionCategory.GENERIC, "Remove obvious flow" + " obfuscation", "Removes conditional jumps " + "that are" +
-            " predictable.<br>This works for " + "obfuscators like smoke or superblaubeere27.",
-            ExecutionTag.POSSIBLE_VERIFY_ERR, ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
+    super(ExecutionCategory.GENERIC, "Remove obvious flow" + " obfuscation",
+            "Removes conditional jumps " + "that are" + " predictable.<br>This works for " +
+                    "obfuscators like smoke or superblaubeere27.", ExecutionTag.POSSIBLE_VERIFY_ERR,
+            ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
   }
 
   @Override
@@ -148,8 +149,8 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     if (owner.equals("java/lang/String") && desc.startsWith("()")) {
       if (values.size() != 1 || !values.get(0).isKnown()) {
         return null;

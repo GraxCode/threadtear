@@ -42,8 +42,7 @@ public final class Sandbox implements Opcodes {
 
   public static MethodNode copyMethod(MethodNode original) {
     MethodNode mn = new MethodNode(original.access, original.name, original.desc, original.signature,
-            original.exceptions
-            .toArray(new String[0]));
+            original.exceptions.toArray(new String[0]));
     InsnList copy = new InsnList();
     Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(original.instructions);
     for (AbstractInsnNode ain : original.instructions) {

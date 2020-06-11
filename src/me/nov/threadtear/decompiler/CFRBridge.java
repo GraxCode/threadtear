@@ -82,8 +82,8 @@ public class CFRBridge implements IDecompilerBridge {
           throw new RuntimeException();
         }
       };
-      CfrDriver cfrDriver = new CfrDriver.Builder().withClassFileSource(source).withOutputSink(mySink)
-              .withOptions(options).build();
+      CfrDriver cfrDriver =
+              new CfrDriver.Builder().withClassFileSource(source).withOutputSink(mySink).withOptions(options).build();
       cfrDriver.analyse(Collections.singletonList(name));
     } catch (Throwable t) {
       t.printStackTrace();

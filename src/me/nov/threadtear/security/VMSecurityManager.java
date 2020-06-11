@@ -127,8 +127,8 @@ public final class VMSecurityManager extends SecurityManager {
       if (ste.getClassName().matches(granted))
         continue;
       if (!isLocal(ste.getClassName())) {
-        Threadtear.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}", ste
-                .getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
+        Threadtear.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}",
+                ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
         return false;
       }
     }

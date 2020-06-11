@@ -37,15 +37,16 @@ public final class References {
         Object o = idin.bsmArgs[i];
         if (o instanceof Handle) {
           Handle handle = (Handle) o;
-          idin.bsmArgs[i] = new Handle(handle.getTag(), map.getOrDefault(handle.getOwner(), handle.getOwner()), handle
-                  .getName(), Descriptor.fixMethodDesc(handle.getDesc(), map), handle.isInterface());
+          idin.bsmArgs[i] =
+                  new Handle(handle.getTag(), map.getOrDefault(handle.getOwner(), handle.getOwner()), handle.getName(),
+                          Descriptor.fixMethodDesc(handle.getDesc(), map), handle.isInterface());
         } else if (o instanceof Type) {
           Type type = (Type) o;
           idin.bsmArgs[i] = Descriptor.fixType(type, map);
         }
         if (idin.bsm != null) {
-          idin.bsm = new Handle(idin.bsm.getTag(), map.getOrDefault(idin.bsm.getOwner(), idin.bsm.getOwner()), idin.bsm
-                  .getName(), Descriptor.fixMethodDesc(idin.bsm.getDesc(), map), idin.bsm.isInterface());
+          idin.bsm = new Handle(idin.bsm.getTag(), map.getOrDefault(idin.bsm.getOwner(), idin.bsm.getOwner()),
+                  idin.bsm.getName(), Descriptor.fixMethodDesc(idin.bsm.getDesc(), map), idin.bsm.isInterface());
         }
       }
     } else if (ain instanceof LdcInsnNode) {
@@ -105,9 +106,9 @@ public final class References {
         String owner = idin.bsm.getOwner();
         String name = idin.bsm.getName();
         String desc = idin.bsm.getDesc();
-        idin.bsm = new Handle(idin.bsm.getTag(), owner, methods.containsKey(owner) ? methods.get(owner).stream()
-                .filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc)).findFirst()
-                .get().newName : name, desc, idin.bsm.isInterface());
+        idin.bsm = new Handle(idin.bsm.getTag(), owner, methods.containsKey(owner) ?
+                methods.get(owner).stream().filter(mapped -> mapped.oldName.equals(name) && mapped.oldDesc.equals(desc))
+                        .findFirst().get().newName : name, desc, idin.bsm.isInterface());
       }
     } else {
       return 0;

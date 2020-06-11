@@ -46,9 +46,8 @@ public class CFGPanel extends JPanel {
     leftActionPanel.add(new JLabel("Control flow graph"));
     JComboBox<Object> methodSelection = new JComboBox<>(cn.methods.stream().map(m -> m.name + m.desc).toArray());
     AutoCompletion.enable(methodSelection);
-    methodSelection
-            .setPreferredSize(new Dimension(Math.min(400, methodSelection.getPreferredSize().width), methodSelection
-                    .getPreferredSize().height));
+    methodSelection.setPreferredSize(new Dimension(Math.min(400, methodSelection.getPreferredSize().width),
+            methodSelection.getPreferredSize().height));
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(0, 4, 0, 0);
     leftActionPanel.add(methodSelection, gbc);
@@ -191,15 +190,15 @@ public class CFGPanel extends JPanel {
       }
       return cached;
     }
-    BlockVertex vertex = new BlockVertex(mn, b, b.getNodes(), b.getLabel(), mn.instructions
-            .indexOf(b.getNodes().get(0)));
+    BlockVertex vertex =
+            new BlockVertex(mn, b, b.getNodes(), b.getLabel(), mn.instructions.indexOf(b.getNodes().get(0)));
     if (input != null) {
       vertex.addInput(input);
     }
-    v1 = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40, String
-            .format("fillColor=%s;fontColor=%s;" + "strokeColor=%s", Strings
-                    .hexColor(getBackground().brighter()), Strings.hexColor(getForeground().brighter()), Strings
-                    .hexColor(getBackground().brighter().brighter())));
+    v1 = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40,
+            String.format("fillColor=%s;fontColor=%s;" + "strokeColor=%s", Strings.hexColor(getBackground().brighter()),
+                    Strings.hexColor(getForeground().brighter()),
+                    Strings.hexColor(getBackground().brighter().brighter())));
     graph.updateCellSize(v1); // resize cell
     existing.put(b, v1);
     if (v1 == null) {
@@ -210,8 +209,7 @@ public class CFGPanel extends JPanel {
       Block out = next.get(i);
       if (out.equals(b)) {
         graph.insertEdge(parent, null, "Infinite loop", v1, v1,
-                "strokeColor=" + getEdgeColor(b, i) + ";fontColor=" + Strings
-                .hexColor(getForeground().brighter()));
+                "strokeColor=" + getEdgeColor(b, i) + ";fontColor=" + Strings.hexColor(getForeground().brighter()));
       } else {
         mxCell vertexOut = addBlock(parent, out, vertex);
         graph.insertEdge(parent, null, null, v1, vertexOut, "strokeColor=" + getEdgeColor(b, i) + ";");

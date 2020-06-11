@@ -32,9 +32,8 @@ public class PatchedCoordinateAssignment extends mxCoordinateAssignment {
    * @param initialX
    * @param parallelEdgeSpacing
    */
-  public PatchedCoordinateAssignment(mxHierarchicalLayout layout, double intraCellSpacing,
-                                     double interRankCellSpacing, int orientation, double initialX,
-                                     double parallelEdgeSpacing) {
+  public PatchedCoordinateAssignment(mxHierarchicalLayout layout, double intraCellSpacing, double interRankCellSpacing,
+                                     int orientation, double initialX, double parallelEdgeSpacing) {
     super(layout, intraCellSpacing, interRankCellSpacing, orientation, initialX, parallelEdgeSpacing);
   }
 

@@ -54,8 +54,8 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
           }
         }
         if (!member.failures.isEmpty()) {
-          this.setToolTipText("<font color=\"#ff6b6b\">" + String
-                  .join("<br><hr><font " + "color=\"#ff6b6b\">", member.failures));
+          this.setToolTipText(
+                  "<font color=\"#ff6b6b\">" + String.join("<br><hr><font " + "color=\"#ff6b6b\">", member.failures));
           this.setIcon(new OverlayIcon(this.getIcon(), failOverlay));
         } else if (!member.transform) {
           this.setIcon(new OverlayIcon(this.getIcon(), ignoreOverlay));

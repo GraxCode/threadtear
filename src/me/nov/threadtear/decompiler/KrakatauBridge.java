@@ -34,8 +34,8 @@ public class KrakatauBridge implements IDecompilerBridge {
     }
     try {
       File krakatauOut = Files.createTempFile(name.hashCode() + "-decompiled", ".jar").toFile();
-      ProcessBuilder pb = new ProcessBuilder("python", "decompile.py", "-out", krakatauOut.getAbsolutePath(), krakatauIn
-              .getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
+      ProcessBuilder pb = new ProcessBuilder("python", "decompile.py", "-out", krakatauOut.getAbsolutePath(),
+              krakatauIn.getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
       pb.directory(krakatau.toFile());
       pb.redirectError();
       StringBuilder output = new StringBuilder();
@@ -60,9 +60,9 @@ public class KrakatauBridge implements IDecompilerBridge {
     } catch (Throwable t) {
       if (t.getMessage() != null && t.getMessage().contains("Cannot run program")) {
         return "Could not run python executable. Please " + "set your python 2.7 path correctly to " + "use krakatau" +
-                ".\nError: " + t
-                .getMessage() + "\n\n/*\nYour environment" + " variables:\n" + System.getenv().entrySet().stream()
-                .map(e -> e.getKey() + " = \"" + e.getValue() + "\"").collect(Collectors.joining("\n")) + "\n*/";
+                ".\nError: " + t.getMessage() + "\n\n/*\nYour environment" + " variables:\n" +
+                System.getenv().entrySet().stream().map(e -> e.getKey() + " = \"" + e.getValue() + "\"")
+                        .collect(Collectors.joining("\n")) + "\n*/";
       }
       t.printStackTrace();
       StringWriter sw = new StringWriter();

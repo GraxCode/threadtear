@@ -89,9 +89,8 @@ public class CFGraph extends mxGraph {
           scp.revalidate();
         } else if (scp != null) {
           // do we need this on linux too?
-          scp.getVerticalScrollBar()
-                  .setValue(scp.getVerticalScrollBar().getValue() + e.getUnitsToScroll() * scp.getVerticalScrollBar()
-                          .getUnitIncrement());
+          scp.getVerticalScrollBar().setValue(scp.getVerticalScrollBar().getValue() +
+                  e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
         }
       });
     }

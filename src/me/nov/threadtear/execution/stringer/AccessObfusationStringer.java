@@ -14,8 +14,8 @@ import me.nov.threadtear.vm.*;
 
 public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
 
-  private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC = "(Ljava/lang/Object;Ljava/lang/Object;" +
-          "Ljava/lang/Object;)Ljava/lang/Object;";
+  private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC =
+          "(Ljava/lang/Object;Ljava/lang/Object;" + "Ljava/lang/Object;)Ljava/lang/Object;";
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
@@ -23,8 +23,9 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private VM vm;
 
   public AccessObfusationStringer() {
-    super(ExecutionCategory.STRINGER, "Access obfuscation" + " removal", "Works for version 3 - 9.<br>Only" + " works" +
-            " with invokedynamic obfuscation for " + "now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.STRINGER, "Access obfuscation" + " removal",
+            "Works for version 3 - 9.<br>Only" + " works" + " with invokedynamic obfuscation for " + "now.",
+            ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -46,8 +47,8 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted",
-            decryptionRatio <= 0.25, encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted", decryptionRatio <= 0.25,
+            encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -88,8 +89,9 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                           shortStacktrace(t));
                 }
               } else if (verbose) {
-                logger.warning("Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner()
-                        .equals(cn.name) + " " + bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
+                logger.warning(
+                        "Other bootstrap type in " + cn.name + ": " + bsm + " " + bsm.getOwner().equals(cn.name) + " " +
+                                bsm.getDesc().equals(STRINGER_INVOKEDYNAMIC_HANDLE_DESC));
               }
             }
           }
@@ -119,14 +121,14 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
   private boolean keepInitializer(ClassNode node) {
     // TODO this can probably be solved in a better way
-    if (node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/Class;")) && node.methods.stream()
-            .anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect" + "/Method;")) && node.methods.stream()
-            .anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Field;"))) {
+    if (node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/Class;")) &&
+            node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect" + "/Method;")) &&
+            node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Field;"))) {
       // decryption class
       return true;
     }
-    if (node.methods.stream().anyMatch(m -> m.desc
-            .startsWith("(Ljava/lang/invoke" + "/MethodHandles$Lookup;" + "Ljava/lang/String;" + "Ljava/lang/invoke" +
+    if (node.methods.stream().anyMatch(m -> m.desc.startsWith(
+            "(Ljava/lang/invoke" + "/MethodHandles$Lookup;" + "Ljava/lang/String;" + "Ljava/lang/invoke" +
                     "/MethodType"))) {
       // other decryption class
       return true;

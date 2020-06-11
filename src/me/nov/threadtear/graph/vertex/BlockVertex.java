@@ -44,8 +44,9 @@ public class BlockVertex implements Serializable {
         TryCatchBlockNode tcb = block.getTCB();
         String type = tcb.type;
         sb.append("<html>");
-        sb.append(Html.mono("tcb-handler " + OpFormat.labelToString(tcb.start) + " to " + OpFormat
-                .labelToString(tcb.end) + " - N" + block.getTCBIndex()));
+        sb.append(Html.mono(
+                "tcb-handler " + OpFormat.labelToString(tcb.start) + " to " + OpFormat.labelToString(tcb.end) + " - N" +
+                        block.getTCBIndex()));
         sb.append(": (");
         sb.append((type == null || type.equals("java/lang/Throwable") ? "catch " + "all" : type.replace('/', '.')));
         sb.append(")");

@@ -23,8 +23,9 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
   private boolean verbose;
 
   public StringObfuscationDashO() {
-    super(ExecutionCategory.DASHO, "String obfuscation " + "removal", "Tested on version 10.3, should " + "work for " +
-            "older versions too.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.DASHO, "String obfuscation " + "removal",
+            "Tested on version 10.3, should " + "work for " + "older versions too.", ExecutionTag.RUNNABLE,
+            ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -103,7 +104,8 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     return new AbstractInsnNode[]{ain};
   }
 
-  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second) throws Exception {
+  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second)
+          throws Exception {
     VM vm = VM.constructNonInitializingVM(this);
     createFakeClone(cn, m, min, top, second); // create a
     // duplicate of the current class,
@@ -175,8 +177,8 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
   }
 
   @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc, List<?
-          extends ConstantValue> values) {
+  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
+                                      List<? extends ConstantValue> values) {
     return null;
   }
 }

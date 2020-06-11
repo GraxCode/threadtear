@@ -176,7 +176,8 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   }
 
   @Override
-  public CodeReferenceValue binaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b) throws AnalyzerException {
+  public CodeReferenceValue binaryOperation(AbstractInsnNode insn, CodeReferenceValue a, CodeReferenceValue b)
+          throws AnalyzerException {
     BasicValue v = basic.binaryOperation(insn, a.getType(), b.getType());
     switch (insn.getOpcode()) {
       case BALOAD:
@@ -235,7 +236,8 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
   }
 
   @Override
-  public CodeReferenceValue naryOperation(AbstractInsnNode insn, List<? extends CodeReferenceValue> values) throws AnalyzerException {
+  public CodeReferenceValue naryOperation(AbstractInsnNode insn, List<? extends CodeReferenceValue> values)
+          throws AnalyzerException {
     BasicValue v = basic.naryOperation(insn, null); // values unused
     // by BasicInterpreter
     switch (insn.getOpcode()) {
@@ -278,8 +280,8 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
     return new MemberAccessValue(v, reference, fin, fin.owner, fin.name, fin.desc);
   }
 
-  private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min, List<?
-          extends CodeReferenceValue> values) {
+  private CodeReferenceValue methodReference(BasicValue v, CodeReferenceValue reference, MethodInsnNode min,
+                                             List<? extends CodeReferenceValue> values) {
     Object o = referenceHandler.getMethodReturnOrNull(v, min.owner, min.name, min.desc, values);
     if (o != null) {
       if (o instanceof String) {

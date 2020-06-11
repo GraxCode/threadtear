@@ -17,8 +17,7 @@ public class InstructionAnalysis implements Opcodes {
     Threadtear.logger.debug("Jumps in proportion to references -> ");
     double jumpPercentage = classes.stream().map(c -> c.node.methods).flatMap(List::stream).mapToDouble(m -> Counting
             .percentOf(AbstractInsnNode.JUMP_INSN, m.instructions, AbstractInsnNode.METHOD_INSN,
-                    AbstractInsnNode.FIELD_INSN, AbstractInsnNode.TYPE_INSN))
-            .average().orElse(Double.NaN);
+                    AbstractInsnNode.FIELD_INSN, AbstractInsnNode.TYPE_INSN)).average().orElse(Double.NaN);
     Threadtear.logger.debug(Math.round(jumpPercentage * 10000) / 100.0 + "%");
     Threadtear.logger.debug("Normal proportion is about 11%.");
     Threadtear.logger.debug("A higher value indicates flow " + "obfuscation.");
@@ -44,23 +43,23 @@ public class InstructionAnalysis implements Opcodes {
 
     Threadtear.logger.debug("Average standard deviation of letters" + " in strings -> ");
     double sdev = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator())
-            .flatMap(insns -> StreamSupport.stream(insns, false)).filter(ain -> ain
-                    .getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst
-                    .toString().length() > 2).mapToDouble(ain -> Strings.calcSdev(((LdcInsnNode) ain).cst.toString()))
-            .average().orElse(Double.NaN);
+            .flatMap(insns -> StreamSupport.stream(insns, false))
+            .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String &&
+                    ((LdcInsnNode) ain).cst.toString().length() > 2)
+            .mapToDouble(ain -> Strings.calcSdev(((LdcInsnNode) ain).cst.toString())).average().orElse(Double.NaN);
     Threadtear.logger.debug(Math.round(sdev * 100) / 100.0 + "");
     Threadtear.logger.debug("Normally around 15 - 40.");
     Threadtear.logger.debug("A higher value could indicate string " + "obfuscation.");
     Threadtear.logger.debug("----------------------------------------------");
 
     Threadtear.logger.debug("Percentage of high character value " + "strings -> ");
-    double highutf = classes.stream().map(c -> c.node.methods).flatMap(List::stream)
-            .map(m -> m.instructions.spliterator()).flatMap(insns -> StreamSupport.stream(insns, false))
-            .filter(ain -> ain
-                    .getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String && ((LdcInsnNode) ain).cst
-                    .toString().length() > 2)
-            .mapToDouble(ain -> Strings.isHighUTF(((LdcInsnNode) ain).cst.toString()) ? 1 : 0).average()
-            .orElse(Double.NaN);
+    double highutf =
+            classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator())
+                    .flatMap(insns -> StreamSupport.stream(insns, false))
+                    .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String &&
+                            ((LdcInsnNode) ain).cst.toString().length() > 2)
+                    .mapToDouble(ain -> Strings.isHighUTF(((LdcInsnNode) ain).cst.toString()) ? 1 : 0).average()
+                    .orElse(Double.NaN);
     Threadtear.logger.debug(Math.round(highutf * 10000) / 100.0 + "");
     Threadtear.logger.debug("Normally around 0% - 1%.");
     Threadtear.logger.debug("A higher value could indicate string obfuscation.");

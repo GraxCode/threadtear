@@ -10,9 +10,10 @@ import me.nov.threadtear.util.asm.References;
 public class RestoreSourceFiles extends Execution {
 
   public RestoreSourceFiles() {
-    super(ExecutionCategory.ANALYSIS, "Restore names by " + "source file", "Restore class names by their " + "source " +
-            "file attribute, if it isn't null" + ".<br>Could reverse obfuscation with bad " + "configuration.",
-            ExecutionTag.BETTER_DECOMPILE, ExecutionTag.POSSIBLE_DAMAGE);
+    super(ExecutionCategory.ANALYSIS, "Restore names by " + "source file",
+            "Restore class names by their " + "source " + "file attribute, if it isn't null" +
+                    ".<br>Could reverse obfuscation with bad " + "configuration.", ExecutionTag.BETTER_DECOMPILE,
+            ExecutionTag.POSSIBLE_DAMAGE);
   }
 
   private Map<String, String> map;
@@ -49,9 +50,9 @@ public class RestoreSourceFiles extends Execution {
     logger.info("Updating class names");
     classes.values().stream().forEach(c -> c.node.name = map.getOrDefault(c.node.name, c.node.name));
     logger.info("Updating code references");
-    int refs = classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
-            .map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-            .mapToInt(ain -> References.remapClassRefs(map, ain)).sum();
+    int refs =
+            classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
+                    .flatMap(Arrays::stream).mapToInt(ain -> References.remapClassRefs(map, ain)).sum();
     logger.info("{} code references updated " + "successfully!", refs);
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
             .forEach(m -> References.remapMethodType(map, m));

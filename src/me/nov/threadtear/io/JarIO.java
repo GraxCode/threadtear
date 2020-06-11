@@ -129,8 +129,8 @@ public final class JarIO {
   }
 
   private static boolean isClassFile(byte[] bytes) {
-    return bytes.length >= 4 && String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3])
-            .equals("CAFEBABE");
+    return bytes.length >= 4 &&
+            String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3]).equals("CAFEBABE");
   }
 
   private static JarEntry cloneOldEntry(JarEntry old, String name) {
