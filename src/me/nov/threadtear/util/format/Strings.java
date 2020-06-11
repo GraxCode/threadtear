@@ -29,11 +29,11 @@ public final class Strings {
     return cst.length() >= 2 && (calcSdev(cst) > 30);
   }
 
-  public static boolean containsRegex(String input, String search) {
+  public static boolean regexOrContains(String input, String search) {
     try {
-      return Pattern.compile(search).matcher(input).find();
+      return input.toLowerCase().contains(search.toLowerCase()) || Pattern.compile(search).matcher(input).find();
     } catch (PatternSyntaxException e) {
-      return input.toLowerCase().contains(search.toLowerCase());
+      return false;
     }
   }
 

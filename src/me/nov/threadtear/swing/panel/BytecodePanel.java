@@ -54,7 +54,7 @@ public class BytecodePanel extends JPanel {
         {
           for (int i = 0; i < split.length; i++) {
             String line = split[i];
-            if (Strings.containsRegex(line, searchText)) {
+            if (Strings.regexOrContains(line, searchText)) {
               if (i > searchIndex) {
                 textArea.setCaretPosition(
                         textArea.getDocument().getDefaultRootElement().getElement(i).getStartOffset());
