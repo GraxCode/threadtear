@@ -1,11 +1,10 @@
-package me.nov.threadtear.execution.generic;
+package me.nov.threadtear.execution.generic.inliner;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
-import me.nov.threadtear.util.asm.ArgumentInfer;
-import me.nov.threadtear.util.asm.MethodContext;
+import me.nov.threadtear.util.asm.method.MethodContext;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 

@@ -1,4 +1,4 @@
-package me.nov.threadtear.util.asm;
+package me.nov.threadtear.util.asm.method;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;

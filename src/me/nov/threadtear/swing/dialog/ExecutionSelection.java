@@ -17,6 +17,7 @@ import me.nov.threadtear.execution.cleanup.remove.RemoveUnusedVariables;
 import me.nov.threadtear.execution.cleanup.remove.RemoveUnnecessary;
 import me.nov.threadtear.execution.dasho.StringObfuscationDashO;
 import me.nov.threadtear.execution.generic.*;
+import me.nov.threadtear.execution.generic.inliner.ArgumentInliner;
 import me.nov.threadtear.execution.paramorphism.*;
 import me.nov.threadtear.execution.stringer.*;
 import me.nov.threadtear.execution.tools.*;

@@ -1,5 +1,7 @@
 package me.nov.threadtear.util.asm;
 
+import me.nov.threadtear.util.asm.method.MethodContext;
+import me.nov.threadtear.util.asm.method.MethodSignature;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;

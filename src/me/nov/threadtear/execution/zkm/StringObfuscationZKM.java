@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import me.nov.threadtear.execution.generic.inliner.ArgumentInfer;
+import me.nov.threadtear.util.asm.method.MethodContext;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.*;

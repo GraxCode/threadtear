@@ -1,9 +1,13 @@
-package me.nov.threadtear.util.asm;
+package me.nov.threadtear.execution.generic.inliner;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.Mapping;
+import me.nov.threadtear.util.asm.method.MethodContext;
+import me.nov.threadtear.util.asm.method.MethodSignature;
 import me.nov.threadtear.vm.Sandbox;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
