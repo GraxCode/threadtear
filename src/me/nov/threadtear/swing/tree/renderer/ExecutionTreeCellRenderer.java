@@ -5,9 +5,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import me.nov.threadtear.swing.Utils;
 import org.objectweb.asm.Opcodes;
-
-import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
@@ -18,11 +17,11 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
   private Icon executionRed, executionGreen, executionBlue, executionPurple, directory;
 
   public ExecutionTreeCellRenderer() {
-    this.directory = IconLoader.get().loadSVGIcon("res/folder.svg", false);
-    this.executionRed = IconLoader.get().loadSVGIcon("res/execution_red.svg", false);
-    this.executionGreen = IconLoader.get().loadSVGIcon("res/execution_green.svg", false);
-    this.executionBlue = IconLoader.get().loadSVGIcon("res/execution_blue.svg", false);
-    this.executionPurple = IconLoader.get().loadSVGIcon("res/execution_purple.svg", false);
+    this.directory = Utils.getIcon("res/folder.svg", true);
+    this.executionRed = Utils.getIcon("res/execution_red.svg");
+    this.executionGreen = Utils.getIcon("res/execution_green.svg");
+    this.executionBlue = Utils.getIcon("res/execution_blue.svg");
+    this.executionPurple = Utils.getIcon("res/execution_purple.svg");
 
   }
 

@@ -7,6 +7,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import com.github.weisj.darklaf.components.border.DarkBorders;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.util.format.Strings;
 
@@ -63,7 +64,7 @@ public class FileInfo extends JDialog {
     descriptions.add(new CustomLabel("CRC-32 hash: "));
     values.add(new CustomLabel(Long.toHexString(member.oldEntry.getCrc())));
     JPanel inner = new JPanel(new BorderLayout());
-    inner.setBorder(BorderFactory.createLoweredBevelBorder());
+    inner.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
     inner.add(descriptions, BorderLayout.WEST);
 
     inner.add(values, BorderLayout.CENTER);

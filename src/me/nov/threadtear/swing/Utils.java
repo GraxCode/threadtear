@@ -1,23 +1,135 @@
 package me.nov.threadtear.swing;
 
+import com.github.weisj.darklaf.components.border.DarkBorders;
+import com.github.weisj.darklaf.graphics.ImageUtil;
+import com.github.weisj.darklaf.icons.IconLoader;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.lang.management.*;
 import java.util.List;
 import java.util.Objects;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.tree.*;
 
 public class Utils {
-  public static JPanel addTitleAndBorder(String title, Component c) {
+
+  public static TitledPanel withTitleAndBorder(String title, JComponent c) {
+    Border border = DarkBorders.createLineBorder(1,1,1,1);
+    return new TitledPanel(title, withBorder(wrap(c), border));
+  }
+
+  public static GridBagConstraints createGridBagConstraints(int x, int y) {
+    return createGridBagConstraints(x, y, false);
+  }
+
+  public static GridBagConstraints createGridBagConstraints(int x, int y, boolean fullWidth) {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = x;
+    gbc.gridy = y;
+    gbc.gridwidth = 1;
+    gbc.gridheight = 1;
+
+    if (fullWidth) {
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+    }
+
+    gbc.anchor = (x == 0) ? GridBagConstraints.WEST : GridBagConstraints.EAST;
+    gbc.fill = (x == 0) ? GridBagConstraints.BOTH
+                        : GridBagConstraints.HORIZONTAL;
+
+    gbc.weightx = (x == 0) ? 0.1 : 1.0;
+    gbc.weighty = 1.0;
+    return gbc;
+  }
+
+  public static JComponent pad(JComponent comp, int top, int left, int bottom, int right) {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createTitledBorder(title));
-    JPanel panel2 = new JPanel(new BorderLayout());
-    panel2.add(c, BorderLayout.CENTER);
-    panel2.setBorder(BorderFactory.createLoweredBevelBorder());
-    panel.add(panel2, BorderLayout.CENTER);
+    panel.add(comp, BorderLayout.CENTER);
+    if (top > 0) {
+      JPanel p = new JPanel();
+      p.setPreferredSize(new Dimension(0, top));
+      panel.add(p, BorderLayout.NORTH);
+    }
+    if (bottom > 0) {
+      JPanel p = new JPanel();
+      p.setPreferredSize(new Dimension(0, bottom));
+      panel.add(p, BorderLayout.SOUTH);
+    }
+    if (left > 0) {
+      JPanel p = new JPanel();
+      p.setPreferredSize(new Dimension(left, 0));
+      panel.add(p, BorderLayout.WEST);
+    }
+    if (right > 0) {
+      JPanel p = new JPanel();
+      p.setPreferredSize(new Dimension(right, 0));
+      panel.add(p, BorderLayout.EAST);
+    }
     return panel;
+  }
+
+  public static JComponent horizontallyDivided(JComponent top, JComponent bottom) {
+    JPanel content = new JPanel(new BorderLayout());
+    JPanel topHolder = new JPanel(new BorderLayout());
+    topHolder.add(top, BorderLayout.CENTER);
+    topHolder.add(Utils.createHorizontalSeparator(8), BorderLayout.SOUTH);
+    content.add(topHolder, BorderLayout.CENTER);
+    content.add(bottom, BorderLayout.SOUTH);
+    return content;
+  }
+
+  public static JComponent verticallyDivided(JComponent left, JComponent right) {
+    JPanel content = new JPanel(new BorderLayout());
+    JPanel leftHolder = new JPanel(new BorderLayout());
+    leftHolder.add(left, BorderLayout.CENTER);
+    leftHolder.add(Utils.createVerticalSeparator(8), BorderLayout.EAST);
+    content.add(leftHolder, BorderLayout.CENTER);
+    content.add(right, BorderLayout.EAST);
+    return content;
+  }
+
+  public static JComponent alignBottom(JComponent component) {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.add(component, BorderLayout.SOUTH);
+    return panel;
+  }
+
+  public static JComponent createHorizontalSeparator() {
+    return createHorizontalSeparator(0);
+  }
+
+  public static JComponent createHorizontalSeparator(int padding) {
+    return withEmptyBorder(wrap(new JSeparator(JSeparator.HORIZONTAL)), padding, 0,padding, 0);
+  }
+
+  public static JComponent createVerticalSeparator() {
+    return createVerticalSeparator(0);
+  }
+
+  public static JComponent createVerticalSeparator(int padding) {
+    return withEmptyBorder(wrap(new JSeparator(JSeparator.VERTICAL)), 0, padding,0, padding);
+  }
+
+  public static <T extends JComponent> T withEmptyBorder(T comp, int pad) {
+    return withEmptyBorder(comp, pad, pad, pad, pad);
+  }
+
+  public static <T extends JComponent> T withEmptyBorder(T comp, int top, int left, int bottom, int right) {
+    return withBorder(comp, BorderFactory.createEmptyBorder(top, left, bottom, right));
+  }
+
+  public static <T extends JComponent> T withBorder(T comp, Border border) {
+    comp.setBorder(border);
+    return comp;
+  }
+
+  public static JComponent wrap(final JComponent component) {
+    JPanel wrap = new JPanel(new BorderLayout());
+    wrap.add(component);
+    return wrap;
   }
 
   public static void moveTreeItem(JTree tree, int direction) {
@@ -49,14 +161,24 @@ public class Utils {
     }
   }
 
-  public static Image iconToImage(Icon icon) {
-    if (icon instanceof ImageIcon) {
-      return ((ImageIcon) icon).getImage();
-    } else {
-      BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-      icon.paintIcon(null, image.getGraphics(), 0, 0);
-      return image;
-    }
+  public static Image iconToFrameImage(Icon icon, Window window) {
+    return ImageUtil.createFrameIcon(icon, window);
+  }
+
+  public static Icon getIcon(String path) {
+    return getIcon(path, false);
+  }
+
+  public static Icon getIcon(String path, boolean themed) {
+    return IconLoader.get().getIcon(path, themed);
+  }
+
+  public static Icon getIcon(String path, int width, int height) {
+    return IconLoader.get().getIcon(path, width, height, false);
+  }
+
+  public static Icon getIcon(String path, int width, int height, boolean themed) {
+    return IconLoader.get().getIcon(path, width, height, themed);
   }
 
   public static boolean isNoverify() {

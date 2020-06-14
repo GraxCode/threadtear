@@ -1,18 +1,17 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.GridLayout;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.io.FilenameUtils;
-
-import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Execution;
@@ -32,23 +31,24 @@ public class ConfigurationPanel extends JPanel {
 
   public ConfigurationPanel(Threadtear main) {
     this.main = main;
-    this.setLayout(new GridLayout(2, 1, 16, 16));
-    this.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-    this.add(createCheckboxes());
-    this.add(createBottomButtons());
-
+    this.setLayout(new BorderLayout());
+    this.add(createCheckboxes(), BorderLayout.WEST);
+    this.add(Utils.alignBottom(createBottomButtons()), BorderLayout.EAST);
   }
 
   private JPanel createCheckboxes() {
-    JPanel panel = new JPanel(new GridLayout(2, 2));
-    panel.add(verbose = new JCheckBox("Verbose logging"));
+    JPanel panel = new JPanel(new GridBagLayout());
+    panel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+    panel.add(verbose = new JCheckBox("Verbose logging"), Utils.createGridBagConstraints(0,0));
     verbose.setToolTipText("Log more information and " + "print full stack traces.");
-    panel.add(watermark = new JCheckBox("<html>Watermark " + "<tt>MANIFEST.MF</tt>"));
+    panel.add(watermark = new JCheckBox("<html>Watermark " + "<tt>MANIFEST.MF</tt>"),
+              Utils.createGridBagConstraints(1,0));
     watermark.setToolTipText("<html>Adds a " + "\"<tt>Deobfuscated-By\" attribute to" + " the manifest file.");
     watermark.setSelected(true);
-    panel.add(disableSecurity = new JCheckBox("<html" + ">Disable <tt>SecurityManager</tt> " + "protection"));
+    panel.add(disableSecurity = new JCheckBox("<html" + ">Disable <tt>SecurityManager</tt> " + "protection"),
+              Utils.createGridBagConstraints(0,1));
     disableSecurity
-            .setToolTipText("Remove the protection agains" + " unwanted calls. Could improve " + "deobfuscation.");
+            .setToolTipText("Remove the protection against" + " unwanted calls. Could improve " + "deobfuscation.");
     disableSecurity.addActionListener(l -> {
       if (disableSecurity.isSelected()) {
         if (JOptionPane.showConfirmDialog(this.getParent(),
@@ -59,14 +59,17 @@ public class ConfigurationPanel extends JPanel {
         }
       }
     });
-    panel.add(removeSignature = new JCheckBox("Remove " + "manifest signature"));
+    panel.add(removeSignature = new JCheckBox("Remove " + "manifest signature"),
+              Utils.createGridBagConstraints(1,1));
     removeSignature.setToolTipText("Remove the signature from " + "the manifest file, if available.");
     return panel;
   }
 
   private JPanel createBottomButtons() {
-    JPanel panel = new JPanel(new GridLayout(1, 4, 16, 16));
-    JButton loadCfg = new JButton("Load config", IconLoader.get().loadSVGIcon("res/load_config.svg", false));
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    panel.add(Box.createHorizontalGlue());
+    JButton loadCfg = new JButton("Load config", Utils.getIcon("res/load_config.svg", true));
     loadCfg.addActionListener(l -> {
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
       jfc.setAcceptAllFileFilterUsed(false);
@@ -79,7 +82,7 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(loadCfg);
-    JButton saveCfg = new JButton("Save config", IconLoader.get().loadSVGIcon("res/save_config.svg", false));
+    JButton saveCfg = new JButton("Save config", Utils.getIcon("res/save_config.svg", true));
     saveCfg.addActionListener(l -> {
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
       jfc.setAcceptAllFileFilterUsed(false);
@@ -93,7 +96,7 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(saveCfg);
-    save = new JButton("Save as jar file", IconLoader.get().loadSVGIcon("res/save.svg", false));
+    save = new JButton("Save as jar file", Utils.getIcon("res/save.svg", true));
     save.setEnabled(false);
     save.addActionListener(l -> {
       save.setEnabled(false);
@@ -117,7 +120,7 @@ public class ConfigurationPanel extends JPanel {
       save.setEnabled(true);
     });
     panel.add(save);
-    run = new JButton("Run", IconLoader.get().loadSVGIcon("res/run.svg", false));
+    run = new JButton("Run", Utils.getIcon("res/run.svg"));
     run.setEnabled(false);
     run.addActionListener(l -> {
       run.setEnabled(false);

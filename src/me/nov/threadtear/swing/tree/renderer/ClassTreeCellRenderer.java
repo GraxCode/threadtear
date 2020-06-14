@@ -5,10 +5,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import me.nov.threadtear.swing.Utils;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-
-import com.github.weisj.darklaf.icons.IconLoader;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
@@ -20,14 +19,14 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
   private static final Icon pack, clazz, innerClazz, mainClazz, enu, itf, failOverlay, ignoreOverlay;
 
   static {
-    pack = IconLoader.get().loadSVGIcon("res/package.svg", false);
-    clazz = IconLoader.get().loadSVGIcon("res/class.svg", false);
-    innerClazz = IconLoader.get().loadSVGIcon("res/innerClass.svg", false);
-    mainClazz = IconLoader.get().loadSVGIcon("res/mainClass.svg", false);
-    enu = IconLoader.get().loadSVGIcon("res/enum.svg", false);
-    itf = IconLoader.get().loadSVGIcon("res/interface.svg", false);
-    failOverlay = IconLoader.get().loadSVGIcon("res/failure.svg", 10, 10, false);
-    ignoreOverlay = IconLoader.get().loadSVGIcon("res/ignore.svg", 10, 10, false);
+    pack = Utils.getIcon("res/package.svg");
+    clazz = Utils.getIcon("res/class.svg");
+    innerClazz = Utils.getIcon("res/innerClass.svg");
+    mainClazz = Utils.getIcon("res/mainClass.svg");
+    enu = Utils.getIcon("res/enum.svg");
+    itf = Utils.getIcon("res/interface.svg");
+    failOverlay = Utils.getIcon("res/failure.svg", 10, 10, true);
+    ignoreOverlay = Utils.getIcon("res/ignore.svg", 10, 10, true);
   }
 
   @Override

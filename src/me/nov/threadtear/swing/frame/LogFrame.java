@@ -13,13 +13,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 
-import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.components.OverlayScrollPane;
+import com.github.weisj.darklaf.components.border.DarkBorders;
 
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.logging.Appender;
 import me.nov.threadtear.swing.Utils;
 
-public class LogFrame extends JFrame {
+public class LogFrame extends JDialog {
   private static final long serialVersionUID = 1L;
 
   public static JTextPane area;
@@ -30,8 +31,9 @@ public class LogFrame extends JFrame {
     setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 1000, 800);
     setMinimumSize(new Dimension(500, 400));
+    setModalityType(ModalityType.MODELESS);
     setLayout(new BorderLayout());
-    setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/run.svg", 64, 64, false)));
+    setIconImage(Utils.iconToFrameImage(Utils.getIcon("res/run.svg"), this));
     area = new JTextPane();
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
@@ -40,8 +42,8 @@ public class LogFrame extends JFrame {
             TransferHandler.getCopyAction());
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(
-            BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8), BorderFactory.createLoweredBevelBorder()));
-    cp.add(new JScrollPane(area), BorderLayout.CENTER);
+            BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8), DarkBorders.createLineBorder(1, 1, 1, 1)));
+    cp.add(new OverlayScrollPane(area), BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));

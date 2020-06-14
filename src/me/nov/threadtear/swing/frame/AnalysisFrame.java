@@ -5,8 +5,6 @@ import java.io.File;
 
 import javax.swing.*;
 
-import com.github.weisj.darklaf.icons.IconLoader;
-
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.graph.CFGPanel;
 import me.nov.threadtear.swing.Utils;
@@ -39,15 +37,15 @@ public class AnalysisFrame extends JFrame {
     setBounds(100, 100, 1000, 600);
     setMinimumSize(new Dimension(900, 540));
     setLayout(new BorderLayout());
-    setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/decompile.svg", 64, 64, false)));
+    setIconImage(Utils.iconToFrameImage(Utils.getIcon("res/decompile.svg", true), this));
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Decompiler", IconLoader.get().loadSVGIcon("res/decompile.svg", false),
+    tabbedPane.addTab("Decompiler", Utils.getIcon("res/decompile.svg", true),
             new DecompilerPanel(archive, clazz));
     tabbedPane
-            .addTab("Bytecode", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new BytecodePanel(clazz.node));
-    tabbedPane.addTab("Graph", IconLoader.get().loadSVGIcon("res/bytecode.svg", false), new CFGPanel(clazz.node));
+            .addTab("Bytecode", Utils.getIcon("res/bytecode.svg", true), new BytecodePanel(clazz.node));
+    tabbedPane.addTab("Graph", Utils.getIcon("res/bytecode.svg", true), new CFGPanel(clazz.node));
 
     cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);

@@ -7,10 +7,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 
+import com.github.weisj.darklaf.components.border.DarkBorders;
+import com.github.weisj.darklaf.components.text.SearchTextField;
+import me.nov.threadtear.swing.Utils;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
-import com.github.weisj.darklaf.icons.IconLoader;
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.io.Conversion;
@@ -30,12 +32,12 @@ public class BytecodePanel extends JPanel {
     this.setLayout(new BorderLayout(4, 4));
     JPanel actionPanel = new JPanel();
     actionPanel.setLayout(new GridBagLayout());
-    JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
+    JButton reload = new JButton(Utils.getIcon("res/refresh.svg", true));
     reload.addActionListener(l -> textArea.setText(Conversion.textify(cn)));
-    JTextField search = new JTextField();
+    SearchTextField search = new SearchTextField();
     search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");
     search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
-    search.addActionListener(l -> {
+    search.addSearchListener(l -> {
       try {
         String text = search.getText();
         if (text.isEmpty()) {
@@ -95,7 +97,7 @@ public class BytecodePanel extends JPanel {
     textArea.setText(Conversion.textify(cn));
     JScrollPane scp = new RTextScrollPane(textArea);
     scp.getVerticalScrollBar().setUnitIncrement(16);
-    scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+    scp.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
     this.add(scp, BorderLayout.CENTER);
   }
 

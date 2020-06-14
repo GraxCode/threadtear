@@ -12,13 +12,15 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 
+import com.github.weisj.darklaf.components.border.DarkBorders;
+import com.github.weisj.darklaf.components.text.SearchTextField;
+import me.nov.threadtear.swing.Utils;
 import org.apache.commons.io.IOUtils;
 import org.benf.cfr.reader.util.CfrVersionInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.*;
 
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
-import com.github.weisj.darklaf.icons.IconLoader;
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.decompiler.*;
@@ -75,12 +77,12 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     aggressive.setFocusable(false);
     JPanel rightActionPanel = new JPanel();
     rightActionPanel.setLayout(new GridBagLayout());
-    JButton reload = new JButton(IconLoader.get().loadSVGIcon("res/refresh.svg", false));
+    JButton reload = new JButton(Utils.getIcon("res/refresh.svg", true));
     reload.addActionListener(this);
-    JTextField search = new JTextField();
+    SearchTextField search = new SearchTextField();
     search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");
     search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
-    search.addActionListener(l -> {
+    search.addSearchListener(l -> {
       try {
         String text = search.getText();
         if (text.isEmpty()) {
@@ -143,7 +145,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
       this.update();
       scp = new RTextScrollPane(textArea);
       scp.getVerticalScrollBar().setUnitIncrement(16);
-      scp.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+      scp.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
       this.remove(loadingLabel);
       this.add(scp, BorderLayout.CENTER);
       conversionMethod.setEnabled(true);

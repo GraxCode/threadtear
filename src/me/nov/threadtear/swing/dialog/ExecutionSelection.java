@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import com.github.weisj.darklaf.components.OverlayScrollPane;
+import com.github.weisj.darklaf.components.border.DarkBorders;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.execution.allatori.*;
 import me.nov.threadtear.execution.analysis.*;
@@ -44,8 +46,8 @@ public class ExecutionSelection extends JDialog {
     cp.setLayout(new BorderLayout(0, 0));
     tree = new ExecutionSelectionTree();
     JPanel treePanel = new JPanel(new BorderLayout());
-    treePanel.setBorder(BorderFactory.createLoweredBevelBorder());
-    treePanel.add(new JScrollPane(tree), BorderLayout.CENTER);
+    treePanel.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
+    treePanel.add(new OverlayScrollPane(tree), BorderLayout.CENTER);
     cp.add(treePanel);
     JPanel buttons = new JPanel();
     JButton cancel = new JButton("Cancel");

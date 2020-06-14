@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.components.OverlayScrollPane;
 
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.swing.Utils;
@@ -24,10 +24,10 @@ public class ExecutionListPanel extends JPanel {
 
   public ExecutionListPanel() {
     this.setLayout(new BorderLayout());
-    this.add(Utils.addTitleAndBorder("Executions in order (top " + "to bottom)",
-            new JScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
+    this.add(Utils.withTitleAndBorder("Executions in order (top " + "to bottom)",
+                                      new OverlayScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
 
-    this.add(createButtons(), BorderLayout.SOUTH);
+    this.add(Utils.pad(createButtons(), 8,0,8,0), BorderLayout.SOUTH);
   }
 
   @Override
@@ -38,9 +38,9 @@ public class ExecutionListPanel extends JPanel {
   }
 
   private JPanel createButtons() {
-    JPanel panel = new JPanel(new GridLayout(1, 4, 4, 4));
-    panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-    JButton add = new JButton("Add", IconLoader.get().loadSVGIcon("res/add.svg", false));
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    JButton add = new JButton("Add", Utils.getIcon("res/add.svg", true));
     add.addActionListener(e -> {
       ExecutionSelection es = new ExecutionSelection(ExecutionListPanel.this);
       es.setVisible(true);
@@ -62,7 +62,7 @@ public class ExecutionListPanel extends JPanel {
       executions.repaint();
     });
     panel.add(add);
-    remove = new JButton("Remove", IconLoader.get().loadSVGIcon("res/remove.svg", false));
+    remove = new JButton("Remove", Utils.getIcon("res/remove.svg", true));
     remove.addActionListener(e -> {
       ExecutionTreeNode node = (ExecutionTreeNode) executions.getLastSelectedPathComponent();
       if (node != null && node.member != null) {
@@ -73,14 +73,14 @@ public class ExecutionListPanel extends JPanel {
     });
     panel.add(remove);
     remove.setEnabled(false);
-    up = new JButton("Move up", IconLoader.get().loadSVGIcon("res/move_up.svg", false));
+    up = new JButton("Move up", Utils.getIcon("res/move_up.svg", true));
     up.addActionListener(e -> {
       Utils.moveTreeItem(executions, -1);
       executions.grabFocus();
     });
     panel.add(up);
     up.setEnabled(false);
-    down = new JButton("Move down", IconLoader.get().loadSVGIcon("res/move_down.svg", false));
+    down = new JButton("Move down", Utils.getIcon("res/move_down.svg", true));
     down.addActionListener(e -> {
       Utils.moveTreeItem(executions, 1);
       executions.grabFocus();

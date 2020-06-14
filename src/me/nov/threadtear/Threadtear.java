@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.components.help.HelpMenuItem;
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
 import me.nov.threadtear.execution.*;
@@ -31,11 +31,12 @@ public class Threadtear extends JFrame {
   public TreePanel listPanel;
   public ConfigurationPanel configPanel;
   public LogFrame logFrame;
+  public StatusBar statusBar;
 
   public Threadtear() {
     this.initBounds();
     this.setTitle("Threadtear " + Utils.getVersion());
-    this.setIconImage(Utils.iconToImage(IconLoader.get().loadSVGIcon("res/threadtear.svg", 64, 64, false)));
+    this.setIconImage(Utils.iconToFrameImage(Utils.getIcon("res/threadtear.svg", true), this));
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
@@ -60,7 +61,9 @@ public class Threadtear extends JFrame {
     JMenuItem load = new JMenuItem("Load file");
     load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
     load.addActionListener(l -> {
+      UIManager.put("FileChooser.readOnly", Boolean.TRUE);
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
+      jfc.setMultiSelectionEnabled(false);
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setDialogTitle("Load file");
       jfc.setFileFilter(new FileNameExtensionFilter("Java" + " class or class archive", "jar", "class"));
@@ -82,8 +85,9 @@ public class Threadtear extends JFrame {
     });
     help.add(log);
     JMenuItem laf = new JMenuItem("Look and feel settings");
+    laf.setIcon(ThemeSettings.getInstance().getIcon());
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
-    JMenuItem about = new JMenuItem("About threadtear " + Utils.getVersion());
+    JMenuItem about = new HelpMenuItem("About threadtear " + Utils.getVersion());
     about.addActionListener(l -> JOptionPane.showMessageDialog(this,
             "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
                     ".<br>Add executions to the list on " + "the left side. Make sure to have " +
@@ -101,9 +105,13 @@ public class Threadtear extends JFrame {
   }
 
   private void initializeFrame() {
-    this.setLayout(new BorderLayout(16, 16));
-    this.add(listPanel = new TreePanel(this), BorderLayout.CENTER);
-    this.add(configPanel = new ConfigurationPanel(this), BorderLayout.SOUTH);
+    JPanel content = new JPanel(new BorderLayout());
+    content.add(Utils.withEmptyBorder(Utils.horizontallyDivided(
+      listPanel = new TreePanel(this),
+      Utils.pad(configPanel = new ConfigurationPanel(this), 100,0,0,0)
+    ), 16), BorderLayout.CENTER);
+    content.add(statusBar = new StatusBar(), BorderLayout.SOUTH);
+    setContentPane(content);
   }
 
   private void initBounds() {
@@ -115,6 +123,7 @@ public class Threadtear extends JFrame {
   }
 
   public static void main(String[] args) throws Exception {
+    LookAndFeel.init();
     LookAndFeel.setLookAndFeel();
     configureEnvironment();
     new Threadtear().setVisible(true);
