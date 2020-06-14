@@ -35,6 +35,14 @@ public class StatusBar extends JToolBar {
     add(contentBox = Box.createHorizontalBox());
   }
 
+  @Override
+  public boolean isVisible() {
+    if (!super.isVisible()) return false;
+    Insets ins = getInsets();
+    Insets margins = getMargin();
+    return getHeight() > ins.top + ins.bottom + margins.top + margins.bottom;
+  }
+
   public void runWithLoadIndicator(Runnable action) {
     runWithLoadIndicator(null, action);
   }
