@@ -8,6 +8,8 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -36,9 +38,6 @@ public class FlowObfuscationZKM extends Execution {
     for (AbstractInsnNode ain : mn.instructions.toArray()) {
       if (ain.getPrevious() != null && singleJump.test(ain.getOpcode())) {
         AbstractInsnNode previous = ain.getPrevious();
-        if (previous == null) {
-          continue;
-        }
         boolean shouldPop = false;
         if (ain.getOpcode() == IFNULL || ain.getOpcode() == IFNONNULL) { //first case flow obfuscation scenario
           if (previous.getOpcode() == ALOAD) {
