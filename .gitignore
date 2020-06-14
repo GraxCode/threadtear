@@ -4,6 +4,7 @@
 /.settings/
 /*.jar
 /.idea
+/dist
 # Ignore Gradle project-specific cache directory
 .gradle
 

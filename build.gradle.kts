@@ -1,98 +1,49 @@
-import com.github.vlsi.gradle.crlf.LineEndings
 import com.github.vlsi.gradle.crlf.CrLfSpec
-
+import com.github.vlsi.gradle.crlf.LineEndings
+import com.github.vlsi.gradle.properties.dsl.props
 
 plugins {
-    `java-library`
     id("eclipse")
-    id("com.github.johnrengelman.shadow")
+    id("com.github.autostyle")
     id("com.github.vlsi.crlf")
+    id("com.github.vlsi.gradle-extensions")
 }
+
+val skipAutostyle by props(true) // Remove true if formatting is configured.
 
 val String.v: String get() = rootProject.extra["$this.version"] as String
 val projectVersion = "threadtear".v
 
-repositories {
-    mavenCentral()
-    maven {
-        url = uri("https://jitpack.io")
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
-configurations {
-    all { resolutionStrategy.cacheChangingModulesFor(0, "seconds") }
-}
-
-fun DependencyHandlerScope.externalLib(libraryName: String) {
-    compileOnly(files("${rootProject.rootDir}/libs/$libraryName.jar"))
-    runtimeOnly(files("${rootProject.rootDir}/libs/$libraryName.jar"))
-}
-
-dependencies {
-	implementation("commons-io:commons-io")
-
-    implementation("org.apache.commons:commons-configuration2")
-    implementation("commons-beanutils:commons-beanutils")
-
-    implementation("com.github.weisj:darklaf-core") { isChanging = true }
-    implementation("com.github.weisj:darklaf-theme") { isChanging = true }
-    implementation("com.github.weisj:darklaf-property-loader") { isChanging = true }
-
-    implementation("org.ow2.asm:asm")
-    implementation("org.ow2.asm:asm-tree")
-    implementation("org.ow2.asm:asm-analysis")
-    implementation("org.ow2.asm:asm-util")
-
-    implementation("com.github.leibnitz27:cfr") { isChanging = true }
-    implementation("com.fifesoft:rsyntaxtextarea")
-    implementation("com.github.jgraph:jgraphx")
-    implementation("ch.qos.logback:logback-classic")
-
-    externalLib("fernflower-15-05-20")
-}
-
-sourceSets {
-    main {
-        java.srcDirs("src");
-        resources.srcDirs("src");
-    }
-}
-
-tasks.shadowJar {
-    archiveBaseName.set(project.name)
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    transform(LicenseTransformer::class.java) {
-        destinationPath = "META-INF/licenses/LICENSES.txt"
-        include("META-INF/LICENSE", "META-INF/LICENSE.txt")
-        exclude("META-INF/THREADTEAR_LICENSE")
-    }
-    transform(LicenseTransformer::class.java) {
-        destinationPath = "META-INF/licenses/NOTICES.txt"
-        include("META-INF/NOTICE", "META-INF/NOTICE.txt")
-    }
-    relocate("META-INF", "META-INF/licenses") {
-        includes.addAll(listOf(
-            "META-INF/*LICENSE*",
-            "META-INF/*NOTICE*",
-            "META-INF/AL2.0",
-            "META-INF/LGPL2.1"
-        ))
-        exclude("META-INF/THREADTEAR_LICENSE")
-    }
-}
-
-val fatJar by tasks.registering {
-    group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Build a runnable jar with all dependencies"
-    dependsOn(tasks.shadowJar)
-}
-
 allprojects {
     group = "me.nov.threadtear"
     version = projectVersion
+
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        }
+    }
+
+    configurations {
+        all { resolutionStrategy.cacheChangingModulesFor(0, "seconds") }
+    }
+
+    if (!skipAutostyle) {
+        apply(plugin = "com.github.autostyle")
+        autostyle {
+            kotlinGradle {
+                ktlint()
+            }
+            format("markdown") {
+                filter.include("**/*.md")
+                endWithNewline()
+            }
+        }
+    }
 
     tasks.withType<AbstractArchiveTask>().configureEach {
         // Ensure builds are reproducible
@@ -113,6 +64,18 @@ allprojects {
         configure<JavaPluginExtension> {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        if (!skipAutostyle) {
+            autostyle {
+                java {
+                    importOrder("java", "javax", "org", "com")
+                    removeUnusedImports()
+                    eclipse {
+                        configFile("${project.rootDir}/threadtear.eclipseformat.xml")
+                    }
+                }
+            }
         }
 
         tasks {
@@ -160,7 +123,6 @@ allprojects {
                     attributes["Specification-Title"] = "Threadtear"
                     attributes["Implementation-Vendor"] = "Threadtear"
                     attributes["Implementation-Vendor-Id"] = project.group
-                    attributes["Main-Class"] = "me.nov.threadtear.Threadtear"
                 }
 
                 CrLfSpec(LineEndings.LF).run {
@@ -170,10 +132,11 @@ allprojects {
                         // This includes either project-specific license or a default one
                         if (file("$projectDir/LICENSE").exists()) {
                             textFrom("$projectDir/LICENSE")
+                            rename { s -> "${project.name.toUpperCase()}_LICENSE" }
                         } else {
                             textFrom("$rootDir/LICENSE")
+                            rename { s -> "${rootProject.name.toUpperCase()}_LICENSE" }
                         }
-                        rename { s -> "${project.name.toUpperCase()}_LICENSE" }
                     }
                 }
             }
