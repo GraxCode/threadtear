@@ -1,5 +1,14 @@
 root = true
 
-[*.java]
+[*]
+trim_trailing_whitespace = true
+insert_final_newline = true
+charset = utf-8
 indent_style = space
+
+[*.java]
 indent_size = 2
+
+[*.md]
+indent_size = 4
+trim_trailing_whitespace = false

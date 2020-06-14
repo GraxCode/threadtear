@@ -1,9 +1,9 @@
 /bin/
 /.classpath
 /.project
-/.gitattributes
 /.settings/
 /*.jar
+/.idea
 # Ignore Gradle project-specific cache directory
 .gradle
 
