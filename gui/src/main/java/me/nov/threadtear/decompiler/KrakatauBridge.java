@@ -3,6 +3,7 @@ package me.nov.threadtear.decompiler;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.Objects;
 import java.util.jar.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
@@ -102,7 +103,8 @@ public class KrakatauBridge implements IDecompilerBridge {
   private static String setupKrakatau() {
     try {
       krakatau = Files.createTempDirectory("krakatau");
-      ZipInputStream zin = new ZipInputStream(KrakatauBridge.class.getResourceAsStream("krakatau.zip"));
+      ZipInputStream zin = new ZipInputStream(
+        Objects.requireNonNull(KrakatauBridge.class.getResourceAsStream("krakatau.zip")));
       ZipEntry zipEntry;
       while ((zipEntry = zin.getNextEntry()) != null) {
         Path resolvedPath = krakatau.resolve(zipEntry.getName()).normalize();

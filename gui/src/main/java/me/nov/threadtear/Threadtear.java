@@ -16,9 +16,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.github.weisj.darklaf.components.help.HelpMenuItem;
 import com.github.weisj.darklaf.settings.ThemeSettings;
 
-import me.nov.threadtear.decompiler.KrakatauBridge;
 import me.nov.threadtear.execution.*;
-import me.nov.threadtear.execution.analysis.ReobfuscateMembers;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.Utils;
@@ -34,6 +32,12 @@ public class Threadtear extends JFrame {
   public ConfigurationPanel configPanel;
   public LogFrame logFrame;
   public StatusBar statusBar;
+  private static Threadtear instance;
+
+  public static Threadtear getInstance() {
+    if (instance == null) instance = new Threadtear();
+    return instance;
+  }
 
   public Threadtear() {
     this.initBounds();
@@ -128,7 +132,7 @@ public class Threadtear extends JFrame {
     LookAndFeel.init();
     LookAndFeel.setLookAndFeel();
     configureEnvironment();
-    new Threadtear().setVisible(true);
+    getInstance().setVisible(true);
   }
 
   private static void configureEnvironment() throws Exception {

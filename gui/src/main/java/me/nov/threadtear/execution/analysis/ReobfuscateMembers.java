@@ -33,7 +33,7 @@ public class ReobfuscateMembers extends Execution {
     this.words = Strings.generateWordQueue(
             (int) (classes.values().stream().map(c -> c.node.fields).mapToLong(List::size).sum() +
                     classes.values().stream().map(c -> c.node.methods).mapToLong(List::size).sum()),
-            ReobfuscateMembers.class.getResourceAsStream("english-words.txt"));
+            Objects.requireNonNull(ReobfuscateMembers.class.getResourceAsStream("english-words.txt")));
 
     logger.info("Making method mappings");
     classes.values().stream().map(c -> c.node).forEach(this::makeMethodMappings);

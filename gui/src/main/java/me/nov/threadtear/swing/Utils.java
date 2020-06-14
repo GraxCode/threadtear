@@ -1,9 +1,12 @@
 package me.nov.threadtear.swing;
 
+import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.graphics.ImageUtil;
 import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.swing.textarea.DecompilerTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.lang.management.*;
@@ -25,6 +28,15 @@ public class Utils {
 
   public static GridBagConstraints createGridBagConstraints(int x, int y) {
     return createGridBagConstraints(x, y, false);
+  }
+
+  public static OverlayScrollPane createRSyntaxOverlayScrollPane(DecompilerTextArea textArea) {
+    RTextScrollPane sp = new RTextScrollPane(textArea);
+    OverlayScrollPane overlayScrollPane = new OverlayScrollPane(sp);
+    overlayScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    sp.setLineNumbersEnabled(true);
+    textArea.reloadSyntaxTheme();
+    return overlayScrollPane;
   }
 
   public static GridBagConstraints createGridBagConstraints(int x, int y, boolean fullWidth) {

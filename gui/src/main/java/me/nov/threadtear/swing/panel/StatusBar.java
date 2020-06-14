@@ -113,6 +113,14 @@ public class StatusBar extends JToolBar {
     contentBox.remove(component);
   }
 
+  public boolean isIndicatorRunning() {
+    return loadingIndicator.isVisible();
+  }
+
+  public boolean isProgressbarRunning() {
+    return progressBar.isVisible();
+  }
+
   public interface ProgressCallback extends Consumer<Integer> {
     void setProgress(int progress);
 

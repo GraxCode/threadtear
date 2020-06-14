@@ -10,7 +10,6 @@ import javax.swing.text.*;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
 import me.nov.threadtear.swing.Utils;
-import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
@@ -95,10 +94,10 @@ public class BytecodePanel extends JPanel {
     this.add(topPanel, BorderLayout.NORTH);
     this.textArea = new DecompilerTextArea();
     textArea.setText(Conversion.textify(cn));
-    JScrollPane scp = new RTextScrollPane(textArea);
-    scp.getVerticalScrollBar().setUnitIncrement(16);
-    scp.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
-    this.add(scp, BorderLayout.CENTER);
+    this.add(Utils.withBorder(
+      Utils.wrap(Utils.createRSyntaxOverlayScrollPane(textArea)),
+      DarkBorders.createLineBorder(1, 1, 1, 1)
+    ), BorderLayout.CENTER);
   }
 
   private void hightlightText(String searchText) throws BadLocationException {

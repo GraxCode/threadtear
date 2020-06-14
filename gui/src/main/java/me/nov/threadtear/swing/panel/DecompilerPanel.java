@@ -14,13 +14,12 @@ import javax.swing.text.*;
 
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
+import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.swing.Utils;
 import org.apache.commons.io.IOUtils;
 import org.benf.cfr.reader.util.CfrVersionInfo;
-import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.*;
 
-import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
 
 import me.nov.threadtear.decompiler.*;
@@ -40,7 +39,6 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   public File archive;
   public Clazz clazz;
 
-  private RTextScrollPane scp;
   private JComboBox<String> decompilerSelection;
   private JComboBox<String> conversionMethod;
   private JCheckBox ignoreTCB;
@@ -137,46 +135,29 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     topPanel.add(leftActionPanel, BorderLayout.WEST);
     topPanel.add(rightActionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
-    LoadingIndicator loadingLabel = new LoadingIndicator("Decompiling class file... ", JLabel.CENTER);
-    loadingLabel.setRunning(true);
-    this.add(loadingLabel, BorderLayout.CENTER);
-    SwingUtilities.invokeLater(() -> new Thread(() -> {
+    Threadtear.getInstance().statusBar.runWithLoadIndicator("Decompiling class file... ", () -> {
       this.textArea = new DecompilerTextArea();
       this.update();
-      scp = new RTextScrollPane(textArea);
-      scp.getVerticalScrollBar().setUnitIncrement(16);
-      scp.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
-      this.remove(loadingLabel);
-      this.add(scp, BorderLayout.CENTER);
+      this.add(Utils.withBorder(
+        Utils.wrap(Utils.createRSyntaxOverlayScrollPane(textArea)),
+        DarkBorders.createLineBorder(1, 1, 1, 1)
+      ), BorderLayout.CENTER);
       conversionMethod.setEnabled(true);
       invalidate();
       validate();
       repaint();
-    }, "decompile-thread").start());
+    });
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (scp != null && scp.isShowing()) {
+    if (!Threadtear.getInstance().statusBar.isIndicatorRunning()) {
       reload();
     }
   }
 
   private void reload() {
-    LoadingIndicator loadingLabel = new LoadingIndicator("Decompiling class file... ", JLabel.CENTER);
-    loadingLabel.setRunning(true);
-    this.add(loadingLabel, BorderLayout.CENTER);
-    this.remove(scp);
-    invalidate();
-    validate();
-    SwingUtilities.invokeLater(() -> new Thread(() -> {
-      update();
-      this.remove(loadingLabel);
-      this.add(scp, BorderLayout.CENTER);
-      invalidate();
-      validate();
-      repaint();
-    }).start());
+    Threadtear.getInstance().statusBar.runWithLoadIndicator("Decompiling class file...", this::update);
   }
 
   public void update() {

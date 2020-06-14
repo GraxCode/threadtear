@@ -52,7 +52,7 @@ public class ReobfuscateVariableNames extends Execution {
     logger.info("Generating random names");
     Queue<String> words =
       Strings.generateWordQueue(methodVariableCountMap.values().stream().mapToInt(Integer::intValue).sum(),
-        ReobfuscateVariableNames.class.getResourceAsStream("english-words.txt"));
+        Objects.requireNonNull(ReobfuscateVariableNames.class.getResourceAsStream("english-words.txt")));
     int count = words.size();
 
     logger.info("Renaming variables");
