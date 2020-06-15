@@ -61,14 +61,18 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private JPanel createButtons() {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-    obfAnalysis = new JButton("Full analysis", Utils.getIcon("analysis.svg", true));
+    obfAnalysis = new JButton("Full analysis");
+    obfAnalysis.setIcon(Utils.getIcon("analysis.svg", true));
+    obfAnalysis.setDisabledIcon(Utils.getIcon("analysis_disabled.svg", true));
     obfAnalysis.addActionListener(l -> {
       threadtear.logFrame.setVisible(true);
       new Thread(() -> InstructionAnalysis.analyze(classes)).start();
     });
     obfAnalysis.setEnabled(false);
     panel.add(obfAnalysis);
-    analyze = new JButton("Analyze code", Utils.getIcon("decompile.svg", true));
+    analyze = new JButton("Analyze code");
+    analyze.setIcon(Utils.getIcon("decompile.svg", true));
+    analyze.setDisabledIcon(Utils.getIcon("decompile_disabled.svg", true));
     analyze.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
@@ -77,7 +81,9 @@ public class ClassTreePanel extends JPanel implements ILoader {
     });
     panel.add(analyze);
     analyze.setEnabled(false);
-    fileInfo = new JButton("Information", Utils.getIcon("file.svg", true));
+    fileInfo = new JButton("Information");
+    fileInfo.setIcon(Utils.getIcon("file.svg", true));
+    fileInfo.setDisabledIcon(Utils.getIcon("file_disabled.svg", true));
     fileInfo.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
@@ -87,7 +93,9 @@ public class ClassTreePanel extends JPanel implements ILoader {
 
     panel.add(fileInfo);
     fileInfo.setEnabled(false);
-    ignore = new JButton("Ignore", Utils.getIcon("ignore.svg", true));
+    ignore = new JButton("Ignore");
+    ignore.setIcon(Utils.getIcon("ignore.svg", true));
+    ignore.setDisabledIcon(Utils.getIcon("ignore_disabled.svg", true));
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
       for (TreePath path : paths) {

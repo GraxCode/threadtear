@@ -16,6 +16,7 @@ import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.button.ReloadButton;
 import org.apache.commons.io.IOUtils;
 import org.benf.cfr.reader.util.CfrVersionInfo;
 import org.objectweb.asm.tree.*;
@@ -75,7 +76,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     aggressive.setFocusable(false);
     JPanel rightActionPanel = new JPanel();
     rightActionPanel.setLayout(new GridBagLayout());
-    JButton reload = new JButton(Utils.getIcon("refresh.svg", true));
+    JButton reload = new ReloadButton();
     reload.addActionListener(this);
     SearchTextField search = new SearchTextField();
     search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");

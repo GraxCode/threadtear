@@ -82,7 +82,9 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(loadCfg);
-    JButton saveCfg = new JButton("Save config", Utils.getIcon("save_config.svg", true));
+    JButton saveCfg = new JButton("Save config");
+    saveCfg.setIcon(Utils.getIcon("save_config.svg", true));
+    saveCfg.setDisabledIcon(Utils.getIcon("save_config_disabled.svg", true));
     saveCfg.addActionListener(l -> {
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
       jfc.setAcceptAllFileFilterUsed(false);

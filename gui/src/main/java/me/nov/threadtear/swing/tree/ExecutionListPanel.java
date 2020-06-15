@@ -40,7 +40,9 @@ public class ExecutionListPanel extends JPanel {
   private JPanel createButtons() {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-    JButton add = new JButton("Add", Utils.getIcon("add.svg", true));
+    JButton add = new JButton("Add");
+    add.setIcon(Utils.getIcon("add.svg", true));
+    add.setDisabledIcon(Utils.getIcon("add_disabled.svg", true));
     add.addActionListener(e -> {
       ExecutionSelection es = new ExecutionSelection(ExecutionListPanel.this);
       es.setVisible(true);
@@ -62,7 +64,9 @@ public class ExecutionListPanel extends JPanel {
       executions.repaint();
     });
     panel.add(add);
-    remove = new JButton("Remove", Utils.getIcon("remove.svg", true));
+    remove = new JButton("Remove");
+    remove.setIcon(Utils.getIcon("remove.svg", true));
+    remove.setDisabledIcon(Utils.getIcon("remove_disabled.svg", true));
     remove.addActionListener(e -> {
       ExecutionTreeNode node = (ExecutionTreeNode) executions.getLastSelectedPathComponent();
       if (node != null && node.member != null) {
@@ -74,13 +78,17 @@ public class ExecutionListPanel extends JPanel {
     panel.add(remove);
     remove.setEnabled(false);
     up = new JButton("Move up", Utils.getIcon("move_up.svg", true));
+    up.setIcon(Utils.getIcon("move_up.svg", true));
+    up.setDisabledIcon(Utils.getIcon("move_up_disabled.svg", true));
     up.addActionListener(e -> {
       Utils.moveTreeItem(executions, -1);
       executions.grabFocus();
     });
     panel.add(up);
     up.setEnabled(false);
-    down = new JButton("Move down", Utils.getIcon("move_down.svg", true));
+    down = new JButton("Move down");
+    down.setIcon(Utils.getIcon("move_down.svg", true));
+    down.setDisabledIcon(Utils.getIcon("move_down_disabled.svg", true));
     down.addActionListener(e -> {
       Utils.moveTreeItem(executions, 1);
       executions.grabFocus();

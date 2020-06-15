@@ -10,6 +10,7 @@ import javax.swing.text.*;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
 import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.button.ReloadButton;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.github.weisj.darklaf.ui.text.DarkTextUI;
@@ -31,7 +32,7 @@ public class BytecodePanel extends JPanel {
     this.setLayout(new BorderLayout(4, 4));
     JPanel actionPanel = new JPanel();
     actionPanel.setLayout(new GridBagLayout());
-    JButton reload = new JButton(Utils.getIcon("refresh.svg", true));
+    JButton reload = new ReloadButton();
     reload.addActionListener(l -> textArea.setText(Conversion.textify(cn)));
     SearchTextField search = new SearchTextField();
     search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");

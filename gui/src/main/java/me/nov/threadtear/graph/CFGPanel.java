@@ -13,7 +13,7 @@ import javax.swing.filechooser.*;
 
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.button.ReloadButton;
 import me.nov.threadtear.swing.component.AutoCompletion;
 import org.objectweb.asm.tree.*;
 
@@ -98,7 +98,7 @@ public class CFGPanel extends JPanel {
       }
     });
     rightActions.add(save);
-    JButton reload = new JButton(Utils.getIcon("refresh.svg", true));
+    JButton reload = new ReloadButton();
     reload.addActionListener(l -> generateGraph());
     rightActions.add(reload);
     rightActionPanel.add(rightActions);
@@ -125,6 +125,14 @@ public class CFGPanel extends JPanel {
         this.generateGraph();
       }
     });
+  }
+
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    if (blocks != null) {
+      generateGraph();
+    }
   }
 
   public void generateGraph() {
