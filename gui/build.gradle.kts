@@ -67,7 +67,7 @@ tasks.clean {
 val fatJar by tasks.registering(Copy::class) {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = "Build a runnable jar with all dependencies"
-    dependsOn(tasks.shadowJar)
+    dependsOn(tasks.build, tasks.shadowJar)
     destinationDir = File("$rootDir/dist/")
     tasks.shadowJar.flatMap { it.archiveFile }.let {
         val name = it.get().asFile.name
