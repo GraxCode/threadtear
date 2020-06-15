@@ -8,7 +8,7 @@ import javax.swing.text.*;
 import ch.qos.logback.classic.*;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import me.nov.threadtear.swing.frame.LogFrame;
+import me.nov.threadtear.Threadtear;
 
 /**
  * @author Rodrigo Garcia Lima (email:
@@ -66,7 +66,7 @@ public class Appender extends AppenderBase<ILoggingEvent> {
     String formattedMsg = patternLayout.doLayout(event);
 
     SwingUtilities.invokeLater(() -> {
-      JTextPane textPane = LogFrame.area;
+      JTextPane textPane = Threadtear.getInstance().logFrame.getTextArea();
       if (textPane == null) {
         return;
       }

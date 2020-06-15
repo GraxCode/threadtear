@@ -23,7 +23,8 @@ import me.nov.threadtear.swing.Utils;
 public class LogFrame extends JDialog {
   private static final long serialVersionUID = 1L;
 
-  public static JTextPane area;
+  private static final Icon icon = Utils.getIcon("run.svg");
+  private final JTextPane area;
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm");
 
   public LogFrame() {
@@ -33,7 +34,7 @@ public class LogFrame extends JDialog {
     setMinimumSize(new Dimension(500, 400));
     setModalityType(ModalityType.MODELESS);
     setLayout(new BorderLayout());
-    setIconImage(Utils.iconToFrameImage(Utils.getIcon("run.svg"), this));
+    setIconImage(Utils.iconToFrameImage(getIcon(), this));
     area = new JTextPane();
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
@@ -41,8 +42,8 @@ public class LogFrame extends JDialog {
     area.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
             TransferHandler.getCopyAction());
     JPanel cp = new JPanel(new BorderLayout());
-    cp.setBorder(
-            BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8), DarkBorders.createLineBorder(1, 1, 1, 1)));
+    cp.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(8, 8, 8, 8),
+      DarkBorders.createLineBorder(1, 1, 1, 1)));
     cp.add(new OverlayScrollPane(area), BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
     JPanel buttons = new JPanel();
@@ -83,5 +84,13 @@ public class LogFrame extends JDialog {
     } catch (BadLocationException e) {
       e.printStackTrace();
     }
+  }
+
+  public JTextPane getTextArea() {
+    return area;
+  }
+
+  public static Icon getIcon() {
+    return icon;
   }
 }

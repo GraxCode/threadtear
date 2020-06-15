@@ -1,6 +1,9 @@
 package me.nov.threadtear.swing.panel;
 
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
+import com.github.weisj.darklaf.ui.button.DarkButtonUI;
+import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.swing.frame.LogFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,17 +16,32 @@ public class StatusBar extends JToolBar {
   private final JLabel progressLabel;
   private final LoadingIndicator loadingIndicator;
   private final JProgressBar progressBar;
+  private final int padding = 2;
 
   public StatusBar() {
     setFloatable(false);
-    setMargin(new Insets(4,16,4,16));
 
-    add(messageLabel = new JLabel());
+    add(Box.createHorizontalStrut(16));
+
+    JButton logButton = new JButton();
+    logButton.setToolTipText("Open logging Frame");
+    logButton.putClientProperty(DarkButtonUI.KEY_VARIANT, DarkButtonUI.VARIANT_BORDERLESS_RECTANGULAR);
+    logButton.putClientProperty(DarkButtonUI.KEY_SQUARE, true);
+    logButton.putClientProperty(DarkButtonUI.KEY_THIN, true);
+    logButton.setBorder(BorderFactory.createEmptyBorder());
+    logButton.setIcon(LogFrame.getIcon());
+    logButton.addActionListener(e -> Threadtear.getInstance().logFrame.setVisible(true));
+
+    add(logButton);
+
+    add(Box.createHorizontalStrut(padding));
+    add(messageLabel = createMessageLabel());
+    add(Box.createHorizontalStrut(padding));
     add(Box.createHorizontalGlue());
 
     Box loadingBox = Box.createHorizontalBox();
     loadingBox.add(progressBar = new JProgressBar());
-    loadingBox.add(Box.createHorizontalStrut(4));
+    loadingBox.add(Box.createHorizontalStrut(padding));
     loadingBox.add(loadingIndicator = new LoadingIndicator());
     loadingBox.add(progressLabel = new JLabel());
     progressBar.setMaximumSize(new Dimension(200, 200));
@@ -33,14 +51,39 @@ public class StatusBar extends JToolBar {
     add(loadingBox);
 
     add(contentBox = Box.createHorizontalBox());
+    add(Box.createHorizontalStrut(16));
+  }
+
+  protected JLabel createMessageLabel() {
+    return new JLabel() {
+      @Override
+      public Dimension getPreferredSize() {
+          Dimension dim = StatusBar.this.getSize();
+          Dimension pref = super.getPreferredSize();
+          pref.width = Math.min(pref.width, dim.width / 2);
+          return pref;
+      }
+    };
   }
 
   @Override
-  public boolean isVisible() {
-    if (!super.isVisible()) return false;
+  public void doLayout() {
+    super.doLayout();
     Insets ins = getInsets();
-    Insets margins = getMargin();
-    return getHeight() > ins.top + ins.bottom + margins.top + margins.bottom;
+    int h = getHeight() - ins.bottom - ins.top;
+    int y = ins.top;
+    for (Component component : getComponents()) {
+      int w = component.getWidth();
+      int x = component.getX();
+      component.setBounds(x, y, w, h);
+    }
+  }
+
+  @Override
+  public Dimension getPreferredSize() {
+    Dimension dim = super.getPreferredSize();
+    dim.height += 2 * padding;
+    return dim;
   }
 
   public void runWithLoadIndicator(Runnable action) {

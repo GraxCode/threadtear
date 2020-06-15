@@ -24,6 +24,7 @@ import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
 import me.nov.threadtear.swing.panel.*;
+import org.slf4j.LoggerFactory;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -40,6 +41,7 @@ public class Threadtear extends JFrame {
   }
 
   public Threadtear() {
+    logFrame = new LogFrame();
     this.initBounds();
     this.setTitle("Threadtear " + Utils.getVersion());
     this.setIconImage(Utils.iconToFrameImage(Utils.getIcon("threadtear.svg", true), this));
@@ -47,7 +49,6 @@ public class Threadtear extends JFrame {
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
     this.initializeMenu();
-    logFrame = new LogFrame();
   }
 
   private void initializeMenu() {
@@ -83,12 +84,9 @@ public class Threadtear extends JFrame {
     bar.add(file);
     JMenu help = new JMenu("Help");
     JMenuItem log = new JMenuItem("Open logging frame");
+    log.setIcon(LogFrame.getIcon());
     log.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK));
-    log.addActionListener(l -> {
-      if (logFrame != null) {
-        logFrame.setVisible(true);
-      }
-    });
+    log.addActionListener(l -> logFrame.setVisible(true));
     help.add(log);
     JMenuItem laf = new JMenuItem("Look and feel settings");
     laf.setIcon(ThemeSettings.getInstance().getIcon());
@@ -132,6 +130,7 @@ public class Threadtear extends JFrame {
     LookAndFeel.init();
     LookAndFeel.setLookAndFeel();
     configureEnvironment();
+    configureLoggers();
     getInstance().setVisible(true);
   }
 
@@ -140,6 +139,13 @@ public class Threadtear extends JFrame {
     Field charset = Charset.class.getDeclaredField("defaultCharset");
     charset.setAccessible(true);
     charset.set(null, null);
+  }
+
+  private static void configureLoggers() {
+    logger.addLogger(LoggerFactory.getLogger("logfile"));
+    logger.addLogger(LoggerFactory.getLogger("console"));
+    logger.addLogger(LoggerFactory.getLogger("form"));
+    logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public void run(boolean verbose, boolean disableSecurity) {

@@ -12,6 +12,7 @@
         </encoder>
     </appender>
     <appender name="FORM" class="me.nov.threadtear.logging.Appender"/>
+    <appender name="STATUS_BAR" class="me.nov.threadtear.logging.StatusBarAppender"/>
 
     <logger name="console" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
@@ -21,5 +22,8 @@
     </logger>
     <logger name="form" level="debug" additivity="false">
         <appender-ref ref="FORM"/>
+    </logger>
+    <logger name="statusbar" level="info" additivity="false">
+        <appender-ref ref="STATUS_BAR"/>
     </logger>
 </configuration>

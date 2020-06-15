@@ -1,5 +1,8 @@
 package me.nov.threadtear.logging;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 
 import org.slf4j.*;
@@ -10,9 +13,8 @@ import me.nov.threadtear.execution.Clazz;
  * @author Col-E
  */
 public class LogWrapper {
-  private final Logger logfile = LoggerFactory.getLogger("logfile");
-  private final Logger console = LoggerFactory.getLogger("console");
-  private final Logger form = LoggerFactory.getLogger("form");
+
+  private final List<Logger> loggers;
 
   private Clazz currentErrorCollector;
 
@@ -20,11 +22,21 @@ public class LogWrapper {
     currentErrorCollector = c;
   }
 
+  public LogWrapper() {
+    this.loggers = new ArrayList<>();
+  }
+
+  public void addLogger(Logger logger) {
+    if (logger != null) loggers.add(logger);
+  }
+
+  public void removeLogger(Logger logger) {
+    loggers.remove(logger);
+  }
+
   public void info(String format, Object... args) {
     String msg = compile(format, args);
-    console.info(msg);
-    logfile.info(msg);
-    form.info(msg);
+    logMessage(msg, Logger::info);
   }
 
   public void errorIf(String format, boolean error, Object... args) {
@@ -37,9 +49,7 @@ public class LogWrapper {
 
   public void warning(String format, Object... args) {
     String msg = compile(format, args);
-    console.warn(msg);
-    logfile.warn(msg);
-    form.warn(msg);
+    logMessage(msg, Logger::warn);
   }
 
   public void error(String format, Object... args) {
@@ -47,9 +57,7 @@ public class LogWrapper {
     if (currentErrorCollector != null) {
       currentErrorCollector.addFail(msg);
     }
-    console.error(msg);
-    logfile.error(msg);
-    form.error(msg);
+    logMessage(msg, Logger::error);
   }
 
   public void error(String format, Throwable t, Object... args) {
@@ -57,23 +65,23 @@ public class LogWrapper {
     if (currentErrorCollector != null) {
       currentErrorCollector.addFail(t);
     }
-    console.error(msg, t);
-    logfile.error(msg, t);
-    form.error(msg, t);
+    logMessage(msg, Logger::error);
   }
 
   public void debug(String format, Object... args) {
     String msg = compile(format, args);
-    console.debug(msg);
-    logfile.debug(msg);
-    form.debug(msg);
+    logMessage(msg, Logger::debug);
   }
 
   public void trace(String format, Object... args) {
     String msg = compile(format, args);
-    console.trace(msg);
-    logfile.trace(msg);
-    form.trace(msg);
+    logMessage(msg, Logger::trace);
+  }
+
+  private void logMessage(String msg, BiConsumer<Logger, String> logFunction) {
+    for (Logger logger : loggers) {
+      logFunction.accept(logger, msg);
+    }
   }
 
   /**

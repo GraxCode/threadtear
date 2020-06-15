@@ -184,7 +184,6 @@ public class ClassTreePanel extends JPanel implements ILoader {
         threadtear.configPanel.save.setEnabled(true);
         int classesCount = classes.size();
         Threadtear.logger.info("Loaded {} class file(s)", classesCount);
-        threadtear.statusBar.setMessage(String.format("Loaded %d class file(s)", classesCount));
       } catch (Exception e) {
         e.printStackTrace();
       }
