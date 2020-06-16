@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <defs id="colors">
+        <linearGradient id="menuIconEnabled">
+            <stop offset="0" stop-color="#AFB1B3"/>
+            <stop offset="1" stop-color="#AFB1B3"/>
+        </linearGradient>
+    </defs>
+    <rect id="frame" width="16" height="16" fill="none"/>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#499C54" d="M7 6H4l4 4 4-4H9V1H7z"/>
+        <path fill="url(#menuIconEnabled)" d="M2 11h12v3H2v-3zm10 1v1h1v-1h-1z"/>
+    </g>
+</svg>
