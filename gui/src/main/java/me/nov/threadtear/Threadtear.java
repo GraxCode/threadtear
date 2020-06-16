@@ -112,7 +112,7 @@ public class Threadtear extends JFrame {
     JPanel content = new JPanel(new BorderLayout());
     content.add(Utils.withEmptyBorder(Utils.horizontallyDivided(
       listPanel = new TreePanel(this),
-      Utils.pad(configPanel = new ConfigurationPanel(this), 100,0,0,0)
+      Utils.pad(configPanel = new ConfigurationPanel(this), 50, 0, 0, 0)
     ), 16), BorderLayout.CENTER);
     content.add(statusBar = new StatusBar(), BorderLayout.SOUTH);
     setContentPane(content);

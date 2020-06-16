@@ -5,6 +5,7 @@ import java.io.File;
 
 import javax.swing.*;
 
+import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.graph.CFGPanel;
 import me.nov.threadtear.swing.Utils;
@@ -16,6 +17,7 @@ public class AnalysisFrame extends JFrame {
   private final File archive;
   private final Clazz clazz;
   private final String title;
+  public LoadingIndicator loading;
 
   public AnalysisFrame(String title, Clazz clazz) {
     this.clazz = clazz;
@@ -42,7 +44,7 @@ public class AnalysisFrame extends JFrame {
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.addTab("Decompiler", Utils.getIcon("decompile.svg", true),
-      new DecompilerPanel(archive, clazz));
+      new DecompilerPanel(this, archive, clazz));
     tabbedPane.setDisabledIconAt(0, Utils.getIcon("decompile_disabled.svg", true));
     tabbedPane.addTab("Bytecode", Utils.getIcon("bytecode.svg", true),
       new BytecodePanel(clazz.node));
@@ -52,12 +54,15 @@ public class AnalysisFrame extends JFrame {
 
     cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
-    JPanel buttons = new JPanel();
-    buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+    JPanel actionBar = new JPanel();
+    actionBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
     JButton close = new JButton("Close");
     close.addActionListener(e -> dispose());
-    buttons.add(close);
-    getContentPane().add(buttons, BorderLayout.SOUTH);
-
+    loading = new LoadingIndicator();
+    loading.setVisible(false);
+    loading.setRunning(true);
+    actionBar.add(loading);
+    actionBar.add(close);
+    getContentPane().add(actionBar, BorderLayout.SOUTH);
   }
 }

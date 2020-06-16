@@ -24,7 +24,7 @@ public class StatusBar extends JToolBar {
     add(Box.createHorizontalStrut(16));
 
     JButton logButton = new JButton();
-    logButton.setToolTipText("Open logging Frame");
+    logButton.setToolTipText("Open logging frame");
     logButton.putClientProperty(DarkButtonUI.KEY_VARIANT, DarkButtonUI.VARIANT_BORDERLESS_RECTANGULAR);
     logButton.putClientProperty(DarkButtonUI.KEY_SQUARE, true);
     logButton.putClientProperty(DarkButtonUI.KEY_THIN, true);
