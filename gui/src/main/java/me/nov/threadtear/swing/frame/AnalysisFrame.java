@@ -49,8 +49,8 @@ public class AnalysisFrame extends JFrame {
     tabbedPane.addTab("Bytecode", Utils.getIcon("bytecode.svg", true),
       new BytecodePanel(clazz.node));
     tabbedPane.setDisabledIconAt(1, Utils.getIcon("bytecode_disabled.svg", true));
-    tabbedPane.addTab("Graph", Utils.getIcon("bytecode.svg", true), new CFGPanel(clazz.node));
-    tabbedPane.setDisabledIconAt(2, Utils.getIcon("bytecode_disabled.svg", true));
+    tabbedPane.addTab("Graph", Utils.getIcon("graph.svg", true), new CFGPanel(clazz.node));
+    tabbedPane.setDisabledIconAt(2, Utils.getIcon("graph_disabled.svg", true));
 
     cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
