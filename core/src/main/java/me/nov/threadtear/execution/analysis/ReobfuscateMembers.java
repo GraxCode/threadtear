@@ -3,10 +3,10 @@ package me.nov.threadtear.execution.analysis;
 import java.net.URL;
 import java.util.*;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.asm.*;
@@ -154,7 +154,7 @@ public class ReobfuscateMembers extends Execution {
       return loadedNode;
     } catch (Exception e) {
       if (verbose)
-        Threadtear.logger.warning("Couldn't find or resolve {}, {}", name, shortStacktrace(e));
+        LogWrapper.logger.warning("Couldn't find or resolve {}, {}", name, shortStacktrace(e));
       return null;
     }
   }

@@ -16,14 +16,14 @@ import javax.swing.text.BadLocationException;
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.logging.Appender;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.logging.LogWrapper;
+import me.nov.threadtear.swing.SwingUtils;
 
 public class LogFrame extends JDialog {
   private static final long serialVersionUID = 1L;
 
-  private static final Icon icon = Utils.getIcon("run.svg");
+  private static final Icon icon = SwingUtils.getIcon("run.svg");
   private final JTextPane area;
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm");
 
@@ -34,7 +34,7 @@ public class LogFrame extends JDialog {
     setMinimumSize(new Dimension(500, 400));
     setModalityType(ModalityType.MODELESS);
     setLayout(new BorderLayout());
-    setIconImage(Utils.iconToFrameImage(getIcon(), this));
+    setIconImage(SwingUtils.iconToFrameImage(getIcon(), this));
     area = new JTextPane();
     area.setEditable(false);
     area.setMargin(new Insets(8, 8, 8, 8));
@@ -64,7 +64,7 @@ public class LogFrame extends JDialog {
         } catch (IOException e1) {
           e1.printStackTrace();
         }
-        Threadtear.logger.info("Saved log to " + output.getAbsolutePath());
+        LogWrapper.logger.info("Saved log to " + output.getAbsolutePath());
       }
     });
     buttons.add(save);

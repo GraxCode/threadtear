@@ -5,10 +5,11 @@ import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.function.BiPredicate;
 
+import me.nov.threadtear.ThreadtearCore;
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.util.asm.*;
 
@@ -48,23 +49,23 @@ public class VM extends ClassLoader implements Opcodes {
       resolveClass(c);
       return c;
     } catch (Throwable t) {
-      Threadtear.logger.error("Failed to resolve class using " + "defineClass", t);
+      LogWrapper.logger.error("Failed to resolve class using " + "defineClass", t);
       return null;
     }
   }
 
   private boolean isForbiddenName(String name) {
-    return name.startsWith(Threadtear.class.getPackage().getName()) || name.matches(RT_REGEX);
+    return name.startsWith(ThreadtearCore.class.getPackage().getName()) || name.matches(RT_REGEX);
   }
 
-  public static final String threadtearPkg = Threadtear.class.getPackage().getName();
+  public static final String threadtearPkg = ThreadtearCore.class.getPackage().getName();
 
   @Override
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     if (name.contains("/"))
       throw new IllegalArgumentException();
     if (name.startsWith(threadtearPkg)) {
-      Threadtear.logger.warning("Dynamic class tried to access a " + "threadtear package!");
+      LogWrapper.logger.warning("Dynamic class tried to access a " + "threadtear package!");
       return null;
     }
     if (loaded.containsKey(name)) {

@@ -5,9 +5,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import me.nov.threadtear.CoreUtils;
+import me.nov.threadtear.logging.LogWrapper;
 import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -16,7 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.io.JarIO;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.tree.component.*;
 
 public class ConfigurationPanel extends JPanel {
@@ -33,20 +34,20 @@ public class ConfigurationPanel extends JPanel {
     this.main = main;
     this.setLayout(new BorderLayout());
     this.add(createCheckboxes(), BorderLayout.WEST);
-    this.add(Utils.alignBottom(createBottomButtons()), BorderLayout.EAST);
+    this.add(SwingUtils.alignBottom(createBottomButtons()), BorderLayout.EAST);
   }
 
   private JPanel createCheckboxes() {
     JPanel panel = new JPanel(new GridBagLayout());
     panel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-    panel.add(verbose = new JCheckBox("Verbose logging"), Utils.createGridBagConstraints(0,0));
+    panel.add(verbose = new JCheckBox("Verbose logging"), SwingUtils.createGridBagConstraints(0,0));
     verbose.setToolTipText("Log more information and " + "print full stack traces.");
     panel.add(watermark = new JCheckBox("<html>Watermark " + "<tt>MANIFEST.MF</tt>"),
-              Utils.createGridBagConstraints(1,0));
+              SwingUtils.createGridBagConstraints(1,0));
     watermark.setToolTipText("<html>Adds a " + "\"<tt>Deobfuscated-By\" attribute to" + " the manifest file.");
     watermark.setSelected(true);
     panel.add(disableSecurity = new JCheckBox("<html" + ">Disable <tt>SecurityManager</tt> " + "protection"),
-              Utils.createGridBagConstraints(0,1));
+              SwingUtils.createGridBagConstraints(0,1));
     disableSecurity
             .setToolTipText("Remove the protection against" + " unwanted calls. Could improve " + "deobfuscation.");
     disableSecurity.addActionListener(l -> {
@@ -60,7 +61,7 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(removeSignature = new JCheckBox("Remove " + "manifest signature"),
-              Utils.createGridBagConstraints(1,1));
+              SwingUtils.createGridBagConstraints(1,1));
     removeSignature.setToolTipText("Remove the signature from " + "the manifest file, if available.");
     return panel;
   }
@@ -69,7 +70,7 @@ public class ConfigurationPanel extends JPanel {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
     panel.add(Box.createHorizontalGlue());
-    JButton loadCfg = new JButton("Load config", Utils.getIcon("load_config.svg", true));
+    JButton loadCfg = new JButton("Load config", SwingUtils.getIcon("load_config.svg", true));
     loadCfg.addActionListener(l -> {
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
       jfc.setAcceptAllFileFilterUsed(false);
@@ -83,8 +84,8 @@ public class ConfigurationPanel extends JPanel {
     });
     panel.add(loadCfg);
     JButton saveCfg = new JButton("Save config");
-    saveCfg.setIcon(Utils.getIcon("save_config.svg", true));
-    saveCfg.setDisabledIcon(Utils.getIcon("save_config_disabled.svg", true));
+    saveCfg.setIcon(SwingUtils.getIcon("save_config.svg", true));
+    saveCfg.setDisabledIcon(SwingUtils.getIcon("save_config_disabled.svg", true));
     saveCfg.addActionListener(l -> {
       JFileChooser jfc = new JFileChooser(System.getProperty("user.home"));
       jfc.setAcceptAllFileFilterUsed(false);
@@ -98,7 +99,7 @@ public class ConfigurationPanel extends JPanel {
       }
     });
     panel.add(saveCfg);
-    save = new JButton("Save as jar file", Utils.getIcon("save.svg", true));
+    save = new JButton("Save as jar file", SwingUtils.getIcon("save.svg", true));
     save.setEnabled(false);
     save.addActionListener(l -> {
       save.setEnabled(false);
@@ -117,16 +118,16 @@ public class ConfigurationPanel extends JPanel {
         File output = jfc.getSelectedFile();
         JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(),
                 watermark.isSelected());
-        Threadtear.logger.info("Saved to " + output.getAbsolutePath());
+        LogWrapper.logger.info("Saved to " + output.getAbsolutePath());
       }
       save.setEnabled(true);
     });
     panel.add(save);
-    run = new JButton("Run", Utils.getIcon("run.svg"));
+    run = new JButton("Run", SwingUtils.getIcon("run.svg"));
     run.setEnabled(false);
     run.addActionListener(l -> {
       run.setEnabled(false);
-      if (!Utils.isNoverify()) {
+      if (!CoreUtils.isNoverify()) {
         JOptionPane.showMessageDialog(main,
                 "<html>You " + "started without \"-noverify\". " + "Some deobfuscators could" + " fail" +
                         ".<br>Use \"<tt>java -noverify " + "-jar ...</tt>\" to start the " + "application.", "Warning",

@@ -4,12 +4,12 @@ import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.*;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.util.asm.Instructions;
@@ -161,7 +161,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         for (int i = 0; i < invokedynamicParams; i++) {
           ConstantValue stack = frame.getStack(frame.getStackSize() - invokedynamicParams + i);
           if (!stack.isKnown()) {
-            Threadtear.logger
+            LogWrapper.logger
                     .warning("Stack value depth {} is " + "unknown in {}, could be " + "decryption class itself", i,
                             referenceString(cn, null));
             return null;
@@ -171,10 +171,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {
         if (e.getMessage().contains("arguments")) {
-          Threadtear.logger.error("IllegalArgumentException: Wrong" + " arguments for {}, cannot decrypt!",
+          LogWrapper.logger.error("IllegalArgumentException: Wrong" + " arguments for {}, cannot decrypt!",
                   Arrays.toString(bootstrap.getParameterTypes()));
         } else {
-          Threadtear.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!",
+          LogWrapper.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!",
                   idin.desc);
         }
       }

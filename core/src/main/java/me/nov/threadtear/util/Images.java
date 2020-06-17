@@ -1,11 +1,11 @@
 package me.nov.threadtear.util;
 
+import me.nov.threadtear.CoreUtils;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
-
-import me.nov.threadtear.swing.Utils;
 
 public final class Images {
   private Images() {
@@ -32,7 +32,7 @@ public final class Images {
     g2d.setPaint(Color.black);
     g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
     FontMetrics fm = g2d.getFontMetrics();
-    String watermark = "threadtear " + Utils.getVersion();
+    String watermark = "threadtear " + CoreUtils.getVersion();
     int x = copy.getWidth() - fm.stringWidth(watermark) - 5;
     int y = fm.getHeight();
     g2d.drawString(watermark, x, y);

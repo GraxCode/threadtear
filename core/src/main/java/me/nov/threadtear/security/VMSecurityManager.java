@@ -1,11 +1,13 @@
 package me.nov.threadtear.security;
 
+import me.nov.threadtear.ThreadtearCore;
+import me.nov.threadtear.logging.LogWrapper;
+
 import java.io.FileDescriptor;
 import java.lang.reflect.ReflectPermission;
 import java.net.InetAddress;
 import java.security.Permission;
 
-import me.nov.threadtear.Threadtear;
 
 public final class VMSecurityManager extends SecurityManager {
   private boolean grantAll;
@@ -96,7 +98,7 @@ public final class VMSecurityManager extends SecurityManager {
 
   @Override
   public final void checkPackageAccess(String pkg) {
-    if (pkg.startsWith("sun.misc") || pkg.startsWith(Threadtear.class.getPackage().getName()) || checkReflection(pkg)) {
+    if (pkg.startsWith("sun.misc") || pkg.startsWith(ThreadtearCore.class.getPackage().getName()) || checkReflection(pkg)) {
       throwIfNotGranted();
     }
   }
@@ -127,7 +129,7 @@ public final class VMSecurityManager extends SecurityManager {
       if (ste.getClassName().matches(granted))
         continue;
       if (!isLocal(ste.getClassName())) {
-        Threadtear.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}",
+        LogWrapper.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}",
                 ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
         return false;
       }

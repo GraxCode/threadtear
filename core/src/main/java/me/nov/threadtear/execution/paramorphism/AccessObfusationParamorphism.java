@@ -4,10 +4,10 @@ import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.DynamicReflection;
@@ -153,10 +153,10 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
       return (CallSite) bootstrapBridge.invoke(null, args.toArray());
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
-      Threadtear.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
+      LogWrapper.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
     } catch (Throwable e) {
       if (verbose)
-        Threadtear.logger.error("CallSite exception", e);
+        LogWrapper.logger.error("CallSite exception", e);
     }
     return null;
   }

@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 import com.github.weisj.darklaf.components.OverlayScrollPane;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.swing.TitledPanel;
 import org.apache.commons.io.FilenameUtils;
 import org.objectweb.asm.tree.ClassNode;
@@ -19,7 +20,7 @@ import org.objectweb.asm.tree.ClassNode;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.io.*;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.analysis.InstructionAnalysis;
 import me.nov.threadtear.swing.dialog.FileInfo;
 import me.nov.threadtear.swing.frame.AnalysisFrame;
@@ -45,9 +46,9 @@ public class ClassTreePanel extends JPanel implements ILoader {
   public ClassTreePanel(Threadtear threadtear) {
     this.threadtear = threadtear;
     this.setLayout(new BorderLayout());
-    this.add(outerPanel = Utils.withTitleAndBorder("Class list", new OverlayScrollPane(tree = new ClassTree())),
+    this.add(outerPanel = SwingUtils.withTitleAndBorder("Class list", new OverlayScrollPane(tree = new ClassTree())),
             BorderLayout.CENTER);
-    this.add(Utils.pad(createButtons(), 8,0,8,0), BorderLayout.SOUTH);
+    this.add(SwingUtils.pad(createButtons(), 8,0,8,0), BorderLayout.SOUTH);
     this.setTransferHandler(new JarDropHandler(this));
   }
 
@@ -62,8 +63,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
     obfAnalysis = new JButton("Full analysis");
-    obfAnalysis.setIcon(Utils.getIcon("analysis.svg", true));
-    obfAnalysis.setDisabledIcon(Utils.getIcon("analysis_disabled.svg", true));
+    obfAnalysis.setIcon(SwingUtils.getIcon("analysis.svg", true));
+    obfAnalysis.setDisabledIcon(SwingUtils.getIcon("analysis_disabled.svg", true));
     obfAnalysis.addActionListener(l -> {
       threadtear.logFrame.setVisible(true);
       new Thread(() -> InstructionAnalysis.analyze(classes)).start();
@@ -71,8 +72,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     obfAnalysis.setEnabled(false);
     panel.add(obfAnalysis);
     analyze = new JButton("Analyze code");
-    analyze.setIcon(Utils.getIcon("decompile.svg", true));
-    analyze.setDisabledIcon(Utils.getIcon("decompile_disabled.svg", true));
+    analyze.setIcon(SwingUtils.getIcon("decompile.svg", true));
+    analyze.setDisabledIcon(SwingUtils.getIcon("decompile_disabled.svg", true));
     analyze.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
@@ -82,8 +83,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     panel.add(analyze);
     analyze.setEnabled(false);
     fileInfo = new JButton("Information");
-    fileInfo.setIcon(Utils.getIcon("file.svg", true));
-    fileInfo.setDisabledIcon(Utils.getIcon("file_disabled.svg", true));
+    fileInfo.setIcon(SwingUtils.getIcon("file.svg", true));
+    fileInfo.setDisabledIcon(SwingUtils.getIcon("file_disabled.svg", true));
     fileInfo.addActionListener(l -> {
       ClassTreeNode tn = (ClassTreeNode) tree.getLastSelectedPathComponent();
       if (tn != null && tn.member != null) {
@@ -94,8 +95,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     panel.add(fileInfo);
     fileInfo.setEnabled(false);
     ignore = new JButton("Ignore");
-    ignore.setIcon(Utils.getIcon("ignore.svg", true));
-    ignore.setDisabledIcon(Utils.getIcon("ignore_disabled.svg", true));
+    ignore.setIcon(SwingUtils.getIcon("ignore.svg", true));
+    ignore.setDisabledIcon(SwingUtils.getIcon("ignore_disabled.svg", true));
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
       for (TreePath path : paths) {
@@ -178,7 +179,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
 
   @Override
   public void onFileDrop(File input) {
-    Threadtear.logger.info("Loading class files from {}", input.getAbsolutePath());
+    LogWrapper.logger.info("Loading class files from {}", input.getAbsolutePath());
     threadtear.statusBar.runWithLoadIndicator("Loading class file(s)...", () -> {
       try {
         String type = FilenameUtils.getExtension(input.getAbsolutePath());
@@ -191,7 +192,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
         threadtear.configPanel.run.setEnabled(true);
         threadtear.configPanel.save.setEnabled(true);
         int classesCount = classes.size();
-        Threadtear.logger.info("Loaded {} class file(s)", classesCount);
+        LogWrapper.logger.info("Loaded {} class file(s)", classesCount);
       } catch (Exception e) {
         e.printStackTrace();
       }

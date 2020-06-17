@@ -1,4 +1,4 @@
-package me.nov.threadtear.util;
+package me.nov.threadtear.swing.frame;
 
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.swing.frame.AnalysisFrame;

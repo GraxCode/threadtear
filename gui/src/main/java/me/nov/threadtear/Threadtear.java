@@ -19,7 +19,7 @@ import com.github.weisj.darklaf.settings.ThemeSettings;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;
-  public static final LogWrapper logger = new LogWrapper();
   public TreePanel listPanel;
   public ConfigurationPanel configPanel;
   public LogFrame logFrame;
@@ -43,8 +42,8 @@ public class Threadtear extends JFrame {
   public Threadtear() {
     logFrame = new LogFrame();
     this.initBounds();
-    this.setTitle("Threadtear " + Utils.getVersion());
-    this.setIconImage(Utils.iconToFrameImage(Utils.getIcon("threadtear.svg", true), this));
+    this.setTitle("Threadtear " + CoreUtils.getVersion());
+    this.setIconImage(SwingUtils.iconToFrameImage(SwingUtils.getIcon("threadtear.svg", true), this));
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
@@ -91,7 +90,7 @@ public class Threadtear extends JFrame {
     JMenuItem laf = new JMenuItem("Look and feel settings");
     laf.setIcon(ThemeSettings.getInstance().getIcon());
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
-    JMenuItem about = new HelpMenuItem("About threadtear " + Utils.getVersion());
+    JMenuItem about = new HelpMenuItem("About threadtear " + CoreUtils.getVersion());
     about.addActionListener(l -> JOptionPane.showMessageDialog(this,
             "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
                     ".<br>Add executions to the list on " + "the left side. Make sure to have " +
@@ -110,9 +109,9 @@ public class Threadtear extends JFrame {
 
   private void initializeFrame() {
     JPanel content = new JPanel(new BorderLayout());
-    content.add(Utils.withEmptyBorder(Utils.horizontallyDivided(
+    content.add(SwingUtils.withEmptyBorder(SwingUtils.horizontallyDivided(
       listPanel = new TreePanel(this),
-      Utils.pad(configPanel = new ConfigurationPanel(this), 50, 0, 0, 0)
+      SwingUtils.pad(configPanel = new ConfigurationPanel(this), 50, 0, 0, 0)
     ), 16), BorderLayout.CENTER);
     content.add(statusBar = new StatusBar(), BorderLayout.SOUTH);
     setContentPane(content);
@@ -142,10 +141,10 @@ public class Threadtear extends JFrame {
   }
 
   private static void configureLoggers() {
-    logger.addLogger(LoggerFactory.getLogger("logfile"));
-    logger.addLogger(LoggerFactory.getLogger("console"));
-    logger.addLogger(LoggerFactory.getLogger("form"));
-    logger.addLogger(LoggerFactory.getLogger("statusbar"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("logfile"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("form"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public void run(boolean verbose, boolean disableSecurity) {
@@ -160,23 +159,23 @@ public class Threadtear extends JFrame {
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> new Thread(() -> {
-      logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
+      LogWrapper.logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
       if (!disableSecurity) {
-        logger.info("Initializing security manager if " + "something goes horribly wrong");
+        LogWrapper.logger.info("Initializing security manager if " + "something goes horribly wrong");
         System.setSecurityManager(new VMSecurityManager());
       } else {
-        logger.warning("Starting without security " + "manager!");
+        LogWrapper.logger.warning("Starting without security " + "manager!");
       }
       List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
-      logger.warning("{} classes will be ignored", ignoredClasses.size());
+      LogWrapper.logger.warning("{} classes will be ignored", ignoredClasses.size());
       classes.removeIf(c -> !c.transform);
       Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> c));
-      logger.info("If an execution doesn't work properly " + "on your file, please open an issue: " + "https://github" +
+      LogWrapper.logger.info("If an execution doesn't work properly " + "on your file, please open an issue: " + "https://github" +
               ".com/GraxCode/threadtear" + "/issues");
       RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
       List<String> arguments = runtimeMxBean.getInputArguments();
-      if (!Utils.isNoverify()) {
-        logger.warning("You started threadtear without " + "-noverify, this result in less " + "decryption! Your VM " +
+      if (!CoreUtils.isNoverify()) {
+        LogWrapper.logger.warning("You started threadtear without " + "-noverify, this result in less " + "decryption! Your VM " +
                 "args: {}", arguments);
         try {
           Thread.sleep(2000);
@@ -185,10 +184,10 @@ public class Threadtear extends JFrame {
       }
       executions.forEach(e -> {
         long ms = System.currentTimeMillis();
-        logger.info("Executing " + e.getClass().getName());
+        LogWrapper.logger.info("Executing " + e.getClass().getName());
         boolean success = e.execute(map, verbose);
-        logger.collectErrors(null);
-        logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure",
+        LogWrapper.logger.collectErrors(null);
+        LogWrapper.logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure",
                 (System.currentTimeMillis() - ms));
         logFrame.append("-----------------------------------------------------------\n");
       });
@@ -198,7 +197,7 @@ public class Threadtear extends JFrame {
         Thread.sleep(500);
       } catch (InterruptedException e1) {
       }
-      logger.info("Successful completion!");
+      LogWrapper.logger.info("Successful completion!");
       System.setSecurityManager(null);
       listPanel.classList.loadTree(classes);
       configPanel.run.setEnabled(true);

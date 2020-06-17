@@ -3,7 +3,7 @@ package me.nov.threadtear.io;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.CoreUtils;
 
 public final class Manifest {
   private Manifest() {
@@ -30,7 +30,7 @@ public final class Manifest {
     String manifest = new String(manifestBytes, StandardCharsets.UTF_8);
     if (!manifest.contains("Deobfuscated-By: ")) {
       manifest = manifest.substring(0, manifest.length() - lineSeparator.length()); // remove new line
-      manifest += "Deobfuscated-By: Threadtear " + Utils.getVersion() + lineSeparator + lineSeparator;
+      manifest += "Deobfuscated-By: Threadtear " + CoreUtils.getVersion() + lineSeparator + lineSeparator;
     }
     return manifest.getBytes(StandardCharsets.UTF_8);
   }

@@ -4,10 +4,10 @@ import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.*;
@@ -111,10 +111,10 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       return (CallSite) bootstrap
               .invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
     } catch (IllegalArgumentException e) {
-      Threadtear.logger.error("One or more classes not in jar " + "file: {}, cannot decrypt!", idin.desc);
+      LogWrapper.logger.error("One or more classes not in jar " + "file: {}, cannot decrypt!", idin.desc);
     } catch (Exception e) {
       if (verbose)
-        Threadtear.logger.error("CallSite exception", e);
+        LogWrapper.logger.error("CallSite exception", e);
     }
     return null;
   }

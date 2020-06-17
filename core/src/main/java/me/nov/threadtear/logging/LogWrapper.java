@@ -14,6 +14,8 @@ import me.nov.threadtear.execution.Clazz;
  */
 public class LogWrapper {
 
+  public static final LogWrapper logger = new LogWrapper();
+
   private final List<Logger> loggers;
 
   private Clazz currentErrorCollector;

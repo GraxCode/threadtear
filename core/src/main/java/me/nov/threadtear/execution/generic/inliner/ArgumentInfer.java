@@ -1,9 +1,9 @@
 package me.nov.threadtear.execution.generic.inliner;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.analysis.stack.ConstantTracker;
 import me.nov.threadtear.analysis.stack.ConstantValue;
 import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Mapping;
 import me.nov.threadtear.util.asm.method.MethodContext;
@@ -213,7 +213,7 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
     try {
       analyzer.analyze(owner.name, method);
     } catch (AnalyzerException e) {
-      Threadtear.logger.error("Failed analysis", e);
+      LogWrapper.logger.error("Failed analysis", e);
       // for debugging purposes:
       // BytecodeDebugger.show(method, e);
     }

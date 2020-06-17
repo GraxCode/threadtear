@@ -3,9 +3,9 @@ package me.nov.threadtear.execution.paramorphism;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.*;
 import me.nov.threadtear.util.format.Strings;
 import me.nov.threadtear.vm.*;
@@ -84,7 +84,7 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
       return (String) stringGetterBridge.invoke(null);
     } catch (Throwable e) {
       if (verbose)
-        Threadtear.logger.error("Throwable", e);
+        LogWrapper.logger.error("Throwable", e);
     }
     return null;
   }

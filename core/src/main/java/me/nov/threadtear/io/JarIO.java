@@ -6,10 +6,10 @@ import java.util.jar.*;
 import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
 
-import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
 
 public final class JarIO {
@@ -37,7 +37,7 @@ public final class JarIO {
           }
         } catch (Exception e) {
           e.printStackTrace();
-          Threadtear.logger.error("Failed to load file " + name);
+          LogWrapper.logger.error("Failed to load file " + name);
         }
       }
     } catch (Exception e) {
@@ -91,7 +91,7 @@ public final class JarIO {
             out.write(IOUtils.toByteArray(jar.getInputStream(z)));
             out.closeEntry();
           } catch (Exception e) {
-            Threadtear.logger
+            LogWrapper.logger
                     .error("Failed at entry " + z.getName() + " " + e.getClass().getName() + " " + e.getMessage());
           }
         });
@@ -104,7 +104,7 @@ public final class JarIO {
           out.write(Conversion.toBytecode0(c.node));
           out.closeEntry();
         } catch (Exception e) {
-          Threadtear.logger
+          LogWrapper.logger
                   .error("Failed at class entry " + c.node.name + " " + e.getClass().getName() + " " + e.getMessage());
         }
       }

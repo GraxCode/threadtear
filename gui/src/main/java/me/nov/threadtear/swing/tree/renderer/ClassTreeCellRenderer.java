@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -19,14 +19,14 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
   private static final Icon pack, clazz, innerClazz, mainClazz, enu, itf, failOverlay, ignoreOverlay;
 
   static {
-    pack = Utils.getIcon("package.svg");
-    clazz = Utils.getIcon("class.svg");
-    innerClazz = Utils.getIcon("innerClass.svg");
-    mainClazz = Utils.getIcon("mainClass.svg");
-    enu = Utils.getIcon("enum.svg");
-    itf = Utils.getIcon("interface.svg");
-    failOverlay = Utils.getIcon("failure.svg", 10, 10, true);
-    ignoreOverlay = Utils.getIcon("ignore.svg", 10, 10, true);
+    pack = SwingUtils.getIcon("package.svg", true);
+    clazz = SwingUtils.getIcon("class.svg");
+    innerClazz = SwingUtils.getIcon("innerClass.svg");
+    mainClazz = SwingUtils.getIcon("mainClass.svg");
+    enu = SwingUtils.getIcon("enum.svg");
+    itf = SwingUtils.getIcon("interface.svg");
+    failOverlay = SwingUtils.getIcon("failure.svg", 10, 10, true);
+    ignoreOverlay = SwingUtils.getIcon("ignore.svg", 10, 10, true);
   }
 
   @Override
