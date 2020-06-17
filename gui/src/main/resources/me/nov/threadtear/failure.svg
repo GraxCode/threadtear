@@ -2,7 +2,6 @@
     <defs id="colors">
         <linearGradient id="errorIconColor">
             <stop offset="0" stop-color="#E05555"/>
-            <stop offset="1" stop-color="#E05555"/>
         </linearGradient>
     </defs>
     <rect id="frame" width="16" height="16" fill="none"/>
