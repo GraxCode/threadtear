@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+*               text=auto
+
+*.java          text
+*.html          text
+*.css           text
+*.js            text
+*.sql           text
+*.q             text
+*.svg           text
+*.properties    text
+
+*.sh            text eol=lf
+*.cgi           text eol=lf
+
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Images are explicitly configured as binary, just in case
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+
+/gradlew           text eol=lf

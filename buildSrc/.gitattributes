@@ -1,0 +1,3 @@
+# For some reason Gradle requires LF eol for precompiled script plugins
+# Otherwise buildSrc compilation fails on Windows
+/src/main/kotlin/**/*.gradle.kts text eol=lf

@@ -1,0 +1,29 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>threadtear.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level: %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FORM" class="me.nov.threadtear.logging.Appender"/>
+    <appender name="STATUS_BAR" class="me.nov.threadtear.logging.StatusBarAppender"/>
+
+    <logger name="console" level="info" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="logfile" level="trace" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="form" level="debug" additivity="false">
+        <appender-ref ref="FORM"/>
+    </logger>
+    <logger name="statusbar" level="info" additivity="false">
+        <appender-ref ref="STATUS_BAR"/>
+    </logger>
+</configuration>

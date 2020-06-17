@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <defs id="colors">
+        <linearGradient id="errorIconColor">
+            <stop offset="0" stop-color="#E05555"/>
+            <stop offset="1" stop-color="#E05555"/>
+        </linearGradient>
+    </defs>
+    <rect id="frame" width="16" height="16" fill="none"/>
+    <g fill="none" fill-rule="evenodd">
+        <circle cx="8" cy="8" r="7" fill="url(#errorIconColor)"/>
+        <path fill="#FFF" d="M7 3h2v7H7z"/>
+        <path fill="#FFF" d="M7 11h2v2H7z"/>
+    </g>
+</svg>

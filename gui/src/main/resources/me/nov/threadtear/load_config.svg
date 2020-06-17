@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <defs id="colors">
+        <linearGradient id="fileIconBackground" opacity="fileIconOpacity">
+            <stop offset="0" stop-color="#9AA7B0" stop-opacity=".8"/>
+            <stop offset="1" stop-color="#9AA7B0" stop-opacity=".8"/>
+        </linearGradient>
+    </defs>
+    <rect id="frame" width="16" height="16" fill="none"/>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="url(#fileIconBackground)"
+              d="M15 10L9 6v7H1V2.051C1 2.023 1.023 2 1.051 2H4.98a2.8 2.8 0 0 1 1.717.711L7.985 4H15v6z"/>
+        <path fill="#62B543" d="M10 8l6 4-6 4z"/>
+    </g>
+</svg>
