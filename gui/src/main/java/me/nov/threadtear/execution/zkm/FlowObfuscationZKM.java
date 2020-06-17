@@ -8,18 +8,22 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public class FlowObfuscationZKM extends Execution {
 
-  public FlowObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "Flow obfuscation " + "removal",
-            "Tested on ZKM 14, could work on " + "newer " + "versions too.", ExecutionTag.POSSIBLE_DAMAGE,
-            ExecutionTag.BETTER_DECOMPILE);
-  }
-
+  private static final Predicate<Integer> singleJump =
+    op -> (op >= IFEQ && op <= IFLE) || op == IFNULL || op == IFNONNULL;
   private int replaced;
+
+  public FlowObfuscationZKM() {
+    super(ExecutionCategory.ZKM, "Flow obfuscation removal",
+          "Tested on ZKM 14, could work on newer versions too.", ExecutionTag.POSSIBLE_DAMAGE,
+          ExecutionTag.BETTER_DECOMPILE);
+  }
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
@@ -30,19 +34,23 @@ public class FlowObfuscationZKM extends Execution {
     return replaced > 0;
   }
 
-  private static final Predicate<Integer> singleJump =
-          op -> (op >= IFEQ && op <= IFLE) || op == IFNULL || op == IFNONNULL;
-
   public void removeZKMJumps(MethodNode mn) {
     for (AbstractInsnNode ain : mn.instructions.toArray()) {
       if (ain.getPrevious() != null && singleJump.test(ain.getOpcode())) {
         AbstractInsnNode previous = ain.getPrevious();
-        if (previous.getOpcode() == IFNULL || previous.getOpcode() == IFNONNULL) {
-          AbstractInsnNode previousPrevious = previous.getPrevious();
-          if (previousPrevious != null && previousPrevious.getOpcode() == ALOAD) {
-            mn.instructions.set(previous, new InsnNode(POP));
-            replaced++;
+        boolean shouldPop = false;
+        if (ain.getOpcode() == IFNULL || ain.getOpcode() == IFNONNULL) { //first case flow obfuscation scenario
+          if (previous.getOpcode() == ALOAD) {
+            shouldPop = true;
           }
+        } else if (ain.getOpcode() >= IFEQ && ain.getOpcode() <= IFLE) { //second case
+          if (previous.getOpcode() == ILOAD) {
+            shouldPop = true;
+          }
+        }
+        if (shouldPop) {
+          mn.instructions.set(ain, new InsnNode(POP));
+          replaced++;
         }
       }
     }
