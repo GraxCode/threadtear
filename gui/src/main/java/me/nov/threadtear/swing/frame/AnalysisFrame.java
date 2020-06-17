@@ -60,7 +60,7 @@ public class AnalysisFrame extends JFrame {
     close.addActionListener(e -> dispose());
     loading = new LoadingIndicator();
     loading.setVisible(false);
-    loading.setRunning(true);
+    loading.setRunning(false);
     actionBar.add(loading);
     actionBar.add(close);
     getContentPane().add(actionBar, BorderLayout.SOUTH);

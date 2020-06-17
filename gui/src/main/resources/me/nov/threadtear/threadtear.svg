@@ -2,11 +2,9 @@
     <defs id="colors">
         <linearGradient id="textIconEnabled">
             <stop offset="0" stop-color="#FFFFFF"/>
-            <stop offset="1" stop-color="#FFFFFF"/>
         </linearGradient>
         <linearGradient id="textIconDisabled">
             <stop offset="0" stop-color="#000000"/>
-            <stop offset="1" stop-color="#000000"/>
         </linearGradient>
     </defs>
     <g fill="url(#textIconEnabled)">

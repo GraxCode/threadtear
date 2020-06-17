@@ -2,7 +2,6 @@
     <defs id="colors">
         <linearGradient id="fileIconBackground" opacity="fileIconOpacity">
             <stop offset="0" stop-color="#9AA7B0" stop-opacity=".8"/>
-            <stop offset="1" stop-color="#9AA7B0" stop-opacity=".8"/>
         </linearGradient>
     </defs>
     <rect id="frame" width="16" height="16" fill="none"/>
