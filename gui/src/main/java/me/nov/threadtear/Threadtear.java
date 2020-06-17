@@ -56,8 +56,8 @@ public class Threadtear extends JFrame {
     JMenuItem ws = new JMenuItem("Reset Workspace");
     ws.addActionListener(l -> {
       if (JOptionPane
-              .showConfirmDialog(Threadtear.this, "Do you" + " really want to reset your " + "workspace?", "Warning",
-                      JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        .showConfirmDialog(Threadtear.this, "Do you" + " really want to reset your " + "workspace?", "Warning",
+          JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         this.dispose();
         System.gc();
         new Threadtear().setVisible(true);
@@ -92,15 +92,15 @@ public class Threadtear extends JFrame {
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
     JMenuItem about = new HelpMenuItem("About threadtear " + CoreUtils.getVersion());
     about.addActionListener(l -> JOptionPane.showMessageDialog(this,
-            "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
-                    ".<br>Add executions to the list on " + "the left side. Make sure to have " +
-                    "them in right order." + "<br>If you " + "click \"Run\", they will get " +
-                    "executed in order and transform the " + "loaded classes.<br><br>Threadtear " +
-                    "was made by <i>noverify</i> a.k.a " + "<i>GraxCode</i> in 2020.<br><br>" +
-                    "This project is licensed under GNU " + "GENERAL PUBLIC LICENSE Version 3" +
-                    ".<br>You are welcome to contribute " + "to this project on " +
-                    "GitHub!<br><br><b>Do <i>NOT</i> use " + "this on files you don't have legal " + "rights for!</b>",
-            "About", JOptionPane.INFORMATION_MESSAGE));
+      "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
+        ".<br>Add executions to the list on " + "the left side. Make sure to have " +
+        "them in right order." + "<br>If you " + "click \"Run\", they will get " +
+        "executed in order and transform the " + "loaded classes.<br><br>Threadtear " +
+        "was made by <i>noverify</i> a.k.a " + "<i>GraxCode</i> in 2020.<br><br>" +
+        "This project is licensed under GNU " + "GENERAL PUBLIC LICENSE Version 3" +
+        ".<br>You are welcome to contribute " + "to this project on " +
+        "GitHub!<br><br><b>Do <i>NOT</i> use " + "this on files you don't have legal " + "rights for!</b>",
+      "About", JOptionPane.INFORMATION_MESSAGE));
     help.add(about);
     help.add(laf);
     bar.add(help);
@@ -154,29 +154,32 @@ public class Threadtear extends JFrame {
       return;
     }
     if (executions.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "No executions to " + "run.");
+      JOptionPane.showMessageDialog(this, "No executions to run.");
       return;
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> new Thread(() -> {
-      LogWrapper.logger.info("Executing " + executions.size() + " tasks on " + classes.size() + " classes!");
+      LogWrapper.logger.info("Executing {} tasks on {} classes!", executions.size(), classes.size());
       if (!disableSecurity) {
-        LogWrapper.logger.info("Initializing security manager if " + "something goes horribly wrong");
+        LogWrapper.logger.info("Initializing security manager if something goes horribly wrong");
         System.setSecurityManager(new VMSecurityManager());
       } else {
-        LogWrapper.logger.warning("Starting without security " + "manager!");
+        LogWrapper.logger.warning("Starting without security manager!");
       }
       List<Clazz> ignoredClasses = classes.stream().filter(c -> !c.transform).collect(Collectors.toList());
       LogWrapper.logger.warning("{} classes will be ignored", ignoredClasses.size());
       classes.removeIf(c -> !c.transform);
-      Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> c));
-      LogWrapper.logger.info("If an execution doesn't work properly " + "on your file, please open an issue: " + "https://github" +
-              ".com/GraxCode/threadtear" + "/issues");
+      Map<String, Clazz> map = classes.stream().collect(Collectors.toMap(c -> c.node.name, c -> c, (c1, c2) -> {
+        LogWrapper.logger.warning("Warning: Duplicate class definition of {}, one class may not get decrypted", c1.node.name);
+        return c1;
+      }));
+      LogWrapper.logger.info("If an execution doesn't work properly on your file, please open an issue: https://github" +
+        ".com/GraxCode/threadtear/issues");
       RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
       List<String> arguments = runtimeMxBean.getInputArguments();
       if (!CoreUtils.isNoverify()) {
-        LogWrapper.logger.warning("You started threadtear without " + "-noverify, this result in less " + "decryption! Your VM " +
-                "args: {}", arguments);
+        LogWrapper.logger.warning("You started threadtear without -noverify, this results in less decryption! Your VM " +
+          "args: {}", arguments);
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e1) {
@@ -188,7 +191,7 @@ public class Threadtear extends JFrame {
         boolean success = e.execute(map, verbose);
         LogWrapper.logger.collectErrors(null);
         LogWrapper.logger.errorIf("Finish with {}. Took {} ms.", !success, success ? "success" : "failure",
-                (System.currentTimeMillis() - ms));
+          (System.currentTimeMillis() - ms));
         logFrame.append("-----------------------------------------------------------\n");
       });
       classes.addAll(ignoredClasses); // re-add ignored
