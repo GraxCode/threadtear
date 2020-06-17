@@ -5,6 +5,7 @@
 /*.jar
 /.idea
 /dist
+**/*.iml
 # Ignore Gradle project-specific cache directory
 .gradle
 

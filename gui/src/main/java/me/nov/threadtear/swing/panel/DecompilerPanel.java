@@ -163,7 +163,9 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   private void reload() {
     Threadtear.getInstance().statusBar.runWithLoadIndicator("Decompiling class file...", () -> {
       analysisFrame.loading.setVisible(true);
+      analysisFrame.loading.setRunning(true);
       this.update();
+      analysisFrame.loading.setRunning(false);
       analysisFrame.loading.setVisible(false);
     });
   }
