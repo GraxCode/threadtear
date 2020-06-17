@@ -9,7 +9,7 @@ import javax.swing.text.*;
 
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.button.ReloadButton;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -95,8 +95,8 @@ public class BytecodePanel extends JPanel {
     this.add(topPanel, BorderLayout.NORTH);
     this.textArea = new DecompilerTextArea();
     textArea.setText(Conversion.textify(cn));
-    this.add(Utils.withBorder(
-      Utils.wrap(Utils.createRSyntaxOverlayScrollPane(textArea)),
+    this.add(SwingUtils.withBorder(
+      SwingUtils.wrap(SwingUtils.createRSyntaxOverlayScrollPane(textArea)),
       DarkBorders.createLineBorder(1, 1, 1, 1)
     ), BorderLayout.CENTER);
   }

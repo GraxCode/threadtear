@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import org.objectweb.asm.Opcodes;
 
 import me.nov.threadtear.execution.Execution;
@@ -17,11 +17,11 @@ public class ExecutionTreeCellRenderer extends DefaultTreeCellRenderer implement
   private Icon executionRed, executionGreen, executionBlue, executionPurple, directory;
 
   public ExecutionTreeCellRenderer() {
-    this.directory = Utils.getIcon("folder.svg", true);
-    this.executionRed = Utils.getIcon("execution_red.svg");
-    this.executionGreen = Utils.getIcon("execution_green.svg");
-    this.executionBlue = Utils.getIcon("execution_blue.svg");
-    this.executionPurple = Utils.getIcon("execution_purple.svg");
+    this.directory = SwingUtils.getIcon("folder.svg", true);
+    this.executionRed = SwingUtils.getIcon("execution_red.svg");
+    this.executionGreen = SwingUtils.getIcon("execution_green.svg");
+    this.executionBlue = SwingUtils.getIcon("execution_blue.svg");
+    this.executionPurple = SwingUtils.getIcon("execution_purple.svg");
 
   }
 

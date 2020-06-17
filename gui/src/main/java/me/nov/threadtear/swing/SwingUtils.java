@@ -9,15 +9,12 @@ import me.nov.threadtear.swing.textarea.DecompilerTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
-import java.lang.management.*;
-import java.util.List;
-import java.util.Objects;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.tree.*;
 
-public class Utils {
+public class SwingUtils {
 
   private static final IconLoader ICON_LOADER = IconLoader.get(Threadtear.class);
 
@@ -90,7 +87,7 @@ public class Utils {
     JPanel content = new JPanel(new BorderLayout());
     JPanel topHolder = new JPanel(new BorderLayout());
     topHolder.add(top, BorderLayout.CENTER);
-    topHolder.add(Utils.createHorizontalSeparator(8), BorderLayout.SOUTH);
+    topHolder.add(SwingUtils.createHorizontalSeparator(8), BorderLayout.SOUTH);
     content.add(topHolder, BorderLayout.CENTER);
     content.add(bottom, BorderLayout.SOUTH);
     return content;
@@ -100,7 +97,7 @@ public class Utils {
     JPanel content = new JPanel(new BorderLayout());
     JPanel leftHolder = new JPanel(new BorderLayout());
     leftHolder.add(left, BorderLayout.CENTER);
-    leftHolder.add(Utils.createVerticalSeparator(8), BorderLayout.EAST);
+    leftHolder.add(SwingUtils.createVerticalSeparator(8), BorderLayout.EAST);
     content.add(leftHolder, BorderLayout.CENTER);
     content.add(right, BorderLayout.EAST);
     return content;
@@ -168,14 +165,6 @@ public class Utils {
     tree.setSelectionPath(path);
   }
 
-  public static String getVersion() {
-    try {
-      return Objects.requireNonNull(Utils.class.getPackage().getImplementationVersion());
-    } catch (NullPointerException e) {
-      return "(dev)";
-    }
-  }
-
   public static Image iconToFrameImage(Icon icon, Window window) {
     return ImageUtil.createFrameIcon(icon, window);
   }
@@ -196,9 +185,4 @@ public class Utils {
     return ICON_LOADER.getIcon(path, width, height, themed);
   }
 
-  public static boolean isNoverify() {
-    RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-    List<String> arguments = runtimeMxBean.getInputArguments();
-    return arguments.contains("-Xverify:none");
-  }
 }

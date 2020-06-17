@@ -15,7 +15,7 @@ import javax.swing.text.*;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
 import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.button.ReloadButton;
 import me.nov.threadtear.swing.frame.AnalysisFrame;
 import org.apache.commons.io.IOUtils;
@@ -142,8 +142,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     Threadtear.getInstance().statusBar.runWithLoadIndicator("Decompiling class file... ", () -> {
       this.textArea = new DecompilerTextArea();
       this.update();
-      this.add(Utils.withBorder(
-        Utils.wrap(Utils.createRSyntaxOverlayScrollPane(textArea)),
+      this.add(SwingUtils.withBorder(
+        SwingUtils.wrap(SwingUtils.createRSyntaxOverlayScrollPane(textArea)),
         DarkBorders.createLineBorder(1, 1, 1, 1)
       ), BorderLayout.CENTER);
       conversionMethod.setEnabled(true);

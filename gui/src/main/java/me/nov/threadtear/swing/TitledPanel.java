@@ -12,7 +12,7 @@ public class TitledPanel extends JPanel {
   public TitledPanel(String title, Component content) {
     super(new BorderLayout());
     this.titledBorder = BorderFactory.createTitledBorder(title);
-    add(Utils.withBorder(Box.createHorizontalBox(), titledBorder), BorderLayout.NORTH);
+    add(SwingUtils.withBorder(Box.createHorizontalBox(), titledBorder), BorderLayout.NORTH);
     setContent(content);
   }
 

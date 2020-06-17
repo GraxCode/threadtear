@@ -8,7 +8,7 @@ import javax.swing.*;
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.graph.CFGPanel;
-import me.nov.threadtear.swing.Utils;
+import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.panel.*;
 import me.nov.threadtear.util.format.Strings;
 
@@ -39,18 +39,18 @@ public class AnalysisFrame extends JFrame {
     setBounds(100, 100, 1000, 600);
     setMinimumSize(new Dimension(900, 540));
     setLayout(new BorderLayout());
-    setIconImage(Utils.iconToFrameImage(Utils.getIcon("decompile.svg", true), this));
+    setIconImage(SwingUtils.iconToFrameImage(SwingUtils.getIcon("decompile.svg", true), this));
     JPanel cp = new JPanel(new BorderLayout());
     cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Decompiler", Utils.getIcon("decompile.svg", true),
+    tabbedPane.addTab("Decompiler", SwingUtils.getIcon("decompile.svg", true),
       new DecompilerPanel(this, archive, clazz));
-    tabbedPane.setDisabledIconAt(0, Utils.getIcon("decompile_disabled.svg", true));
-    tabbedPane.addTab("Bytecode", Utils.getIcon("bytecode.svg", true),
+    tabbedPane.setDisabledIconAt(0, SwingUtils.getIcon("decompile_disabled.svg", true));
+    tabbedPane.addTab("Bytecode", SwingUtils.getIcon("bytecode.svg", true),
       new BytecodePanel(clazz.node));
-    tabbedPane.setDisabledIconAt(1, Utils.getIcon("bytecode_disabled.svg", true));
-    tabbedPane.addTab("Graph", Utils.getIcon("graph.svg", true), new CFGPanel(clazz.node));
-    tabbedPane.setDisabledIconAt(2, Utils.getIcon("graph_disabled.svg", true));
+    tabbedPane.setDisabledIconAt(1, SwingUtils.getIcon("bytecode_disabled.svg", true));
+    tabbedPane.addTab("Graph", SwingUtils.getIcon("graph.svg", true), new CFGPanel(clazz.node));
+    tabbedPane.setDisabledIconAt(2, SwingUtils.getIcon("graph_disabled.svg", true));
 
     cp.add(tabbedPane, BorderLayout.CENTER);
     this.add(cp, BorderLayout.CENTER);
