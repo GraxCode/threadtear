@@ -47,8 +47,8 @@ public class ClassTreePanel extends JPanel implements ILoader {
     this.threadtear = threadtear;
     this.setLayout(new BorderLayout());
     this.add(outerPanel = SwingUtils.withTitleAndBorder("Class list", new OverlayScrollPane(tree = new ClassTree())),
-            BorderLayout.CENTER);
-    this.add(SwingUtils.pad(createButtons(), 8,0,8,0), BorderLayout.SOUTH);
+      BorderLayout.CENTER);
+    this.add(SwingUtils.pad(createButtons(), 8, 0, 8, 0), BorderLayout.SOUTH);
     this.setTransferHandler(new JarDropHandler(this));
   }
 
@@ -62,6 +62,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
   private JPanel createButtons() {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    panel.add(Box.createHorizontalGlue());
     obfAnalysis = new JButton("Full analysis");
     obfAnalysis.setIcon(SwingUtils.getIcon("analysis.svg", true));
     obfAnalysis.setDisabledIcon(SwingUtils.getIcon("analysis_disabled.svg", true));
@@ -99,12 +100,14 @@ public class ClassTreePanel extends JPanel implements ILoader {
     ignore.setDisabledIcon(SwingUtils.getIcon("ignore_disabled.svg", true));
     ignore.addActionListener(l -> {
       TreePath[] paths = tree.getSelectionPaths();
-      for (TreePath path : paths) {
-        ClassTreeNode tn = (ClassTreeNode) path.getLastPathComponent();
-        ignoreChilds(tn);
+      if (paths != null) {
+        for (TreePath path : paths) {
+          ClassTreeNode tn = (ClassTreeNode) path.getLastPathComponent();
+          ignoreChilds(tn);
+        }
+        refreshIgnored();
+        tree.grabFocus();
       }
-      refreshIgnored();
-      tree.grabFocus();
     });
     ignore.setEnabled(false);
     panel.add(ignore);
@@ -206,16 +209,16 @@ public class ClassTreePanel extends JPanel implements ILoader {
           this.classes = JarIO.loadClasses(inputFile);
           if (classes.stream().anyMatch(c -> c.oldEntry.getCertificates() != null)) {
             JOptionPane.showMessageDialog(this,
-                    "<html" + ">Warning: File is signed and" + " may not load correctly if " + "already " +
-                            "modified, remove the" + " signature<br>" + "(<tt>META-INF\\MANIFEST" + ".MF</tt" +
-                            ">) and certificates " + "(<tt>META-INF\\*.SF/" + ".RSA</tt>) first!",
-                    "Signature" + " warning", JOptionPane.WARNING_MESSAGE);
+              "<html" + ">Warning: File is signed and" + " may not load correctly if " + "already " +
+                "modified, remove the" + " signature<br>" + "(<tt>META-INF\\MANIFEST" + ".MF</tt" +
+                ">) and certificates " + "(<tt>META-INF\\*.SF/" + ".RSA</tt>) first!",
+              "Signature" + " warning", JOptionPane.WARNING_MESSAGE);
           }
           break;
         case "class":
           ClassNode node = Conversion.toNode(Files.readAllBytes(inputFile.toPath()));
           this.classes =
-                  new ArrayList<>(Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile)));
+            new ArrayList<>(Collections.singletonList(new Clazz(node, new JarEntry(node.name), inputFile)));
           break;
       }
     } catch (IOException e) {
@@ -232,7 +235,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
         String last = packages[packages.length - 1];
         boolean valid = last.chars().mapToObj(i -> (char) i).allMatch(Character::isJavaIdentifierPart);
         packages = new String[]{"<html><font " + "color=\"red\">$invalid_name",
-                valid ? last : ("<html><font " + "color=\"red\">$" + last.hashCode())};
+          valid ? last : ("<html><font " + "color=\"red\">$" + last.hashCode())};
       }
       addToTree((ClassTreeNode) model.getRoot(), c, packages, 0);
     });
