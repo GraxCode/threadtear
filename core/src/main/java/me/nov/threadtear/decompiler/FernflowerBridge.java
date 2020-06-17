@@ -112,4 +112,21 @@ public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, I
   public void closeArchive(String path, String archiveName) {
   }
 
+  public static class FernflowerDecompilerInfo extends DecompilerInfo<FernflowerBridge> {
+
+    @Override
+    public String getName() {
+      return "Fernflower";
+    }
+
+    @Override
+    public String getVersionInfo() {
+      return "15-08-20";
+    }
+
+    @Override
+    public FernflowerBridge createDecompilerBridge() {
+      return new FernflowerBridge();
+    }
+  }
 }

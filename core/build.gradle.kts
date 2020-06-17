@@ -3,8 +3,7 @@ plugins {
 }
 
 fun DependencyHandlerScope.externalLib(libraryName: String) {
-    compileOnly(files("${rootProject.rootDir}/libs/$libraryName.jar"))
-    runtimeOnly(files("${rootProject.rootDir}/libs/$libraryName.jar"))
+    implementation(files("${rootProject.rootDir}/libs/$libraryName.jar"))
 }
 
 dependencies {
@@ -13,8 +12,8 @@ dependencies {
     implementation("org.apache.commons:commons-configuration2")
     implementation("commons-beanutils:commons-beanutils")
 
+    api("org.ow2.asm:asm-tree")
     implementation("org.ow2.asm:asm")
-    implementation("org.ow2.asm:asm-tree")
     implementation("org.ow2.asm:asm-analysis")
     implementation("org.ow2.asm:asm-util")
 
