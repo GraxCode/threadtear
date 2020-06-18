@@ -1,8 +1,16 @@
 package me.nov.threadtear.vm;
 
+import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.Instructions;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
+
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.BiPredicate;
 
 import me.nov.threadtear.ThreadtearCore;
@@ -31,9 +39,9 @@ public class VM extends ClassLoader implements Opcodes {
 
   private Class<?> bytesToClass(String name, byte[] bytes) {
     if (loaded.containsKey(name))
-      throw new RuntimeException("class " + name + " is " + "already defined");
+      throw new RuntimeException("class " + name + " is already defined");
     if (isForbiddenName(name))
-      throw new RuntimeException(name + " is not an " + "allowed class name");
+      throw new RuntimeException(name + " is not an allowed class name");
     try {
       Method define = ClassLoader.class
               .getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class,
