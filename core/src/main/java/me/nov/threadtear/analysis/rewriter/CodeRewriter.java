@@ -88,8 +88,9 @@ public class CodeRewriter extends Interpreter<CodeReferenceValue> implements Opc
       case LLOAD:
       case DLOAD:
       case FLOAD:
-        CodeReferenceValue var = presetArgs != null ? presetArgs[((VarInsnNode) insn).var] : null;
-        return var == null ? new UnknownInstructionValue(value.getType(), insn) : var.setType(value.getType());
+        return new UnknownInstructionValue(value.getType(), insn);
+        //CodeReferenceValue var = presetArgs != null ? presetArgs[((VarInsnNode) insn).var] : null;
+        //return var == null ? new UnknownInstructionValue(value.getType(), insn) : var.setType(value.getType());
       case ASTORE:
       case ISTORE:
       case LSTORE:

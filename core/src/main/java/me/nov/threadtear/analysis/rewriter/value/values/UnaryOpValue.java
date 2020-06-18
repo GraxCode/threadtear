@@ -1,5 +1,7 @@
 package me.nov.threadtear.analysis.rewriter.value.values;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.objectweb.asm.tree.*;
@@ -57,9 +59,9 @@ public class UnaryOpValue extends CodeReferenceValue {
   }
 
   @Override
-  public InsnList getInstructions() {
-    InsnList list = new InsnList();
-    list.add(value.getInstructions());
+  public List<AbstractInsnNode> getInstructions() {
+    List<AbstractInsnNode> list = new ArrayList<>();
+    list.addAll(value.getInstructions());
     list.add(node);
     return list;
   }

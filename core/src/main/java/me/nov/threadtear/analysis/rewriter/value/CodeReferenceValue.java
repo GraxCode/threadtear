@@ -1,5 +1,6 @@
 package me.nov.threadtear.analysis.rewriter.value;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.objectweb.asm.*;
@@ -17,7 +18,7 @@ public abstract class CodeReferenceValue implements Value, Opcodes {
 
   public abstract InsnList cloneInstructions();
 
-  public abstract InsnList getInstructions();
+  public abstract List<AbstractInsnNode> getInstructions();
 
   public abstract Object getStackValueOrNull();
 

@@ -1,5 +1,7 @@
 package me.nov.threadtear.analysis.rewriter.value.values;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.objectweb.asm.tree.*;
@@ -52,8 +54,8 @@ public class NumberValue extends CodeReferenceValue {
   }
 
   @Override
-  public InsnList getInstructions() {
-    return Instructions.singleton(node);
+  public List<AbstractInsnNode> getInstructions() {
+    return Collections.singletonList(node);
   }
 
   @Override

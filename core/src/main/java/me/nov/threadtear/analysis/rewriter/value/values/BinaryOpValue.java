@@ -1,6 +1,9 @@
 package me.nov.threadtear.analysis.rewriter.value.values;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
@@ -20,13 +23,21 @@ public class BinaryOpValue extends CodeReferenceValue {
 
   @Override
   public boolean isKnownValue() {
-    return left.isKnownValue() && right.isKnownValue();
+    return !doesThrow() && left.isKnownValue() && right.isKnownValue();
+  }
+
+  private static final Predicate<Integer> zeroSideEffect = (i) -> i == IDIV || i == IREM || i == LDIV || i == LREM;
+
+  private boolean doesThrow() {
+    if (!zeroSideEffect.test(node.getOpcode()))
+      return false;
+    Number rightValue = (Number) right.getStackValueOrNull();
+    return rightValue != null && rightValue.intValue() == 0;
   }
 
   @Override
   public boolean isRequiredInCode() {
-    // TODO check for idiv 0 and similar things
-    return left.isRequiredInCode() || right.isRequiredInCode();
+    return doesThrow() || left.isRequiredInCode() || right.isRequiredInCode();
   }
 
   @Override
@@ -64,12 +75,11 @@ public class BinaryOpValue extends CodeReferenceValue {
     list.add(new InsnNode(node.getOpcode()));
     return list;
   }
-
   @Override
-  public InsnList getInstructions() {
-    InsnList list = new InsnList();
-    list.add(left.getInstructions());
-    list.add(right.getInstructions());
+  public List<AbstractInsnNode> getInstructions() {
+    List<AbstractInsnNode> list = new ArrayList<>();
+    list.addAll(left.getInstructions());
+    list.addAll(right.getInstructions());
     list.add(node);
     return list;
   }
@@ -147,8 +157,7 @@ public class BinaryOpValue extends CodeReferenceValue {
       case DREM:
         return num1.doubleValue() % num2.doubleValue();
 
-      // compare instructions not tested, could return
-      // wrong result
+      // TODO compare instructions not tested, could return wrong result
       case LCMP:
         return Long.compare(num1.longValue(), num2.longValue());
       case FCMPL:

@@ -1,5 +1,7 @@
 package me.nov.threadtear.analysis.rewriter.value.values;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.objectweb.asm.tree.*;
@@ -92,10 +94,10 @@ public class MemberAccessValue extends CodeReferenceValue {
   }
 
   @Override
-  public InsnList getInstructions() {
-    InsnList list = new InsnList();
+  public List<AbstractInsnNode> getInstructions() {
+    List<AbstractInsnNode> list = new ArrayList<>();
     if (ownerRef != null) {
-      list.add(ownerRef.getInstructions());
+      list.addAll(ownerRef.getInstructions());
     }
     list.add(node);
     return list;

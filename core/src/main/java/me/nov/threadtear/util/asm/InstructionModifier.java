@@ -43,6 +43,10 @@ public class InstructionModifier {
     appends.put(original, append);
   }
 
+  public void append(AbstractInsnNode original, AbstractInsnNode append) {
+    appends.put(original, Instructions.singleton(append));
+  }
+
   public void prepend(AbstractInsnNode original, InsnList append) {
     prepends.put(original, append);
   }
@@ -65,6 +69,12 @@ public class InstructionModifier {
 
   public void removeAll(List<AbstractInsnNode> toRemove) {
     for (AbstractInsnNode insn : toRemove) {
+      remove(insn);
+    }
+  }
+
+  public void removeAll(InsnList toRemove) {
+    for (AbstractInsnNode insn : toRemove.toArray()) {
       remove(insn);
     }
   }

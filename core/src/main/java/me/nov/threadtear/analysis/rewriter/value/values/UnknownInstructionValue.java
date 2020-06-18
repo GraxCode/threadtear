@@ -6,6 +6,9 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import me.nov.threadtear.analysis.rewriter.value.CodeReferenceValue;
 import me.nov.threadtear.util.asm.Instructions;
 
+import java.util.Collections;
+import java.util.List;
+
 public class UnknownInstructionValue extends CodeReferenceValue {
 
   public UnknownInstructionValue(BasicValue type, AbstractInsnNode node) {
@@ -47,8 +50,8 @@ public class UnknownInstructionValue extends CodeReferenceValue {
   }
 
   @Override
-  public InsnList getInstructions() {
-    return Instructions.singleton(node);
+  public List<AbstractInsnNode> getInstructions() {
+    return Collections.singletonList(node);
   }
 
   @Override
