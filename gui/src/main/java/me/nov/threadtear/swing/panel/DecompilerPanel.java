@@ -1,34 +1,39 @@
 package me.nov.threadtear.swing.panel;
 
-import static org.objectweb.asm.Opcodes.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.Objects;
-import java.util.stream.StreamSupport;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.*;
-
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.components.text.SearchTextField;
+import com.github.weisj.darklaf.ui.text.DarkTextUI;
 import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.decompiler.DecompilerInfo;
+import me.nov.threadtear.decompiler.IDecompilerBridge;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.button.ReloadButton;
 import me.nov.threadtear.swing.frame.AnalysisFrame;
-import org.apache.commons.io.IOUtils;
-import org.benf.cfr.reader.util.CfrVersionInfo;
-import org.objectweb.asm.tree.*;
-
-import com.github.weisj.darklaf.ui.text.DarkTextUI;
-
-import me.nov.threadtear.decompiler.*;
-import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.io.Conversion;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
 import me.nov.threadtear.util.format.Strings;
+import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class DecompilerPanel extends JPanel implements ActionListener {
   private static final long serialVersionUID = 1L;
@@ -42,7 +47,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
   public File archive;
   public Clazz clazz;
 
-  private final JComboBox<String> decompilerSelection;
+  private final JComboBox<DecompilerInfo> decompilerSelection;
   private final JComboBox<String> conversionMethod;
   private final JCheckBox ignoreTCB;
   private final JCheckBox ignoreMon;
@@ -59,8 +64,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(
-      new String[]{"CFR " + CfrVersionInfo.VERSION, "Fernflower " + "15-05-20", "Krakatau 22-05-20"});
+    decompilerSelection = new JComboBox<>(DecompilerInfo.getDecompilerInfos().toArray(new DecompilerInfo[0]));
     decompilerSelection.setSelectedIndex(preferredDecompilerIndex);
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
@@ -191,17 +195,9 @@ public class DecompilerPanel extends JPanel implements ActionListener {
           .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
       }
       bytes = Conversion.toBytecode0(copy);
-      switch (decompilerSelection.getSelectedIndex()) {
-        case 0:
-          decompilerBridge = new CFRBridge();
-          break;
-        case 1:
-          decompilerBridge = new FernflowerBridge();
-          break;
-        case 2:
-          decompilerBridge = new KrakatauBridge();
-          break;
-      }
+      decompilerBridge = decompilerSelection.getModel()
+        .getElementAt(decompilerSelection.getSelectedIndex())
+        .createDecompilerBridge();
       preferredDecompilerIndex = decompilerSelection.getSelectedIndex();
       decompilerBridge.setAggressive(aggressive.isSelected());
       String decompiled = decompilerBridge.decompile(archive, clazz.node.name, bytes);

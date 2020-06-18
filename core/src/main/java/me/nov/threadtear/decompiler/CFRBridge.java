@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.commons.io.IOUtils;
 import org.benf.cfr.reader.api.*;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
+import org.benf.cfr.reader.util.CfrVersionInfo;
 import org.objectweb.asm.tree.ClassNode;
 
 import me.nov.threadtear.io.Conversion;
@@ -96,5 +97,23 @@ public class CFRBridge implements IDecompilerBridge {
       result = "No CFR output received";
     }
     return result;
+  }
+
+  public static class CFRDecompilerInfo extends DecompilerInfo<CFRBridge> {
+
+    @Override
+    public String getName() {
+      return "CFR";
+    }
+
+    @Override
+    public String getVersionInfo() {
+      return CfrVersionInfo.VERSION;
+    }
+
+    @Override
+    public CFRBridge createDecompilerBridge() {
+      return new CFRBridge();
+    }
   }
 }

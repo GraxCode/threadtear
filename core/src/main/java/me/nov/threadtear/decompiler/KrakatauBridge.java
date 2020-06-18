@@ -1,18 +1,23 @@
 package me.nov.threadtear.decompiler;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
-import java.util.jar.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
-import java.util.zip.*;
-
-import org.apache.commons.io.IOUtils;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class KrakatauBridge implements IDecompilerBridge {
   private static boolean setup;
   private static Path krakatau;
+
 
   @Override
   public String decompile(File archive, String name, byte[] bytes) {
@@ -36,7 +41,7 @@ public class KrakatauBridge implements IDecompilerBridge {
     try {
       File krakatauOut = Files.createTempFile(name.hashCode() + "-decompiled", ".jar").toFile();
       ProcessBuilder pb = new ProcessBuilder("python", "decompile.py", "-out", krakatauOut.getAbsolutePath(),
-              krakatauIn.getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
+        krakatauIn.getAbsolutePath(), "-path", archive.getAbsolutePath(), "-skip");
       pb.directory(krakatau.toFile());
       pb.redirectError();
       StringBuilder output = new StringBuilder();
@@ -61,9 +66,9 @@ public class KrakatauBridge implements IDecompilerBridge {
     } catch (Throwable t) {
       if (t.getMessage() != null && t.getMessage().contains("Cannot run program")) {
         return "Could not run python executable. Please " + "set your python 2.7 path correctly to " + "use krakatau" +
-                ".\nError: " + t.getMessage() + "\n\n/*\nYour environment" + " variables:\n" +
-                System.getenv().entrySet().stream().map(e -> e.getKey() + " = \"" + e.getValue() + "\"")
-                        .collect(Collectors.joining("\n")) + "\n*/";
+          ".\nError: " + t.getMessage() + "\n\n/*\nYour environment" + " variables:\n" +
+          System.getenv().entrySet().stream().map(e -> e.getKey() + " = \"" + e.getValue() + "\"")
+            .collect(Collectors.joining("\n")) + "\n*/";
       }
       t.printStackTrace();
       StringWriter sw = new StringWriter();
@@ -128,6 +133,24 @@ public class KrakatauBridge implements IDecompilerBridge {
       PrintWriter pw = new PrintWriter(sw);
       t.printStackTrace(pw);
       return sw.toString();
+    }
+  }
+
+  public static class KrakatauDecompilerInfo extends DecompilerInfo<KrakatauBridge> {
+
+    @Override
+    public String getName() {
+      return "Krakatau";
+    }
+
+    @Override
+    public String getVersionInfo() {
+      return "22-05-20";
+    }
+
+    @Override
+    public KrakatauBridge createDecompilerBridge() {
+      return new KrakatauBridge();
     }
   }
 }
