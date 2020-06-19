@@ -107,7 +107,7 @@ public class ExecutionSelection extends JDialog {
       addExecution(root, new StringObfuscationZKM());
       addExecution(root, new AccessObfusationZKM());
       addExecution(root, new FlowObfuscationZKM());
-
+      addExecution(root, new DESObfuscationZKM());
 
       addExecution(root, new StringObfuscationAllatori());
       addExecution(root, new ExpirationDateRemoverAllatori());

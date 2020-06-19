@@ -1,30 +1,33 @@
 package me.nov.threadtear;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.lang.management.*;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.github.weisj.darklaf.components.help.HelpMenuItem;
 import com.github.weisj.darklaf.settings.ThemeSettings;
-
-import me.nov.threadtear.execution.*;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
 import me.nov.threadtear.swing.listener.ExitListener;
-import me.nov.threadtear.swing.panel.*;
+import me.nov.threadtear.swing.panel.ConfigurationPanel;
+import me.nov.threadtear.swing.panel.StatusBar;
+import me.nov.threadtear.swing.panel.TreePanel;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;

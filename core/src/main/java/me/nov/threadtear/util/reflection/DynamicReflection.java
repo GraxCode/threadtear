@@ -1,11 +1,18 @@
 package me.nov.threadtear.util.reflection;
 
-import java.lang.invoke.*;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.*;
-
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleInfo;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public final class DynamicReflection implements Opcodes {
   private DynamicReflection() {
@@ -18,10 +25,13 @@ public final class DynamicReflection implements Opcodes {
    */
   public static MethodHandleInfo revealMethodInfo(MethodHandle handle)
           throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-    if (handle.getClass().getName().startsWith(BMHL)) {
-      Field original = handle.getClass().getDeclaredField("argL0");
+    Class<? extends MethodHandle> clazz = handle.getClass();
+    if (clazz.getName().startsWith(BMHL)) {
+      Field original = clazz.getDeclaredField("argL0");
       original.setAccessible(true);
       handle = (MethodHandle) original.get(handle);
+    } else if (clazz.getName().contains("BruteArgumentMoverHandle")) {
+      LogWrapper.logger.warning("Wrong java version! Please use Java 8 to decrypt MethodHandles properly.");
     }
     return revealTrusted(handle);
   }

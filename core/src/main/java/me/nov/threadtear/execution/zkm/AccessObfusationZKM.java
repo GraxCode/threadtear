@@ -1,32 +1,42 @@
 package me.nov.threadtear.execution.zkm;
 
-import java.lang.invoke.*;
-import java.lang.reflect.Method;
-import java.util.*;
-
+import me.nov.threadtear.analysis.stack.ConstantValue;
+import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.logging.LogWrapper;
-import org.objectweb.asm.*;
+import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.reflection.DynamicReflection;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.VM;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import me.nov.threadtear.analysis.stack.*;
-import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.asm.Instructions;
-import me.nov.threadtear.util.reflection.DynamicReflection;
-import me.nov.threadtear.vm.*;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleInfo;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class AccessObfusationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
   private static final String ZKM_INVOKEDYNAMIC_HANDLE_DESC = "(Ljava/lang/invoke/MethodHandles$Lookup;" +
-          "Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;";
+    "Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;";
 
   /**
    * The method that returns the real MethodHandle
    */
   private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = "\\(Ljava/lang/invoke/MethodHandles" +
-          "\\$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)" +
-          "Ljava/lang/invoke/MethodHandle;";
+    "\\$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)" +
+    "Ljava/lang/invoke/MethodHandle;";
 
   private Map<String, Clazz> classes;
   private int encrypted;
@@ -35,9 +45,9 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   private VM vm;
 
   public AccessObfusationZKM() {
-    super(ExecutionCategory.ZKM, "Access obfuscation " + "removal",
-            "Tested on ZKM 8 - 11, could work " + "on newer " + "versions too.<br>Only works with " +
-                    "invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+    super(ExecutionCategory.ZKM, "Access obfuscation removal",
+      "Tested on ZKM 8 - 11, could work on newer versions too.<br>Only works with " +
+        "invokedynamic obfuscation for now.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -46,19 +56,19 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     this.classes = classes;
     this.encrypted = 0;
     this.decrypted = 0;
-    logger.info("Decrypting all invokedynamic references," + " this could take some time!");
-    logger.warning("Make sure all required libraries or " + "dynamic classes are in the jar itself, or " + "else some" +
-            " invokedynamics cannot be " + "deobfuscated!");
+    logger.info("Decrypting all invokedynamic references, this could take some time!");
+    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some" +
+      " invokedynamics cannot be deobfuscated!");
     this.vm = VM.constructNonInitializingVM(this);
     this.vm.setDummyLoading(true);
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No access obfuscation matching ZKM " + "has been found!");
+      logger.error("No access obfuscation matching ZKM has been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted", decryptionRatio <= 0.25,
-            encrypted, decryptionRatio);
+    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25,
+      encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -77,32 +87,32 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
           if (idin.bsm != null) {
             Handle bsm = idin.bsm;
             if (bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC) &&
-                    classes.values().stream().map(c -> c.node).anyMatch(node -> node.name.equals(bsm.getOwner()))) {
+              classes.values().stream().map(c -> c.node).anyMatch(node -> node.name.equals(bsm.getOwner()))) {
               encrypted++;
               try {
                 allowReflection(true);
                 MethodHandle handle = loadZKMBuriedHandleFromVM(
-                        classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner()))
-                                .findFirst().get(), idin, frame);
+                  classes.values().stream().map(c -> c.node).filter(node -> node.name.equals(bsm.getOwner()))
+                    .findFirst().get(), idin, frame);
                 if (handle != null) {
                   MethodHandleInfo methodInfo = DynamicReflection.revealMethodInfo(handle);
                   AbstractInsnNode instruction = DynamicReflection.getInstructionFromHandleInfo(methodInfo);
 
                   Type[] decryptionTypes =
-                          Type.getArgumentTypes(handle.type().toMethodDescriptorString()); // with extra values
+                    Type.getArgumentTypes(handle.type().toMethodDescriptorString()); // with extra values
                   Type[] realTypes =
-                          Type.getArgumentTypes(methodInfo.getMethodType().toMethodDescriptorString()); // without
+                    Type.getArgumentTypes(methodInfo.getMethodType().toMethodDescriptorString()); // without
                   int extraArgs = decryptionTypes.length - realTypes.length; // difference equals extra count
                   if (instruction.getOpcode() != INVOKESTATIC && instruction.getOpcode() != GETSTATIC &&
-                          instruction.getOpcode() != PUTSTATIC) {
+                    instruction.getOpcode() != PUTSTATIC) {
                     // object reference is an argument on
                     // the handle, we do not want to pop it
                     extraArgs--;
                   }
                   for (int i = 0; i < extraArgs; i++) {
                     Type t = decryptionTypes[decryptionTypes.length - 1 - i];
-                    rewrittenCode
-                            .add(new InsnNode(t.getSize() > 1 ? POP2 : POP)); // pop off remaining decryption values
+                    rewrittenCode.add(new InsnNode(t.getSize() > 1 ? POP2 : POP));
+                    // pop off remaining decryption values
                   }
                   rewrittenCode.add(instruction);
                   decrypted++;
@@ -115,8 +125,8 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                 if (verbose) {
                   logger.error("Throwable", t);
                 }
-                logger.error("Failed to get callsite " + "using classloader in {}, {}", referenceString(cn, m),
-                        shortStacktrace(t));
+                logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m),
+                  shortStacktrace(t));
               }
             } else if (verbose) {
               logger.warning("Other bootstrap type in {}:" + " {}", referenceString(cn, m), bsm);
@@ -132,11 +142,11 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
   }
 
   private MethodHandle loadZKMBuriedHandleFromVM(ClassNode cn, InvokeDynamicInsnNode idin, Frame<ConstantValue> frame)
-          throws Throwable {
+    throws Throwable {
     if (!vm.isLoaded(cn.name.replace('/', '.'))) {
       cn.methods.forEach(mn -> Instructions
-              .isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"),
-                      (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
+        .isolateCallsThatMatch(mn, (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*"),
+          (name, desc) -> !name.equals(cn.name) && !name.matches("java/lang/.*")));
       vm.explicitlyPreload(cn); // make sure bootstrap
       // class class has <clinit>
     }
@@ -149,7 +159,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       }
     }
     if (bootstrap == null) {
-      logger.warning("Failed to find real bootstrap " + "method in {}: {}", referenceString(cn, null), idin.desc);
+      logger.warning("Failed to find real bootstrap method in {}: {}", referenceString(cn, null), idin.desc);
       return null;
     }
     if (idin.desc.matches("\\(.*[JI]+\\).*")) {
@@ -161,9 +171,11 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         for (int i = 0; i < invokedynamicParams; i++) {
           ConstantValue stack = frame.getStack(frame.getStackSize() - invokedynamicParams + i);
           if (!stack.isKnown()) {
+            LogWrapper.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
+              referenceString(cn, null));
             LogWrapper.logger
-                    .warning("Stack value depth {} is " + "unknown in {}, could be " + "decryption class itself", i,
-                            referenceString(cn, null));
+              .warning("Stack value depth {} is " + "unknown in {}, could be " + "decryption class itself", i,
+                referenceString(cn, null));
             return null;
           }
           args.add(stack.getValue());
@@ -172,10 +184,10 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       } catch (IllegalArgumentException e) {
         if (e.getMessage().contains("arguments")) {
           LogWrapper.logger.error("IllegalArgumentException: Wrong" + " arguments for {}, cannot decrypt!",
-                  Arrays.toString(bootstrap.getParameterTypes()));
+            Arrays.toString(bootstrap.getParameterTypes()));
         } else {
           LogWrapper.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!",
-                  idin.desc);
+            idin.desc);
         }
       }
     } else {
