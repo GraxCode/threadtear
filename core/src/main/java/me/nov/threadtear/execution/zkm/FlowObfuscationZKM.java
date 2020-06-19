@@ -30,7 +30,7 @@ public class FlowObfuscationZKM extends Execution {
     replaced = 0;
     logger.info("Removing all garbage jumps");
     classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(this::removeZKMJumps));
-    logger.info("Removed {} jumps matching ZKM pattern in" + " total", replaced);
+    logger.info("Removed {} jumps matching ZKM pattern in total", replaced);
     return replaced > 0;
   }
 

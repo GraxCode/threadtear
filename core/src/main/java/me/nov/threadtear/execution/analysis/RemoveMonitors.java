@@ -9,8 +9,8 @@ import me.nov.threadtear.execution.*;
 public class RemoveMonitors extends Execution {
 
   public RemoveMonitors() {
-    super(ExecutionCategory.ANALYSIS, "Remove " + "synchronized blocks",
-            "Removes all " + "monitorenter and " + "monitorexit instructions", ExecutionTag.POSSIBLE_DAMAGE,
+    super(ExecutionCategory.ANALYSIS, "Remove synchronized blocks",
+            "Removes all monitorenter and monitorexit instructions", ExecutionTag.POSSIBLE_DAMAGE,
             ExecutionTag.BETTER_DECOMPILE);
   }
 

@@ -15,7 +15,7 @@ import me.nov.threadtear.vm.*;
 public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
 
   private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC =
-          "(Ljava/lang/Object;Ljava/lang/Object;" + "Ljava/lang/Object;)Ljava/lang/Object;";
+          "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
@@ -23,8 +23,8 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private VM vm;
 
   public AccessObfusationStringer() {
-    super(ExecutionCategory.STRINGER, "Access obfuscation" + " removal",
-            "Works for version 3 - 9.<br>Only" + " works" + " with invokedynamic obfuscation for " + "now.",
+    super(ExecutionCategory.STRINGER, "Access obfuscation removal",
+            "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.",
             ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -35,19 +35,19 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references");
-    logger.warning("Make sure all required libraries or " + "dynamic classes are in the jar itself, or " + "else some" +
-            " invokedynamics cannot be " + "deobfuscated!");
+    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some" +
+            " invokedynamics cannot be deobfuscated!");
 
     this.vm = VM.constructVM(this); // can't use
     // non-initializing as decryption class needs <clinit>
     vm.setDummyLoading(true);
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No access obfuscation matching " + "stringer 3 - 9 has been found!");
+      logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted", decryptionRatio <= 0.25,
+    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25,
             encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
@@ -85,7 +85,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.error("Failed to get callsite " + "using classloader in {}, {}", referenceString(cn, m),
+                  logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m),
                           shortStacktrace(t));
                 }
               } else if (verbose) {

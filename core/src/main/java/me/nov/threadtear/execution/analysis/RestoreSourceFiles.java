@@ -10,9 +10,9 @@ import me.nov.threadtear.util.asm.References;
 public class RestoreSourceFiles extends Execution {
 
   public RestoreSourceFiles() {
-    super(ExecutionCategory.ANALYSIS, "Restore names by " + "source file",
-            "Restore class names by their " + "source " + "file attribute, if it isn't null" +
-                    ".<br>Could reverse obfuscation with bad " + "configuration.", ExecutionTag.BETTER_DECOMPILE,
+    super(ExecutionCategory.ANALYSIS, "Restore names by source file",
+            "Restore class names by their source file attribute, if it isn't null" +
+                    ".<br>Could reverse obfuscation with bad configuration.", ExecutionTag.BETTER_DECOMPILE,
             ExecutionTag.POSSIBLE_DAMAGE);
   }
 
@@ -20,15 +20,15 @@ public class RestoreSourceFiles extends Execution {
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-    logger.info("Generating mappings for source file " + "attributes");
+    logger.info("Generating mappings for source file attributes");
     map = classes.values().stream().filter(c -> c.node.sourceFile != null && c.node.sourceFile.endsWith(".java"))
             .collect(Collectors
                     .toMap(c -> c.node.name, c -> c.node.sourceFile.substring(0, c.node.sourceFile.length() - 5)));
     boolean duplicateFound = false;
     if (map.size() < classes.size()) {
-      logger.warning("{} classes of {} have a valid " + "source file attribute.", map.size(), classes.size());
+      logger.warning("{} classes of {} have a valid source file attribute.", map.size(), classes.size());
       if (map.isEmpty()) {
-        logger.error("No source file attribute found, " + "nothing to do, returning!");
+        logger.error("No source file attribute found, nothing to do, returning!");
         return false;
       }
     }
@@ -37,11 +37,11 @@ public class RestoreSourceFiles extends Execution {
       long count = map.values().stream().filter(sf -> sf.equalsIgnoreCase(entry.getValue())).count();
       if (count > 1) {
         if (!duplicateFound) {
-          logger.warning("Duplicate mapping was found! " + "Numbering classes with multiple " + "occurrences!");
+          logger.warning("Duplicate mapping was found! Numbering classes with multiple occurrences!");
           duplicateFound = true;
         }
         if (verbose) {
-          logger.warning("{} exists {} times! Renaming.." + ".", entry.getValue(), count);
+          logger.warning("{} exists {} times! Renaming...", entry.getValue(), count);
         }
         // rename duplicate
         entry.setValue(entry.getValue() + count);
@@ -53,7 +53,7 @@ public class RestoreSourceFiles extends Execution {
     int refs =
             classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
                     .flatMap(Arrays::stream).mapToInt(ain -> References.remapClassRefs(map, ain)).sum();
-    logger.info("{} code references updated " + "successfully!", refs);
+    logger.info("{} code references updated successfully!", refs);
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
             .forEach(m -> References.remapMethodType(map, m));
     classes.values().stream().map(c -> c.node.fields).flatMap(List::stream)

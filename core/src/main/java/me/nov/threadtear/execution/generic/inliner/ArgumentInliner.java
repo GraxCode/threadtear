@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ArgumentInliner extends Execution {
 
   public ArgumentInliner() {
-    super(ExecutionCategory.GENERIC, "Argument inliner", "Inlines constant arguments from caller " + "methods",
+    super(ExecutionCategory.GENERIC, "Argument inliner", "Inlines constant arguments from caller methods",
             ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE, ExecutionTag.POSSIBLE_DAMAGE);
   }
 

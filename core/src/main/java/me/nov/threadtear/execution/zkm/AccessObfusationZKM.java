@@ -129,7 +129,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
                   shortStacktrace(t));
               }
             } else if (verbose) {
-              logger.warning("Other bootstrap type in {}:" + " {}", referenceString(cn, m), bsm);
+              logger.warning("Other bootstrap type in {}: {}", referenceString(cn, m), bsm);
             }
           }
         }
@@ -174,7 +174,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
             LogWrapper.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
               referenceString(cn, null));
             LogWrapper.logger
-              .warning("Stack value depth {} is " + "unknown in {}, could be " + "decryption class itself", i,
+              .warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
                 referenceString(cn, null));
             return null;
           }
@@ -183,7 +183,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
         return (MethodHandle) bootstrap.invoke(null, args.toArray());
       } catch (IllegalArgumentException e) {
         if (e.getMessage().contains("arguments")) {
-          LogWrapper.logger.error("IllegalArgumentException: Wrong" + " arguments for {}, cannot decrypt!",
+          LogWrapper.logger.error("IllegalArgumentException: Wrong arguments for {}, cannot decrypt!",
             Arrays.toString(bootstrap.getParameterTypes()));
         } else {
           LogWrapper.logger.error("IllegalArgumentException: One or more classes not in jar file: {}, cannot decrypt!",

@@ -17,8 +17,8 @@ public class TryCatchObfuscationRemover extends Execution {
   private boolean verbose;
 
   public TryCatchObfuscationRemover() {
-    super(ExecutionCategory.ZKM, "Remove unnecessary try " + "catch blocks",
-            "Remove try catch block flow " + "obfuscation by ZKM.<br>Makes decompiling a " + "lot easier.",
+    super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks",
+            "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.",
             ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
   }
 
@@ -26,11 +26,11 @@ public class TryCatchObfuscationRemover extends Execution {
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.verbose = verbose;
     this.classes = classes;
-    logger.info("Removing redundant try catch blocks by " + "ZKM");
+    logger.info("Removing redundant try catch blocks by ZKM");
     long tcbs = getAmountBlocks();
     classes.values().stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
     long amount = (tcbs - getAmountBlocks());
-    logger.info("Finished, removed {} blocks of {} total " + "blocks!", amount, tcbs);
+    logger.info("Finished, removed {} blocks of {} total blocks!", amount, tcbs);
     return amount > 0;
   }
 
@@ -58,13 +58,13 @@ public class TryCatchObfuscationRemover extends Execution {
       Clazz clazz = classes.get(min.owner);
       if (clazz == null) {
         if (verbose)
-          logger.warning("Class {} not found, possibly " + "library", min.owner);
+          logger.warning("Class {} not found, possibly library", min.owner);
         return false;
       }
       MethodNode getter = getMethod(clazz.node, min.name, min.desc);
       if (getter == null) {
         if (verbose)
-          logger.warning("Getter {} not found, possibly " + "library", min.owner + "." + min.name + min.desc);
+          logger.warning("Getter {} not found, possibly library", min.owner + "." + min.name + min.desc);
         return false;
       }
       AbstractInsnNode getterFirst = getter.instructions.getFirst();

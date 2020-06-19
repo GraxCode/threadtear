@@ -114,8 +114,8 @@ public final class VMSecurityManager extends SecurityManager {
 
   private final void throwIfNotGranted() {
     if (!grantAccess())
-      throw new SecurityException("An execution ran code " + "that it's not supposed to. If you think " + "this is a " +
-              "false call, open an issue on " + "GitHub.");
+      throw new SecurityException("An execution ran code that it's not supposed to. If you think this is a " +
+              "false call, open an issue on GitHub.");
   }
 
   private static final String granted = "sun\\..*";
@@ -129,7 +129,7 @@ public final class VMSecurityManager extends SecurityManager {
       if (ste.getClassName().matches(granted))
         continue;
       if (!isLocal(ste.getClassName())) {
-        LogWrapper.logger.warning("Dynamic class was blocked " + "trying to execute forbidden " + "code: {}, {}",
+        LogWrapper.logger.warning("Dynamic class was blocked trying to execute forbidden code: {}, {}",
                 ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
         return false;
       }

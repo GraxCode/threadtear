@@ -15,8 +15,8 @@ import java.util.stream.StreamSupport;
 
 public class JunkRemoverAllatori extends Execution {
   public JunkRemoverAllatori() {
-    super(ExecutionCategory.ALLATORI, "Junk instruction " + "remover",
-            "Removes junk instructions that " + "create a " + "lot of boolean variables when " +
+    super(ExecutionCategory.ALLATORI, "Junk instruction remover",
+            "Removes junk instructions that create a lot of boolean variables when " +
                     "decompiled with Fernflower.", ExecutionTag.BETTER_DECOMPILE);
   }
 
@@ -36,7 +36,7 @@ public class JunkRemoverAllatori extends Execution {
         }
       }
     }
-    logger.info("Removed {} junk instructions from {}/{} " + "methods.", removedTotal, methodModified, methodTotal);
+    logger.info("Removed {} junk instructions from {}/{} methods.", removedTotal, methodModified, methodTotal);
     return true;
   }
 

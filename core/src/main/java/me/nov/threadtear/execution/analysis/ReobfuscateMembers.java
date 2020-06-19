@@ -18,8 +18,8 @@ public class ReobfuscateMembers extends Execution {
   private boolean verbose;
 
   public ReobfuscateMembers() {
-    super(ExecutionCategory.ANALYSIS, "Reobfuscate " + "methods and fields",
-            "Reobfuscate method and" + " field names" + " for easier analysis.<br>Gets " +
+    super(ExecutionCategory.ANALYSIS, "Reobfuscate methods and fields",
+            "Reobfuscate method and field names for easier analysis.<br>Gets " +
                     "rid of annoying method names like 恼人的名字.", ExecutionTag.BETTER_DECOMPILE,
             ExecutionTag.POSSIBLE_DAMAGE);
   }
@@ -37,7 +37,7 @@ public class ReobfuscateMembers extends Execution {
 
     logger.info("Making method mappings");
     classes.values().stream().map(c -> c.node).forEach(this::makeMethodMappings);
-    logger.info(methods.size() + " method mappings created for " + "classes and superclasses");
+    logger.info(methods.size() + " method mappings created for classes and superclasses");
 
     logger.info("Renaming methods");
     classes.values().stream().map(c -> c.node).forEach(c -> c.methods.forEach(m -> m.name =
@@ -47,7 +47,7 @@ public class ReobfuscateMembers extends Execution {
     int mrefs =
             classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
                     .flatMap(Arrays::stream).mapToInt(ain -> References.remapMethodRefs(methods, ain)).sum();
-    logger.info(mrefs + " method references updated " + "successfully!");
+    logger.info(mrefs + " method references updated successfully!");
 
     logger.info("Making field mappings");
     classes.values().stream().map(c -> c.node).forEach(this::makeFieldMappings);
@@ -60,7 +60,7 @@ public class ReobfuscateMembers extends Execution {
     int frefs =
             classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
                     .flatMap(Arrays::stream).mapToInt(ain -> References.remapFieldRefs(fields, ain)).sum();
-    logger.info(frefs + " field references updated " + "successfully!");
+    logger.info(frefs + " field references updated successfully!");
     return frefs > 0 && mrefs > 0;
   }
 

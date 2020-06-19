@@ -27,9 +27,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
   private ArgumentInfer argumentInfer;
 
   public StringObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "String obfuscation " + "removal",
-            "Tested on ZKM 5 - 11, could work " + "on newer " + "versions too.<br>" + "<i>String " +
-                    "encryption using DES Cipher is currently " + "<b>NOT</b> supported" + ".</i>",
+    super(ExecutionCategory.ZKM, "String obfuscation removal",
+            "Tested on ZKM 5 - 11, could work on newer versions too.<br><i>String " +
+                    "encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
             ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -64,7 +64,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
                     Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
   }
 
-  private static final String ALLOWED_CALLS = "(java/lang" + "/String).*";
+  private static final String ALLOWED_CALLS = "(java/lang/String).*";
 
   private void decrypt(Clazz c) {
     ClassNode cn = c.node;
@@ -73,7 +73,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     if (clinit == null)
       return;
     if (clinit.instructions.size() > 2000) {
-      logger.error("Static initializer too huge to " + "decrypt in {}", referenceString(cn, null));
+      logger.error("Static initializer too huge to decrypt in {}", referenceString(cn, null));
       return;
     }
     ClassNode proxyClass = Sandbox.createClassProxy("ProxyClass");
@@ -91,7 +91,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       proxyClass.methods.add(copy);
       Instructions.isolateCallsThatMatch(copy, (name, desc) -> !name.matches(ALLOWED_CALLS),
               (name, desc) -> !name.equals(cn.name) ||
-                      (!desc.equals("[Ljava/lang" + "/String;") && !desc.equals("Ljava/lang/String;")));
+                      (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
     });
     cn.fields.stream().filter(m -> m.desc.equals("[Ljava/lang/String;") || m.desc.equals("Ljava/lang/String;"))
             .forEach(f -> proxyClass.fields.add(f));
@@ -137,7 +137,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           try {
             decryptedFieldValue = (String[]) callProxy.getField(((FieldInsnNode) ain).name).get(null);
           } catch (Exception e) {
-            logger.error("Failed to get decrypted field " + "value in {}", referenceString(realClass, m));
+            logger.error("Failed to get decrypted field value in {}", referenceString(realClass, m));
           }
         }
       });
@@ -233,7 +233,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           String decrypedString = (String) callProxy.getDeclaredField(fin.name).get(null);
           if (decrypedString == null) {
             // could be false call, not the decrypted string
-            logger.warning("Possible false call in {} or " + "failed decryption, single field is " + "null: {}",
+            logger.warning("Possible false call in {} or failed decryption, single field is null: {}",
                     referenceString(cn, m), fin.name);
             return;
           } else {
@@ -254,7 +254,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
             String[] ref = (String[]) reference;
             String decryptedString = ref[arrayIndex];
             if (Strings.isHighUTF(decryptedString)) {
-              logger.warning("String decryption in {} may" + " have failed", referenceString(cn, m));
+              logger.warning("String decryption in {} may have failed", referenceString(cn, m));
             }
             modifier.replace(ain, new InsnNode(POP2), new LdcInsnNode(decryptedString));
             decrypted++;

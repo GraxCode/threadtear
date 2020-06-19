@@ -58,8 +58,8 @@ public class FileInfo extends JDialog {
     }
     descriptions.add(new CustomLabel("Signature: "));
     values.add(new CustomLabel(member.oldEntry.getCertificates() != null ?
-            "<font " + "color=\"red\">signed, please remove " + "certs</font>" :
-            "<font " + "color=\"green\">not " + "signed</font>"));
+            "<font color=\"red\">signed, please remove certs</font>" :
+            "<font color=\"green\">not signed</font>"));
 
     descriptions.add(new CustomLabel("CRC-32 hash: "));
     values.add(new CustomLabel(Long.toHexString(member.oldEntry.getCrc())));

@@ -27,7 +27,7 @@ public final class Sandbox implements Opcodes {
   private static InsnList generateConstructorSuperCall() {
     InsnList list = new InsnList();
     list.add(new VarInsnNode(ALOAD, 0));
-    list.add(new MethodInsnNode(INVOKESPECIAL, "java/lang" + "/Object", "<init>", "()V"));
+    list.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/Object", "<init>", "()V"));
     return list;
   }
 

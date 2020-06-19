@@ -46,7 +46,7 @@ public final class JarIO {
     return classes;
   }
 
-  public static final String CERT_REGEX = "META-INF/.+(\\" + ".SF|\\.RSA|\\.DSA)";
+  public static final String CERT_REGEX = "META-INF/.+(\\.SF|\\.RSA|\\.DSA)";
 
   public static void saveAsJar(File original, File output, List<Clazz> classes, boolean noSignature,
                                boolean watermark) {

@@ -10,8 +10,8 @@ import me.nov.threadtear.util.format.Strings;
 public class ReobfuscateClassNames extends Execution {
 
   public ReobfuscateClassNames() {
-    super(ExecutionCategory.ANALYSIS, "Reobfuscate class " + "names",
-            "Reobfuscate class names for easier " + "analysis.<br>Gets rid of annoying class " + "names like IlIllIlI.",
+    super(ExecutionCategory.ANALYSIS, "Reobfuscate class names",
+            "Reobfuscate class names for easier analysis.<br>Gets rid of annoying class names like IlIllIlI.",
             ExecutionTag.BETTER_DECOMPILE, ExecutionTag.POSSIBLE_DAMAGE);
   }
 
@@ -22,8 +22,8 @@ public class ReobfuscateClassNames extends Execution {
             Objects.requireNonNull(ReobfuscateClassNames.class.getResourceAsStream("names.txt")));
     Map<String, String> map = classes.values().stream().collect(Collectors.toMap(c -> c.node.name, c -> words.poll()));
     if (verbose) {
-      logger.info("Generated {} unique easy-to-remember " + "strings", map.size());
-      logger.info("Renaming classes and source files to " + "original names");
+      logger.info("Generated {} unique easy-to-remember strings", map.size());
+      logger.info("Renaming classes and source files to original names");
     }
     classes.values().stream().forEach(c -> {
       c.node.sourceFile = c.node.name; // to have a
@@ -34,7 +34,7 @@ public class ReobfuscateClassNames extends Execution {
     int refs =
             classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())
                     .flatMap(Arrays::stream).mapToInt(ain -> References.remapClassRefs(map, ain)).sum();
-    logger.info(refs + " code references updated " + "successfully!");
+    logger.info(refs + " code references updated successfully!");
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
             .forEach(m -> References.remapMethodType(map, m));
     classes.values().stream().map(c -> c.node.fields).flatMap(List::stream)

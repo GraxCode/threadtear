@@ -13,9 +13,9 @@ import me.nov.threadtear.execution.*;
 public class ExpirationDateRemoverAllatori extends Execution implements IConstantReferenceHandler {
 
   public ExpirationDateRemoverAllatori() {
-    super(ExecutionCategory.ALLATORI, "Remove expiry " + "date",
-            "Allatori adds expiration dates to " + "the " + "code<br>that stop the obfuscated jar " +
-                    "file from running after being passed" + ".<br>They can be " + "removed easily.",
+    super(ExecutionCategory.ALLATORI, "Remove expiry date",
+            "Allatori adds expiration dates to the code<br>that stop the obfuscated jar " +
+                    "file from running after being passed.<br>They can be removed easily.",
             ExecutionTag.POSSIBLE_DAMAGE);
   }
 

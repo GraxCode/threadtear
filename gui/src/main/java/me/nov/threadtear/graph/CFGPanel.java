@@ -67,7 +67,7 @@ public class CFGPanel extends JPanel {
 
     JPanel rightActions = new JPanel();
     rightActions.setLayout(new GridBagLayout());
-    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial " + "layout", "Compact layout" });
+    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial layout", "Compact layout" });
     layout.addActionListener(a -> {
       useTreeLayout = layout.getSelectedIndex() == 1;
       generateGraph();
@@ -207,7 +207,7 @@ public class CFGPanel extends JPanel {
       vertex.addInput(input);
     }
     v1 = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40,
-        String.format("fillColor=%s;fontColor=%s;" + "strokeColor=%s", Strings.hexColor(getBackground().brighter()),
+        String.format("fillColor=%s;fontColor=%s;strokeColor=%s", Strings.hexColor(getBackground().brighter()),
             Strings.hexColor(getForeground().brighter()), Strings.hexColor(getBackground().brighter().brighter())));
     graph.updateCellSize(v1); // resize cell
     existing.put(b, v1);

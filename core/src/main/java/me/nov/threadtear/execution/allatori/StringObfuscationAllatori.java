@@ -21,8 +21,8 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
   private boolean verbose;
 
   public StringObfuscationAllatori() {
-    super(ExecutionCategory.ALLATORI, "String obfuscation" + " removal",
-            "Tested on version 7.3, should " + "work for" + " older versions too.", ExecutionTag.RUNNABLE,
+    super(ExecutionCategory.ALLATORI, "String obfuscation removal",
+            "Tested on version 7.3, should work for older versions too.", ExecutionTag.RUNNABLE,
             ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -35,11 +35,11 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
 
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No strings matching Allatori 7.3 " + "string obfuscation have been found!");
+      logger.error("No strings matching Allatori 7.3 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total " + encrypted + " encrypted " + "strings, " + (decryptionRatio) + "% were " +
+    logger.info("Of a total " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were " +
             "successfully decrypted");
     return decryptionRatio > 0.25;
   }
@@ -81,7 +81,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
             String realString = invokeProxy(cn, m, min, encryptedString);
             if (realString != null) {
               if (Strings.isHighUTF(realString)) {
-                logger.warning("String may have not " + "decrypted correctly in " + cn.name + "." + m.name + m.desc);
+                logger.warning("String may have not decrypted correctly in " + cn.name + "." + m.name + m.desc);
               }
               this.decrypted++;
               return new AbstractInsnNode[]{new InsnNode(POP), new LdcInsnNode(realString)};
@@ -154,7 +154,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
     instructions.add(new InsnNode(RETURN));
 
     node.fields.add(new FieldNode(ACC_PUBLIC | ACC_STATIC, "proxyReturn", "Ljava/lang/String;", null, null));
-    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()" + "V")); // method should return real
+    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()V")); // method should return real
     // string
     if (min.owner.equals(cn.name)) {
       // decryption method is in own class
