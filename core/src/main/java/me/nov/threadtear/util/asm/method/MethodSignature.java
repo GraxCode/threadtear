@@ -51,7 +51,7 @@ public class MethodSignature {
 
   @Override
   public String toString() {
-    return "MethodSignature{" + "owner='" + owner + '\'' + ", name='" + name + '\'' + ", desc='" + desc + '\'' + '}';
+    return "MethodSignature{owner='" + owner + '\'' + ", name='" + name + '\'' + ", desc='" + desc + '\'' + '}';
   }
 
   @Override

@@ -25,8 +25,8 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
   private VM vm;
 
   public AccessObfusationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "Access " + "obfuscation removal",
-            "Tested on version 2.1" + ".<br>This is " + "unfinished: Doesn't work on " +
+    super(ExecutionCategory.PARAMORPHISM, "Access obfuscation removal",
+            "Tested on version 2.1.<br>This is unfinished: Doesn't work on " +
                     "constructors and static initializers.", ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -37,18 +37,18 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     this.encrypted = 0;
     this.decrypted = 0;
     logger.info("Decrypting all invokedynamic references");
-    logger.warning("Make sure all required libraries or " + "dynamic classes are in the jar itself, or " + "else some" +
-            " invokedynamics cannot be " + "deobfuscated!");
+    logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some" +
+            " invokedynamics cannot be deobfuscated!");
     classes.values().stream().forEach(this::patchThrowableDepth);
-    logger.info("Make sure to remove bad attributes " + "first!");
-    logger.info("Starting decryption, this could take " + "some time!");
+    logger.info("Make sure to remove bad attributes first!");
+    logger.info("Starting decryption, this could take some time!");
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No access obfuscation matching " + "Paramorphism 2.1 have been found!");
+      logger.error("No access obfuscation matching Paramorphism 2.1 have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.errorIf("Of a total {} encrypted references, " + "{}% were successfully decrypted", decryptionRatio <= 0.25,
+    logger.errorIf("Of a total {} encrypted references, {}% were successfully decrypted", decryptionRatio <= 0.25,
             encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
@@ -83,7 +83,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
               Handle bsm = idin.bsm;
               if (bsm.getDesc().matches(PARAMORPHISM_INVOKEDYNAMIC_HANDLE_DESC)) {
                 if (!classes.containsKey(bsm.getOwner())) {
-                  logger.error("Missing decryption class:" + " {}", bsm.getOwner());
+                  logger.error("Missing decryption class: {}", bsm.getOwner());
                   continue;
                 }
                 encrypted++;
@@ -102,7 +102,7 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
                   if (verbose) {
                     logger.error("Throwable", t);
                   }
-                  logger.error("Failed to get callsite " + "using classloader in {}, {}", referenceString(cn, m),
+                  logger.error("Failed to get callsite using classloader in {}, {}", referenceString(cn, m),
                           shortStacktrace(t));
                 }
               } else if (verbose) {

@@ -11,9 +11,9 @@ import me.nov.threadtear.util.asm.*;
 public class InlineMethods extends Execution {
 
   public InlineMethods() {
-    super(ExecutionCategory.CLEANING, "Inline static " + "methods without invocation",
-            "Inline static " + "methods " + "that only return or throw.<br>Can be" +
-                    " useful for deobfuscating try catch block " + "obfuscation.", ExecutionTag.SHRINK,
+    super(ExecutionCategory.CLEANING, "Inline static methods without invocation",
+            "Inline static methods that only return or throw.<br>Can be" +
+                    " useful for deobfuscating try catch block obfuscation.", ExecutionTag.SHRINK,
             ExecutionTag.RUNNABLE);
   }
 
@@ -24,7 +24,7 @@ public class InlineMethods extends Execution {
     HashMap<String, MethodNode> map = new HashMap<>();
     classes.values().stream().map(c -> c.node).forEach(c -> c.methods.stream().filter(this::isUnnecessary)
             .forEach(m -> map.put(c.name + "." + m.name + m.desc, m)));
-    logger.info("{} unnecessary methods found that could " + "be inlined", map.size());
+    logger.info("{} unnecessary methods found that could be inlined", map.size());
     inlines = 0;
     classes.values().stream().map(c -> c.node.methods).flatMap(List::stream)
             .forEach(m -> m.instructions.forEach(ain -> {
@@ -153,7 +153,7 @@ public class InlineMethods extends Execution {
       }
       i--;
     }
-    throw new RuntimeException("no return found to " + "remove, invalid method?");
+    throw new RuntimeException("no return found to remove, invalid method?");
   }
 
   public boolean isUnnecessary(MethodNode m) {

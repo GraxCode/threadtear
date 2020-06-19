@@ -41,28 +41,28 @@ public class ConfigurationPanel extends JPanel {
     JPanel panel = new JPanel(new GridBagLayout());
     panel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
     panel.add(verbose = new JCheckBox("Verbose logging"), SwingUtils.createGridBagConstraints(0,0));
-    verbose.setToolTipText("Log more information and " + "print full stack traces.");
-    panel.add(watermark = new JCheckBox("<html>Watermark " + "<tt>MANIFEST.MF</tt>"),
+    verbose.setToolTipText("Log more information and print full stack traces.");
+    panel.add(watermark = new JCheckBox("<html>Watermark <tt>MANIFEST.MF</tt>"),
               SwingUtils.createGridBagConstraints(1,0));
-    watermark.setToolTipText("<html>Adds a " + "\"<tt>Deobfuscated-By\" attribute to" + " the manifest file.");
+    watermark.setToolTipText("<html>Adds a \"<tt>Deobfuscated-By\" attribute to the manifest file.");
     watermark.setSelected(true);
-    panel.add(disableSecurity = new JCheckBox("<html" + ">Disable <tt>SecurityManager</tt> " + "protection"),
+    panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"),
               SwingUtils.createGridBagConstraints(0,1));
     disableSecurity
-            .setToolTipText("Remove the protection against" + " unwanted calls. Could improve " + "deobfuscation.");
+            .setToolTipText("Remove the protection against unwanted calls. Could improve deobfuscation.");
     disableSecurity.addActionListener(l -> {
       if (disableSecurity.isSelected()) {
         if (JOptionPane.showConfirmDialog(this.getParent(),
-                "<html>You are disabling " + "the <tt>SecurityManager</tt> that " + "protects " +
-                        "you<br>from arbitrary code " + "execution. Are you sure?", "Warning",
+                "<html>You are disabling the <tt>SecurityManager</tt> that protects " +
+                        "you<br>from arbitrary code execution. Are you sure?", "Warning",
                 JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
           disableSecurity.setSelected(false);
         }
       }
     });
-    panel.add(removeSignature = new JCheckBox("Remove " + "manifest signature"),
+    panel.add(removeSignature = new JCheckBox("Remove manifest signature"),
               SwingUtils.createGridBagConstraints(1,1));
-    removeSignature.setToolTipText("Remove the signature from " + "the manifest file, if available.");
+    removeSignature.setToolTipText("Remove the signature from the manifest file, if available.");
     return panel;
   }
 
@@ -105,14 +105,14 @@ public class ConfigurationPanel extends JPanel {
       save.setEnabled(false);
       File inputFile = main.listPanel.classList.inputFile;
       if (inputFile == null) {
-        JOptionPane.showMessageDialog(this, "You have to " + "load a jar file first.");
+        JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
         return;
       }
       JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setSelectedFile(new File(FilenameUtils.removeExtension(inputFile.getAbsolutePath()) + ".jar"));
       jfc.setDialogTitle("Save transformed jar archive");
-      jfc.setFileFilter(new FileNameExtensionFilter("Java" + " Package (*.jar)", "jar"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar)", "jar"));
       int result = jfc.showSaveDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();
@@ -129,8 +129,8 @@ public class ConfigurationPanel extends JPanel {
       run.setEnabled(false);
       if (!CoreUtils.isNoverify()) {
         JOptionPane.showMessageDialog(main,
-                "<html>You " + "started without \"-noverify\". " + "Some deobfuscators could" + " fail" +
-                        ".<br>Use \"<tt>java -noverify " + "-jar ...</tt>\" to start the " + "application.", "Warning",
+                "<html>You started without \"-noverify\". Some deobfuscators could fail" +
+                        ".<br>Use \"<tt>java -noverify -jar ...</tt>\" to start the application.", "Warning",
                 JOptionPane.WARNING_MESSAGE);
       }
       main.run(verbose.isSelected(), disableSecurity.isSelected());
@@ -192,7 +192,7 @@ public class ConfigurationPanel extends JPanel {
             main.listPanel.classList.repaint();
           }
         } else {
-          JOptionPane.showMessageDialog(this, "Input file " + "not found: " + file.getAbsolutePath());
+          JOptionPane.showMessageDialog(this, "Input file not found: " + file.getAbsolutePath());
         }
       }
       if (config.containsKey("executions")) {

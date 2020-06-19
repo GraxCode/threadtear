@@ -12,8 +12,8 @@ import me.nov.threadtear.util.asm.*;
 public class InlineUnchangedFields extends Execution {
 
   public InlineUnchangedFields() {
-    super(ExecutionCategory.CLEANING, "Inline unchanged " + "fields",
-            "Inline fields that are not set " + "anywhere " + "in the code.<br>Can be useful for " +
+    super(ExecutionCategory.CLEANING, "Inline unchanged fields",
+            "Inline fields that are not set anywhere in the code.<br>Can be useful for " +
                     "ZKM deobfuscation.", ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE,
             ExecutionTag.BETTER_DEOBFUSCATE);
   }

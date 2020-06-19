@@ -48,7 +48,7 @@ public class BlockVertex implements Serializable {
                 "tcb-handler " + OpFormat.labelToString(tcb.start) + " to " + OpFormat.labelToString(tcb.end) + " - N" +
                         block.getTCBIndex()));
         sb.append(": (");
-        sb.append((type == null || type.equals("java/lang/Throwable") ? "catch " + "all" : type.replace('/', '.')));
+        sb.append((type == null || type.equals("java/lang/Throwable") ? "catch all" : type.replace('/', '.')));
         sb.append(")");
         sb.append("\n");
       }

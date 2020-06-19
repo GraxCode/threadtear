@@ -11,7 +11,7 @@ public class LogAllExceptions extends Execution {
 
   public LogAllExceptions() {
     super(ExecutionCategory.TOOLS, "Log all exceptions",
-            "Adds .printStackTrace() in every try catch " + "block " + "handler.", ExecutionTag.RUNNABLE);
+            "Adds .printStackTrace() in every try catch block handler.", ExecutionTag.RUNNABLE);
   }
 
   @Override
@@ -29,7 +29,7 @@ public class LogAllExceptions extends Execution {
       });
       m.maxStack = Math.max(m.maxStack, 2);
     });
-    logger.info("Inserted .printStackTrace() in every " + "catch block!");
+    logger.info("Inserted .printStackTrace() in every catch block!");
     return true;
   }
 

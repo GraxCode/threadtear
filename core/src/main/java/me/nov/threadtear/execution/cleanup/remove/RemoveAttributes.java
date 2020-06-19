@@ -7,7 +7,7 @@ import me.nov.threadtear.execution.*;
 public class RemoveAttributes extends Execution {
 
   public RemoveAttributes() {
-    super(ExecutionCategory.CLEANING, "Remove attributes", "Removes local variable names and " + "signatures",
+    super(ExecutionCategory.CLEANING, "Remove attributes", "Removes local variable names and signatures",
             ExecutionTag.SHRINK, ExecutionTag.BETTER_DECOMPILE);
   }
 

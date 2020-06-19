@@ -18,7 +18,7 @@ public final class DynamicReflection implements Opcodes {
   private DynamicReflection() {
   }
 
-  private static final String BMHL = "java.lang.invoke" + ".BoundMethodHandle$Species_L";
+  private static final String BMHL = "java.lang.invoke.BoundMethodHandle$Species_L";
 
   /**
    * This probably only works for java 8
@@ -93,7 +93,7 @@ public final class DynamicReflection implements Opcodes {
       case H_INVOKEINTERFACE:
         return INVOKEINTERFACE;
     }
-    throw new IllegalArgumentException("not a bootstrap " + "tag: " + tag);
+    throw new IllegalArgumentException("not a bootstrap tag: " + tag);
   }
 
   public static void setFinalStatic(Field field, Object newValue) throws Exception {

@@ -24,7 +24,7 @@ public class ConstantValue implements Value {
     Type t = getType().getType();
     if (t == null)
       return "uninitialized";
-    String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a " + "reference type" : t.getClassName();
+    String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a reference type" : t.getClassName();
     return this == ConstantTracker.NULL ? "null" :
             value == null ? "unknown value of " + typeName : value + " (" + typeName + ")";
   }

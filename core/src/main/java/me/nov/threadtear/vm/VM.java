@@ -24,7 +24,7 @@ import me.nov.threadtear.util.asm.*;
 public class VM extends ClassLoader implements Opcodes {
   public HashMap<String, Class<?>> loaded = new HashMap<>();
 
-  public static final String RT_REGEX = "((?:com\\." + "(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
+  public static final String RT_REGEX = "((?:com\\.(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
   private IVMReferenceHandler handler;
 
   public boolean noInitialization;
@@ -57,7 +57,7 @@ public class VM extends ClassLoader implements Opcodes {
       resolveClass(c);
       return c;
     } catch (Throwable t) {
-      LogWrapper.logger.error("Failed to resolve class using " + "defineClass", t);
+      LogWrapper.logger.error("Failed to resolve class using defineClass", t);
       return null;
     }
   }
@@ -73,7 +73,7 @@ public class VM extends ClassLoader implements Opcodes {
     if (name.contains("/"))
       throw new IllegalArgumentException();
     if (name.startsWith(threadtearPkg)) {
-      LogWrapper.logger.warning("Dynamic class tried to access a " + "threadtear package!");
+      LogWrapper.logger.warning("Dynamic class tried to access a threadtear package!");
       return null;
     }
     if (loaded.containsKey(name)) {

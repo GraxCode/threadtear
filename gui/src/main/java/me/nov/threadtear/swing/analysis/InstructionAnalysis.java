@@ -20,7 +20,7 @@ public class InstructionAnalysis implements Opcodes {
                     AbstractInsnNode.FIELD_INSN, AbstractInsnNode.TYPE_INSN)).average().orElse(Double.NaN);
     LogWrapper.logger.debug(Math.round(jumpPercentage * 10000) / 100.0 + "%");
     LogWrapper.logger.debug("Normal proportion is about 11%.");
-    LogWrapper.logger.debug("A higher value indicates flow " + "obfuscation.");
+    LogWrapper.logger.debug("A higher value indicates flow obfuscation.");
     LogWrapper.logger.debug("----------------------------------------------");
 
     LogWrapper.logger.debug("Average invokedynamics per method -> ");
@@ -29,19 +29,19 @@ public class InstructionAnalysis implements Opcodes {
             .orElse(Double.NaN);
     LogWrapper.logger.debug(Math.round(invokedynamics * 100) / 100.0 + "");
     LogWrapper.logger.debug("Normally about 0.0 - 0.4.");
-    LogWrapper.logger.debug("A higher value indicates reference " + "obfuscation.");
+    LogWrapper.logger.debug("A higher value indicates reference obfuscation.");
     LogWrapper.logger.debug("----------------------------------------------");
 
-    LogWrapper.logger.debug("Rare stack operations averagely per " + "method -> ");
+    LogWrapper.logger.debug("Rare stack operations averagely per method -> ");
     double stackop = classes.stream().map(c -> c.node.methods).flatMap(List::stream)
             .mapToDouble(m -> Counting.countOp(m.instructions, POP2, DUP2, DUP_X1, DUP_X2, DUP2_X1, DUP2_X2, SWAP))
             .average().orElse(Double.NaN);
     LogWrapper.logger.debug(Math.round(stackop * 100) / 100.0 + "");
     LogWrapper.logger.debug("Normally about 0.0 - 0.1.");
-    LogWrapper.logger.debug("A higher value indicates flow " + "obfuscation.");
+    LogWrapper.logger.debug("A higher value indicates flow obfuscation.");
     LogWrapper.logger.debug("----------------------------------------------");
 
-    LogWrapper.logger.debug("Average standard deviation of letters" + " in strings -> ");
+    LogWrapper.logger.debug("Average standard deviation of letters in strings -> ");
     double sdev = classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator())
             .flatMap(insns -> StreamSupport.stream(insns, false))
             .filter(ain -> ain.getOpcode() == LDC && ((LdcInsnNode) ain).cst instanceof String &&
@@ -49,10 +49,10 @@ public class InstructionAnalysis implements Opcodes {
             .mapToDouble(ain -> Strings.calcSdev(((LdcInsnNode) ain).cst.toString())).average().orElse(Double.NaN);
     LogWrapper.logger.debug(Math.round(sdev * 100) / 100.0 + "");
     LogWrapper.logger.debug("Normally around 15 - 40.");
-    LogWrapper.logger.debug("A higher value could indicate string " + "obfuscation.");
+    LogWrapper.logger.debug("A higher value could indicate string obfuscation.");
     LogWrapper.logger.debug("----------------------------------------------");
 
-    LogWrapper.logger.debug("Percentage of high character value " + "strings -> ");
+    LogWrapper.logger.debug("Percentage of high character value strings -> ");
     double highutf =
             classes.stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.spliterator())
                     .flatMap(insns -> StreamSupport.stream(insns, false))

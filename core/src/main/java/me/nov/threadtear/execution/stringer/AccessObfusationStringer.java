@@ -111,7 +111,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
       return (CallSite) bootstrap
               .invoke(null, MethodHandles.lookup(), idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm));
     } catch (IllegalArgumentException e) {
-      LogWrapper.logger.error("One or more classes not in jar " + "file: {}, cannot decrypt!", idin.desc);
+      LogWrapper.logger.error("One or more classes not in jar file: {}, cannot decrypt!", idin.desc);
     } catch (Exception e) {
       if (verbose)
         LogWrapper.logger.error("CallSite exception", e);
@@ -122,13 +122,13 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private boolean keepInitializer(ClassNode node) {
     // TODO this can probably be solved in a better way
     if (node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/Class;")) &&
-            node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect" + "/Method;")) &&
+            node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Method;")) &&
             node.methods.stream().anyMatch(m -> m.desc.equals("(I)Ljava/lang/reflect/Field;"))) {
       // decryption class
       return true;
     }
     if (node.methods.stream().anyMatch(m -> m.desc.startsWith(
-            "(Ljava/lang/invoke" + "/MethodHandles$Lookup;" + "Ljava/lang/String;" + "Ljava/lang/invoke" +
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke" +
                     "/MethodType"))) {
       // other decryption class
       return true;

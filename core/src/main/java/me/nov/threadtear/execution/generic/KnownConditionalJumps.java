@@ -17,8 +17,8 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   private int predictedSwitches;
 
   public KnownConditionalJumps() {
-    super(ExecutionCategory.GENERIC, "Remove obvious flow" + " obfuscation",
-            "Removes conditional jumps " + "that are" + " predictable.<br>This works for " +
+    super(ExecutionCategory.GENERIC, "Remove obvious flow obfuscation",
+            "Removes conditional jumps that are predictable.<br>This works for " +
                     "obfuscators like smoke or superblaubeere27.", ExecutionTag.POSSIBLE_VERIFY_ERR,
             ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
   }
@@ -26,7 +26,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     classes.values().stream().forEach(this::decrypt);
-    logger.info("Removed " + predictedJumps + " " + "unnecessary conditional jumps and " + predictedSwitches + " " +
+    logger.info("Removed " + predictedJumps + " unnecessary conditional jumps and " + predictedSwitches + " " +
             "unnecessary switches.");
     return true;
   }

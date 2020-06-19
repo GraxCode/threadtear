@@ -24,7 +24,7 @@ public class KrakatauBridge implements IDecompilerBridge {
     if (!setup) {
       String error = setupKrakatau();
       if (error != null) {
-        return "Failed to unzip krakatau in temp " + "directory.\n" + error;
+        return "Failed to unzip krakatau in temp directory.\n" + error;
       }
     }
     File krakatauIn;
@@ -65,8 +65,8 @@ public class KrakatauBridge implements IDecompilerBridge {
       return output.toString();
     } catch (Throwable t) {
       if (t.getMessage() != null && t.getMessage().contains("Cannot run program")) {
-        return "Could not run python executable. Please " + "set your python 2.7 path correctly to " + "use krakatau" +
-          ".\nError: " + t.getMessage() + "\n\n/*\nYour environment" + " variables:\n" +
+        return "Could not run python executable. Please set your python 2.7 path correctly to use krakatau" +
+          ".\nError: " + t.getMessage() + "\n\n/*\nYour environment variables:\n" +
           System.getenv().entrySet().stream().map(e -> e.getKey() + " = \"" + e.getValue() + "\"")
             .collect(Collectors.joining("\n")) + "\n*/";
       }

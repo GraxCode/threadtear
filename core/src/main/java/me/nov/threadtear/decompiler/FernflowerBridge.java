@@ -68,7 +68,7 @@ public class FernflowerBridge implements IDecompilerBridge, IBytecodeProvider, I
       return sw.toString();
     }
     if (result == null || result.trim().isEmpty()) {
-      result = "No Fernflower output received\n\nOutput " + "log:\n" + new String(log.toByteArray());
+      result = "No Fernflower output received\n\nOutput log:\n" + new String(log.toByteArray());
     }
     return result;
   }

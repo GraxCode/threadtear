@@ -18,8 +18,8 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
   private VM vm;
 
   public StringObfuscationParamorphism() {
-    super(ExecutionCategory.PARAMORPHISM, "String " + "obfuscation removal",
-            "Tested on version 2" + ".1<br>Make sure" + " to decrypt access " + "obfuscation first.",
+    super(ExecutionCategory.PARAMORPHISM, "String obfuscation removal",
+            "Tested on version 2.1<br>Make sure to decrypt access obfuscation first.",
             ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -32,11 +32,11 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
     this.vm = VM.constructVM(this);
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No strings matching Paramorphism 2.1 " + "string obfuscation have been found!");
+      logger.error("No strings matching Paramorphism 2.1 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total {} encrypted strings, {}% " + "were successfully decrypted", encrypted, decryptionRatio);
+    logger.info("Of a total {} encrypted strings, {}% were successfully decrypted", encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -54,7 +54,7 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
               String string = invokeVM(cn, m, min);
               if (string != null) {
                 if (Strings.isHighUTF(string)) {
-                  logger.warning("String may have not " + "decrypted correctly in {}", referenceString(cn, m));
+                  logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
                 }
                 this.decrypted++;
                 m.instructions.set(ain, new LdcInsnNode(string));

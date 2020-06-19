@@ -55,7 +55,7 @@ public class LogFrame extends JDialog {
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setSelectedFile(inputFile);
       jfc.setDialogTitle("Save log to file");
-      jfc.setFileFilter(new FileNameExtensionFilter("Log " + "file (*.log)", "log"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Log file (*.log)", "log"));
       int result = jfc.showSaveDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();

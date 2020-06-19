@@ -59,7 +59,7 @@ public class Threadtear extends JFrame {
     JMenuItem ws = new JMenuItem("Reset Workspace");
     ws.addActionListener(l -> {
       if (JOptionPane
-        .showConfirmDialog(Threadtear.this, "Do you" + " really want to reset your " + "workspace?", "Warning",
+        .showConfirmDialog(Threadtear.this, "Do you really want to reset your workspace?", "Warning",
           JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         this.dispose();
         System.gc();
@@ -75,7 +75,7 @@ public class Threadtear extends JFrame {
       jfc.setMultiSelectionEnabled(false);
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setDialogTitle("Load file");
-      jfc.setFileFilter(new FileNameExtensionFilter("Java" + " class or class archive", "jar", "class"));
+      jfc.setFileFilter(new FileNameExtensionFilter("Java class or class archive", "jar", "class"));
       int result = jfc.showOpenDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
         File input = jfc.getSelectedFile();
@@ -95,14 +95,14 @@ public class Threadtear extends JFrame {
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
     JMenuItem about = new HelpMenuItem("About threadtear " + CoreUtils.getVersion());
     about.addActionListener(l -> JOptionPane.showMessageDialog(this,
-      "<html>This tool is " + "not intended to produce runnable " + "code, but rather " + "analyzable code" +
-        ".<br>Add executions to the list on " + "the left side. Make sure to have " +
-        "them in right order." + "<br>If you " + "click \"Run\", they will get " +
-        "executed in order and transform the " + "loaded classes.<br><br>Threadtear " +
-        "was made by <i>noverify</i> a.k.a " + "<i>GraxCode</i> in 2020.<br><br>" +
-        "This project is licensed under GNU " + "GENERAL PUBLIC LICENSE Version 3" +
-        ".<br>You are welcome to contribute " + "to this project on " +
-        "GitHub!<br><br><b>Do <i>NOT</i> use " + "this on files you don't have legal " + "rights for!</b>",
+      "<html>This tool is not intended to produce runnable code, but rather analyzable code" +
+        ".<br>Add executions to the list on the left side. Make sure to have " +
+        "them in right order.<br>If you click \"Run\", they will get " +
+        "executed in order and transform the loaded classes.<br><br>Threadtear " +
+        "was made by <i>noverify</i> a.k.a <i>GraxCode</i> in 2020.<br><br>" +
+        "This project is licensed under GNU GENERAL PUBLIC LICENSE Version 3" +
+        ".<br>You are welcome to contribute to this project on " +
+        "GitHub!<br><br><b>Do <i>NOT</i> use this on files you don't have legal rights for!</b>",
       "About", JOptionPane.INFORMATION_MESSAGE));
     help.add(about);
     help.add(laf);

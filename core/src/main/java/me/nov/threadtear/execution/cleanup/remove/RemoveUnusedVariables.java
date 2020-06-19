@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 
 public class RemoveUnusedVariables extends Execution {
   public RemoveUnusedVariables() {
-    super(ExecutionCategory.CLEANING, "Remove unused " + "variables", "Removes unused variables",
+    super(ExecutionCategory.CLEANING, "Remove unused variables", "Removes unused variables",
             ExecutionTag.BETTER_DECOMPILE);
   }
 
@@ -39,7 +39,7 @@ public class RemoveUnusedVariables extends Execution {
         }
       }
     }
-    logger.info("Removed {} unused variables from {}/{} " + "methods.", removedTotal, methodModified, methodTotal);
+    logger.info("Removed {} unused variables from {}/{} methods.", removedTotal, methodModified, methodTotal);
     return true;
   }
 

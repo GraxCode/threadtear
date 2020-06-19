@@ -24,7 +24,7 @@ public class ExecutionListPanel extends JPanel {
 
   public ExecutionListPanel() {
     this.setLayout(new BorderLayout());
-    this.add(SwingUtils.withTitleAndBorder("Executions in order (top " + "to bottom)",
+    this.add(SwingUtils.withTitleAndBorder("Executions in order (top to bottom)",
                                       new OverlayScrollPane(executions = new ExecutionTree())), BorderLayout.CENTER);
 
     this.add(SwingUtils.pad(createButtons(), 8,0,8,0), BorderLayout.SOUTH);

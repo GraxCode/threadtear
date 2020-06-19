@@ -12,8 +12,8 @@ public class AddLineNumbers extends Execution {
   private int method;
 
   public AddLineNumbers() {
-    super(ExecutionCategory.TOOLS, "Add debug line " + "numbers",
-            "Adds line numbers to the code to " + "find out " + "where exactly exceptions happen.",
+    super(ExecutionCategory.TOOLS, "Add debug line numbers",
+            "Adds line numbers to the code to find out where exactly exceptions happen.",
             ExecutionTag.RUNNABLE);
   }
 
@@ -42,7 +42,7 @@ public class AddLineNumbers extends Execution {
       });
     });
 
-    logger.info("Created fake line numbers for debugging " + "purposes!");
+    logger.info("Created fake line numbers for debugging purposes!");
     return true;
   }
 

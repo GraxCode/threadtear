@@ -17,15 +17,15 @@ import me.nov.threadtear.vm.*;
 public class StringObfuscationStringer extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
   private static final String STRINGER_DECRPYTION_METHOD_DESC_REGEX =
-          "\\(Ljava/lang/Object;" + "[^\\[L]?[^\\[L]?[^\\[L]?[^\\[L]?\\)Ljava/lang/String;";
+          "\\(Ljava/lang/Object;[^\\[L]?[^\\[L]?[^\\[L]?[^\\[L]?\\)Ljava/lang/String;";
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
   private boolean verbose;
 
   public StringObfuscationStringer() {
-    super(ExecutionCategory.STRINGER, "String obfuscation" + " removal",
-            "Works for version 3 - 9.<br>Make" + " sure " + "to decrypt access obfuscation first.",
+    super(ExecutionCategory.STRINGER, "String obfuscation removal",
+            "Works for version 3 - 9.<br>Make sure to decrypt access obfuscation first.",
             ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -58,7 +58,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     this.encrypted = 0;
     this.decrypted = 0;
     if (classes.values().stream().anyMatch(c -> c.oldEntry.getExtra() != null && c.oldEntry.getExtra().length > 0)) {
-      logger.warning("The file has a stringer signature, " + "please patch first!");
+      logger.warning("The file has a stringer signature, please patch first!");
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
@@ -66,11 +66,11 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     }
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No strings matching stringer 9 string" + " obfuscation have been found!");
+      logger.error("No strings matching stringer 9 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total {} encrypted strings, {}% " + "were successfully decrypted", encrypted, decryptionRatio);
+    logger.info("Of a total {} encrypted strings, {}% were successfully decrypted", encrypted, decryptionRatio);
     return decryptionRatio > 0.25;
   }
 
@@ -108,18 +108,18 @@ public class StringObfuscationStringer extends Execution implements IVMReference
           allowReflection(false);
           if (realString != null) {
             if (Strings.isHighUTF(realString)) {
-              logger.warning("String may have not " + "decrypted correctly in {}", referenceString(cn, m));
+              logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
             }
             this.decrypted++;
             return new AbstractInsnNode[]{min, new InsnNode(POP), new LdcInsnNode(realString)};
           } else {
-            logger.error("Failed to decrypt string or " + "false call in {}", referenceString(cn, m));
+            logger.error("Failed to decrypt string or false call in {}", referenceString(cn, m));
           }
         } catch (Throwable e) {
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.error("Failed to decrypt string in {}, " + "{}", referenceString(cn, m), shortStacktrace(e));
+          logger.error("Failed to decrypt string in {}, {}", referenceString(cn, m), shortStacktrace(e));
         }
       }
     }
@@ -154,7 +154,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       ConstantValue stackValue = frame.getStack(frame.getStackSize() - arguments + i);
       if (!stackValue.isKnown()) {
         if (verbose) {
-          logger.error("Stack index " + i + " is unknown " + "in " + cn.name + "." + m.name + ": " + "field type: " +
+          logger.error("Stack index " + i + " is unknown in " + cn.name + "." + m.name + ": field type: " +
                   proxyField.getType().getName() + ", stack type: " + stackValue.getType());
         }
         return null;
@@ -206,7 +206,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
     instructions.add(new InsnNode(RETURN));
 
     node.fields.add(new FieldNode(ACC_PUBLIC | ACC_STATIC, "proxyReturn", "Ljava/lang/String;", null, null));
-    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()" + "V")); // method should return real
+    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()V")); // method should return real
     // string
     fakeInvocationClone = node;
     invocationFieldClass = fieldClass;

@@ -23,8 +23,8 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
   private boolean verbose;
 
   public StringObfuscationDashO() {
-    super(ExecutionCategory.DASHO, "String obfuscation " + "removal",
-            "Tested on version 10.3, should " + "work for " + "older versions too.", ExecutionTag.RUNNABLE,
+    super(ExecutionCategory.DASHO, "String obfuscation removal",
+            "Tested on version 10.3, should work for older versions too.", ExecutionTag.RUNNABLE,
             ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
@@ -37,11 +37,11 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
 
     classes.values().stream().forEach(this::decrypt);
     if (encrypted == 0) {
-      logger.error("No strings matching DashO 7.3 string " + "obfuscation have been found!");
+      logger.error("No strings matching DashO 7.3 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
-    logger.info("Of a total " + encrypted + " encrypted " + "strings, " + (decryptionRatio) + "% were " +
+    logger.info("Of a total " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were " +
             "successfully decrypted");
     return decryptionRatio > 0.25;
   }
@@ -83,21 +83,21 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
             String realString = invokeProxy(cn, m, min, top, second);
             if (realString != null) {
               if (Strings.isHighUTF(realString)) {
-                logger.warning("String may have not " + "decrypted correctly in {}", referenceString(cn, m));
+                logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
               }
               this.decrypted++;
               return new AbstractInsnNode[]{new InsnNode(POP2), new LdcInsnNode(realString)};
             } else {
-              logger.error("Failed to decrypt string in " + "{}", referenceString(cn, m));
+              logger.error("Failed to decrypt string in {}", referenceString(cn, m));
             }
           } else if (verbose) {
-            logger.warning("Unknown top stack value in " + "{}, skipping", referenceString(cn, m));
+            logger.warning("Unknown top stack value in {}, skipping", referenceString(cn, m));
           }
         } catch (Throwable e) {
           if (verbose) {
             logger.error("Throwable", e);
           }
-          logger.error("Failed to decrypt string in {}: " + "{}", referenceString(cn, m), shortStacktrace(e));
+          logger.error("Failed to decrypt string in {}: {}", referenceString(cn, m), shortStacktrace(e));
         }
       }
     }
@@ -152,7 +152,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     instructions.add(new InsnNode(RETURN));
 
     node.fields.add(new FieldNode(ACC_PUBLIC | ACC_STATIC, "proxyReturn", "Ljava/lang/String;", null, null));
-    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()" + "V")); // method should return real
+    node.methods.add(Sandbox.createMethodProxy(instructions, m.name, "()V")); // method should return real
     // string
     if (min.owner.equals(cn.name)) {
       // decryption method is in own class

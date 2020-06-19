@@ -54,13 +54,13 @@ public class ClassTreeNode extends DefaultMutableTreeNode implements Comparator<
 
   public void combinePackage(ClassTreeNode pckg) {
     if (pckg.member != null)
-      throw new IllegalArgumentException("cannot merge " + "package with file");
+      throw new IllegalArgumentException("cannot merge package with file");
     if (pckg == this)
-      throw new IllegalArgumentException("cannot merge " + "itself");
+      throw new IllegalArgumentException("cannot merge itself");
     if (!children.contains(pckg))
-      throw new IllegalArgumentException("package is not " + "a child");
+      throw new IllegalArgumentException("package is not a child");
     if (this.getChildCount() != 1)
-      throw new IllegalArgumentException("child count " + "over 1");
+      throw new IllegalArgumentException("child count over 1");
     text += "." + pckg.text; // combine package names
     this.removeAllChildren(); // remove old package
 

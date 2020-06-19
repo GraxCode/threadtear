@@ -81,10 +81,10 @@ public class Converter implements Opcodes {
           // ifs have two outputs: either it jumps or not
           outputs.add(blockAtLabel);
           if (jin.getNext() == null) {
-            throw new RuntimeException("if has no next " + "entry");
+            throw new RuntimeException("if has no next entry");
           }
           if (correspBlock.get(jin.getNext()) == b) {
-            throw new RuntimeException("next node is " + "self?");
+            throw new RuntimeException("next node is self?");
           }
           Block blockAfter = correspBlock.get(jin.getNext());
           outputs.add(blockAfter);

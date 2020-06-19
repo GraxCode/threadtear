@@ -204,7 +204,7 @@ public class CodeAnalyzer implements Opcodes {
             }
           } else if (insnOpcode == RET) {
             if (subroutine == null) {
-              throw new AnalyzerException(insnNode, "RET " + "instruction outside of a " + "subroutine");
+              throw new AnalyzerException(insnNode, "RET instruction outside of a subroutine");
             }
             for (int i = 0; i < subroutine.callers.size(); ++i) {
               JumpInsnNode caller = subroutine.callers.get(i);
@@ -251,11 +251,11 @@ public class CodeAnalyzer implements Opcodes {
           }
         }
       } catch (AnalyzerException e) {
-        throw new AnalyzerException(e.node, "Error at " + "instruction " + insnIndex + ": " + e.getMessage(), e);
+        throw new AnalyzerException(e.node, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
       } catch (RuntimeException e) {
         // DontCheck(IllegalCatch): can't be fixed, for
         // backward compatibility.
-        throw new AnalyzerException(insnNode, "Error at " + "instruction " + insnIndex + ": " + e.getMessage(), e);
+        throw new AnalyzerException(insnNode, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
       }
     }
 
@@ -330,7 +330,7 @@ public class CodeAnalyzer implements Opcodes {
     while (!instructionIndicesToProcess.isEmpty()) {
       int currentInsnIndex = instructionIndicesToProcess.remove(instructionIndicesToProcess.size() - 1);
       if (currentInsnIndex < 0 || currentInsnIndex >= insnListSize) {
-        throw new AnalyzerException(null, "Execution can " + "fall off the end of the code");
+        throw new AnalyzerException(null, "Execution can fall off the end of the code");
       }
       if (subroutines[currentInsnIndex] != null) {
         continue;

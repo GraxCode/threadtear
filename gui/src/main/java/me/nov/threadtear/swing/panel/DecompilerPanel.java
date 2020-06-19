@@ -72,8 +72,8 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     conversionMethod.setSelectedIndex(1);
     conversionMethod.addActionListener(this);
     leftActionPanel.add(conversionMethod);
-    leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try " + "catch blocks"));
-    leftActionPanel.add(ignoreMon = new JCheckBox("Ignore " + "synchronized"));
+    leftActionPanel.add(ignoreTCB = new JCheckBox("Ignore try catch blocks"));
+    leftActionPanel.add(ignoreMon = new JCheckBox("Ignore synchronized"));
     leftActionPanel.add(aggressive = new JCheckBox("Aggressive"));
     ignoreTCB.setFocusable(false);
     ignoreTCB.addActionListener(this);
