@@ -1,16 +1,17 @@
 package me.nov.threadtear.swing.frame;
 
-import java.awt.*;
-import java.io.File;
-
-import javax.swing.*;
-
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
+import com.github.weisj.darklaf.ui.tabbedpane.DarkTabbedPaneUI;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.graph.CFGPanel;
 import me.nov.threadtear.swing.SwingUtils;
-import me.nov.threadtear.swing.panel.*;
+import me.nov.threadtear.swing.panel.BytecodePanel;
+import me.nov.threadtear.swing.panel.DecompilerPanel;
 import me.nov.threadtear.util.format.Strings;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 
 public class AnalysisFrame extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -40,16 +41,19 @@ public class AnalysisFrame extends JFrame {
     setMinimumSize(new Dimension(900, 540));
     setLayout(new BorderLayout());
     setIconImage(SwingUtils.iconToFrameImage(SwingUtils.getIcon("decompile.svg", true), this));
-    JPanel cp = new JPanel(new BorderLayout());
-    cp.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+    int pad = 8;
+    JPanel cp = SwingUtils.withEmptyBorder(new JPanel(new BorderLayout()), pad, 0, pad, 0);
     JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.putClientProperty(DarkTabbedPaneUI.KEY_LEADING_COMP, Box.createHorizontalStrut(pad));
+    tabbedPane.putClientProperty(DarkTabbedPaneUI.KEY_TRAILING_COMP, Box.createHorizontalStrut(pad));
     tabbedPane.addTab("Decompiler", SwingUtils.getIcon("decompile.svg", true),
-      new DecompilerPanel(this, archive, clazz));
+      SwingUtils.withEmptyBorder(new DecompilerPanel(this, archive, clazz), 0, pad, 0, pad));
     tabbedPane.setDisabledIconAt(0, SwingUtils.getIcon("decompile_disabled.svg", true));
     tabbedPane.addTab("Bytecode", SwingUtils.getIcon("bytecode.svg", true),
-      new BytecodePanel(clazz.node));
+      SwingUtils.withEmptyBorder(new BytecodePanel(clazz.node), 0, pad, 0, pad));
     tabbedPane.setDisabledIconAt(1, SwingUtils.getIcon("bytecode_disabled.svg", true));
-    tabbedPane.addTab("Graph", SwingUtils.getIcon("graph.svg", true), new CFGPanel(clazz.node));
+    tabbedPane.addTab("Graph", SwingUtils.getIcon("graph.svg", true),
+      SwingUtils.withEmptyBorder(new CFGPanel(clazz.node), 0, pad, 0, pad));
     tabbedPane.setDisabledIconAt(2, SwingUtils.getIcon("graph_disabled.svg", true));
 
     cp.add(tabbedPane, BorderLayout.CENTER);

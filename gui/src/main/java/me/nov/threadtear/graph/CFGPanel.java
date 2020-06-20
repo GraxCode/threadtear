@@ -29,11 +29,11 @@ import me.nov.threadtear.util.format.Strings;
 
 public class CFGPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private MethodNode mn;
-  private ArrayList<Block> blocks = new ArrayList<>();
-  private CFGraph graph;
-  private CFGComponent graphComponent;
+  private final ArrayList<Block> blocks = new ArrayList<>();
+  private final CFGraph graph;
+  private final CFGComponent graphComponent;
   private JScrollPane scrollPane;
+  private MethodNode mn;
   public boolean useTreeLayout = false;
 
   public CFGPanel(ClassNode cn) {
@@ -109,8 +109,12 @@ public class CFGPanel extends JPanel {
     topPanel.add(rightActionPanel, BorderLayout.EAST);
     this.add(topPanel, BorderLayout.NORTH);
     graphComponent = graph.getComponent();
-    graphComponent.scp = scrollPane;
-    JPanel inner = new JPanel();
+    JPanel inner = new JPanel() {
+      @Override
+      public Color getBackground() {
+        return graphComponent.getBackground();
+      }
+    };
     inner.setBorder(new EmptyBorder(30, 30, 30, 30));
     inner.setLayout(new BorderLayout(0, 0));
     inner.add(graphComponent, BorderLayout.CENTER);
@@ -118,6 +122,7 @@ public class CFGPanel extends JPanel {
     scrollPane = overlayScrollPane.getScrollPane();
     scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     scrollPane.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
+    graphComponent.scp = scrollPane;
     this.add(overlayScrollPane, BorderLayout.CENTER);
     SwingUtilities.invokeLater(() -> {
       if (mn == null && !cn.methods.isEmpty()) {

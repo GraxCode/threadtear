@@ -1,8 +1,9 @@
 package me.nov.threadtear.graph;
 
+import java.awt.*;
 import java.util.Map;
 
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.mxgraph.canvas.mxGraphics2DCanvas;
@@ -93,6 +94,15 @@ public class CFGraph extends mxGraph {
                   e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
         }
       });
+    }
+
+    @Override
+    public void updateUI() {
+      super.updateUI();
+      Color bg = UIManager.getColor("backgroundContainer");
+      setPageBackgroundColor(bg);
+      setBackground(bg);
+      SwingUtilities.invokeLater(() -> getViewport().setBackground(bg));
     }
 
     @Override

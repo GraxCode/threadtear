@@ -9,7 +9,7 @@
     <background color="21252B"/>
     <caret color="D2D2D2"/>
     <selection useFG="false" bg="373e48" roundedEdges="false"/>
-    <currentLineHighlight color="5D626A" fade="true"/>
+    <currentLineHighlight color="5D626A" fade="false"/>
     <marginLine fg="373e48"/>
     <markAllHighlight color="2a2f37"/>
     <markOccurrencesHighlight color="5D626A" border="false"/>

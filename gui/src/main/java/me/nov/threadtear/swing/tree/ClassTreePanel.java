@@ -1,33 +1,37 @@
 package me.nov.threadtear.swing.tree;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.List;
-import java.util.jar.JarEntry;
-
-import javax.swing.*;
-import javax.swing.tree.*;
-
 import com.github.weisj.darklaf.components.OverlayScrollPane;
-import me.nov.threadtear.logging.LogWrapper;
-import me.nov.threadtear.swing.TitledPanel;
-import org.apache.commons.io.FilenameUtils;
-import org.objectweb.asm.tree.ClassNode;
-
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.io.*;
+import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.io.JarIO;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.swing.SwingUtils;
+import me.nov.threadtear.swing.TitledPanel;
 import me.nov.threadtear.swing.analysis.InstructionAnalysis;
 import me.nov.threadtear.swing.dialog.FileInfo;
 import me.nov.threadtear.swing.frame.AnalysisFrame;
-import me.nov.threadtear.swing.handler.*;
+import me.nov.threadtear.swing.handler.ILoader;
+import me.nov.threadtear.swing.handler.JarDropHandler;
 import me.nov.threadtear.swing.tree.component.ClassTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ClassTreeCellRenderer;
 import me.nov.threadtear.util.format.Strings;
+import org.apache.commons.io.FilenameUtils;
+import org.objectweb.asm.tree.ClassNode;
+
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.jar.JarEntry;
 
 public class ClassTreePanel extends JPanel implements ILoader {
   private static final long serialVersionUID = 1L;
@@ -252,6 +256,22 @@ public class ClassTreePanel extends JPanel implements ILoader {
       node.sort();
     }
     tree.setModel(model);
+    SwingUtilities.invokeLater(() -> {
+      // Expand the tree to the open the first package with more than one child.
+      boolean rootVisible = tree.isRootVisible();
+      TreeNode node = (TreeNode) model.getRoot();
+      boolean expanding = node.getChildCount() >= 1;
+      while (expanding) {
+        if (node.getChildCount() > 1) expanding = false;
+        if (rootVisible || node != model.getRoot()) {
+          TreeNode[] path = node instanceof DefaultMutableTreeNode
+            ? ((DefaultMutableTreeNode) node).getPath()
+            : model.getPathToRoot(node);
+          tree.expandPath(new TreePath(path));
+        }
+        node = node.getChildAt(0);
+      }
+    });
   }
 
   public void addToTree(ClassTreeNode current, Clazz c, String[] packages, int pckg) {
