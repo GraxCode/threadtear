@@ -1,4 +1,4 @@
-package me.nov.threadtear.graph;
+package me.nov.threadtear.swing.panel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,6 +13,9 @@ import javax.swing.filechooser.*;
 
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
+import me.nov.threadtear.graph.Block;
+import me.nov.threadtear.graph.CFGraph;
+import me.nov.threadtear.graph.Converter;
 import me.nov.threadtear.swing.button.ReloadButton;
 import me.nov.threadtear.swing.component.AutoCompletion;
 import org.objectweb.asm.tree.*;
@@ -103,7 +106,7 @@ public class CFGPanel extends JPanel {
     rightActions.add(reload);
     rightActionPanel.add(rightActions);
     JPanel topPanel = new JPanel();
-    topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
+    topPanel.setBorder(new EmptyBorder(3, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
     topPanel.add(leftActionPanel, BorderLayout.WEST);
     topPanel.add(rightActionPanel, BorderLayout.EAST);

@@ -269,6 +269,7 @@ public class ClassTreePanel extends JPanel implements ILoader {
             : model.getPathToRoot(node);
           tree.expandPath(new TreePath(path));
         }
+        if (node.isLeaf()) return;
         node = node.getChildAt(0);
       }
     });
@@ -281,7 +282,6 @@ public class ClassTreePanel extends JPanel implements ILoader {
       return;
     }
     for (int i = 0; i < current.getChildCount(); i++) {
-
       ClassTreeNode child = (ClassTreeNode) current.getChildAt(i);
       if (child.toString().equals(node) && child.member == null) {
         addToTree(child, c, packages, ++pckg);

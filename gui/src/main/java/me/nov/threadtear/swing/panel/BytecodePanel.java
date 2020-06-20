@@ -87,7 +87,7 @@ public class BytecodePanel extends JPanel {
     gbc.anchor = GridBagConstraints.EAST;
     actionPanel.add(reload, gbc);
     JPanel topPanel = new JPanel();
-    topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
+    topPanel.setBorder(new EmptyBorder(3, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
     topPanel.add(new JLabel("<html>Bytecode of <tt>" + Strings.min(cn.name.replace('/', '.'), 128) + "</tt>"),
             BorderLayout.WEST);

@@ -138,7 +138,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     gbc.anchor = GridBagConstraints.EAST;
     rightActionPanel.add(reload, gbc);
     JPanel topPanel = new JPanel();
-    topPanel.setBorder(new EmptyBorder(1, 5, 0, 1));
+    topPanel.setBorder(new EmptyBorder(3, 5, 0, 1));
     topPanel.setLayout(new BorderLayout());
     topPanel.add(leftActionPanel, BorderLayout.WEST);
     topPanel.add(rightActionPanel, BorderLayout.EAST);

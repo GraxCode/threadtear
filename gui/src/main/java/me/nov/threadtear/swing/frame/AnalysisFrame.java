@@ -3,7 +3,7 @@ package me.nov.threadtear.swing.frame;
 import com.github.weisj.darklaf.components.loading.LoadingIndicator;
 import com.github.weisj.darklaf.ui.tabbedpane.DarkTabbedPaneUI;
 import me.nov.threadtear.execution.Clazz;
-import me.nov.threadtear.graph.CFGPanel;
+import me.nov.threadtear.swing.panel.CFGPanel;
 import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.panel.BytecodePanel;
 import me.nov.threadtear.swing.panel.DecompilerPanel;
