@@ -354,31 +354,36 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
     if (a.isKnown() && b.isKnown() && c.isKnown() && c.value instanceof Number) {
       Object array = a.value;
       Number value = (Number) c.value;
+      int index = b.getAsInteger();
+      if(index < 0 || index >= Array.getLength(array)) {
+        // avoid OOB exceptions
+        return null;
+      }
       switch (insn.getOpcode()) {
         case BASTORE:
           if (array instanceof byte[]) {
-            ((byte[]) array)[b.getAsInteger()] = value.byteValue();
+            ((byte[]) array)[index] = value.byteValue();
           } else {
-            ((boolean[]) array)[b.getAsInteger()] = value.intValue() != 0;
+            ((boolean[]) array)[index] = value.intValue() != 0;
           }
           break;
         case CASTORE:
-          ((char[]) array)[b.getAsInteger()] = (char) value.intValue();
+          ((char[]) array)[index] = (char) value.intValue();
           break;
         case SASTORE:
-          ((short[]) array)[b.getAsInteger()] = value.shortValue();
+          ((short[]) array)[index] = value.shortValue();
           break;
         case IASTORE:
-          ((int[]) array)[b.getAsInteger()] = value.intValue();
+          ((int[]) array)[index] = value.intValue();
           break;
         case FASTORE:
-          ((float[]) array)[b.getAsInteger()] = value.floatValue();
+          ((float[]) array)[index] = value.floatValue();
           break;
         case DASTORE:
-          ((double[]) array)[b.getAsInteger()] = value.doubleValue();
+          ((double[]) array)[index] = value.doubleValue();
           break;
         case LASTORE:
-          ((long[]) array)[b.getAsInteger()] = value.longValue();
+          ((long[]) array)[index] = value.longValue();
           break;
         case AASTORE:
           throw new IllegalArgumentException("unimplemented");
