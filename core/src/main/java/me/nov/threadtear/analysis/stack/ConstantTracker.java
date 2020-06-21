@@ -385,8 +385,8 @@ public class ConstantTracker extends Interpreter<ConstantValue> implements Opcod
         case LASTORE:
           ((long[]) array)[index] = value.longValue();
           break;
-        case AASTORE:
-          throw new IllegalArgumentException("unimplemented");
+        default:
+          return null;
       }
     }
     return null;
