@@ -1,6 +1,8 @@
 package me.nov.threadtear.vm;
 
+import me.nov.threadtear.ThreadtearCore;
 import me.nov.threadtear.io.Conversion;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.Instructions;
 import org.objectweb.asm.Opcodes;
@@ -12,14 +14,6 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiPredicate;
-
-import me.nov.threadtear.ThreadtearCore;
-import me.nov.threadtear.logging.LogWrapper;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
-
-import me.nov.threadtear.io.Conversion;
-import me.nov.threadtear.util.asm.*;
 
 public class VM extends ClassLoader implements Opcodes {
   public HashMap<String, Class<?>> loaded = new HashMap<>();
@@ -63,7 +57,7 @@ public class VM extends ClassLoader implements Opcodes {
   }
 
   private boolean isForbiddenName(String name) {
-    return name.startsWith(ThreadtearCore.class.getPackage().getName()) || name.matches(RT_REGEX);
+    return name.startsWith(threadtearPkg) || name.matches(RT_REGEX);
   }
 
   public static final String threadtearPkg = ThreadtearCore.class.getPackage().getName();
