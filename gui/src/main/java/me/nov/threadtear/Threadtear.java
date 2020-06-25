@@ -162,6 +162,7 @@ public class Threadtear extends JFrame {
     }
     logFrame.setVisible(true);
     SwingUtilities.invokeLater(() -> new Thread(() -> {
+      LogWrapper.logger.info("Threadtear version {}", CoreUtils.getVersion());
       LogWrapper.logger.info("Executing {} tasks on {} classes!", executions.size(), classes.size());
       if (!disableSecurity) {
         LogWrapper.logger.info("Initializing security manager if something goes horribly wrong");
