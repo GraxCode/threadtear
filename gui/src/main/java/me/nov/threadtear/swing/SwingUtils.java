@@ -2,7 +2,6 @@ package me.nov.threadtear.swing;
 
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
-import com.github.weisj.darklaf.graphics.ImageUtil;
 import com.github.weisj.darklaf.icons.IconLoader;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
@@ -166,7 +165,7 @@ public class SwingUtils {
   }
 
   public static Image iconToFrameImage(Icon icon, Window window) {
-    return ImageUtil.createFrameIcon(icon, window);
+    return IconLoader.createFrameIcon(icon, window);
   }
 
   public static Icon getIcon(String path) {

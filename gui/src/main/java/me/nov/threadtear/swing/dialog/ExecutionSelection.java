@@ -2,6 +2,7 @@ package me.nov.threadtear.swing.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,6 +12,7 @@ import javax.swing.tree.*;
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionLink;
 import me.nov.threadtear.execution.allatori.*;
 import me.nov.threadtear.execution.analysis.*;
 import me.nov.threadtear.execution.cleanup.*;
@@ -24,6 +26,7 @@ import me.nov.threadtear.execution.paramorphism.*;
 import me.nov.threadtear.execution.stringer.*;
 import me.nov.threadtear.execution.tools.*;
 import me.nov.threadtear.execution.zkm.*;
+import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
 import me.nov.threadtear.swing.tree.renderer.ExecutionTreeCellRenderer;
 
@@ -79,53 +82,7 @@ public class ExecutionSelection extends JDialog {
       ExecutionTreeNode root = new ExecutionTreeNode("");
       DefaultTreeModel model = new DefaultTreeModel(root);
       this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-      /*
-       * LINK YOUR EXECUTION HERE
-       */
-      addExecution(root, new InlineMethods());
-      addExecution(root, new InlineUnchangedFields());
-      addExecution(root, new RemoveUnnecessary());
-      addExecution(root, new RemoveUnusedVariables());
-      addExecution(root, new RemoveAttributes());
-      addExecution(root, new ArgumentInliner());
-
-      addExecution(root, new ObfuscatedAccess());
-      addExecution(root, new KnownConditionalJumps());
-      addExecution(root, new ConvertCompareInstructions());
-
-      addExecution(root, new RestoreSourceFiles());
-      addExecution(root, new ReobfuscateClassNames());
-      addExecution(root, new ReobfuscateMembers());
-      addExecution(root, new ReobfuscateVariableNames());
-      addExecution(root, new RemoveMonitors());
-      addExecution(root, new RemoveTCBs());
-
-      addExecution(root, new StringObfuscationStringer());
-      addExecution(root, new AccessObfusationStringer());
-
-      addExecution(root, new TryCatchObfuscationRemover());
-      addExecution(root, new StringObfuscationZKM());
-      addExecution(root, new AccessObfusationZKM());
-      addExecution(root, new FlowObfuscationZKM());
-      addExecution(root, new DESObfuscationZKM());
-
-      addExecution(root, new StringObfuscationAllatori());
-      addExecution(root, new ExpirationDateRemoverAllatori());
-      addExecution(root, new JunkRemoverAllatori());
-
-      addExecution(root, new StringObfuscationDashO());
-
-      addExecution(root, new BadAttributeRemover());
-      addExecution(root, new StringObfuscationParamorphism());
-      addExecution(root, new AccessObfusationParamorphism());
-
-      addExecution(root, new Java7Compatibility());
-      addExecution(root, new Java8Compatibility());
-      addExecution(root, new IsolatePossiblyMalicious());
-      addExecution(root, new AddLineNumbers());
-      addExecution(root, new LogAllExceptions());
-      addExecution(root, new RemoveMaxs());
-
+      ExecutionLink.executions.forEach(c -> addExecution(root, c));
       this.setModel(model);
       ToolTipManager.sharedInstance().registerComponent(this);
       this.addTreeSelectionListener(this);
@@ -149,7 +106,14 @@ public class ExecutionSelection extends JDialog {
       });
     }
 
-    private void addExecution(ExecutionTreeNode root, Execution e) {
+    private void addExecution(ExecutionTreeNode root, Class<? extends Execution> c) {
+      Execution e;
+      try {
+        e = c.getDeclaredConstructor().newInstance();
+      } catch (Throwable t) {
+        LogWrapper.logger.error("Failed to instantiate execution {}.", t, c.getSimpleName());
+        return;
+      }
       String[] split = (e.type.name + "." + e.name).split("\\.");
       addToTree(root, e, split, 0);
     }
