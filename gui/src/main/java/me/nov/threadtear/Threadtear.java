@@ -131,23 +131,9 @@ public class Threadtear extends JFrame {
   public static void main(String[] args) throws Exception {
     LookAndFeel.init();
     LookAndFeel.setLookAndFeel();
-    configureEnvironment();
-    configureLoggers();
+    ThreadtearCore.configureEnvironment();
+    ThreadtearCore.configureLoggers();
     getInstance().setVisible(true);
-  }
-
-  private static void configureEnvironment() throws Exception {
-    System.setProperty("file.encoding", "UTF-8");
-    Field charset = Charset.class.getDeclaredField("defaultCharset");
-    charset.setAccessible(true);
-    charset.set(null, null);
-  }
-
-  private static void configureLoggers() {
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("logfile"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("form"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public void run(boolean verbose, boolean disableSecurity) {

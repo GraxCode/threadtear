@@ -4,15 +4,32 @@ import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.security.VMSecurityManager;
+import org.slf4j.LoggerFactory;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ThreadtearCore {
+  public static void configureEnvironment() throws Exception {
+    System.setProperty("file.encoding", "UTF-8");
+    Field charset = Charset.class.getDeclaredField("defaultCharset");
+    charset.setAccessible(true);
+    charset.set(null, null);
+  }
+
+  public static void configureLoggers() {
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("logfile"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("form"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
+  }
+
   public static void run(List<Clazz> classes, List<Execution> executions, boolean disableSecurity, boolean verbose) {
     LogWrapper.logger.info("Threadtear version {}", CoreUtils.getVersion());
     LogWrapper.logger.info("Executing {} tasks on {} classes!", executions.size(), classes.size());
