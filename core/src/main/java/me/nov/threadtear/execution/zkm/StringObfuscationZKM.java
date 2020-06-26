@@ -1,42 +1,55 @@
 package me.nov.threadtear.execution.zkm;
 
+import me.nov.threadtear.analysis.stack.ConstantValue;
+import me.nov.threadtear.analysis.stack.IConstantReferenceHandler;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.execution.generic.inliner.ArgumentInfer;
+import me.nov.threadtear.util.asm.Access;
+import me.nov.threadtear.util.asm.InstructionModifier;
+import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.util.asm.References;
+import me.nov.threadtear.util.asm.method.MethodContext;
+import me.nov.threadtear.util.format.Strings;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.Sandbox;
+import me.nov.threadtear.vm.VM;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
+
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import me.nov.threadtear.execution.generic.inliner.ArgumentInfer;
-import me.nov.threadtear.util.asm.method.MethodContext;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.tree.analysis.*;
-
-import me.nov.threadtear.analysis.stack.*;
-import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.asm.*;
-import me.nov.threadtear.util.format.Strings;
-import me.nov.threadtear.vm.*;
-
 public class StringObfuscationZKM extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
 
-  private int decrypted;
-
-  private boolean verbose;
-
   private static final String ENCHANCED_MODE_METHOD_DESC = "\\(II+\\)Ljava/lang/String;";
+  private static final String ALLOWED_CALLS = "(java/lang/String).*";
+  private int decrypted;
+  private boolean verbose;
   private ArgumentInfer argumentInfer;
-
-  public StringObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "String obfuscation removal",
-            "Tested on ZKM 5 - 11, could work on newer versions too.<br><i>String " +
-                    "encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
-            ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
-  }
 
   /*
    * TODO: String encryption using DES Cipher (probably
    *  only in combination with reflection obfuscation
    */
+  private FieldInsnNode decryptedArrayField;
+  private String[] decryptedFieldValue;
+
+  public StringObfuscationZKM() {
+    super(ExecutionCategory.ZKM, "String obfuscation removal",
+      "Tested on ZKM 5 - 11, could work on newer versions too.<br><i>String " +
+        "encryption using DES Cipher is currently <b>NOT</b> supported.</i>",
+      ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
+  }
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
@@ -60,11 +73,9 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     if (mn == null)
       return false;
     return StreamSupport.stream(mn.instructions.spliterator(), false).anyMatch(
-            ain -> ain.getType() == AbstractInsnNode.LDC_INSN &&
-                    Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
+      ain -> ain.getType() == AbstractInsnNode.LDC_INSN &&
+        Strings.isHighSDev(((LdcInsnNode) ain).cst.toString()));
   }
-
-  private static final String ALLOWED_CALLS = "(java/lang/String).*";
 
   private void decrypt(Clazz c) {
     ClassNode cn = c.node;
@@ -81,8 +92,8 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     callMethod.name = "clinitProxy";
     callMethod.access = ACC_PUBLIC | ACC_STATIC;
     Instructions.isolateCallsThatMatch(callMethod, (name, desc) -> !name.matches(ALLOWED_CALLS),
-            (name, desc) -> !name.equals(cn.name) ||
-                    (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
+      (name, desc) -> !name.equals(cn.name) ||
+        (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
     proxyClass.methods.add(callMethod);
 
     // add decryption methods
@@ -90,14 +101,14 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
       MethodNode copy = Sandbox.copyMethod(m);
       proxyClass.methods.add(copy);
       Instructions.isolateCallsThatMatch(copy, (name, desc) -> !name.matches(ALLOWED_CALLS),
-              (name, desc) -> !name.equals(cn.name) ||
-                      (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
+        (name, desc) -> !name.equals(cn.name) ||
+          (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
     });
     cn.fields.stream().filter(m -> m.desc.equals("[Ljava/lang/String;") || m.desc.equals("Ljava/lang/String;"))
-            .forEach(f -> proxyClass.fields.add(f));
+      .forEach(f -> proxyClass.fields.add(f));
     Map<String, String> singleMap = Collections.singletonMap(cn.name, proxyClass.name);
     proxyClass.methods.stream().map(m -> m.instructions.toArray()).flatMap(Arrays::stream)
-            .forEach(ain -> References.remapClassRefs(singleMap, ain));
+      .forEach(ain -> References.remapClassRefs(singleMap, ain));
     try {
       invokeVMAndReplace(proxyClass, cn);
     } catch (Throwable e) {
@@ -184,7 +195,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
                                         Frame<ConstantValue> frame, InstructionModifier modifier) {
     try {
       int argCount = (int) Arrays.stream(Type.getArgumentTypes(min.desc))
-              .filter(t -> t.getClassName().equals(int.class.getName())).count();
+        .filter(t -> t.getClassName().equals(int.class.getName())).count();
 
       ConstantValue[] argValues = new ConstantValue[argCount];
       for (int i = 0; i < argValues.length; i++) {
@@ -234,7 +245,7 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
           if (decrypedString == null) {
             // could be false call, not the decrypted string
             logger.warning("Possible false call in {} or failed decryption, single field is null: {}",
-                    referenceString(cn, m), fin.name);
+              referenceString(cn, m), fin.name);
             return;
           } else {
             // i don't know why we need NOP, but it only
@@ -269,13 +280,10 @@ public class StringObfuscationZKM extends Execution implements IVMReferenceHandl
     }
   }
 
-  private FieldInsnNode decryptedArrayField;
-  private String[] decryptedFieldValue;
-
   @Override
   public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
     return decryptedArrayField != null && decryptedArrayField.owner.equals(owner) &&
-            decryptedArrayField.name.equals(name) && decryptedArrayField.desc.equals(desc) ? decryptedFieldValue : null;
+      decryptedArrayField.name.equals(name) && decryptedArrayField.desc.equals(desc) ? decryptedFieldValue : null;
   }
 
   @Override

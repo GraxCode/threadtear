@@ -165,17 +165,17 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
     if (idin.desc.matches("\\(.*[JI]+\\).*")) {
       try {
         int invokedynamicParams = Type.getArgumentTypes(Type.getMethodDescriptor(bootstrap)).length - 4;
-        List<Object> args = new ArrayList<>(Arrays.asList(DynamicReflection.getTrustedLookup(), null /*
-                        MutableCallSite, unused in method
-                         */, idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)));
+        List<Object> args = new ArrayList<>(Arrays.asList(
+          DynamicReflection.getTrustedLookup(), null /* MutableCallSite, unused in method */,
+          idin.name, MethodType.fromMethodDescriptorString(idin.desc, vm)
+        ));
         for (int i = 0; i < invokedynamicParams; i++) {
           ConstantValue stack = frame.getStack(frame.getStackSize() - invokedynamicParams + i);
           if (!stack.isKnown()) {
             LogWrapper.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
               referenceString(cn, null));
-            LogWrapper.logger
-              .warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
-                referenceString(cn, null));
+            LogWrapper.logger.warning("Stack value depth {} is unknown in {}, could be decryption class itself", i,
+              referenceString(cn, null));
             return null;
           }
           args.add(stack.getValue());
