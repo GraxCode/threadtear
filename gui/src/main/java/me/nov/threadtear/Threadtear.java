@@ -133,7 +133,13 @@ public class Threadtear extends JFrame {
     LookAndFeel.setLookAndFeel();
     ThreadtearCore.configureEnvironment();
     ThreadtearCore.configureLoggers();
+    configureGUILoggers();
     getInstance().setVisible(true);
+  }
+
+  private static void configureGUILoggers() {
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public void run(boolean verbose, boolean disableSecurity) {
