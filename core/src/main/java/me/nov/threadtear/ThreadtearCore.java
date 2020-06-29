@@ -25,9 +25,7 @@ public class ThreadtearCore {
 
   public static void configureLoggers() {
     LogWrapper.logger.addLogger(LoggerFactory.getLogger("logfile"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
     LogWrapper.logger.addLogger(LoggerFactory.getLogger("form"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public static void run(List<Clazz> classes, List<Execution> executions, boolean disableSecurity, boolean verbose) {
