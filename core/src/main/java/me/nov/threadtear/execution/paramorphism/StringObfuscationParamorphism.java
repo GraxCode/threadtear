@@ -1,14 +1,18 @@
 package me.nov.threadtear.execution.paramorphism;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.logging.LogWrapper;
+import me.nov.threadtear.util.format.Strings;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.Sandbox;
+import me.nov.threadtear.vm.VM;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.format.Strings;
-import me.nov.threadtear.vm.*;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 public class StringObfuscationParamorphism extends Execution implements IVMReferenceHandler {
   private boolean verbose;

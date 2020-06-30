@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public final class References {
   private References() {
@@ -31,7 +32,13 @@ public final class References {
       fin.desc = Descriptor.fixTypeDesc(fin.desc, map);
     } else if (ain instanceof TypeInsnNode) {
       TypeInsnNode tin = (TypeInsnNode) ain;
-      tin.desc = map.getOrDefault(tin.desc, tin.desc);
+      String desc = tin.desc;
+      if (desc.startsWith("[")) {
+        String substring = desc.substring(1);
+        tin.desc = "[" + map.getOrDefault(substring, substring);
+      } else {
+        tin.desc = map.getOrDefault(desc, desc);
+      }
     } else if (ain instanceof InvokeDynamicInsnNode) {
       InvokeDynamicInsnNode idin = (InvokeDynamicInsnNode) ain;
       idin.desc = Descriptor.fixMethodDesc(idin.desc, map);
@@ -54,19 +61,41 @@ public final class References {
       LdcInsnNode lin = (LdcInsnNode) ain;
       if (lin.cst instanceof Type) {
         lin.cst = Descriptor.fixType((Type) lin.cst, map);
+      } else if (lin.cst instanceof Handle) {
+        Handle handle = (Handle) lin.cst;
+        lin.cst = new Handle(handle.getTag(), map.getOrDefault(handle.getOwner(), handle.getOwner()), handle.getName(),
+          Descriptor.fixMethodDesc(handle.getDesc(), map), handle.isInterface());
       }
     } else if (ain instanceof FrameNode) {
       FrameNode fn = (FrameNode) ain;
+      Function<String, String> namingFunction = s -> {
+        String newName;
+        if (s.startsWith("[")) {
+          String substring;
+          if (s.contains(";")) {
+            substring = s.substring(s.indexOf("L") + 1, s.indexOf(";"));
+            newName = "[L" + map.getOrDefault(substring, substring) + ";";
+          } else {
+            substring = s.substring(1);
+            newName = "[" + map.getOrDefault(substring, substring);
+          }
+        } else {
+          newName = map.getOrDefault(s, s);
+        }
+        return newName;
+      };
       for (int i = 0; i < fn.stack.size(); i++) {
         Object o = fn.stack.get(i);
         if (o instanceof String) {
-          fn.stack.set(i, map.getOrDefault(o.toString(), o.toString()));
+          String element = namingFunction.apply((String) o);
+          fn.stack.set(i, element);
         }
       }
       for (int i = 0; i < fn.local.size(); i++) {
         Object o = fn.local.get(i);
         if (o instanceof String) {
-          fn.local.set(i, map.getOrDefault(o.toString(), o.toString()));
+          String element = namingFunction.apply((String) o);
+          fn.local.set(i, element);
         }
       }
     } else {
