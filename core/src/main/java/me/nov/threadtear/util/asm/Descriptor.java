@@ -54,7 +54,7 @@ public final class Descriptor {
     if (x.isEmpty()) {
       return true;
     } else if (x.equals("Z") || x.equals("J") || x.equals("I") || x.equals("F") || x.equals("D") || x.equals("C") ||
-            x.equals("T") || x.equals("G")) {
+      x.equals("T") || x.equals("G")) {
       return true;
     }
     return false;
@@ -83,5 +83,26 @@ public final class Descriptor {
     } else {
       sb.append(type.getDescriptor());
     }
+  }
+
+  public static boolean matchesParameters(Class<?>[] classes, String desc) {
+    Type[] params = Type.getArgumentTypes(desc);
+    if (classes.length != params.length)
+      return false;
+    for (int i = 0; i < classes.length; i++) {
+      if (!classes[i].getName().equals(toClassName(params[i].getDescriptor()))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public static String toClassName(String descriptor) {
+    Type t = Type.getType(descriptor);
+    if (t.getSort() == Type.ARRAY) {
+      // why java, why?!
+      return descriptor.replace('/', '.');
+    }
+    return t.getClassName();
   }
 }

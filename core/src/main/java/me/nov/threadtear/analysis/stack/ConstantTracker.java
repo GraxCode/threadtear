@@ -3,6 +3,7 @@ package me.nov.threadtear.analysis.stack;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.*;

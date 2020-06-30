@@ -1,8 +1,11 @@
 package me.nov.threadtear.execution.generic;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
+import me.nov.threadtear.util.asm.Descriptor;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.*;
 
@@ -18,17 +21,18 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
 
   public KnownConditionalJumps() {
     super(ExecutionCategory.GENERIC, "Remove obvious flow obfuscation",
-            "Removes conditional jumps that are predictable.<br>This works for " +
-                    "obfuscators like smoke or superblaubeere27.", ExecutionTag.POSSIBLE_VERIFY_ERR,
-            ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
+      "Removes conditional jumps that are predictable.<br>This works for " +
+        "obfuscators like smoke or superblaubeere27.", ExecutionTag.POSSIBLE_VERIFY_ERR,
+      ExecutionTag.BETTER_DECOMPILE, ExecutionTag.BETTER_DEOBFUSCATE);
   }
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
-    classes.values().stream().forEach(this::decrypt);
-    logger.info("Removed " + predictedJumps + " unnecessary conditional jumps and " + predictedSwitches + " " +
-            "unnecessary switches.");
-    return true;
+    predictedJumps = 0;
+    predictedSwitches = 0;
+    classes.values().forEach(this::decrypt);
+    logger.info("Removed {} unnecessary conditional jumps and {} unnecessary switches.", predictedJumps, predictedSwitches);
+    return predictedJumps > 0 || predictedSwitches > 0;
   }
 
   public void decrypt(Clazz c) {
@@ -148,22 +152,33 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
     return null;
   }
 
+
+  private static final List<String> PERMITTED_SIMULATION = Arrays.asList("java/lang/Integer", "java/lang/Long",
+    "java/lang/Short", "java/lang/Byte", "java/lang/Boolean", "java/lang/String", "java/lang/Float", "java/lang/Double",
+    "java/lang/StringBuilder", "java/lang/StringBuffer");
+
   @Override
   public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
                                       List<? extends ConstantValue> values) {
-    if (owner.equals("java/lang/String") && desc.startsWith("()")) {
-      if (values.size() != 1 || !values.get(0).isKnown()) {
+    if (PERMITTED_SIMULATION.contains(owner)) {
+      if (!values.stream().allMatch(ConstantValue::isKnown)) {
         return null;
       }
-      // this can be improved by also simulating methods with arguments, but i'm to
-      // lazy to implement that
-      // TODO maybe even implement fake getters that just return an int value that are
-      // used to hide gotos
       try {
-        Method method = String.class.getDeclaredMethod(name);
-        return method.invoke(values.get(0).getValue());
+        Method method = Arrays.stream(Class.forName(owner.replace('/', '.')).getDeclaredMethods())
+          .filter(m -> m.getName().equals(name) && Descriptor.matchesParameters(m.getParameterTypes(), desc))
+          .findFirst().orElse(null);
+        if (method != null) {
+          if (Modifier.isStatic(method.getModifiers())) {
+            return method.invoke(null, values.stream().map(ConstantValue::getValue).toArray());
+          } else {
+            return method.invoke(values.get(0).getValue(), values.stream().map(ConstantValue::getValue).skip(1).toArray());
+          }
+        }
+      } catch (InvocationTargetException e) {
+        // ignore invocation exceptions
       } catch (Throwable t) {
-        logger.error("Throwable", t);
+        logger.error("Couldn't bridge ConstantTracker to runtime method {}.{}", t, owner, name);
       }
     }
     return null;

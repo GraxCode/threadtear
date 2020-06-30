@@ -27,7 +27,7 @@ public interface IConstantReferenceHandler {
    * @param owner  Owner of the field
    * @param name   Name of the field
    * @param desc   Desc of the field
-   * @param values Arguments that are passed, including the object reference
+   * @param values Arguments that are passed, including the object reference as first entry
    * @return preferred value or null if unknown
    */
   Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
