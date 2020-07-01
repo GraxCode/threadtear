@@ -2,11 +2,13 @@ package me.nov.threadtear.analysis.stack;
 
 import me.nov.threadtear.logging.LogWrapper;
 import me.nov.threadtear.util.asm.Descriptor;
+import me.nov.threadtear.util.reflection.Casts;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,9 +39,10 @@ public class BasicReferenceHandler implements IConstantReferenceHandler {
           .findFirst().orElse(null);
         if (method != null) {
           if (Modifier.isStatic(method.getModifiers())) {
-            return method.invoke(null, values.stream().map(ConstantValue::getValue).toArray());
+            return method.invoke(null, toExactObjects(method.getParameterTypes(), values));
           } else {
-            return method.invoke(values.get(0).getValue(), values.stream().map(ConstantValue::getValue).skip(1).toArray());
+            return method.invoke(values.get(0).getValue(), toExactObjects(method.getParameterTypes(),
+              values.subList(1, values.size())));
           }
         }
       } catch (InvocationTargetException e) {
@@ -49,5 +52,16 @@ public class BasicReferenceHandler implements IConstantReferenceHandler {
       }
     }
     return null;
+  }
+
+  protected Object[] toExactObjects(Class<?>[] parameterTypes, List<? extends ConstantValue> values) {
+    Object[] params = new Object[parameterTypes.length];
+    for (int i = 0; i < parameterTypes.length; i++) {
+      Class<?> param = parameterTypes[i];
+      Object value = values.get(i).getValue();
+
+      params[i] = Casts.castWithPrimitives(param, value);
+    }
+    return params;
   }
 }

@@ -64,6 +64,7 @@ public class LogWrapper {
 
   public void error(String format, Throwable t, Object... args) {
     String msg = compile(format, args);
+    msg += " (" + t.toString() + ")";
     if (currentErrorCollector != null) {
       currentErrorCollector.addFail(t);
     }

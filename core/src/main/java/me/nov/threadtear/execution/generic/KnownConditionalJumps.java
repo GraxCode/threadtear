@@ -43,6 +43,8 @@ public class KnownConditionalJumps extends Execution {
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
 
       loopConstantFrames(cn, m, new BasicReferenceHandler(), (ain, frame) -> {
+        if (frame == null)
+          return;
         if (ain.getType() == AbstractInsnNode.JUMP_INSN) {
           try {
             int predicted = predictJump(frame, ain.getOpcode());
@@ -55,6 +57,7 @@ public class KnownConditionalJumps extends Execution {
               return;
             }
           } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Invalid stack in " + cn.name + "." + m.name, e);
           }
         } else if (ain.getOpcode() == LOOKUPSWITCH) {
