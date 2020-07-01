@@ -2,15 +2,21 @@ package me.nov.threadtear.analysis.stack;
 
 import java.util.Objects;
 
+import me.nov.threadtear.util.reflection.Casts;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.analysis.*;
 
 public class ConstantValue implements Value {
   private final BasicValue type;
-  Object value; // null if unknown or NULL
+  Object value;
 
   ConstantValue(BasicValue type, Object value) {
     this.type = Objects.requireNonNull(type);
+    if (type == BasicValue.INT_VALUE && !(value instanceof Integer)) {
+      // make sure we don't get problems with BasicReferenceHandler returns.
+      // All non-decimal numbers smaller than Integer including Character should held as Integer.
+      value = Casts.castWithPrimitives(int.class, value);
+    }
     this.value = value;
   }
 
@@ -26,9 +32,12 @@ public class ConstantValue implements Value {
       return "uninitialized";
     String typeName = getType() == BasicValue.REFERENCE_VALUE ? "a reference type" : t.getClassName();
     return this == ConstantTracker.NULL ? "null" :
-            value == null ? "unknown value of " + typeName : value + " (" + typeName + ")";
+      value == null ? "unknown value of " + typeName : value + " (" + typeName + ")";
   }
 
+  /**
+   * @return Associated value, Integer object for Integer, Short, Byte, Character or Boolean.
+   */
   public Object getValue() {
     return value;
   }
@@ -75,8 +84,7 @@ public class ConstantValue implements Value {
   }
 
   /**
-   * @return true for Integer, Short, Byte, Boolean,
-   * Character
+   * @return true for Integer, Short, Byte, Boolean, Character
    */
   public boolean isInteger() {
     return getType() == BasicValue.INT_VALUE;

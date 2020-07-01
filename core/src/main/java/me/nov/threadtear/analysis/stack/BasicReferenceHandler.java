@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,6 +53,9 @@ public class BasicReferenceHandler implements IConstantReferenceHandler {
     return null;
   }
 
+  /**
+   * Make sure int types are converted to match the parameters
+   */
   protected Object[] toExactObjects(Class<?>[] parameterTypes, List<? extends ConstantValue> values) {
     Object[] params = new Object[parameterTypes.length];
     for (int i = 0; i < parameterTypes.length; i++) {
