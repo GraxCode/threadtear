@@ -1,4 +1,4 @@
-package me.nov.threadtear.execution.zkm;
+package me.nov.threadtear.execution.generic;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,16 +17,17 @@ public class TryCatchObfuscationRemover extends Execution {
   private boolean verbose;
 
   public TryCatchObfuscationRemover() {
-    super(ExecutionCategory.ZKM, "Remove unnecessary try catch blocks",
-            "Remove try catch block flow obfuscation by ZKM.<br>Makes decompiling a lot easier.",
-            ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
+    super(ExecutionCategory.GENERIC, "Remove unnecessary try catch blocks",
+      "Remove try catch block flow obfuscation.<br>Makes decompiling a lot easier.",
+      ExecutionTag.RUNNABLE, ExecutionTag.BETTER_DECOMPILE);
   }
 
   @Override
   public boolean execute(Map<String, Clazz> classes, boolean verbose) {
     this.verbose = verbose;
     this.classes = classes;
-    logger.info("Removing redundant try catch blocks by ZKM");
+    logger.info("Removing redundant try catch blocks");
+    // TODO: recursive scan to check if catch type is ever thrown
     long tcbs = getAmountBlocks();
     classes.values().stream().map(c -> c.node).forEach(c -> checkTCBs(c, c.methods));
     long amount = (tcbs - getAmountBlocks());
@@ -36,17 +37,19 @@ public class TryCatchObfuscationRemover extends Execution {
 
   private long getAmountBlocks() {
     return classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.tryCatchBlocks)
-            .mapToLong(List::size).sum();
+      .mapToLong(List::size).sum();
   }
 
   public void checkTCBs(ClassNode c, List<MethodNode> methods) {
     methods.forEach(m -> {
-      if (m.tryCatchBlocks.stream().anyMatch(this::isFake)) {
-        m.tryCatchBlocks.stream().filter(this::isFake).collect(Collectors.toSet())
-                .forEach(tcb -> m.tryCatchBlocks.remove(tcb));
-        Instructions.removeDeadCode(c, m);
-      }
+      m.tryCatchBlocks.removeIf(this::isFake);
+      m.tryCatchBlocks.removeIf(tcb -> isNonsense(m, tcb));
+      Instructions.removeDeadCode(c, m);
     });
+  }
+
+  private boolean isNonsense(MethodNode mn, TryCatchBlockNode tcbn) {
+    return tcbn.start == tcbn.end || mn.instructions.indexOf(tcbn.start) >= mn.instructions.indexOf(tcbn.end);
   }
 
   public boolean isFake(TryCatchBlockNode tcbn) {

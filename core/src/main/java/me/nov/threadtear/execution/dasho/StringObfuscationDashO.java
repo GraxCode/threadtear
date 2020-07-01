@@ -82,7 +82,6 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
             // don't check
             String realString = invokeProxy(cn, m, min, top, second);
             if (realString != null) {
-              System.out.println(cn.name + " " + m.name + " " + realString);
               if (Strings.isHighUTF(realString)) {
                 logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
               }

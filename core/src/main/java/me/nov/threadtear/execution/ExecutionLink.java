@@ -13,6 +13,7 @@ import me.nov.threadtear.execution.dasho.StringObfuscationDashO;
 import me.nov.threadtear.execution.generic.ConvertCompareInstructions;
 import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
+import me.nov.threadtear.execution.generic.TryCatchObfuscationRemover;
 import me.nov.threadtear.execution.generic.inliner.ArgumentInliner;
 import me.nov.threadtear.execution.paramorphism.AccessObfusationParamorphism;
 import me.nov.threadtear.execution.paramorphism.BadAttributeRemover;

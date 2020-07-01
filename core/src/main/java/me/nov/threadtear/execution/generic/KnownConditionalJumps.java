@@ -55,7 +55,7 @@ public class KnownConditionalJumps extends Execution {
               return;
             }
           } catch (Exception e) {
-            logger.error("Invalid stack in " + cn.name + "." + m.name + ":" + e.getMessage());
+            logger.error("Invalid stack in " + cn.name + "." + m.name, e);
           }
         } else if (ain.getOpcode() == LOOKUPSWITCH) {
           LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) ain;
