@@ -12,7 +12,7 @@ import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.format.Strings;
 import me.nov.threadtear.vm.*;
 
-public class StringObfuscationDashO extends Execution implements IVMReferenceHandler, IConstantReferenceHandler {
+public class StringObfuscationDashO extends Execution implements IVMReferenceHandler {
 
   private static final String DASHO_DECRPYTION_METHOD_DESC1 = "(ILjava/lang/String;)Ljava/lang/String;";
   private static final String DASHO_DECRPYTION_METHOD_DESC2 = "(Ljava/lang/String;I)Ljava/lang/String;";
@@ -24,8 +24,8 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
 
   public StringObfuscationDashO() {
     super(ExecutionCategory.DASHO, "String obfuscation removal",
-            "Tested on version 10.3, should work for older versions too.", ExecutionTag.RUNNABLE,
-            ExecutionTag.POSSIBLY_MALICIOUS);
+      "Tested on version 10.3, should work for older versions too.", ExecutionTag.RUNNABLE,
+      ExecutionTag.POSSIBLY_MALICIOUS);
   }
 
   @Override
@@ -35,14 +35,14 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     this.encrypted = 0;
     this.decrypted = 0;
 
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching DashO 7.3 string obfuscation have been found!");
       return false;
     }
     float decryptionRatio = Math.round((decrypted / (float) encrypted) * 100);
     logger.info("Of a total " + encrypted + " encrypted strings, " + (decryptionRatio) + "% were " +
-            "successfully decrypted");
+      "successfully decrypted");
     return decryptionRatio > 0.25;
   }
 
@@ -57,7 +57,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
       // and instruction index
       // wouldn't fit together anymore we have to do it
       // this way
-      loopConstantFrames(cn, m, this, (ain, frame) -> {
+      loopConstantFrames(cn, m, new BasicReferenceHandler(), (ain, frame) -> {
         for (AbstractInsnNode newInstr : tryReplaceMethods(cn, m, ain, frame)) {
           rewrittenCode.add(newInstr.clone(labels));
         }
@@ -82,6 +82,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
             // don't check
             String realString = invokeProxy(cn, m, min, top, second);
             if (realString != null) {
+              System.out.println(cn.name + " " + m.name + " " + realString);
               if (Strings.isHighUTF(realString)) {
                 logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
               }
@@ -105,7 +106,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
   }
 
   private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second)
-          throws Exception {
+    throws Exception {
     VM vm = VM.constructNonInitializingVM(this);
     createFakeClone(cn, m, min, top, second); // create a
     // duplicate of the current class,
@@ -169,16 +170,5 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
       return fakeInvocationClone;
     }
     return classes.containsKey(name) ? classes.get(name).node : null;
-  }
-
-  @Override
-  public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
-    return null;
-  }
-
-  @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
-                                      List<? extends ConstantValue> values) {
-    return null;
   }
 }

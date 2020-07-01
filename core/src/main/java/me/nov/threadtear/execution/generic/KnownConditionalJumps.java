@@ -14,7 +14,7 @@ import me.nov.threadtear.execution.*;
 import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.reflection.Casts;
 
-public class KnownConditionalJumps extends Execution implements IConstantReferenceHandler {
+public class KnownConditionalJumps extends Execution {
 
   private int predictedJumps;
   private int predictedSwitches;
@@ -42,7 +42,7 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
       InsnList rewrittenCode = new InsnList();
       Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
 
-      loopConstantFrames(cn, m, this, (ain, frame) -> {
+      loopConstantFrames(cn, m, new BasicReferenceHandler(), (ain, frame) -> {
         if (ain.getType() == AbstractInsnNode.JUMP_INSN) {
           try {
             int predicted = predictJump(frame, ain.getOpcode());
@@ -145,42 +145,5 @@ public class KnownConditionalJumps extends Execution implements IConstantReferen
     }
     return 0;
 
-  }
-
-  @Override
-  public Object getFieldValueOrNull(BasicValue v, String owner, String name, String desc) {
-    return null;
-  }
-
-
-  private static final List<String> PERMITTED_SIMULATION = Arrays.asList("java/lang/Integer", "java/lang/Long",
-    "java/lang/Short", "java/lang/Byte", "java/lang/Boolean", "java/lang/String", "java/lang/Float", "java/lang/Double",
-    "java/lang/StringBuilder", "java/lang/StringBuffer");
-
-  @Override
-  public Object getMethodReturnOrNull(BasicValue v, String owner, String name, String desc,
-                                      List<? extends ConstantValue> values) {
-    if (PERMITTED_SIMULATION.contains(owner)) {
-      if (!values.stream().allMatch(ConstantValue::isKnown)) {
-        return null;
-      }
-      try {
-        Method method = Arrays.stream(Class.forName(owner.replace('/', '.')).getDeclaredMethods())
-          .filter(m -> m.getName().equals(name) && Descriptor.matchesParameters(m.getParameterTypes(), desc))
-          .findFirst().orElse(null);
-        if (method != null) {
-          if (Modifier.isStatic(method.getModifiers())) {
-            return method.invoke(null, values.stream().map(ConstantValue::getValue).toArray());
-          } else {
-            return method.invoke(values.get(0).getValue(), values.stream().map(ConstantValue::getValue).skip(1).toArray());
-          }
-        }
-      } catch (InvocationTargetException e) {
-        // ignore invocation exceptions
-      } catch (Throwable t) {
-        logger.error("Couldn't bridge ConstantTracker to runtime method {}.{}", t, owner, name);
-      }
-    }
-    return null;
   }
 }
