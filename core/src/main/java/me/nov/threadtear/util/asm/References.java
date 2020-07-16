@@ -69,10 +69,11 @@ public final class References {
     } else if (ain instanceof FrameNode) {
       FrameNode fn = (FrameNode) ain;
       Function<String, String> namingFunction = s -> {
+        //TODO: optimize by using Type class
         String newName;
         if (s.startsWith("[")) {
           String substring;
-          if (s.contains(";")) {
+          if (s.endsWith(";")) {
             substring = s.substring(s.indexOf("L") + 1, s.indexOf(";"));
             newName = "[L" + map.getOrDefault(substring, substring) + ";";
           } else {
@@ -104,7 +105,7 @@ public final class References {
     return 1;
   }
 
-  public static int remapMethodRefs(HashMap<String, ArrayList<MappedMember>> methods, AbstractInsnNode ain) {
+  public static int remapMethodRefs(Map<String, List<MappedMember>> methods, AbstractInsnNode ain) {
     if (ain instanceof MethodInsnNode) {
       MethodInsnNode min = (MethodInsnNode) ain;
       if (!methods.containsKey(min.owner))
@@ -146,7 +147,7 @@ public final class References {
     return 1;
   }
 
-  public static int remapFieldRefs(HashMap<String, ArrayList<MappedMember>> fields, AbstractInsnNode ain) {
+  public static int remapFieldRefs(Map<String, List<MappedMember>> fields, AbstractInsnNode ain) {
     if (ain instanceof FieldInsnNode) {
       FieldInsnNode fin = (FieldInsnNode) ain;
       if (!fields.containsKey(fin.owner))

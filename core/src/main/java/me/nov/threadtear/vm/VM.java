@@ -13,15 +13,15 @@ import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiPredicate;
 
 public class VM extends ClassLoader implements Opcodes {
-  public HashMap<String, Class<?>> loaded = new HashMap<>();
-
   public static final String RT_REGEX = "((?:com\\.(?:oracle|sun)|j(?:avax?|dk)|sun)\\.).*";
-  private IVMReferenceHandler handler;
-
+  public static final String threadtearPkg = ThreadtearCore.class.getPackage().getName();
+  public Map<String, Class<?>> loaded = new HashMap<>();
   public boolean noInitialization;
+  private IVMReferenceHandler handler;
   private boolean dummyLoading;
 
   private VM(IVMReferenceHandler handler, ClassLoader parent, boolean clinit) {
@@ -31,6 +31,14 @@ public class VM extends ClassLoader implements Opcodes {
     this.dummyLoading = false;
   }
 
+  public static VM constructVM(IVMReferenceHandler ivm) {
+    return new VM(ivm, ClassLoader.getSystemClassLoader(), false);
+  }
+
+  public static VM constructNonInitializingVM(IVMReferenceHandler ivm) {
+    return new VM(ivm, ClassLoader.getSystemClassLoader(), true);
+  }
+
   private Class<?> bytesToClass(String name, byte[] bytes) {
     if (loaded.containsKey(name))
       throw new RuntimeException("class " + name + " is already defined");
@@ -38,8 +46,8 @@ public class VM extends ClassLoader implements Opcodes {
       throw new RuntimeException(name + " is not an allowed class name");
     try {
       Method define = ClassLoader.class
-              .getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class,
-                      ProtectionDomain.class);
+        .getDeclaredMethod("defineClass0", String.class, byte[].class, int.class, int.class,
+          ProtectionDomain.class);
       define.setAccessible(true);
       Class<?> c = (Class<?>) define.invoke(this, name, bytes, 0, bytes.length, null);
       resolveClass(c);
@@ -59,8 +67,6 @@ public class VM extends ClassLoader implements Opcodes {
   private boolean isForbiddenName(String name) {
     return name.startsWith(threadtearPkg) || name.matches(RT_REGEX);
   }
-
-  public static final String threadtearPkg = ThreadtearCore.class.getPackage().getName();
 
   @Override
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -104,13 +110,16 @@ public class VM extends ClassLoader implements Opcodes {
     vmnode.fields.forEach(f -> f.access = fixAccess(f.access));
     vmnode.access = fixAccess(node.access);
     if (noInitialization) {
-      vmnode.methods.stream().filter(m -> m.name.equals("<clinit>")).forEach(m -> {
+      vmnode.methods.stream().filter(m -> m.name.equals("<clinit>")).findFirst().ifPresent(m -> {
         m.instructions.clear();
         m.instructions.add(new InsnNode(RETURN));
         m.tryCatchBlocks.clear();
         m.localVariables = null;
       });
-      vmnode.superName = "java/lang/Object";
+      if (Access.isEnum(vmnode.access))
+        vmnode.superName = "java/lang/Enum";
+      else
+        vmnode.superName = "java/lang/Object";
       vmnode.interfaces = new ArrayList<>();
     }
     if (removalPredicate != null) {
@@ -159,13 +168,5 @@ public class VM extends ClassLoader implements Opcodes {
 
   public void setDummyLoading(boolean dummyLoad) {
     this.dummyLoading = dummyLoad;
-  }
-
-  public static VM constructVM(IVMReferenceHandler ivm) {
-    return new VM(ivm, ClassLoader.getSystemClassLoader(), false);
-  }
-
-  public static VM constructNonInitializingVM(IVMReferenceHandler ivm) {
-    return new VM(ivm, ClassLoader.getSystemClassLoader(), true);
   }
 }
