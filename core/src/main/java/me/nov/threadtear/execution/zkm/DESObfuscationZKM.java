@@ -8,6 +8,7 @@ import me.nov.threadtear.execution.ExecutionCategory;
 import me.nov.threadtear.execution.ExecutionTag;
 import me.nov.threadtear.util.asm.Access;
 import me.nov.threadtear.util.asm.InstructionModifier;
+import me.nov.threadtear.util.asm.Instructions;
 import me.nov.threadtear.util.asm.References;
 import me.nov.threadtear.util.reflection.DynamicReflection;
 import me.nov.threadtear.vm.IVMReferenceHandler;
@@ -27,6 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -63,7 +65,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     Collection<Clazz> values = classes.values();
 //    values.forEach(this::fixInterface);
     logger.info("Decrypting references...");
-//    String s = "RawJavaType";
+//    String s = "AttributeUnknown";
     values.stream()
 //      .filter(this::hasDESEncryption)
 //      .filter(clazz -> clazz.node.name.contains(s))
@@ -146,11 +148,14 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     ClassNode classNode = clazz.node;
     logger.info("Decrypting references in class {}...", classNode.name);
     MethodNode clinit = super.getStaticInitializer(classNode);
-//    if (clinit != null) {
-//      BiPredicate<String, String> predicate = (name, desc) -> !name.equals(classNode.name)
-//        && !name.matches("javax?/(lang|crypto)/.*");
-//      Instructions.isolateCallsThatMatch(clinit, predicate, predicate);
-//    }
+    if (clinit != null) {
+      BiPredicate<String, String> predicate = (owner, desc) -> !owner.equals(classNode.name)
+        && !owner.matches("javax?/(lang|util|crypto)/.*")
+        && !desc.matches("\\[?Ljava/lang/String;|J")
+        && !desc.matches("\\(JJLjava/lang/Object;\\)L.+;")
+        && !desc.equals("(J)J");
+      Instructions.isolateCallsThatMatch(clinit, predicate, predicate);
+    }
     if (clinit == null)
       return;
     ClassNode proxyNode = this.getProxy(classNode, clinit);
@@ -161,25 +166,31 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
       .map(m -> m.instructions.toArray())
       .flatMap(Arrays::stream)
       .forEach(ain -> References.remapClassRefs(singleMap, ain));
+    proxyNode.fields.forEach(fieldNode -> References.remapFieldType(singleMap, fieldNode));
 
     VM vm = VM.constructVM(this);
     try {
       this.invokeVM(classNode, proxyNode, vm);
     } catch (InvocationTargetException e) {
       if (e.getCause() instanceof BadPaddingException) {
-        logger.warning("Skipping class {} because key could not be calculated correctly...",
-          referenceString(classNode, null));
-        return;
+//        logger.warning("Skipping class {} because the key could not be calculated correctly...",
+//          referenceString(classNode, null));
+//        return;
       }
+      e.printStackTrace();
+//      else if (e.getCause() instanceof RuntimeException && e.getCause().getMessage().contains("NoSuchMethodException")) {
+//
+//      }
     } catch (Exception e) {
-      logger.error("Failed to invoke proxy in {}, {}", referenceString(classNode, null),
-        shortStacktrace(e));
+      logger.error("Failed to invoke proxy in {}, {}", referenceString(classNode, null), shortStacktrace(e));
       e.printStackTrace();
       return;
     }
     for (MethodNode methodNode : classNode.methods) {
-      if (!methodNode.name.equals("<clinit>"))
-        continue;
+      if (methodNode.name.equals("clinitProxy"))
+        methodNode.name = "<clinit>";
+//      if (!methodNode.name.equals("<clinit>"))
+//        continue;
       Set<InvokeDynamicInsnNode> nodes = this.invokeDynamicsWithoutStrings(methodNode);
       if (nodes.isEmpty()) {
         logger.debug("Skipping method {} without obfuscated references...", methodNode.name);
@@ -281,10 +292,9 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
 
   private void invokeVM(ClassNode classNode, ClassNode proxyNode, VM vm) throws Exception {
     vm.explicitlyPreload(proxyNode, true);
-    vm.explicitlyPreload(classNode, true);
-    Class<?> proxyClass = vm.loadClass("ProxyClass", true);
+    Class<?> clazz = vm.loadClass(classNode.name.replace("/", "."));
     try {
-      proxyClass.getMethod("clinitProxy").invoke(null);
+      clazz.getMethod("clinitProxy").invoke(null);
     } catch (InvocationTargetException e) {
       if (!(e.getCause() instanceof NullPointerException)) {
         throw e;
@@ -297,44 +307,56 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
   private ClassNode getProxy(ClassNode classNode, MethodNode clinit) {
     if (clinit == null)
       return null;
-    ClassNode proxyClass = Sandbox.createClassProxy("ProxyClass");
+    ClassNode proxyClass = Sandbox.createClassProxy(classNode.name);
     if (Access.isEnum(classNode.access)) {
-      proxyClass.access |= ACC_ENUM | ACC_SUPER;
+      proxyClass.access |= ACC_ENUM | ACC_FINAL;
       proxyClass.superName = "java/lang/Enum";
     }
-    //    Instructions.isolateCallsThatMatch(clinit, (name, desc) -> !name.matches(ALLOWED_CALLS),
-//      (name, desc) -> !name.equals(classNode.name) ||
-//        (!desc.equals("[Ljava/lang/String;") && !desc.equals("Ljava/lang/String;")));
+    if ((classNode.access & ACC_SUPER) != 0) {
+      proxyClass.access |= ACC_SUPER;
+    }
+    if (!classNode.superName.equals("java/lang/Object")) {
+      proxyClass.superName = classNode.superName;
+    }
+//    Instructions.isolateCallsThatMatch(clinit,
+//      (owner, desc) -> !owner.equals(classNode.name) && !owner.matches("javax?/(lang|crypto)/.*"),
+//      (owner, desc) -> !owner.equals(classNode.name) && !owner.matches("javax?/(lang|crypto)/.*")
+//        || !desc.matches("\\[?Ljava/lang/String;")
+//    );
 
-    //TODO: optimize by searching for all method calls in clinit and copying them-
     List<MethodNode> methods = classNode.methods;
-    int clinitIndex = methods.indexOf(clinit);
-    Set<MethodNode> copiedMethods = new HashSet<>(methods.subList(clinitIndex + 1, methods.size()));
+      int clinitIndex = methods.indexOf(clinit);
+      Set<MethodNode> copiedMethods = new HashSet<>(methods.subList(clinitIndex + 1, methods.size()));
 
-    Set<MethodNode> methodInvocations = Arrays.stream(clinit.instructions.toArray())
-      .filter(node -> node instanceof MethodInsnNode)
-      .map(node -> (MethodInsnNode) node)
-      .filter(node -> node.owner.equals(classNode.name))
-      .flatMap(node -> classNode.methods.stream()
-        .filter(methodNode -> methodNode.name.equals(node.name) && methodNode.desc.equals(node.desc)))
-      .collect(Collectors.toSet());
+      Set<MethodNode> methodInvocations = Arrays.stream(clinit.instructions.toArray())
+        .filter(node -> node instanceof MethodInsnNode)
+        .map(node -> (MethodInsnNode) node)
+        .filter(node -> node.owner.equals(classNode.name))
+        .flatMap(node -> classNode.methods.stream()
+          .filter(methodNode -> methodNode.name.equals(node.name) && methodNode.desc.equals(node.desc)))
+        .collect(Collectors.toSet());
 
-    Set<MethodNode> proxyMethods = new HashSet<>();
-    proxyMethods.addAll(copiedMethods);
-    proxyMethods.addAll(methodInvocations);
-    proxyClass.methods.addAll(proxyMethods);
-    clinit.name = "clinitProxy";
-    proxyClass.methods.add(clinit);
+      Set<MethodNode> proxyMethods = new HashSet<>();
+      proxyMethods.addAll(copiedMethods);
+      proxyMethods.addAll(methodInvocations);
+      proxyClass.methods.addAll(proxyMethods);
+      clinit.name = "clinitProxy";
+      proxyClass.methods.add(clinit);
 
-    Set<FieldNode> fieldNodes = classNode.fields.stream()
-      .filter(it -> Access.isStatic(it.access))
-      .filter(it -> it.desc.equals("J") || it.desc.equals("Ljava/util/Map;")
-        || it.desc.matches("\\[?Ljava/lang/String;"))
-      .collect(Collectors.toSet());
-    if (fieldNodes.isEmpty())
-      return null;
-    proxyClass.fields.addAll(fieldNodes);
-
+//    Set<FieldNode> fieldNodes;
+//    if (Access.isEnum(classNode.access)) {
+//      fieldNodes = new HashSet<>(classNode.fields);
+//    } else {
+//      fieldNodes = classNode.fields.stream()
+//        .filter(it -> Access.isStatic(it.access))
+//        .filter(it -> it.desc.equals("J") || it.desc.equals("Ljava/util/Map;")
+//          || it.desc.matches("\\[?Ljava/lang/String;"))
+//        .collect(Collectors.toSet());
+//    }
+//    if (fieldNodes.isEmpty())
+//      return null;
+//    proxyClass.fields.addAll(fieldNodes);
+    proxyClass.fields.addAll(classNode.fields);
     return proxyClass;
   }
 
