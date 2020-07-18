@@ -80,11 +80,11 @@ public class InstructionModifier {
   }
 
   public void apply(MethodNode methodNode) {
+    prepends.forEach((insn, list) -> methodNode.instructions.insertBefore(insn, list));
+    appends.forEach((insn, list) -> methodNode.instructions.insert(insn, list));
     replacements.forEach((insn, list) -> {
       methodNode.instructions.insert(insn, list);
       methodNode.instructions.remove(insn);
     });
-    prepends.forEach((insn, list) -> methodNode.instructions.insertBefore(insn, list));
-    appends.forEach((insn, list) -> methodNode.instructions.insert(insn, list));
   }
 }

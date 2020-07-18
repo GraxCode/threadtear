@@ -1,26 +1,35 @@
 package me.nov.threadtear.execution.dasho;
 
-import java.lang.reflect.Method;
-import java.util.*;
-
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.tree.analysis.*;
-
-import me.nov.threadtear.analysis.stack.*;
-import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.asm.Instructions;
+import me.nov.threadtear.analysis.stack.BasicReferenceHandler;
+import me.nov.threadtear.analysis.stack.ConstantValue;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.util.asm.InstructionModifier;
 import me.nov.threadtear.util.format.Strings;
-import me.nov.threadtear.vm.*;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.Sandbox;
+import me.nov.threadtear.vm.VM;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.Frame;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class StringObfuscationDashO extends Execution implements IVMReferenceHandler {
 
-  private static final String DASHO_DECRPYTION_METHOD_DESC1 = "(ILjava/lang/String;)Ljava/lang/String;";
-  private static final String DASHO_DECRPYTION_METHOD_DESC2 = "(Ljava/lang/String;I)Ljava/lang/String;";
 
+  private static final List<String> DESCS = Arrays.asList("(ILjava/lang/String;)Ljava/lang/String;",
+    "(Ljava/lang/String;I)Ljava/lang/String;", "(Ljava/lang/String;II)Ljava/lang/String;");
   private Map<String, Clazz> classes;
   private int encrypted;
   private int decrypted;
   private boolean verbose;
+  private ClassNode fakeInvocationClone;
 
   public StringObfuscationDashO() {
     super(ExecutionCategory.DASHO, "String obfuscation removal",
@@ -50,48 +59,45 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     ClassNode cn = c.node;
     logger.collectErrors(c);
     cn.methods.forEach(m -> {
-      InsnList rewrittenCode = new InsnList();
-      Map<LabelNode, LabelNode> labels = Instructions.cloneLabels(m.instructions);
-
-      // as we can't add instructions because frame index
-      // and instruction index
-      // wouldn't fit together anymore we have to do it
-      // this way
-      loopConstantFrames(cn, m, new BasicReferenceHandler(), (ain, frame) -> {
-        for (AbstractInsnNode newInstr : tryReplaceMethods(cn, m, ain, frame)) {
-          rewrittenCode.add(newInstr.clone(labels));
-        }
-      });
-      if (rewrittenCode.size() > 0) {
-        Instructions.updateInstructions(m, labels, rewrittenCode);
-      }
+      InstructionModifier modifier = new InstructionModifier();
+      loopConstantFrames(cn, m, new BasicReferenceHandler(),
+        (ain, frame) -> tryReplaceMethods(cn, m, modifier, ain, frame));
+      modifier.apply(m);
     });
   }
 
-  private AbstractInsnNode[] tryReplaceMethods(ClassNode cn, MethodNode m, AbstractInsnNode ain,
-                                               Frame<ConstantValue> frame) {
+  private void tryReplaceMethods(ClassNode cn, MethodNode m, InstructionModifier modifier, AbstractInsnNode ain,
+                                 Frame<ConstantValue> frame) {
     if (ain.getOpcode() == INVOKESTATIC) {
       MethodInsnNode min = (MethodInsnNode) ain;
-      if (min.desc.equals(DASHO_DECRPYTION_METHOD_DESC1) || min.desc.equals(DASHO_DECRPYTION_METHOD_DESC2)) {
+      if (DESCS.contains(min.desc)) {
         try {
           encrypted++;
-          ConstantValue second = frame.getStack(frame.getStackSize() - 2);
-          ConstantValue top = frame.getStack(frame.getStackSize() - 1);
-          if (top.isKnown() && second.isKnown()) {
-            // strings are not high utf and no high sdev,
-            // don't check
-            String realString = invokeProxy(cn, m, min, top, second);
-            if (realString != null) {
-              if (Strings.isHighUTF(realString)) {
-                logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
-              }
-              this.decrypted++;
-              return new AbstractInsnNode[]{new InsnNode(POP2), new LdcInsnNode(realString)};
-            } else {
-              logger.error("Failed to decrypt string in {}", referenceString(cn, m));
+          Type[] args = Type.getArgumentTypes(min.desc);
+          for (int i = 0; i < args.length; i++)
+            if (!frame.getStack(frame.getStackSize() - 1 - i).isKnown()) {
+              if (verbose)
+                logger.error("Failed to decrypt string in {}", referenceString(cn, m));
+              return;
             }
-          } else if (verbose) {
-            logger.warning("Unknown top stack value in {}, skipping", referenceString(cn, m));
+          // strings are not high utf and no high sdev,
+          // don't check
+          String realString = invokeProxy(cn, m, min, args, frame);
+          if (realString != null) {
+            if (Strings.isHighUTF(realString)) {
+              logger.warning("String may have not decrypted correctly in {}", referenceString(cn, m));
+            }
+            this.decrypted++;
+
+            InsnList il = new InsnList();
+            for (Type arg : args) {
+              // pop off remaining decryption values
+              il.add(new InsnNode(arg.getSize() > 1 ? POP2 : POP));
+            }
+            modifier.prepend(min, il);
+            modifier.replace(min, new LdcInsnNode(realString));
+          } else {
+            logger.error("Failed to decrypt string in {}", referenceString(cn, m));
           }
         } catch (Throwable e) {
           if (verbose) {
@@ -101,15 +107,14 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
         }
       }
     }
-    return new AbstractInsnNode[]{ain};
   }
 
-  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top, ConstantValue second)
+  private String invokeProxy(ClassNode cn, MethodNode m, MethodInsnNode min, Type[] args, Frame<ConstantValue> frame)
     throws Exception {
     VM vm = VM.constructNonInitializingVM(this);
-    createFakeClone(cn, m, min, top, second); // create a
+    createFakeClone(cn, m, min, args, frame); // create a
     // duplicate of the current class,
-    // we need this because stringer checks for
+    // we need this because dashO checks for
     // stacktrace method name and class
 
     ClassNode decryptionMethodOwner = classes.get(min.owner).node;
@@ -125,7 +130,7 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     // dupe class
 
     if (m.name.equals("<init>")) {
-      loadedClone.newInstance(); // special case:
+      loadedClone.getDeclaredConstructor().newInstance(); // special case:
       // constructors have to be invoked by newInstance.
       // Sandbox.createMethodProxy automatically handles
       // access and super call
@@ -140,12 +145,13 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     return (String) loadedClone.getDeclaredField("proxyReturn").get(null);
   }
 
-  private void createFakeClone(ClassNode cn, MethodNode m, MethodInsnNode min, ConstantValue top,
-                               ConstantValue second) {
+  private void createFakeClone(ClassNode cn, MethodNode m, MethodInsnNode min, Type[] args,
+                               Frame<ConstantValue> frame) {
     ClassNode node = Sandbox.createClassProxy(cn.name);
     InsnList instructions = new InsnList();
-    instructions.add(new LdcInsnNode(second.getValue()));
-    instructions.add(new LdcInsnNode(top.getValue()));
+    for (int i = 0; i < args.length; i++)
+      instructions.insert(new LdcInsnNode(frame.getStack(frame.getStackSize() - 1 - i).getValue()));
+
     instructions.add(min.clone(null)); // we can clone
     // original method here
     instructions.add(new FieldInsnNode(PUTSTATIC, node.name, "proxyReturn", "Ljava/lang/String;"));
@@ -160,8 +166,6 @@ public class StringObfuscationDashO extends Execution implements IVMReferenceHan
     }
     fakeInvocationClone = node;
   }
-
-  private ClassNode fakeInvocationClone;
 
   @Override
   public ClassNode tryClassLoad(String name) {
