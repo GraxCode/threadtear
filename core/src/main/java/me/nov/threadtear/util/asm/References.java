@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -105,7 +106,7 @@ public final class References {
     return 1;
   }
 
-  public static int remapMethodRefs(Map<String, List<MappedMember>> methods, AbstractInsnNode ain) {
+  public static int remapMethodRefs(Map<String, ? extends List<MappedMember>> methods, AbstractInsnNode ain) {
     if (ain instanceof MethodInsnNode) {
       MethodInsnNode min = (MethodInsnNode) ain;
       if (!methods.containsKey(min.owner))
@@ -147,7 +148,7 @@ public final class References {
     return 1;
   }
 
-  public static int remapFieldRefs(Map<String, List<MappedMember>> fields, AbstractInsnNode ain) {
+  public static int remapFieldRefs(Map<String, ? extends List<MappedMember>> fields, AbstractInsnNode ain) {
     if (ain instanceof FieldInsnNode) {
       FieldInsnNode fin = (FieldInsnNode) ain;
       if (!fields.containsKey(fin.owner))
