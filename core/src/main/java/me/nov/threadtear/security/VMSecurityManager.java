@@ -10,6 +10,7 @@ import java.security.Permission;
 
 
 public final class VMSecurityManager extends SecurityManager {
+  private static final String granted = "sun\\..*";
   private boolean grantAll;
   private boolean checkReflection = true;
 
@@ -98,7 +99,7 @@ public final class VMSecurityManager extends SecurityManager {
 
   @Override
   public final void checkPackageAccess(String pkg) {
-    if (pkg.startsWith("sun.misc") || pkg.startsWith(ThreadtearCore.class.getPackage().getName()) || checkReflection(pkg)) {
+    if (pkg.startsWith("javax.swing") || pkg.startsWith("sun.misc") || pkg.startsWith(ThreadtearCore.class.getPackage().getName()) || checkReflection(pkg)) {
       throwIfNotGranted();
     }
   }
@@ -115,10 +116,8 @@ public final class VMSecurityManager extends SecurityManager {
   private final void throwIfNotGranted() {
     if (!grantAccess())
       throw new SecurityException("An execution ran code that it's not supposed to. If you think this is a " +
-              "false call, open an issue on GitHub.");
+        "false call, open an issue on GitHub.");
   }
-
-  private static final String granted = "sun\\..*";
 
   private final boolean grantAccess() {
     if (grantAll) {
@@ -130,7 +129,7 @@ public final class VMSecurityManager extends SecurityManager {
         continue;
       if (!isLocal(ste.getClassName())) {
         LogWrapper.logger.warning("Dynamic class was blocked trying to execute forbidden code: {}, {}",
-                ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
+          ste.getClassName(), Thread.currentThread().getStackTrace()[3].getMethodName());
         return false;
       }
     }
