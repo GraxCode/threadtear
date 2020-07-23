@@ -5,7 +5,6 @@ import com.github.weisj.darklaf.settings.ThemeSettings;
 import me.nov.threadtear.execution.Clazz;
 import me.nov.threadtear.execution.Execution;
 import me.nov.threadtear.logging.LogWrapper;
-import me.nov.threadtear.security.VMSecurityManager;
 import me.nov.threadtear.swing.SwingUtils;
 import me.nov.threadtear.swing.frame.LogFrame;
 import me.nov.threadtear.swing.laf.LookAndFeel;
@@ -20,27 +19,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Threadtear extends JFrame {
   private static final long serialVersionUID = 1L;
+  private static Threadtear instance;
   public TreePanel listPanel;
   public ConfigurationPanel configPanel;
   public LogFrame logFrame;
   public StatusBar statusBar;
-  private static Threadtear instance;
-
-  public static Threadtear getInstance() {
-    if (instance == null) instance = new Threadtear();
-    return instance;
-  }
 
   public Threadtear() {
     logFrame = new LogFrame();
@@ -51,6 +38,25 @@ public class Threadtear extends JFrame {
     this.addWindowListener(new ExitListener(this));
     this.initializeFrame();
     this.initializeMenu();
+  }
+
+  public static Threadtear getInstance() {
+    if (instance == null) instance = new Threadtear();
+    return instance;
+  }
+
+  public static void main(String[] args) throws Exception {
+    LookAndFeel.init();
+    LookAndFeel.setLookAndFeel();
+    ThreadtearCore.configureEnvironment();
+    ThreadtearCore.configureLoggers();
+    configureGUILoggers();
+    getInstance().setVisible(true);
+  }
+
+  private static void configureGUILoggers() {
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
+    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   private void initializeMenu() {
@@ -91,7 +97,7 @@ public class Threadtear extends JFrame {
     log.addActionListener(l -> logFrame.setVisible(true));
     help.add(log);
     JMenuItem laf = new JMenuItem("Look and feel settings");
-    laf.setIcon(ThemeSettings.getInstance().getIcon());
+    laf.setIcon(ThemeSettings.getIcon());
     laf.addActionListener(l -> ThemeSettings.showSettingsDialog(this));
     JMenuItem about = new HelpMenuItem("About threadtear " + CoreUtils.getVersion());
     about.addActionListener(l -> JOptionPane.showMessageDialog(this,
@@ -104,7 +110,16 @@ public class Threadtear extends JFrame {
         ".<br>You are welcome to contribute to this project on " +
         "GitHub!<br><br><b>Do <i>NOT</i> use this on files you don't have legal rights for!</b>",
       "About", JOptionPane.INFORMATION_MESSAGE));
+    JMenuItem sysInfo = new JMenuItem("System information", SwingUtils.getIcon("analysis.svg"));
+    sysInfo.addActionListener(l -> JOptionPane.showMessageDialog(this,
+      String.format("<html>Java version:\t<b>%s</b>" +
+          "<br>VM name:\t<b>%s</b><br>VM vendor:\t<b>%s</b><br>Java path:\t<b>%s</b><br>Attachable:\t<b>%b</b>" +
+          "<br>Class support up to:\t<b>%s</b>", System.getProperty("java.version"),
+        System.getProperty("java.vm.name"), System.getProperty("java.vm.vendor"), System.getProperty("java.home"),
+        CoreUtils.isAttachable(), CoreUtils.getClassSupport()),
+      "About", JOptionPane.INFORMATION_MESSAGE));
     help.add(about);
+    help.add(sysInfo);
     help.add(laf);
     bar.add(help);
     this.setJMenuBar(bar);
@@ -126,20 +141,6 @@ public class Threadtear extends JFrame {
     int height = screenSize.height / 2;
     setBounds(screenSize.width / 2 - width / 2, screenSize.height / 2 - height / 2, width, height);
     setMinimumSize(new Dimension((int) (width / 1.25), (int) (height / 1.25)));
-  }
-
-  public static void main(String[] args) throws Exception {
-    LookAndFeel.init();
-    LookAndFeel.setLookAndFeel();
-    ThreadtearCore.configureEnvironment();
-    ThreadtearCore.configureLoggers();
-    configureGUILoggers();
-    getInstance().setVisible(true);
-  }
-
-  private static void configureGUILoggers() {
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("console"));
-    LogWrapper.logger.addLogger(LoggerFactory.getLogger("statusbar"));
   }
 
   public void run(boolean verbose, boolean disableSecurity) {

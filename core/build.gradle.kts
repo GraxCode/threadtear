@@ -16,6 +16,7 @@ dependencies {
     implementation("org.ow2.asm:asm")
     implementation("org.ow2.asm:asm-analysis")
     implementation("org.ow2.asm:asm-util")
+    implementation("org.ow2.asm:asm-commons")
 
     implementation("com.github.leibnitz27:cfr") { isChanging = true }
     implementation("ch.qos.logback:logback-classic")

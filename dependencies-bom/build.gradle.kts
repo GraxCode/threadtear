@@ -43,5 +43,6 @@ dependencies {
         apiv("org.ow2.asm:asm-tree", "asm")
         apiv("org.ow2.asm:asm-analysis", "asm")
         apiv("org.ow2.asm:asm-util", "asm")
+        apiv("org.ow2.asm:asm-commons", "asm")
     }
 }
