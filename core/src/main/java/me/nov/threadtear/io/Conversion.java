@@ -3,6 +3,7 @@ package me.nov.threadtear.io;
 import java.io.*;
 import java.nio.file.Files;
 
+import me.nov.threadtear.logging.LogWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -36,7 +37,7 @@ public final class Conversion {
       try {
         cr.accept(cn, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
       } catch (Exception e2) {
-        // e2.printStackTrace();
+        LogWrapper.logger.error("Failed to load class ", e2);
       }
     }
     cr = null;

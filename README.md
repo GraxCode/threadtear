@@ -145,7 +145,7 @@ public class MyExecution extends Execution implements IConstantReferenceHandler 
 	}
 }
 ```
-Don't forget to add your execution to the tree in `me.nov.threadtear.swing.component.dialog.ExecutionSelection`!
+Don't forget to add your execution to the tree in `me.nov.threadtear.execution.ExecutionLink`!
 ## Tips & Tricks
 There are some tricks that can help you identify and deobfuscate jar files successfully. Before running executions, decompile the code to find out what needs to be used. 
 You can use the implemented decompiler for that.

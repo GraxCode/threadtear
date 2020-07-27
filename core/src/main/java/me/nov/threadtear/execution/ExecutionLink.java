@@ -15,6 +15,7 @@ import me.nov.threadtear.execution.generic.KnownConditionalJumps;
 import me.nov.threadtear.execution.generic.ObfuscatedAccess;
 import me.nov.threadtear.execution.generic.TryCatchObfuscationRemover;
 import me.nov.threadtear.execution.generic.inliner.ArgumentInliner;
+import me.nov.threadtear.execution.generic.inliner.JSRInliner;
 import me.nov.threadtear.execution.paramorphism.AccessObfusationParamorphism;
 import me.nov.threadtear.execution.paramorphism.BadAttributeRemover;
 import me.nov.threadtear.execution.paramorphism.StringObfuscationParamorphism;
@@ -33,8 +34,9 @@ public class ExecutionLink {
     add(RemoveUnnecessary.class);
     add(RemoveUnusedVariables.class);
     add(RemoveAttributes.class);
-    add(ArgumentInliner.class);
 
+    add(ArgumentInliner.class);
+    add(JSRInliner.class);
     add(ObfuscatedAccess.class);
     add(KnownConditionalJumps.class);
     add(ConvertCompareInstructions.class);
