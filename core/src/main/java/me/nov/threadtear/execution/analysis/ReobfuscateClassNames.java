@@ -25,7 +25,7 @@ public class ReobfuscateClassNames extends Execution {
       logger.info("Generated {} unique easy-to-remember strings", map.size());
       logger.info("Renaming classes and source files to original names");
     }
-    classes.values().stream().forEach(c -> {
+    classes.values().forEach(c -> {
       c.node.sourceFile = c.node.name; // to have a
       // connection with original file
       c.node.name = map.getOrDefault(c.node.name, c.node.name);

@@ -12,14 +12,10 @@ import java.awt.event.*;
  * http://creativecommons.org/licenses/publicdomain/
  */
 public final class AutoCompletion extends PlainDocument {
-  private AutoCompletion() {
-  }
-
   JComboBox<?> comboBox;
   ComboBoxModel<?> model;
   JTextComponent editor;
   boolean selecting = false;
-  boolean hidePopupOnFocusLoss;
   boolean hitBackspace = false;
   boolean hitBackspaceOnSelection;
 

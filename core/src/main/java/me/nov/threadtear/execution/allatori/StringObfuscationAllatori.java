@@ -33,7 +33,7 @@ public class StringObfuscationAllatori extends Execution implements IVMReference
     this.encrypted = 0;
     this.decrypted = 0;
 
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching Allatori 7.3 string obfuscation have been found!");
       return false;

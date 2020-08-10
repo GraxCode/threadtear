@@ -36,8 +36,7 @@ public final class JarIO {
             classes.add(new Clazz(cn, en, jar));
           }
         } catch (Exception e) {
-          e.printStackTrace();
-          LogWrapper.logger.error("Failed to load file " + name);
+          LogWrapper.logger.error("Failed to load file {}", e, name);
         }
       }
     } catch (Exception e) {

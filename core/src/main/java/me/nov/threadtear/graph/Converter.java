@@ -18,6 +18,7 @@ public class Converter implements Opcodes {
   }
 
   public Converter(AbstractInsnNode[] array) {
+    this.tcbs = Collections.emptyList();
     this.nodes = new ArrayList<>(Arrays.asList(array));
   }
 

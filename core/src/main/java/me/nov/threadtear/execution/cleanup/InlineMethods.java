@@ -166,7 +166,7 @@ public class InlineMethods extends Execution {
       // abstract methods or similar
       return false;
     }
-    return !StreamSupport.stream(m.instructions.spliterator(), false).anyMatch(this::isInvocationOrJump);
+    return StreamSupport.stream(m.instructions.spliterator(), false).noneMatch(this::isInvocationOrJump);
   }
 
   public boolean isInvocationOrJump(AbstractInsnNode ain) {

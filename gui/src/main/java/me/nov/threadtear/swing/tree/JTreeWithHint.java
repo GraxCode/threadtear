@@ -8,10 +8,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class JTreeWithHint extends JTree {
   private static final long serialVersionUID = 1L;
   private final JLabel hintRenderer;
-  protected String hint;
 
   public JTreeWithHint(String hint) {
-    this.hint = hint;
     hintRenderer = new JLabel(hint);
     hintRenderer.setOpaque(false);
     //this.putClientProperty("JTree.alternateRowColor", true);

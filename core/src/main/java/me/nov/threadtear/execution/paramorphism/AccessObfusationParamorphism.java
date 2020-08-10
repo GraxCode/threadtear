@@ -39,10 +39,10 @@ public class AccessObfusationParamorphism extends Execution implements IVMRefere
     logger.info("Decrypting all invokedynamic references");
     logger.warning("Make sure all required libraries or dynamic classes are in the jar itself, or else some" +
             " invokedynamics cannot be deobfuscated!");
-    classes.values().stream().forEach(this::patchThrowableDepth);
+    classes.values().forEach(this::patchThrowableDepth);
     logger.info("Make sure to remove bad attributes first!");
     logger.info("Starting decryption, this could take some time!");
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching Paramorphism 2.1 have been found!");
       return false;

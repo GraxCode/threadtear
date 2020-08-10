@@ -96,6 +96,7 @@ public final class DynamicReflection implements Opcodes {
     throw new IllegalArgumentException("not a bootstrap tag: " + tag);
   }
 
+  @Deprecated
   public static void setFinalStatic(Field field, Object newValue) throws Exception {
     field.setAccessible(true);
 

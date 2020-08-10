@@ -37,10 +37,10 @@ public final class Conversion {
       try {
         cr.accept(cn, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
       } catch (Exception e2) {
+        e2.printStackTrace();
         LogWrapper.logger.error("Failed to load class ", e2);
       }
     }
-    cr = null;
     return cn;
   }
 

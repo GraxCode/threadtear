@@ -48,7 +48,7 @@ public class RestoreSourceFiles extends Execution {
       }
     }
     logger.info("Updating class names");
-    classes.values().stream().forEach(c -> c.node.name = map.getOrDefault(c.node.name, c.node.name));
+    classes.values().forEach(c -> c.node.name = map.getOrDefault(c.node.name, c.node.name));
     logger.info("Updating code references");
     int refs =
             classes.values().stream().map(c -> c.node.methods).flatMap(List::stream).map(m -> m.instructions.toArray())

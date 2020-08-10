@@ -61,7 +61,7 @@ public class AccessObfusationZKM extends Execution implements IVMReferenceHandle
       " invokedynamics cannot be deobfuscated!");
     this.vm = VM.constructNonInitializingVM(this);
     this.vm.setDummyLoading(true);
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching ZKM has been found!");
       return false;

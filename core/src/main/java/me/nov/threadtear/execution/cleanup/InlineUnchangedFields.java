@@ -41,7 +41,7 @@ public class InlineUnchangedFields extends Execution {
   }
 
   private boolean isNotReferenced(ClassNode cn, FieldNode f) {
-    return fieldPuts.stream().allMatch(fin -> !isReferenceTo(cn, fin, f));
+    return fieldPuts.stream().noneMatch(fin -> isReferenceTo(cn, fin, f));
   }
 
   public void inline(ClassNode cn, FieldNode fn) {

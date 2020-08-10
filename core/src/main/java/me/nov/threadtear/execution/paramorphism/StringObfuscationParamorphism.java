@@ -34,7 +34,7 @@ public class StringObfuscationParamorphism extends Execution implements IVMRefer
     this.encrypted = 0;
     this.decrypted = 0;
     this.vm = VM.constructVM(this);
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching Paramorphism 2.1 string obfuscation have been found!");
       return false;

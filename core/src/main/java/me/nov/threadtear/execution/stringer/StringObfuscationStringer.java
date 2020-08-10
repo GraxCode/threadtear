@@ -64,7 +64,7 @@ public class StringObfuscationStringer extends Execution implements IVMReference
       } catch (InterruptedException e) {
       }
     }
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No strings matching stringer 9 string obfuscation have been found!");
       return false;

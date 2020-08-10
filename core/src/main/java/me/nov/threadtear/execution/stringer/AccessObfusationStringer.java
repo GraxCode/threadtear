@@ -41,7 +41,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
     this.vm = VM.constructVM(this); // can't use
     // non-initializing as decryption class needs <clinit>
     vm.setDummyLoading(true);
-    classes.values().stream().forEach(this::decrypt);
+    classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
       return false;
