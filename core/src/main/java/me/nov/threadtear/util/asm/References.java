@@ -5,8 +5,6 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,7 +27,11 @@ public final class References {
       min.desc = Descriptor.fixMethodDesc(min.desc, map);
     } else if (ain instanceof FieldInsnNode) {
       FieldInsnNode fin = (FieldInsnNode) ain;
+//      String previousOwner = fin.owner;
       fin.owner = map.getOrDefault(fin.owner, fin.owner);
+//      if (fin.desc.endsWith(";") && fin.desc.substring(fin.desc.indexOf("L") + 1, fin.desc.length() - 1).equals(previousOwner))
+//        fin.desc = "L" + fin.owner + ";";
+//      else
       fin.desc = Descriptor.fixTypeDesc(fin.desc, map);
     } else if (ain instanceof TypeInsnNode) {
       TypeInsnNode tin = (TypeInsnNode) ain;

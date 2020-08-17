@@ -1,12 +1,11 @@
 package me.nov.threadtear.vm;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import me.nov.threadtear.util.asm.Instructions;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-import me.nov.threadtear.util.asm.Instructions;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class Sandbox implements Opcodes {
   private Sandbox() {
@@ -68,7 +67,9 @@ public final class Sandbox implements Opcodes {
     clone.version = 52;
     clone.name = cn.name;
     clone.sourceFile = cn.sourceFile;
-    clone.superName = "java/lang/Object";
+    if (!cn.superName.equals("java/lang/Object"))
+      clone.superName = cn.superName;
+      //    clone.superName = "java/lang/Object";
     cn.fields.forEach(f -> clone.fields.add(new FieldNode(f.access, f.name, f.desc, f.signature, f.value)));
     cn.methods.forEach(m -> clone.methods.add(copyMethod(m)));
     return clone;
