@@ -14,3 +14,8 @@ build
 
 # Ignore logs
 *.log
+
+# Ignore compiled classes in modules
+/core/out/
+/gui/out/
+/out/
