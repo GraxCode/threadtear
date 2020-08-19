@@ -40,6 +40,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
   private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = "\\(Ljava/lang/invoke/MethodHandles" +
     "\\$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)" +
     "Ljava/lang/invoke/MethodHandle;";
+  private static final String ZKM_REFERENCE_DESC_REGEX = "\\((?:L.*;)?J+\\)(?:\\[?(?:I|J|(?:L.*;)))";
 
   private boolean verbose;
   private int strings, encryptedStrings;
@@ -153,7 +154,8 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
         && !owner.matches("javax?/(lang|util|crypto)/.*")
         && !desc.matches("\\[?Ljava/lang/String;|J")
         && !desc.matches("\\(JJLjava/lang/Object;\\)L.+;")
-        && !desc.equals("(J)J");
+        && !desc.equals("(J)J")
+        && !desc.matches(ZKM_REFERENCE_DESC_REGEX);
       Instructions.isolateCallsThatMatch(clinit, predicate, predicate);
     }
     if (clinit == null)
@@ -379,8 +381,12 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     classNode.methods.clear();
   }
 
-  private long getFieldKey(ClassNode classNode, InvokeDynamicInsnNode node,
-                           InsnList instructions, VM vm) throws Exception {
+  private long getFieldKey(
+    ClassNode classNode,
+    InvokeDynamicInsnNode node,
+    InsnList instructions,
+    VM vm
+  ) throws Exception {
     VarInsnNode varInsnNode;
     AbstractInsnNode previous = node.getPrevious();
     if (previous instanceof VarInsnNode) {
@@ -469,7 +475,8 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
 
   private Set<InvokeDynamicInsnNode> getInvokeDynamicInstructions(MethodNode methodNode) {
     return this.getInvokeDynamicInstructions(methodNode,
-      node -> node.bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC));
+      node -> node.bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC)
+    );
   }
 
   private Set<InvokeDynamicInsnNode> getInvokeDynamicInstructions(
