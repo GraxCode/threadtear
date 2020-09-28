@@ -40,6 +40,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
   private static final String ZKM_INVOKEDYNAMIC_REAL_BOOTSTRAP_DESC_REGEX = "\\(Ljava/lang/invoke/MethodHandles" +
     "\\$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[JI]+\\)" +
     "Ljava/lang/invoke/MethodHandle;";
+  private static final String ZKM_REFERENCE_DESC_REGEX = "\\((?:L.*;)?J+\\)(?:\\[?(?:I|J|(?:L.*;)))";
 
   private boolean verbose;
   private int strings, encryptedStrings;
@@ -47,7 +48,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
   private Map<String, Clazz> classes;
 
   public DESObfuscationZKM() {
-    super(ExecutionCategory.ZKM, "ZKM DES case deobfuscator",
+    super(ExecutionCategory.ZKM, "ZKM DES case deobfuscator (WIP, unstable)",
       "Deobfuscates string / access obfuscation with DES cipher." +
         "<br>Tested on ZKM 14, could work on newer versions too.", ExecutionTag.POSSIBLE_DAMAGE,
       ExecutionTag.POSSIBLY_MALICIOUS);
@@ -65,7 +66,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     Collection<Clazz> values = classes.values();
 //    values.forEach(this::fixInterface);
     logger.info("Decrypting references...");
-//    String s = "AttributeUnknown";
+//    String s = "constantpool/";
     values.stream()
 //      .filter(this::hasDESEncryption)
 //      .filter(clazz -> clazz.node.name.contains(s))
@@ -153,7 +154,8 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
         && !owner.matches("javax?/(lang|util|crypto)/.*")
         && !desc.matches("\\[?Ljava/lang/String;|J")
         && !desc.matches("\\(JJLjava/lang/Object;\\)L.+;")
-        && !desc.equals("(J)J");
+        && !desc.equals("(J)J")
+        && !desc.matches(ZKM_REFERENCE_DESC_REGEX);
       Instructions.isolateCallsThatMatch(clinit, predicate, predicate);
     }
     if (clinit == null)
@@ -172,7 +174,8 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     try {
       this.invokeVM(classNode, proxyNode, vm);
     } catch (InvocationTargetException e) {
-      if (e.getCause() instanceof BadPaddingException) {
+      Throwable cause = e.getCause();
+      if (cause instanceof BadPaddingException) {
 //        logger.warning("Skipping class {} because the key could not be calculated correctly...",
 //          referenceString(classNode, null));
 //        return;
@@ -247,11 +250,16 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
           try {
             methodHandle = (MethodHandle) bootstrapMethod.invoke(null, args.toArray());
           } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
             if (verbose)
               logger.error("Exception", e);
+            if (cause instanceof ArrayIndexOutOfBoundsException) {
+              logger.warning("Something went wrong while invoking a bootstrap method", shortStacktrace(cause));
+              return;
+            }
             logger.error("Failed to get MethodHandle in {}, {}", referenceString(classNode, methodNode),
-              shortStacktrace(e));
-            e.printStackTrace();
+              shortStacktrace(cause));
+//            e.printStackTrace();
             continue;
           }
           MethodHandleInfo methodHandleInfo = DynamicReflection.revealMethodInfo(methodHandle);
@@ -291,7 +299,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
   }
 
   private void invokeVM(ClassNode classNode, ClassNode proxyNode, VM vm) throws Exception {
-    vm.explicitlyPreload(proxyNode, true);
+//    vm.explicitlyPreload(proxyNode, true);
     Class<?> clazz = vm.loadClass(classNode.name.replace("/", "."));
     try {
       clazz.getMethod("clinitProxy").invoke(null);
@@ -325,23 +333,23 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
 //    );
 
     List<MethodNode> methods = classNode.methods;
-      int clinitIndex = methods.indexOf(clinit);
-      Set<MethodNode> copiedMethods = new HashSet<>(methods.subList(clinitIndex + 1, methods.size()));
+    int clinitIndex = methods.indexOf(clinit);
+    Set<MethodNode> copiedMethods = new HashSet<>(methods.subList(clinitIndex + 1, methods.size()));
 
-      Set<MethodNode> methodInvocations = Arrays.stream(clinit.instructions.toArray())
-        .filter(node -> node instanceof MethodInsnNode)
-        .map(node -> (MethodInsnNode) node)
-        .filter(node -> node.owner.equals(classNode.name))
-        .flatMap(node -> classNode.methods.stream()
-          .filter(methodNode -> methodNode.name.equals(node.name) && methodNode.desc.equals(node.desc)))
-        .collect(Collectors.toSet());
+    Set<MethodNode> methodInvocations = Arrays.stream(clinit.instructions.toArray())
+      .filter(node -> node instanceof MethodInsnNode)
+      .map(node -> (MethodInsnNode) node)
+      .filter(node -> node.owner.equals(classNode.name))
+      .flatMap(node -> classNode.methods.stream()
+        .filter(methodNode -> methodNode.name.equals(node.name) && methodNode.desc.equals(node.desc)))
+      .collect(Collectors.toSet());
 
-      Set<MethodNode> proxyMethods = new HashSet<>();
-      proxyMethods.addAll(copiedMethods);
-      proxyMethods.addAll(methodInvocations);
-      proxyClass.methods.addAll(proxyMethods);
-      clinit.name = "clinitProxy";
-      proxyClass.methods.add(clinit);
+    Set<MethodNode> proxyMethods = new HashSet<>();
+    proxyMethods.addAll(copiedMethods);
+    proxyMethods.addAll(methodInvocations);
+    proxyClass.methods.addAll(proxyMethods);
+    clinit.name = "clinitProxy";
+    proxyClass.methods.add(clinit);
 
 //    Set<FieldNode> fieldNodes;
 //    if (Access.isEnum(classNode.access)) {
@@ -373,8 +381,12 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     classNode.methods.clear();
   }
 
-  private long getFieldKey(ClassNode classNode, InvokeDynamicInsnNode node,
-                           InsnList instructions, VM vm) throws Exception {
+  private long getFieldKey(
+    ClassNode classNode,
+    InvokeDynamicInsnNode node,
+    InsnList instructions,
+    VM vm
+  ) throws Exception {
     VarInsnNode varInsnNode;
     AbstractInsnNode previous = node.getPrevious();
     if (previous instanceof VarInsnNode) {
@@ -410,15 +422,6 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
     return clazz.getDeclaredField(fieldInsnNode.name);
   }
 
-  private AbstractInsnNode findFirstInstruction(AbstractInsnNode start, int opcode) {
-    for (; start != null; start = start.getPrevious()) {
-      if (start.getOpcode() == opcode) {
-        return start;
-      }
-    }
-    return null;
-  }
-
   private FieldInsnNode findFirstFieldInstruction(MethodNode clinit) {
     for (AbstractInsnNode node : clinit.instructions) {
       if (node.getOpcode() != PUTSTATIC)
@@ -427,6 +430,15 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
       if (!fieldInsnNode.desc.equals("J"))
         break;
       return fieldInsnNode;
+    }
+    return null;
+  }
+
+  private AbstractInsnNode findFirstInstruction(AbstractInsnNode start, int opcode) {
+    for (; start != null; start = start.getPrevious()) {
+      if (start.getOpcode() == opcode) {
+        return start;
+      }
     }
     return null;
   }
@@ -463,7 +475,8 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
 
   private Set<InvokeDynamicInsnNode> getInvokeDynamicInstructions(MethodNode methodNode) {
     return this.getInvokeDynamicInstructions(methodNode,
-      node -> node.bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC));
+      node -> node.bsm.getDesc().equals(ZKM_INVOKEDYNAMIC_HANDLE_DESC)
+    );
   }
 
   private Set<InvokeDynamicInsnNode> getInvokeDynamicInstructions(
