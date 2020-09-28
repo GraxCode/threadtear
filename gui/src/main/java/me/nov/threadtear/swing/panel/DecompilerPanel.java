@@ -26,6 +26,8 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,24 +39,18 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class DecompilerPanel extends JPanel implements ActionListener {
   private static final long serialVersionUID = 1L;
-
-  private DecompilerTextArea textArea;
-
-  private int searchIndex = -1;
-  private String lastSearchText = null;
-
+  private static int preferredDecompilerIndex = 0;
   private final AnalysisFrame analysisFrame;
-  public File archive;
-  public Clazz clazz;
-
-  private final JComboBox<DecompilerInfo> decompilerSelection;
+  private final JComboBox<DecompilerInfo<?>> decompilerSelection;
   private final JComboBox<String> conversionMethod;
   private final JCheckBox ignoreTCB;
   private final JCheckBox ignoreMon;
   private final JCheckBox aggressive;
-
-  private static int preferredDecompilerIndex = 0;
-  private IDecompilerBridge decompilerBridge;
+  public File archive;
+  public Clazz clazz;
+  private DecompilerTextArea textArea;
+  private int searchIndex = -1;
+  private String lastSearchText = null;
 
   public DecompilerPanel(AnalysisFrame analysisFrame, File archive, Clazz cn) {
     this.analysisFrame = analysisFrame;
@@ -64,7 +60,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.setLayout(new BorderLayout(4, 4));
     JPanel leftActionPanel = new JPanel();
     leftActionPanel.setLayout(new GridBagLayout());
-    decompilerSelection = new JComboBox<>(DecompilerInfo.getDecompilerInfos().toArray(new DecompilerInfo[0]));
+    decompilerSelection = new JComboBox<DecompilerInfo<?>>(DecompilerInfo.getDecompilerInfos().toArray(new DecompilerInfo[0]));
     decompilerSelection.setSelectedIndex(preferredDecompilerIndex);
     decompilerSelection.addActionListener(this);
     leftActionPanel.add(decompilerSelection);
@@ -86,6 +82,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     ReloadButton reload = new ReloadButton();
     reload.addActionListener(this);
     SearchTextField search = new SearchTextField();
+
     search.putClientProperty(DarkTextUI.KEY_DEFAULT_TEXT, "Search for text or regex");
     search.setPreferredSize(new Dimension(200, reload.getPreferredSize().height));
     search.addSearchListener(l -> {
@@ -145,6 +142,20 @@ public class DecompilerPanel extends JPanel implements ActionListener {
     this.add(topPanel, BorderLayout.NORTH);
     Threadtear.getInstance().statusBar.runWithLoadIndicator("Decompiling class file... ", () -> {
       this.textArea = new DecompilerTextArea();
+      this.textArea.addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)
+            if (e.getKeyCode() == KeyEvent.VK_F) {
+              search.requestFocusInWindow();
+              String text = textArea.getSelectedText();
+              if (text != null && !text.trim().isEmpty()) {
+                search.setText(text);
+                search.postActionEvent();
+              }
+            }
+        }
+      });
       this.update();
       this.add(SwingUtils.withBorder(
         SwingUtils.wrap(SwingUtils.createRSyntaxOverlayScrollPane(textArea)),
@@ -195,7 +206,7 @@ public class DecompilerPanel extends JPanel implements ActionListener {
           .forEach(i -> m.instructions.set(i, new InsnNode(POP))));
       }
       bytes = Conversion.toBytecode0(copy);
-      decompilerBridge = decompilerSelection.getModel()
+      IDecompilerBridge decompilerBridge = decompilerSelection.getModel()
         .getElementAt(decompilerSelection.getSelectedIndex())
         .createDecompilerBridge();
       preferredDecompilerIndex = decompilerSelection.getSelectedIndex();
