@@ -62,7 +62,7 @@ public class MyExecution extends Execution implements IVMReferenceHandler {
 			//transform bytecode to java.lang.Class
 			Class<?> loadedClass = vm.loadClass(c.name.replace('/', '.'), true);
 			//do stuff with your class here
-			loadedClass.getMethods[0].invoke(...);
+			loadedClass.getMethods()[0].invoke(...);
 			return true;
 		});
 	}
