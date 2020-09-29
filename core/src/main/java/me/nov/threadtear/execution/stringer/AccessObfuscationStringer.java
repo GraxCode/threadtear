@@ -1,18 +1,27 @@
 package me.nov.threadtear.execution.stringer;
 
-import java.lang.invoke.*;
+import me.nov.threadtear.execution.Clazz;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.execution.ExecutionCategory;
+import me.nov.threadtear.execution.ExecutionTag;
+import me.nov.threadtear.logging.LogWrapper;
+import me.nov.threadtear.util.reflection.DynamicReflection;
+import me.nov.threadtear.vm.IVMReferenceHandler;
+import me.nov.threadtear.vm.Sandbox;
+import me.nov.threadtear.vm.VM;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
+
+import java.lang.invoke.CallSite;
+import java.lang.invoke.MethodHandleInfo;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import me.nov.threadtear.logging.LogWrapper;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.tree.*;
-
-import me.nov.threadtear.execution.*;
-import me.nov.threadtear.util.reflection.DynamicReflection;
-import me.nov.threadtear.vm.*;
-
-public class AccessObfusationStringer extends Execution implements IVMReferenceHandler {
+public class AccessObfuscationStringer extends Execution implements IVMReferenceHandler {
 
   private static final String STRINGER_INVOKEDYNAMIC_HANDLE_DESC =
           "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
@@ -22,7 +31,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
   private boolean verbose;
   private VM vm;
 
-  public AccessObfusationStringer() {
+  public AccessObfuscationStringer() {
     super(ExecutionCategory.STRINGER, "Access obfuscation removal",
             "Works for version 3 - 9.<br>Only works with invokedynamic obfuscation for now.",
             ExecutionTag.RUNNABLE, ExecutionTag.POSSIBLY_MALICIOUS);
@@ -40,7 +49,7 @@ public class AccessObfusationStringer extends Execution implements IVMReferenceH
 
     this.vm = VM.constructVM(this); // can't use
     // non-initializing as decryption class needs <clinit>
-    vm.setDummyLoading(true);
+//    vm.setDummyLoading(true);
     classes.values().forEach(this::decrypt);
     if (encrypted == 0) {
       logger.error("No access obfuscation matching stringer 3 - 9 has been found!");
