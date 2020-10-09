@@ -16,7 +16,7 @@ public final class Manifest {
     StringBuilder patchedManifest = new StringBuilder();
     for (String line : manifest.split(lineSeparator)) {
       if (line.length() > 1 && !line.startsWith("JAR-Signature:") && !line.startsWith("Name:") &&
-              !line.startsWith("SHA-256-Digest:")) {
+              !line.matches(".+-Digest: .+")) {
         patchedManifest.append(line);
         patchedManifest.append(lineSeparator);
       }
