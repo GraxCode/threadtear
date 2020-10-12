@@ -3,22 +3,26 @@ package me.nov.threadtear.swing;
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
 import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.ui.button.DarkButtonUI;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class SwingUtils {
 
   private static final IconLoader ICON_LOADER = IconLoader.get(Threadtear.class);
 
   public static TitledPanel withTitleAndBorder(String title, JComponent c) {
-    Border border = DarkBorders.createLineBorder(1,1,1,1);
+    Border border = DarkBorders.createLineBorder(1, 1, 1, 1);
     return new TitledPanel(title, withBorder(wrap(c), border));
   }
 
@@ -49,7 +53,7 @@ public class SwingUtils {
 
     gbc.anchor = (x == 0) ? GridBagConstraints.WEST : GridBagConstraints.EAST;
     gbc.fill = (x == 0) ? GridBagConstraints.BOTH
-                        : GridBagConstraints.HORIZONTAL;
+      : GridBagConstraints.HORIZONTAL;
 
     gbc.weightx = (x == 0) ? 0.1 : 1.0;
     gbc.weighty = 1.0;
@@ -113,7 +117,7 @@ public class SwingUtils {
   }
 
   public static JComponent createHorizontalSeparator(int padding) {
-    return withEmptyBorder(wrap(new JSeparator(JSeparator.HORIZONTAL)), padding, 0,padding, 0);
+    return withEmptyBorder(wrap(new JSeparator(JSeparator.HORIZONTAL)), padding, 0, padding, 0);
   }
 
   public static JComponent createVerticalSeparator() {
@@ -121,7 +125,7 @@ public class SwingUtils {
   }
 
   public static JComponent createVerticalSeparator(int padding) {
-    return withEmptyBorder(wrap(new JSeparator(JSeparator.VERTICAL)), 0, padding,0, padding);
+    return withEmptyBorder(wrap(new JSeparator(JSeparator.VERTICAL)), 0, padding, 0, padding);
   }
 
   public static <T extends JComponent> T withEmptyBorder(T comp, int pad) {
@@ -184,4 +188,13 @@ public class SwingUtils {
     return ICON_LOADER.getIcon(path, width, height, themed);
   }
 
+  public static JButton createSlimButton(Icon icon, ActionListener l) {
+    JButton jButton = new JButton(icon);
+    jButton.putClientProperty(DarkButtonUI.KEY_NO_BORDERLESS_OVERWRITE, true);
+    jButton.putClientProperty(DarkButtonUI.KEY_VARIANT, DarkButtonUI.VARIANT_BORDERLESS);
+    jButton.putClientProperty(DarkButtonUI.KEY_THIN, true);
+    if (l != null)
+      jButton.addActionListener(l);
+    return jButton;
+  }
 }

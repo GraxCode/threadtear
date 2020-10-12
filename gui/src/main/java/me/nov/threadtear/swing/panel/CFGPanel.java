@@ -1,43 +1,47 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
+import com.github.weisj.darklaf.components.OverlayScrollPane;
+import com.github.weisj.darklaf.components.border.DarkBorders;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxCellRenderer;
+import me.nov.threadtear.graph.Block;
+import me.nov.threadtear.graph.CFGraph;
+import me.nov.threadtear.graph.CFGraph.CFGComponent;
+import me.nov.threadtear.graph.Converter;
+import me.nov.threadtear.graph.layout.PatchedHierarchicalLayout;
+import me.nov.threadtear.graph.vertex.BlockVertex;
+import me.nov.threadtear.swing.SwingUtils;
+import me.nov.threadtear.swing.button.ReloadButton;
+import me.nov.threadtear.swing.component.AutoCompletion;
+import me.nov.threadtear.util.Images;
+import me.nov.threadtear.util.format.Strings;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.*;
-
-import com.github.weisj.darklaf.components.OverlayScrollPane;
-import com.github.weisj.darklaf.components.border.DarkBorders;
-import me.nov.threadtear.graph.Block;
-import me.nov.threadtear.graph.CFGraph;
-import me.nov.threadtear.graph.Converter;
-import me.nov.threadtear.swing.button.ReloadButton;
-import me.nov.threadtear.swing.component.AutoCompletion;
-import org.objectweb.asm.tree.*;
-
-import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.util.mxCellRenderer;
-
-import me.nov.threadtear.graph.CFGraph.CFGComponent;
-import me.nov.threadtear.graph.layout.PatchedHierarchicalLayout;
-import me.nov.threadtear.graph.vertex.BlockVertex;
-import me.nov.threadtear.util.Images;
-import me.nov.threadtear.util.format.Strings;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CFGPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   private final ArrayList<Block> blocks = new ArrayList<>();
   private final CFGraph graph;
   private final CFGComponent graphComponent;
+  private final Map<Block, mxCell> existing = new HashMap<>();
+  public boolean useTreeLayout = false;
   private JScrollPane scrollPane;
   private MethodNode mn;
-  public boolean useTreeLayout = false;
 
   public CFGPanel(ClassNode cn) {
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -52,7 +56,7 @@ public class CFGPanel extends JPanel {
     JComboBox<Object> methodSelection = new JComboBox<>(cn.methods.stream().map(m -> m.name + m.desc).toArray());
     AutoCompletion.enable(methodSelection);
     methodSelection.setPreferredSize(new Dimension(Math.min(400, methodSelection.getPreferredSize().width),
-        methodSelection.getPreferredSize().height));
+      methodSelection.getPreferredSize().height));
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(0, 4, 0, 0);
     leftActionPanel.add(methodSelection, gbc);
@@ -70,13 +74,14 @@ public class CFGPanel extends JPanel {
 
     JPanel rightActions = new JPanel();
     rightActions.setLayout(new GridBagLayout());
-    JComboBox<String> layout = new JComboBox<>(new String[] { "Hierarchial layout", "Compact layout" });
+    JComboBox<String> layout = new JComboBox<>(new String[]{"Hierarchial layout", "Compact layout"});
     layout.addActionListener(a -> {
       useTreeLayout = layout.getSelectedIndex() == 1;
       generateGraph();
     });
     rightActions.add(layout);
     JButton save = new JButton("Save as image");
+    save.setIcon(SwingUtils.getIcon("save.svg", true));
     save.addActionListener(l -> {
       File parentDir = FileSystemView.getFileSystemView().getHomeDirectory();
       JFileChooser jfc = new JFileChooser(parentDir);
@@ -126,6 +131,7 @@ public class CFGPanel extends JPanel {
     scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     scrollPane.setBorder(DarkBorders.createLineBorder(1, 1, 1, 1));
     graphComponent.scp = scrollPane;
+    addActionBar();
     this.add(overlayScrollPane, BorderLayout.CENTER);
     SwingUtilities.invokeLater(() -> {
       if (mn == null && !cn.methods.isEmpty()) {
@@ -133,6 +139,33 @@ public class CFGPanel extends JPanel {
         this.generateGraph();
       }
     });
+  }
+
+  private void addActionBar() {
+    JPanel actionPanel = new JPanel();
+    actionPanel.setLayout(new BorderLayout());
+    JPanel rightActions = new JPanel();
+    rightActions.setLayout(new GridBagLayout());
+
+    GridBagConstraints c = new GridBagConstraints();
+    c.weightx = 1.0;
+    c.weighty = 1.0;
+    c.anchor = GridBagConstraints.EAST;
+
+    rightActions.add(SwingUtils
+        .createSlimButton(SwingUtils.getIcon("zoom_reset.svg", false),
+          e -> graphComponent.resetZoom()),
+      c);
+    rightActions.add(SwingUtils
+      .createSlimButton(SwingUtils.getIcon("zoom_in.svg", false), e -> graphComponent.zoomIn()), c);
+    rightActions.add(SwingUtils
+      .createSlimButton(SwingUtils.getIcon("zoom_out.svg", false), e -> graphComponent.zoomOut()), c);
+    rightActions.setBorder(new EmptyBorder(2, 0, 0, 0));
+
+    actionPanel.add(rightActions, BorderLayout.EAST);
+    actionPanel.setBorder(new EmptyBorder(1, 5, 0, 5));
+
+    this.add(actionPanel, BorderLayout.PAGE_END);
   }
 
   @Override
@@ -198,10 +231,7 @@ public class CFGPanel extends JPanel {
     this.repaint();
   }
 
-  private Map<Block, mxCell> existing = new HashMap<>();
-
   private mxCell addBlock(mxCell parent, Block b, BlockVertex input) {
-    mxCell v1 = null;
     if (existing.containsKey(b)) {
       mxCell cached = existing.get(b);
       if (input != null) {
@@ -210,30 +240,28 @@ public class CFGPanel extends JPanel {
       return cached;
     }
     BlockVertex vertex = new BlockVertex(mn, b, b.getNodes(), b.getLabel(),
-        mn.instructions.indexOf(b.getNodes().get(0)));
+      mn.instructions.indexOf(b.getNodes().get(0)));
     if (input != null) {
       vertex.addInput(input);
     }
-    v1 = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40,
-        String.format("fillColor=%s;fontColor=%s;strokeColor=%s", Strings.hexColor(getBackground().brighter()),
-            Strings.hexColor(getForeground().brighter()), Strings.hexColor(getBackground().brighter().brighter())));
-    graph.updateCellSize(v1); // resize cell
-    existing.put(b, v1);
-    if (v1 == null) {
-      throw new RuntimeException();
-    }
+    mxCell cell = (mxCell) graph.insertVertex(parent, null, vertex, 150, 10, 80, 40,
+      String.format("fillColor=%s;fontColor=%s;strokeColor=%s", Strings.hexColor(getBackground().brighter()),
+        Strings.hexColor(getForeground().brighter()), Strings.hexColor(getBackground().brighter().brighter())));
+    graph.updateCellSize(cell); // resize cell
+    existing.put(b, cell);
+    assert (cell != null);
     List<Block> next = b.getOutput();
     for (int i = 0; i < next.size(); i++) {
       Block out = next.get(i);
       if (out.equals(b)) {
-        graph.insertEdge(parent, null, "Infinite loop", v1, v1,
-            "strokeColor=" + getEdgeColor(b, i) + ";fontColor=" + Strings.hexColor(getForeground().brighter()));
+        graph.insertEdge(parent, null, "Infinite loop", cell, cell,
+          "strokeColor=" + getEdgeColor(b, i) + ";fontColor=" + Strings.hexColor(getForeground().brighter()));
       } else {
         mxCell vertexOut = addBlock(parent, out, vertex);
-        graph.insertEdge(parent, null, null, v1, vertexOut, "strokeColor=" + getEdgeColor(b, i) + ";");
+        graph.insertEdge(parent, null, null, cell, vertexOut, "strokeColor=" + getEdgeColor(b, i) + ";");
       }
     }
-    return v1;
+    return cell;
   }
 
   private String getEdgeColor(Block b, int i) {

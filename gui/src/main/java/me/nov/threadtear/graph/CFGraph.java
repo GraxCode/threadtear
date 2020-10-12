@@ -13,7 +13,7 @@ import com.mxgraph.util.*;
 import com.mxgraph.view.*;
 
 public class CFGraph extends mxGraph {
-  private CFGComponent component;
+  private final CFGComponent component;
 
   public CFGraph() {
     this.component = new CFGComponent(this);
@@ -124,6 +124,10 @@ public class CFGraph extends mxGraph {
         zoom(1 / zoomFactor);
         repaint();
       }
+    }
+
+    public void resetZoom() {
+      zoomTo(1.0, false);
     }
   }
 }
