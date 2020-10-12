@@ -1,34 +1,35 @@
 package me.nov.threadtear.swing.panel;
 
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import me.nov.threadtear.CoreUtils;
+import me.nov.threadtear.Threadtear;
+import me.nov.threadtear.execution.Execution;
+import me.nov.threadtear.io.JarIO;
 import me.nov.threadtear.logging.LogWrapper;
-import org.apache.commons.configuration2.*;
+import me.nov.threadtear.swing.SwingUtils;
+import me.nov.threadtear.swing.tree.component.ClassTreeNode;
+import me.nov.threadtear.swing.tree.component.ExecutionTreeNode;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.io.FilenameUtils;
 
-import me.nov.threadtear.Threadtear;
-import me.nov.threadtear.execution.Execution;
-import me.nov.threadtear.io.JarIO;
-import me.nov.threadtear.swing.SwingUtils;
-import me.nov.threadtear.swing.tree.component.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 public class ConfigurationPanel extends JPanel {
   private static final long serialVersionUID = 1L;
+  public JButton run;
+  public JButton save;
   private Threadtear main;
   private JCheckBox verbose;
   private JCheckBox watermark;
   private JCheckBox disableSecurity;
   private JCheckBox removeSignature;
-  public JButton run;
-  public JButton save;
 
   public ConfigurationPanel(Threadtear main) {
     this.main = main;
@@ -40,28 +41,28 @@ public class ConfigurationPanel extends JPanel {
   private JPanel createCheckboxes() {
     JPanel panel = new JPanel(new GridBagLayout());
     panel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-    panel.add(verbose = new JCheckBox("Verbose logging"), SwingUtils.createGridBagConstraints(0,0));
+    panel.add(verbose = new JCheckBox("Verbose logging"), SwingUtils.createGridBagConstraints(0, 0));
     verbose.setToolTipText("Log more information and print full stack traces.");
     panel.add(watermark = new JCheckBox("<html>Watermark <tt>MANIFEST.MF</tt>"),
-              SwingUtils.createGridBagConstraints(1,0));
+      SwingUtils.createGridBagConstraints(1, 0));
     watermark.setToolTipText("<html>Adds a \"<tt>Deobfuscated-By\" attribute to the manifest file.");
     watermark.setSelected(true);
     panel.add(disableSecurity = new JCheckBox("<html>Disable <tt>SecurityManager</tt> protection"),
-              SwingUtils.createGridBagConstraints(0,1));
+      SwingUtils.createGridBagConstraints(0, 1));
     disableSecurity
-            .setToolTipText("Remove the protection against unwanted calls. Could improve deobfuscation.");
+      .setToolTipText("Remove the protection against unwanted calls. Could improve deobfuscation.");
     disableSecurity.addActionListener(l -> {
       if (disableSecurity.isSelected()) {
         if (JOptionPane.showConfirmDialog(this.getParent(),
-                "<html>You are disabling the <tt>SecurityManager</tt> that protects " +
-                        "you<br>from arbitrary code execution. Are you sure?", "Warning",
-                JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+          "<html>You are disabling the <tt>SecurityManager</tt> that protects " +
+            "you<br>from arbitrary code execution. Are you sure?", "Warning",
+          JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
           disableSecurity.setSelected(false);
         }
       }
     });
     panel.add(removeSignature = new JCheckBox("Remove manifest signature"),
-              SwingUtils.createGridBagConstraints(1,1));
+      SwingUtils.createGridBagConstraints(1, 1));
     removeSignature.setToolTipText("Remove the signature from the manifest file, if available.");
     return panel;
   }
@@ -108,6 +109,20 @@ public class ConfigurationPanel extends JPanel {
         JOptionPane.showMessageDialog(this, "You have to load a jar file first.");
         return;
       }
+      if (main.listPanel.executionList.getExecutions().size() > 0) {
+        JTextArea ta = new JTextArea();
+        ta.setText("This project is entirely open-source and many hours have went into developing it.\n" +
+          "Please consider donating a small amount, if you are happy with your deobfuscation results.\n" +
+          "Every paid coffee will result in motivation to develop this tool, as it lives of it.\n" +
+          "You can also contact me on twitter (@graxcoding) for more options.\n" +
+          "Thank you.\n\n" +
+          "Bitcoin adress: 3LfBXghKn8KAj74tyetaUdJLic4NpGY3Vr");
+        ta.setCaretPosition(0);
+        ta.setEditable(false);
+        JOptionPane.showMessageDialog(this,
+          ta, "Consider donating",
+          JOptionPane.INFORMATION_MESSAGE, SwingUtils.getIcon("bit_qr.png", 150, 150));
+      }
       JFileChooser jfc = new JFileChooser(inputFile.getParentFile());
       jfc.setAcceptAllFileFilterUsed(false);
       jfc.setSelectedFile(new File(FilenameUtils.removeExtension(inputFile.getAbsolutePath()) + ".jar"));
@@ -117,7 +132,7 @@ public class ConfigurationPanel extends JPanel {
       if (result == JFileChooser.APPROVE_OPTION) {
         File output = jfc.getSelectedFile();
         JarIO.saveAsJar(inputFile, output, main.listPanel.classList.classes, removeSignature.isSelected(),
-                watermark.isSelected());
+          watermark.isSelected());
         LogWrapper.logger.info("Saved to " + output.getAbsolutePath());
       }
       save.setEnabled(true);
@@ -129,9 +144,9 @@ public class ConfigurationPanel extends JPanel {
       run.setEnabled(false);
       if (!CoreUtils.isNoverify()) {
         JOptionPane.showMessageDialog(main,
-                "<html>You started without \"-noverify\". Some deobfuscators could fail" +
-                        ".<br>Use \"<tt>java -noverify -jar ...</tt>\" to start the application.", "Warning",
-                JOptionPane.WARNING_MESSAGE);
+          "<html>You started without \"-noverify\". Some deobfuscators could fail" +
+            ".<br>Use \"<tt>java -noverify -jar ...</tt>\" to start the application.", "Warning",
+          JOptionPane.WARNING_MESSAGE);
       }
       main.run(verbose.isSelected(), disableSecurity.isSelected());
     });
@@ -143,8 +158,8 @@ public class ConfigurationPanel extends JPanel {
     try {
       output.createNewFile();
       FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
-              new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                      .configure(new Parameters().fileBased().setFile(output));
+        new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+          .configure(new Parameters().fileBased().setFile(output));
       FileBasedConfiguration config = builder.getConfiguration();
       config.setProperty("verbose", verbose.isSelected());
       config.setProperty("no_sec", disableSecurity.isSelected());
@@ -154,8 +169,8 @@ public class ConfigurationPanel extends JPanel {
       if (input != null) {
         config.setProperty("file", input.getAbsolutePath());
         config.setProperty("ignored",
-                main.listPanel.classList.classes.stream().filter(c -> !c.transform).map(c -> c.node.name)
-                        .toArray(String[]::new));
+          main.listPanel.classList.classes.stream().filter(c -> !c.transform).map(c -> c.node.name)
+            .toArray(String[]::new));
       }
       ArrayList<Execution> executions = main.listPanel.executionList.getExecutions();
       if (!executions.isEmpty()) {
@@ -170,8 +185,8 @@ public class ConfigurationPanel extends JPanel {
   private void loadConfig(File input) {
     try {
       FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
-              new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                      .configure(new Parameters().fileBased().setFile(input));
+        new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+          .configure(new Parameters().fileBased().setFile(input));
       Configuration config = builder.getConfiguration();
       verbose.setSelected(config.getBoolean("verbose"));
       watermark.setSelected(true);
@@ -205,7 +220,7 @@ public class ConfigurationPanel extends JPanel {
             main.listPanel.executionList.repaint();
           } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Execution failed to initialize: " + execution + " (" + e.toString() + ")");
+              "Execution failed to initialize: " + execution + " (" + e.toString() + ")");
           }
         }
       }

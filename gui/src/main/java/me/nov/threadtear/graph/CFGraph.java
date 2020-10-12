@@ -1,16 +1,19 @@
 package me.nov.threadtear.graph;
 
-import java.awt.*;
-import java.util.Map;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.shape.mxRectangleShape;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.*;
-import com.mxgraph.view.*;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxCellState;
+import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphView;
+import com.mxgraph.view.mxStylesheet;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.util.Map;
 
 public class CFGraph extends mxGraph {
   private final CFGComponent component;
@@ -91,7 +94,7 @@ public class CFGraph extends mxGraph {
         } else if (scp != null) {
           // do we need this on linux too?
           scp.getVerticalScrollBar().setValue(scp.getVerticalScrollBar().getValue() +
-                  e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
+            e.getUnitsToScroll() * scp.getVerticalScrollBar().getUnitIncrement());
         }
       });
     }
