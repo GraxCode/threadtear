@@ -68,6 +68,6 @@ public class ClassTreeCellRenderer extends DefaultTreeCellRenderer implements Op
 
   @Override
   public Font getFont() {
-    return new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    return new Font(Font.SANS_SERIF, Font.PLAIN, new JLabel().getFont().getSize());
   }
 }
