@@ -193,6 +193,7 @@ public class SwingUtils {
     jButton.putClientProperty(DarkButtonUI.KEY_NO_BORDERLESS_OVERWRITE, true);
     jButton.putClientProperty(DarkButtonUI.KEY_VARIANT, DarkButtonUI.VARIANT_BORDERLESS);
     jButton.putClientProperty(DarkButtonUI.KEY_THIN, true);
+    jButton.putClientProperty(DarkButtonUI.KEY_SQUARE, true);
     if (l != null)
       jButton.addActionListener(l);
     return jButton;
