@@ -35,7 +35,6 @@ public class SwingUtils {
     OverlayScrollPane overlayScrollPane = new OverlayScrollPane(sp);
     overlayScrollPane.getVerticalScrollBar().setUnitIncrement(16);
     sp.setLineNumbersEnabled(true);
-    textArea.reloadSyntaxTheme();
     return overlayScrollPane;
   }
 
