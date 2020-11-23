@@ -1,6 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <defs id="colors">
+        <linearGradient id="menuIconEnabled">
+            <stop offset="0" stop-color="#AFB1B3"/>
+        </linearGradient>
+    </defs>
     <rect id="frame" width="16" height="16" fill="none"/>
-    <g fill="#AFB1B3" fill-rule="evenodd">
+    <g fill="url(#menuIconEnabled)" fill-rule="evenodd">
         <path d="M7 5h2v2H7z"/>
         <path d="M7 9h2v2H7z"/>
         <path d="M3 12V6H2V4h3l-.008 8z"/>

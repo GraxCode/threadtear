@@ -153,13 +153,13 @@ public class CFGPanel extends JPanel {
     c.anchor = GridBagConstraints.EAST;
 
     rightActions.add(SwingUtils
-        .createSlimButton(SwingUtils.getIcon("zoom_reset.svg", false),
+        .createSlimButton(SwingUtils.getIcon("zoom_reset.svg", true),
           e -> graphComponent.resetZoom()),
       c);
     rightActions.add(SwingUtils
-      .createSlimButton(SwingUtils.getIcon("zoom_in.svg", false), e -> graphComponent.zoomIn()), c);
+      .createSlimButton(SwingUtils.getIcon("zoom_in.svg", true), e -> graphComponent.zoomIn()), c);
     rightActions.add(SwingUtils
-      .createSlimButton(SwingUtils.getIcon("zoom_out.svg", false), e -> graphComponent.zoomOut()), c);
+      .createSlimButton(SwingUtils.getIcon("zoom_out.svg", true), e -> graphComponent.zoomOut()), c);
     rightActions.setBorder(new EmptyBorder(2, 0, 0, 0));
 
     actionPanel.add(rightActions, BorderLayout.EAST);
