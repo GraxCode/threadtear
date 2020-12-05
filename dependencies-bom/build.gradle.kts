@@ -39,6 +39,7 @@ dependencies {
         apiv("com.github.weisj:darklaf-core","darklaf")
         apiv("com.github.weisj:darklaf-theme","darklaf")
         apiv("com.github.weisj:darklaf-property-loader", "darklaf")
+        apiv("com.github.weisj:darklaf-extensions-rsyntaxarea", "darklaf.extensions")
         apiv("org.ow2.asm:asm", "asm")
         apiv("org.ow2.asm:asm-tree", "asm")
         apiv("org.ow2.asm:asm-analysis", "asm")

@@ -9,6 +9,7 @@ dependencies {
     implementation("com.github.weisj:darklaf-core") { isChanging = true }
     implementation("com.github.weisj:darklaf-theme") { isChanging = true }
     implementation("com.github.weisj:darklaf-property-loader") { isChanging = true }
+    implementation("com.github.weisj:darklaf-extensions-rsyntaxarea")
 
     implementation("com.fifesoft:rsyntaxtextarea")
     implementation("com.github.jgraph:jgraphx")
