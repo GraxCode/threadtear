@@ -6,11 +6,19 @@ import javax.swing.plaf.ColorUIResource;
 
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.*;
+import com.github.weisj.darklaf.theme.info.ColorToneRule;
+import com.github.weisj.darklaf.theme.info.ContrastRule;
 import com.github.weisj.darklaf.theme.info.DefaultThemeProvider;
+import com.github.weisj.darklaf.theme.info.PreferredThemeStyle;
 
 public class LookAndFeel {
 
   public static void init() {
+    // most linux distros have ugly font rendering, but these here can fix that:
+    System.setProperty("awt.useSystemAAFontSettings", "on");
+    System.setProperty("swing.aatext", "true");
+    System.setProperty("sun.java2d.xrender", "true");
+
     LafManager.setThemeProvider(new DefaultThemeProvider(
       new IntelliJTheme(),
       new OneDarkTheme(),
@@ -29,6 +37,6 @@ public class LookAndFeel {
         }
       }
     });
-    LafManager.installTheme(LafManager.getPreferredThemeStyle());
+    LafManager.installTheme(new PreferredThemeStyle(ContrastRule.STANDARD, ColorToneRule.DARK));
   }
 }
