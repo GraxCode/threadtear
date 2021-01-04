@@ -214,7 +214,7 @@ public class ConfigurationPanel extends JPanel {
         String[] executions = config.getStringArray("executions");
         for (String execution : executions) {
           try {
-            Execution e = (Execution) Class.forName(execution).newInstance();
+            Execution e = (Execution) Class.forName(execution).getConstructor().newInstance();
             ((ExecutionTreeNode) main.listPanel.executionList.model.getRoot()).add(new ExecutionTreeNode(e, true));
             main.listPanel.executionList.model.reload();
             main.listPanel.executionList.repaint();
