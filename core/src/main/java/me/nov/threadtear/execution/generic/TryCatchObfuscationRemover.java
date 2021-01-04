@@ -70,6 +70,11 @@ public class TryCatchObfuscationRemover extends Execution {
           logger.warning("Getter {} not found, possibly library", min.owner + "." + min.name + min.desc);
         return false;
       }
+      if ((getter.access & ACC_NATIVE) != 0) {
+        if (verbose)
+          logger.warning("Getter {} is a native method, skipping", min.owner + "." + min.name + min.desc);
+        return false;
+      }
       AbstractInsnNode getterFirst = getter.instructions.getFirst();
       while (getterFirst.getOpcode() == -1) {
         getterFirst = ain.getNext();
