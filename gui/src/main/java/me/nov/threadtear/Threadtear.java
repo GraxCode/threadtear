@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
@@ -133,6 +137,22 @@ public class Threadtear extends JFrame {
     ), 16), BorderLayout.CENTER);
     content.add(statusBar = new StatusBar(), BorderLayout.SOUTH);
     setContentPane(content);
+
+    this.setDropTarget(new DropTarget() {
+      @Override
+      public synchronized void drop(DropTargetDropEvent event) {
+        event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+        try {
+          List<File> files = (List<File>) event.getTransferable()
+            .getTransferData(DataFlavor.javaFileListFlavor);
+          for (File file : files) {
+            listPanel.classList.onFileDrop(file);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
   }
 
   private void initBounds() {
