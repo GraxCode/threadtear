@@ -184,7 +184,7 @@ public class DESObfuscationZKM extends Execution implements IVMReferenceHandler,
 //      else if (e.getCause() instanceof RuntimeException && e.getCause().getMessage().contains("NoSuchMethodException")) {
 //
 //      }
-    } catch (Exception e) {
+    } catch (Throwable e) {
       logger.error("Failed to invoke proxy in {}, {}", referenceString(classNode, null), shortStacktrace(e));
       e.printStackTrace();
       return;

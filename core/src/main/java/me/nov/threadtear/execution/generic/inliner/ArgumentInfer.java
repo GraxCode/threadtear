@@ -192,7 +192,7 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
             method.instructions.insert(new InsnNode(ACONST_NULL));
           } else {
             Type type = arg.getType().getType();
-            if (type != null) {
+            if (type != null && !Access.isArray(type.getDescriptor())) {
               method.instructions.insert(new VarInsnNode(type.getOpcode(ISTORE), varIndex));
               method.instructions.insert(new LdcInsnNode(arg.getValue()));
             }
@@ -213,7 +213,7 @@ public class ArgumentInfer implements IConstantReferenceHandler, Opcodes {
     try {
       analyzer.analyze(owner.name, method);
     } catch (AnalyzerException e) {
-      LogWrapper.logger.error("Failed analysis", e);
+      LogWrapper.logger.error("Failed analysis in {}#{}{}", e, owner.name, method.name, method.desc);
       // for debugging purposes:
       // BytecodeDebugger.show(method, e);
     }
