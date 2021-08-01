@@ -26,7 +26,7 @@ Especially with deobfuscators like for ZKM or Stringer you have to be very caref
 If you discover an ACE, please open an issue. I will try to fix them as soon as possible.
 
 ## How to compile 
-First, run `gradle build`, then `gradle fatJar`. In `builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release.
+First, run `gradlew build`, then `gradlew fatJar`. In `gui/builds/libs` a runnable jar file should then have been created. If you don't want to download the repo, you can use the latest release.
 
 ## Make your own execution
 You can easily create your own execution task. Just extend `me.nov.threadtear.execution.Execution`:
