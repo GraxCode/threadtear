@@ -38,7 +38,6 @@ public final class JarIO {
           // process bytes using CAFED00D
 
           ClassFileReader reader = new ClassFileReader();
-
           ClassFile classFile = reader.read(bytes);
           bytes = new ClassFileWriter().write(classFile);
 
