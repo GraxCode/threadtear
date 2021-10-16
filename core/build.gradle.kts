@@ -21,5 +21,7 @@ dependencies {
     implementation("com.github.leibnitz27:cfr") { isChanging = true }
     implementation("ch.qos.logback:logback-classic")
 
+    implementation("com.github.Col-E:CAFED00D:1.8.0")
+
     externalLib("fernflower-15-05-20")
 }
