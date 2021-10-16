@@ -6,6 +6,9 @@ import java.util.jar.*;
 import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
+import me.coley.cafedude.ClassFile;
+import me.coley.cafedude.io.ClassFileReader;
+import me.coley.cafedude.io.ClassFileWriter;
 import me.nov.threadtear.logging.LogWrapper;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.tree.ClassNode;
@@ -29,8 +32,15 @@ public final class JarIO {
     String name = en.getName();
     try (InputStream jis = jar.getInputStream(en)) {
       byte[] bytes = IOUtils.toByteArray(jis);
+
       if (isClassFile(bytes)) {
         try {
+          // process bytes using CAFED00D
+
+          ClassFileReader reader = new ClassFileReader();
+          ClassFile classFile = reader.read(bytes);
+          bytes = new ClassFileWriter().write(classFile);
+
           final ClassNode cn = Conversion.toNode(bytes);
           if (cn != null && (cn.superName != null || (cn.name != null && cn.name.equals("java/lang/Object")))) {
             classes.add(new Clazz(cn, en, jar));
