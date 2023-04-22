@@ -2,7 +2,7 @@ package me.nov.threadtear.swing;
 
 import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.border.DarkBorders;
-import com.github.weisj.darklaf.icons.IconLoader;
+import com.github.weisj.darklaf.properties.icons.IconLoader;
 import com.github.weisj.darklaf.ui.button.DarkButtonUI;
 import me.nov.threadtear.Threadtear;
 import me.nov.threadtear.swing.textarea.DecompilerTextArea;

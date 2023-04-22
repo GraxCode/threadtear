@@ -15,13 +15,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ThreadtearCore {
+
+  // removed due to being unused
+  /*
   public static void configureEnvironment() throws Exception {
     System.setProperty("file.encoding", "UTF-8");
     Field charset = Charset.class.getDeclaredField("defaultCharset");
     charset.setAccessible(true);
     charset.set(null, null);
   }
-
+*/
   public static void configureLoggers() {
     LogWrapper.logger.addLogger(LoggerFactory.getLogger("logfile"));
     LogWrapper.logger.addLogger(LoggerFactory.getLogger("form"));

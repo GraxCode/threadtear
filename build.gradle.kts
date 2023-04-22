@@ -132,10 +132,10 @@ allprojects {
                         // This includes either project-specific license or a default one
                         if (file("$projectDir/LICENSE").exists()) {
                             textFrom("$projectDir/LICENSE")
-                            rename { s -> "${project.name.toUpperCase()}_LICENSE" }
+                            rename { "${project.name.toUpperCase()}_LICENSE" }
                         } else {
                             textFrom("$rootDir/LICENSE")
-                            rename { s -> "${rootProject.name.toUpperCase()}_LICENSE" }
+                            rename { "${rootProject.name.toUpperCase()}_LICENSE" }
                         }
                     }
                 }
