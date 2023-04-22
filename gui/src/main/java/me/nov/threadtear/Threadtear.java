@@ -48,7 +48,7 @@ public class Threadtear extends JFrame {
   public static void main(String[] args) throws Exception {
     LookAndFeel.init();
     LookAndFeel.setLookAndFeel();
-    ThreadtearCore.configureEnvironment();
+    // ThreadtearCore.configureEnvironment();
     ThreadtearCore.configureLoggers();
     configureGUILoggers();
     getInstance().setVisible(true);
